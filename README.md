@@ -15,6 +15,17 @@ You can simply get it running by installing the local needings of NPM with `npm 
 
 After that just type `npx grunt` to start the processing which watches all the LESS and JS folders to generate new asset files on the fly if anythings changes.
 
+### Getting Started
+
+[`Build/.nvmrc`](`Build/.nvmrc`) specifies which version of Node we use (see [documentation](https://github.com/nvm-sh/nvm#nvmrc)).
+
+```bash
+cd Build/
+nvm install  # or just `nvm use`
+npm install
+npm run watch
+```
+
 ## Dependencies
 
 - TYPO3 CMS Frontend (cms)
