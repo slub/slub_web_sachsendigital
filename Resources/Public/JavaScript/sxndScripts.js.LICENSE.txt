@@ -1,0 +1,6 @@
+/*! Magnific Popup - v1.1.0 - 2016-02-20
+* http://dimsemenov.com/plugins/magnific-popup/
+* Copyright (c) 2016 Dmitry Semenov; */
+
+/*! modernizr 3.5.0 (Custom Build) | MIT *
+ * https://modernizr.com/download/?-csstransforms3d-inlinesvg-objectfit-picture-svg-touchevents-setclasses !*/

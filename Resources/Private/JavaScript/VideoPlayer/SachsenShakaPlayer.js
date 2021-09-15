@@ -1,3 +1,5 @@
+require('./controls.css');
+
 var video;
 var controls;
 var manifestUri;

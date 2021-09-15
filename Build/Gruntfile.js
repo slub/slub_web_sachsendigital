@@ -19,24 +19,6 @@ module.exports = function(grunt) {
                 }
             }
         },
-        terser: {
-            development: {
-                options: {
-                    compress: true,
-                    output: {
-                        comments: false
-                    }
-                },
-                files: {
-                    "Resources/Public/JavaScript/sxndScripts.js": [
-                        'Resources/Private/JavaScript/modernizrCustom.js',
-                        'Resources/Private/JavaScript/jquery.cookiebar.js',
-                        'Resources/Private/JavaScript/JqueryMagnificPopup.min.js',
-                        'Resources/Private/JavaScript/sxndScripts.js'
-                    ]
-                }
-            }
-        },
         watch: {
             styles: {
                 files: ['Resources/Private/Less/**/*.less'],
@@ -45,15 +27,8 @@ module.exports = function(grunt) {
                     spawn: false
                 }
             },
-            js: {
-                files: ['Resources/Private/JavaScript/*.js'],
-                tasks: ['terser'],
-                options: {
-                    spawn: false
-                }
-            }
         }
     });
     grunt.file.setBase('../');
-    grunt.registerTask('default', ['less','terser','watch']);
+    grunt.registerTask('default', ['less','watch']);
 };

@@ -1,3 +1,8 @@
+require('./modernizrCustom');
+require('./jquery.cookiebar');
+require('./JqueryMagnificPopup.min');
+
+
 /*
  *
  * JS functions

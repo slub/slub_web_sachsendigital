@@ -23,8 +23,18 @@ After that just type `npx grunt` to start the processing which watches all the L
 cd Build/
 nvm install  # or just `nvm use`
 npm install
+
+# Development
 npm run watch
+npm run watch-less
+
+# Production
+npm run build
 ```
+
+### Remarks
+
+- jQuery is marked as external in Webpack config
 
 ## Dependencies
 
