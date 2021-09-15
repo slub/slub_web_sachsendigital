@@ -40,6 +40,15 @@ nvm use  # If you use NVM
 npm run build
 ```
 
+### Running Tests
+
+```bash
+npm test
+
+# (Alternative) Watch mode
+npm test -- --watch
+```
+
 ### Remarks
 
 - jQuery is marked as external in Webpack config
