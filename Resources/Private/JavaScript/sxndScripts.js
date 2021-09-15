@@ -1,7 +1,7 @@
 const $ = require('jquery');
 
-require('./modernizrCustom');
-require('./jquery.cookiebar');
+require('./vendor/modernizrCustom');
+require('./vendor/jquery.cookiebar');
 require('magnific-popup');
 
 
