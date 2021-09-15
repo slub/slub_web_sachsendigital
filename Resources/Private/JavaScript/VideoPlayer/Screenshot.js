@@ -28,21 +28,11 @@ function drawCanvas(target, videoDomElement, metadataArray) {
       ? [target, target.getContext('2d')]
       : [target.canvas, target];
 
-  var stringArray = [], infoString = '';
-
-  for (var i = 0; i < metadataArray.screenshotFields.length; i++) {
-    if (typeof (metadataArray.metadata[metadataArray.screenshotFields[i]]) === 'string') {
-      stringArray.push(metadataArray.metadata[metadataArray.screenshotFields[i]]);
-    }
-  }
-
-  for (var i = 0; i < stringArray.length; i++) {
-    if ((stringArray.length - 1) !== i) {
-      infoString += stringArray[i] + ' / ';
-    } else {
-      infoString += stringArray[i];
-    }
-  }
+  const infoString =
+    metadataArray.screenshotFields
+      .map(field => metadataArray.metadata[field])
+      .filter(value => typeof value === 'string')
+      .join(' / ');
 
   targetCanvas.width = videoDomElement.videoWidth;
   targetCanvas.height = videoDomElement.videoHeight;
