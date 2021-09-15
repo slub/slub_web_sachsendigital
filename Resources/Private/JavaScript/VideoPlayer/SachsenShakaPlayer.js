@@ -1,3 +1,5 @@
+const $ = require('jquery');
+
 require('./controls.css');
 
 var video;

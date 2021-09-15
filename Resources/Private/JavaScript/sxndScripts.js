@@ -1,3 +1,5 @@
+const $ = require('jquery');
+
 require('./modernizrCustom');
 require('./jquery.cookiebar');
 require('./JqueryMagnificPopup.min');
