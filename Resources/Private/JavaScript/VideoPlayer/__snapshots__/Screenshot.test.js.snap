@@ -146,7 +146,7 @@ Array [
   },
   Object {
     "props": Object {
-      "value": "25px Arial",
+      "value": "12px Arial",
     },
     "transform": Array [
       1,
@@ -218,8 +218,8 @@ Array [
     "props": Object {
       "maxWidth": null,
       "text": "Test Video / 1912",
-      "x": 950,
-      "y": 530,
+      "x": 955,
+      "y": 535,
     },
     "transform": Array [
       1,

@@ -42,12 +42,15 @@ function drawCanvas(target, videoDomElement, metadataArray) {
 
   context.drawImage(videoDomElement, 0, 0, targetCanvas.width, targetCanvas.height);
 
-  context.font = '25px Arial';
+  const unitHeight = targetCanvas.height / 1080;
+  const textPad = 10 * unitHeight;
+
+  context.font = `${Math.floor(25 * unitHeight)}px Arial`;
   context.textAlign = 'end';
   context.fillStyle = "#FFFFFF";
   context.shadowBlur = 5;
   context.shadowColor = "black";
-  context.fillText(infoString, targetCanvas.width - 10, targetCanvas.height - 10);
+  context.fillText(infoString, targetCanvas.width - textPad, targetCanvas.height - textPad);
 
   targetCanvas.style.width = '80%';
   targetCanvas.style.height = 'auto';
