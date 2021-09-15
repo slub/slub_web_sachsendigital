@@ -16,8 +16,18 @@ function renderScreenshot(videoDomElement) {
   drawCanvas(canvas, videoDomElement, metadataArray);
 }
 
-function drawCanvas(targetCanvas, videoDomElement, metadataArray) {
-  var context
+/**
+ *
+ * @param {HTMLCanvasElement | CanvasRenderingContext2D} target Canvas on which the screenshot is drawn
+ * @param {HTMLVideoElement} videoDomElement Source video element from which the screenshot is taken
+ * @param {any} metadataArray Output of {@link generateMetadataObject}
+ */
+function drawCanvas(target, videoDomElement, metadataArray) {
+  const [targetCanvas, context] =
+    target instanceof HTMLCanvasElement
+      ? [target, target.getContext('2d')]
+      : [target.canvas, target];
+
   var stringArray = [], infoString = '';
 
   for (var i = 0; i < metadataArray.screenshotFields.length; i++) {
@@ -36,8 +46,6 @@ function drawCanvas(targetCanvas, videoDomElement, metadataArray) {
 
   targetCanvas.width = videoDomElement.videoWidth;
   targetCanvas.height = videoDomElement.videoHeight;
-
-  context = targetCanvas.getContext('2d');
 
   context.drawImage(videoDomElement, 0, 0, targetCanvas.width, targetCanvas.height);
 
@@ -66,4 +74,4 @@ function generateMetadataObject() {
   return metadataObject;
 }
 
-module.exports = { renderScreenshot };
+module.exports = { drawCanvas, renderScreenshot };
