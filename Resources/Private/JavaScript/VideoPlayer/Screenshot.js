@@ -64,4 +64,4 @@ function generateMetadataObject() {
   return metadataObject;
 }
 
-module.exports = { drawCanvas, renderScreenshot };
+module.exports = { drawCanvas, renderScreenshot, generateMetadataObject };

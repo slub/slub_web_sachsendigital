@@ -2,7 +2,12 @@
  * @jest-environment jsdom
  */
 
-const { drawCanvas } = require('./Screenshot');
+const { drawCanvas, generateMetadataObject } = require('./Screenshot');
+
+beforeEach(() => {
+  // TODO: Reset JSDOM in a more robust way
+  document.body.innerHTML = '';
+});
 
 class VideoMock extends HTMLVideoElement {
   constructor(width, height) {
@@ -51,4 +56,28 @@ test('can draw to canvas', () => {
 
   snapshotWithSize(1920, 1080);
   snapshotWithSize(960, 540);
+});
+
+test('can generate metadata object', () => {
+  document.body.innerHTML = `
+    <data id="metadata" data-screenshotfields="title,year" style="display: none;">
+      <data id="title" value="Some Video">Some Video</data>
+      <data id="year" value="1922">1922</data>
+      <data id="creator" value="Someone">Someone</data>
+    </data>
+  `;
+
+  const metadataObject = generateMetadataObject();
+
+  expect(metadataObject).toEqual({
+    metadata: {
+      title: "Some Video",
+      year: "1922",
+      creator: "Someone",
+    },
+    screenshotFields: [
+      "title",
+      "year",
+    ],
+  });
 });
