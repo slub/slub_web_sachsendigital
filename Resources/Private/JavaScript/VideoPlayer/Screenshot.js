@@ -53,7 +53,7 @@ function drawCanvas(target, videoDomElement, metadataArray) {
 function generateMetadataObject() {
   var dataDomElement = $('#metadata');
   var metadataObject = {};
-  metadataObject.metadata = [];
+  metadataObject.metadata = {};
   metadataObject.screenshotFields = dataDomElement.data('screenshotfields').split(',');
 
   for (var i = 0; i < dataDomElement.children().length; i++) {
