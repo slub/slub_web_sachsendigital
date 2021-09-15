@@ -59,7 +59,8 @@ test('can draw to canvas', () => {
 });
 
 test('can generate metadata object', () => {
-  document.body.innerHTML = `
+  const template = document.createElement("template");
+  template.innerHTML = `
     <data id="metadata" data-screenshotfields="title,year" style="display: none;">
       <data id="title" value="Some Video">Some Video</data>
       <data id="year" value="1922">1922</data>
@@ -67,7 +68,9 @@ test('can generate metadata object', () => {
     </data>
   `;
 
-  const metadataObject = generateMetadataObject();
+  const dataDomElement = template.content.firstElementChild;
+
+  const metadataObject = generateMetadataObject(dataDomElement);
 
   expect(metadataObject).toEqual({
     metadata: {

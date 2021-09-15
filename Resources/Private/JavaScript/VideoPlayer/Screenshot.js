@@ -12,7 +12,8 @@ function renderScreenshot(videoDomElement) {
 
   // lets go
   const canvas = document.getElementById('screenshot-canvas');
-  const metadataArray = generateMetadataObject();
+  const metadataElement = document.getElementById('metadata');
+  const metadataArray = generateMetadataObject(metadataElement);
   drawCanvas(canvas, videoDomElement, metadataArray);
 }
 
@@ -50,17 +51,22 @@ function drawCanvas(target, videoDomElement, metadataArray) {
   targetCanvas.style.height = 'auto';
 }
 
-function generateMetadataObject() {
-  var dataDomElement = $('#metadata');
-  var metadataObject = {};
-  metadataObject.metadata = {};
-  metadataObject.screenshotFields = dataDomElement.data('screenshotfields').split(',');
+/**
+ *
+ * @param {HTMLDataElement} dataDomElement
+ */
+function generateMetadataObject(dataDomElement) {
+  var metadataObject = {
+    metadata: {},
+    screenshotFields: dataDomElement.getAttribute('data-screenshotfields').split(','),
+  };
 
-  for (var i = 0; i < dataDomElement.children().length; i++) {
-    if (dataDomElement.children()[i].value.length) {
-      metadataObject.metadata[dataDomElement.children()[i].id] = dataDomElement.children()[i].value;
+  for (const child of dataDomElement.children) {
+    if (child.value) {
+      metadataObject.metadata[child.id] = child.value;
     }
   }
+
   return metadataObject;
 }
 
