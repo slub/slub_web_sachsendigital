@@ -11,15 +11,14 @@ function renderScreenshot(videoDomElement) {
   });
 
   // lets go
-  drawCanvas(videoDomElement);
+  const canvas = document.getElementById('screenshot-canvas');
+  const metadataArray = generateMetadataObject();
+  drawCanvas(canvas, videoDomElement, metadataArray);
 }
 
-function drawCanvas(videoDomElement) {
-  var canvas, context
+function drawCanvas(targetCanvas, videoDomElement, metadataArray) {
+  var context
   var stringArray = [], infoString = '';
-
-  canvas = document.getElementById('screenshot-canvas');
-  var metadataArray = generateMetadataObject();
 
   for (var i = 0; i < metadataArray.screenshotFields.length; i++) {
     if (typeof (metadataArray.metadata[metadataArray.screenshotFields[i]]) === 'string') {
@@ -35,22 +34,22 @@ function drawCanvas(videoDomElement) {
     }
   }
 
-  canvas.width = videoDomElement.videoWidth;
-  canvas.height = videoDomElement.videoHeight;
+  targetCanvas.width = videoDomElement.videoWidth;
+  targetCanvas.height = videoDomElement.videoHeight;
 
-  context = canvas.getContext('2d');
+  context = targetCanvas.getContext('2d');
 
-  context.drawImage(videoDomElement, 0, 0, canvas.width, canvas.height);
+  context.drawImage(videoDomElement, 0, 0, targetCanvas.width, targetCanvas.height);
 
   context.font = '25px Arial';
   context.textAlign = 'end';
   context.fillStyle = "#FFFFFF";
   context.shadowBlur = 5;
   context.shadowColor = "black";
-  context.fillText(infoString, canvas.width - 10, canvas.height - 10);
+  context.fillText(infoString, targetCanvas.width - 10, targetCanvas.height - 10);
 
-  canvas.style.width = '80%';
-  canvas.style.height = 'auto';
+  targetCanvas.style.width = '80%';
+  targetCanvas.style.height = 'auto';
 }
 
 function generateMetadataObject() {
