@@ -233,3 +233,18 @@ Array [
   },
 ]
 `;
+
+exports[`can open screenshot overlay 1`] = `
+<div
+  id="screenshot-overlay"
+>
+  <span
+    class="close-screenshot-modal icon-close"
+  />
+  <canvas
+    height="0"
+    style="width: 80%; height: auto;"
+    width="0"
+  />
+</div>
+`;

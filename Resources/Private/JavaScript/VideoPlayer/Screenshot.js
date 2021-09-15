@@ -1,17 +1,19 @@
-const $ = require('jquery');
-
 function renderScreenshot(videoDomElement) {
   // add canvas overlay to DOM
-  var domElement = $("<div id='screenshot-overlay'><span class='close-screenshot-modal icon-close'></span><canvas id='screenshot-canvas'></canvas></div>");
-  $('body').append(domElement);
+  const domTemplate = document.createElement("template");
+  domTemplate.innerHTML = `<div id="screenshot-overlay"><span class="close-screenshot-modal icon-close"></span><canvas></canvas></div>`;
+  const domElement = domTemplate.content.firstElementChild;
+  document.body.append(domElement);
+
+  const canvas = domElement.querySelector("canvas");
+  const closeButton = domElement.querySelector('.close-screenshot-modal');
 
   // bind close action
-  $('.close-screenshot-modal').bind('click', function () {
-    $('#screenshot-overlay').detach();
+  closeButton.addEventListener('click', () => {
+    domElement.remove();
   });
 
   // lets go
-  const canvas = document.getElementById('screenshot-canvas');
   const metadataElement = document.getElementById('metadata');
   const metadataArray = generateMetadataObject(metadataElement);
   drawCanvas(canvas, videoDomElement, metadataArray);

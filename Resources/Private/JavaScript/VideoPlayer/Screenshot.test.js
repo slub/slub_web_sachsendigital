@@ -2,11 +2,43 @@
  * @jest-environment jsdom
  */
 
-const { drawCanvas, generateMetadataObject } = require('./Screenshot');
+const { renderScreenshot, drawCanvas, generateMetadataObject } = require('./Screenshot');
+
+function createMetadataDom() {
+  const template = document.createElement("template");
+  template.innerHTML = `
+    <data id="metadata" data-screenshotfields="title,year" style="display: none;">
+      <data id="title" value="Some Video">Some Video</data>
+      <data id="year" value="1922">1922</data>
+      <data id="creator" value="Someone">Someone</data>
+    </data>
+  `;
+
+  return template.content.firstElementChild;
+}
 
 beforeEach(() => {
   // TODO: Reset JSDOM in a more robust way
   document.body.innerHTML = '';
+});
+
+test('can open screenshot overlay', () => {
+  const overlay = () => document.getElementById('screenshot-overlay');
+
+  document.body.append(
+    createMetadataDom()
+  );
+
+  // not opened yet
+  expect(overlay()).toBeNull();
+
+  // opened; exact tags are in snapshot
+  renderScreenshot(document.createElement("video"));
+  expect(overlay()).toMatchSnapshot();
+
+  // close
+  document.querySelector('.close-screenshot-modal').dispatchEvent(new Event('click'));
+  expect(overlay()).toBeNull();
 });
 
 class VideoMock extends HTMLVideoElement {
@@ -59,17 +91,7 @@ test('can draw to canvas', () => {
 });
 
 test('can generate metadata object', () => {
-  const template = document.createElement("template");
-  template.innerHTML = `
-    <data id="metadata" data-screenshotfields="title,year" style="display: none;">
-      <data id="title" value="Some Video">Some Video</data>
-      <data id="year" value="1922">1922</data>
-      <data id="creator" value="Someone">Someone</data>
-    </data>
-  `;
-
-  const dataDomElement = template.content.firstElementChild;
-
+  const dataDomElement = createMetadataDom();
   const metadataObject = generateMetadataObject(dataDomElement);
 
   expect(metadataObject).toEqual({
