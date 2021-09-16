@@ -437,10 +437,10 @@ myapp.PresentationTimeTracker = class extends shaka.ui.Element {
     /** @type {!HTMLButtonElement} */
     this.currentTime_ = document.createElement('button');
     this.currentTime_.classList.add('shaka-current-time');
-    this.currentTime_.title = 'Aktuelle Laufzeit / Gesamtlaufzeit';
-    this.setValue_('0:00');
     this.parent.appendChild(this.currentTime_);
-    this.activeMode = 0;
+
+    this.activeMode = TimeMode.CurrentTime;
+    this.displayTime_(0);
 
     this.eventManager.listen(this.currentTime_, 'click', () => {
       // We toggle the time display here --> change mode on click --> values get updated in timeandseekrangeupdated event
@@ -452,25 +452,28 @@ myapp.PresentationTimeTracker = class extends shaka.ui.Element {
 
     this.eventManager.listen(this.controls, 'timeandseekrangeupdated', () => {
       let displayTime = this.controls.getDisplayTime();
-      const showHour = video.duration >= 3600;
-
-      switch (this.activeMode) {
-        case TimeMode.CurrentTime:
-        default:
-          this.updateTime_();
-          this.currentTime_.title = 'Aktuelle Laufzeit / Gesamtlaufzeit';
-          break;
-        case TimeMode.RemainingTime:
-          this.setValue_(buildTimeString(video.duration - displayTime, showHour));
-          this.currentTime_.title = 'Restlaufzeit';
-          break;
-        case TimeMode.CurrentFrame:
-          this.setValue_(vifa.get());
-          this.currentTime_.title = 'Frame-Nummer';
-          break;
-      }
+      this.displayTime_(displayTime);
     });
+  }
 
+  displayTime_(totalSeconds) {
+    const showHour = video.duration >= 3600;
+
+    switch (this.activeMode) {
+      case TimeMode.CurrentTime:
+      default:
+        this.displayAsCurrentTime_(totalSeconds);
+        this.currentTime_.title = 'Aktuelle Laufzeit / Gesamtlaufzeit';
+        break;
+      case TimeMode.RemainingTime:
+        this.setValue_(buildTimeString(video.duration - totalSeconds, showHour));
+        this.currentTime_.title = 'Restlaufzeit';
+        break;
+      case TimeMode.CurrentFrame:
+        this.setValue_(vifa.get());
+        this.currentTime_.title = 'Frame-Nummer';
+        break;
+    }
   }
 
   /** @private */
@@ -484,14 +487,15 @@ myapp.PresentationTimeTracker = class extends shaka.ui.Element {
     }
   }
 
-  updateTime_() {
+  displayAsCurrentTime_(totalSeconds) {
     const showHour = video.duration >= 3600;
-    let displayTime = this.controls.getDisplayTime();
 
-    let value = buildTimeString(displayTime, showHour);
+    let value = buildTimeString(totalSeconds, showHour);
 
     // calculate frame number and append it to the value
-    value += ':' + ("0" + (vifa.get() % fps)).slice(-2);
+    if (vifa) {
+      value += ':' + ("0" + (vifa.get() % fps)).slice(-2);
+    }
     if (video.duration) {
       value += ' / ' + buildTimeString(video.duration, showHour);
     }
