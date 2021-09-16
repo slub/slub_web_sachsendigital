@@ -585,28 +585,6 @@ shaka.ui.Controls.registerElement(
 // we used when registering the factory with the controls.
 //ui['controlPanelElements'] = ['rewind', 'fast_forward', 'skip'];
 
-
-/**
- * Helper functions
- */
-
-function resizeVideoCanvas() {
-    var view, player, video;
-    view = $('.document-view');
-    player = $('.mediaplayer-container');
-    video = $("video");
-    video.css({
-        width: '100%',
-        height: 'auto',
-    });
-    if(player.height() > view.height()) {
-        video.css({
-            width: '80%',
-            height: 'auto',
-        });
-    }
-}
-
 function generateUrl() {
   const url = new URL(window.location);
   url.searchParams.set('timecode', controls.getDisplayTime());
