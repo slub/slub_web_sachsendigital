@@ -23,29 +23,6 @@ var chapters = [
 ];
 
 /**
- * Get the URL parameters
- * source: https://css-tricks.com/snippets/javascript/get-url-variables/
- * @param  {String} url The URL
- * @return {Object}     The URL parameters
- */
-var getParams = function (url) {
-  var params = {};
-  var parser = document.createElement('a');
-  parser.href = url;
-  var query = parser.search.substring(1);
-  var vars = query.split('&');
-  if(vars[0].length) {
-      for (var i = 0; i < vars.length; i++) {
-          var pair = vars[i].split('=');
-          params[pair[0]] = decodeURIComponent(pair[1]);
-      }
-      return params;
-  } else {
-      return false;
-  }
-};
-
-/**
  *
  * Initialize the Shaka-Player App
  *
@@ -129,9 +106,10 @@ async function initPlayer() {
   try {
     // This runs if the asynchronous load is successful.
     console.log('The video has now been loaded!');
-    if(getParams(document.URL)['timecode']) {
-      await player.load(manifestUri,parseFloat(getParams(document.URL)['timecode']) );
-      //play(parseFloat(getParams(document.URL)['timecode']));
+    const timecode = new URL(window.location).searchParams.get('timecode');
+    if(timecode) {
+      await player.load(manifestUri,parseFloat(timecode) );
+      //play(parseFloat(timecode));
     } else {
       await player.load(manifestUri);
     }
@@ -653,13 +631,10 @@ function resizeVideoCanvas() {
 }
 
 function generateUrl() {
-  var $timecodeUrl = document.URL, $urlInput = $('#url-field'), urlContainer = $('#url-container');
-  if(getParams($timecodeUrl)) {
-      $timecodeUrl = $timecodeUrl + '&timecode=' + controls.getDisplayTime();
-  } else {
-      $timecodeUrl = $timecodeUrl + '?timecode=' + controls.getDisplayTime();
-  }
+  const url = new URL(window.location);
+  url.searchParams.set('timecode', controls.getDisplayTime());
 
-  $urlInput.val($timecodeUrl);
+  var $urlInput = $('#url-field'), urlContainer = $('#url-container');
+  $urlInput.val(url.toString());
   urlContainer.show('fast');
 }
