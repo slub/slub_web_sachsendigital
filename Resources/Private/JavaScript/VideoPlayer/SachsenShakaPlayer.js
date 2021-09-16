@@ -154,50 +154,33 @@ function play(seconds) {
   video.currentTime = seconds;
 }
 
+// Listen to the custom shaka-ui-loaded event, to wait until the UI is loaded.
+document.addEventListener('shaka-ui-loaded', initPlayer);
+// Listen to the custom shaka-ui-load-failed event, in case Shaka Player fails
+// to load (e.g. due to lack of browser support).
+document.addEventListener('shaka-ui-load-failed', initFailed);
 
-  // Listen to the custom shaka-ui-loaded event, to wait until the UI is loaded.
-  document.addEventListener('shaka-ui-loaded', initPlayer);
-  // Listen to the custom shaka-ui-load-failed event, in case Shaka Player fails
-  // to load (e.g. due to lack of browser support).
-  document.addEventListener('shaka-ui-load-failed', initFailed);
-
-  document.addEventListener('keydown', (e) => {
-    let audio_vol = video.volume;
-
-    if (e.key == 'f') {
-      e.preventDefault();
-      controls.toggleFullScreen();
-    } else if (e.key == ' ') {
-        if (video.paused) {
-            video.play();
-        } else {
-            video.pause();
-        }
-        e.preventDefault();
-    } else if (e.key == "ArrowUp") {
-        e.preventDefault();
-        if (audio_vol != 1) {
-            try {
-                video.volume = audio_vol + 0.05;
-            }
-            catch (err) {
-                video.volume = 1;
-            }
-        }
-    } else if (e.key == "ArrowDown") {
-        e.preventDefault();
-        if (audio_vol != 0) {
-            try {
-                video.volume = audio_vol - 0.05;
-            }
-            catch (err) {
-                video.volume = 0;
-            }
-        }
-    } else if (e.key == 'p') {
-      e.preventDefault();
-      vifa.seekForward(1);
+document.addEventListener('keydown', (e) => {
+  if (e.key == 'f') {
+    e.preventDefault();
+    controls.toggleFullScreen();
+  } else if (e.key == ' ') {
+    e.preventDefault();
+    if (video.paused) {
+      video.play();
+    } else {
+      video.pause();
     }
+  } else if (e.key == "ArrowUp") {
+    e.preventDefault();
+    video.volume = Math.min(1, video.volume + 0.05);
+  } else if (e.key == "ArrowDown") {
+    e.preventDefault();
+    video.volume = Math.max(0, video.volume - 0.05);
+  } else if (e.key == 'p') {
+    e.preventDefault();
+    vifa.seekForward(1);
+  }
 });
 
 class myapp {}
