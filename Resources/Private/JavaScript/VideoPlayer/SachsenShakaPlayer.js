@@ -162,17 +162,11 @@ function play(seconds) {
   document.addEventListener('shaka-ui-load-failed', initFailed);
 
   document.addEventListener('keydown', (e) => {
-    const videoContainer = document.querySelector('video');
-    let is_fullscreen = () => !!document.fullscreenElement
     let audio_vol = video.volume;
 
     if (e.key == 'f') {
-        if (is_fullscreen()) {
-            document.exitFullscreen();
-        } else {
-            videoContainer.requestFullscreen();
-        }
-        e.preventDefault();
+      e.preventDefault();
+      controls.toggleFullScreen();
     } else if (e.key == ' ') {
         if (video.paused) {
             video.play();
