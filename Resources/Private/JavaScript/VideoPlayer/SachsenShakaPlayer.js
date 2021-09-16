@@ -1,5 +1,6 @@
 const $ = require('jquery');
 const { renderScreenshot } = require('./Screenshot');
+const { buildTimeString } = require('./util');
 
 require('../../Less/VideoPlayer/VideoPlayer.less');
 require('./controls.css');
@@ -505,7 +506,7 @@ myapp.PresentationTimeTracker = class extends shaka.ui.Element {
           this.currentTime_.title = 'Aktuelle Laufzeit / Gesamtlaufzeit';
           break;
         case TimeMode.RemainingTime:
-          this.setValue_(this.buildTimeString_(video.duration - displayTime, showHour));
+          this.setValue_(buildTimeString(video.duration - displayTime, showHour));
           this.currentTime_.title = 'Restlaufzeit';
           break;
         case TimeMode.CurrentFrame:
@@ -532,41 +533,17 @@ myapp.PresentationTimeTracker = class extends shaka.ui.Element {
     const showHour = video.duration >= 3600;
     let displayTime = this.controls.getDisplayTime();
 
-    let value = this.buildTimeString_(displayTime, showHour);
+    let value = buildTimeString(displayTime, showHour);
 
     // calculate frame number and append it to the value
     value += ':' + ("0" + (vifa.get() % fps)).slice(-2);
     if (video.duration) {
-      value += ' / ' + this.buildTimeString_(video.duration, showHour);
+      value += ' / ' + buildTimeString(video.duration, showHour);
     }
     this.setValue_(value);
     this.currentTime = value;
     //this.currentTime_.disabled = true;
   }
-  /**
-   * Builds a time string, e.g., 01:04:23, from |displayTime|.
-   *
-   * @param {number} displayTime (in seconds)
-   * @param {boolean} showHour
-   * @return {string}
-   */
-  buildTimeString_(displayTime, showHour) {
-    const h = Math.floor(displayTime / 3600);
-    const m = Math.floor((displayTime / 60) % 60);
-    let s = Math.floor(displayTime % 60);
-    if (s < 10) {
-      s = '0' + s;
-    }
-    let text = m + ':' + s;
-    if (showHour) {
-      if (m < 10) {
-        text = '0' + text;
-      }
-      text = h + ':' + text;
-    }
-    return text;
-  }
-
 };
 
 
