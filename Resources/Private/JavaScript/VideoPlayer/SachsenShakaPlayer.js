@@ -456,6 +456,12 @@ shaka.ui.Controls.registerElement(
   new myapp.BookmarkButton.Factory()
 );
 
+const TimeMode = {
+  CurrentTime: 0,
+  RemainingTime: 1,
+  CurrentFrame: 2,
+  COUNT: 3,
+};
 
 /**
  * @extends {shaka.ui.Element}
@@ -478,43 +484,31 @@ myapp.PresentationTimeTracker = class extends shaka.ui.Element {
     this.currentTime_.title = 'Aktuelle Laufzeit / Gesamtlaufzeit';
     this.setValue_('0:00');
     this.parent.appendChild(this.currentTime_);
-    this.mode = ['currentTime', 'remainingTime', 'currentFrame'];
-    this.modeActive = this.mode[0];
+    this.activeMode = 0;
 
     this.eventManager.listen(this.currentTime_, 'click', () => {
       // We toggle the time display here --> change mode on click --> values get updated in timeandseekrangeupdated event
       // current time: HH:MM:SS:FF
       // remaining time
       // current frame
-      switch (this.modeActive) {
-        case 'currentTime':
-        default:
-          this.modeActive = this.mode[1];
-          break;
-        case 'remainingTime':
-          this.modeActive = this.mode[2];
-          break;
-        case 'currentFrame':
-          this.modeActive = this.mode[0];
-          break;
-      }
+      this.activeMode = (this.activeMode + 1) % TimeMode.COUNT;
     });
 
     this.eventManager.listen(this.controls, 'timeandseekrangeupdated', () => {
       let displayTime = this.controls.getDisplayTime();
       const showHour = video.duration >= 3600;
 
-      switch (this.modeActive) {
-        case 'currentTime':
+      switch (this.activeMode) {
+        case TimeMode.CurrentTime:
         default:
           this.updateTime_();
           this.currentTime_.title = 'Aktuelle Laufzeit / Gesamtlaufzeit';
           break;
-        case 'remainingTime':
+        case TimeMode.RemainingTime:
           this.setValue_(this.buildTimeString_(video.duration - displayTime, showHour));
           this.currentTime_.title = 'Restlaufzeit';
           break;
-        case 'currentFrame':
+        case TimeMode.CurrentFrame:
           this.setValue_(vifa.get());
           this.currentTime_.title = 'Frame-Nummer';
           break;
