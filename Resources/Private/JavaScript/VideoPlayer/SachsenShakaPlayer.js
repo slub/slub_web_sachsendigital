@@ -508,6 +508,7 @@ myapp.PresentationTimeTracker = class extends shaka.ui.Element {
         case 'currentTime':
         default:
           this.updateTime_();
+          this.currentTime_.title = 'Aktuelle Laufzeit / Gesamtlaufzeit';
           break;
         case 'remainingTime':
           this.setValue_(this.buildTimeString_(video.duration - displayTime, showHour));
