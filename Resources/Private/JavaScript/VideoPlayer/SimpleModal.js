@@ -5,7 +5,7 @@ class SimpleModal {
    *
    * @param {HTMLElement} element
    */
-  constructor(element) {
+  constructor(element, state = {}) {
     this._element = element;
     this._$element = $(element);
 
@@ -18,6 +18,7 @@ class SimpleModal {
 
     this._state = {
       show: false,
+      ...state,
     };
 
     this._closeButton = this._element.querySelector('.modal-close');
@@ -35,7 +36,7 @@ class SimpleModal {
       return;
     }
 
-    this._render({
+    this.setState({
       show: value,
     });
   }
@@ -48,9 +49,14 @@ class SimpleModal {
     this.open(!this._state.show);
   }
 
-  _render(state = {}) {
+  setState(state = {}) {
     const newState = Object.assign({}, this._state, state);
-    const { show } = newState;
+    this.render(newState);
+    this._state = newState;
+  }
+
+  render(state) {
+    const { show } = state;
 
     if (show != this._state.show) {
       this._isAnimating = true;
@@ -62,8 +68,6 @@ class SimpleModal {
         },
       });
     }
-
-    this._state = newState;
   }
 }
 

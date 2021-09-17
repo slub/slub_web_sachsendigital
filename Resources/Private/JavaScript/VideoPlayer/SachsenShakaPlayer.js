@@ -1,4 +1,5 @@
 const $ = require('jquery');
+const { BookmarkModal } = require('./BookmarkModal');
 const { SimpleModal } = require('./SimpleModal');
 const { renderScreenshot } = require('./Screenshot');
 const { buildTimeString } = require('./util');
@@ -13,6 +14,7 @@ var player;
 var vifa;
 var fps = 25;
 let helpModal;
+let bookmarkModal;
 
 function skipSeconds(delta) {
   // TODO: Consider end of video
@@ -108,6 +110,7 @@ async function initPlayer() {
   });
 
   helpModal = new SimpleModal(document.querySelector('.dfgplayer-help'));
+  bookmarkModal = new BookmarkModal(document.querySelector('.bookmark-modal'));
 
   registerKeybindings();
 
@@ -434,7 +437,7 @@ myapp.BookmarkButton = class extends shaka.ui.Element {
 
     // Listen for clicks on the button
     this.eventManager.listen(this.button_, 'click', () => {
-      generateUrl();
+      bookmarkModal.setTimecode(controls.getDisplayTime()).open();
     });
   }
 };
@@ -629,12 +632,3 @@ shaka.ui.Controls.registerElement(
 // rewind and fast forward button and out custom skip button, referenced by the name
 // we used when registering the factory with the controls.
 //ui['controlPanelElements'] = ['rewind', 'fast_forward', 'skip'];
-
-function generateUrl() {
-  const url = new URL(window.location);
-  url.searchParams.set('timecode', controls.getDisplayTime());
-
-  var $urlInput = $('#url-field'), urlContainer = $('#url-container');
-  $urlInput.val(url.toString());
-  urlContainer.show('fast');
-}

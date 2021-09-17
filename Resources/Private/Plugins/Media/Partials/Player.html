@@ -15,9 +15,9 @@
                     style="width:100%;height:100%">
                     <source src="https://media.sachsen.digital/{settings.movieDir}/{settings.movieDir}.mp4" type="video/mp4">
                 </video>
-                <div id="url-container" style="display: none;">
-                    <input type="text" id="url-field" value="https://sachsen.digital" onclick="this.select();">
-                    <span class="icon-close" onclick="$('#url-container').hide('fast')"></span>
+                <div id="url-container" class="bookmark-modal" style="display: none;">
+                    <input type="text" id="url-field" class="url-input" value="https://sachsen.digital" onclick="this.select();">
+                    <span class="modal-close icon-close"></span>
                 </div>
                 <div class="dfgplayer-help modal">
                     <div class="headline-container">
