@@ -1,4 +1,5 @@
 const $ = require('jquery');
+const { SimpleModal } = require('./SimpleModal');
 const { renderScreenshot } = require('./Screenshot');
 const { buildTimeString } = require('./util');
 
@@ -11,6 +12,7 @@ var manifestUri;
 var player;
 var vifa;
 var fps = 25;
+let helpModal;
 
 
 
@@ -101,6 +103,8 @@ async function initPlayer() {
     play(timecode);
   });
 
+  helpModal = new SimpleModal(document.querySelector('.dfgplayer-help'));
+
   registerKeybindings();
 
   // Try to load a manifest.
@@ -189,6 +193,9 @@ function registerKeybindings() {
     } else if (e.key == ',') {
       e.preventDefault();
       vifa.seekBackward(1);
+    } else if (e.key == 'F1') {
+      e.preventDefault();
+      helpModal.toggle();
     }
   });
 }
