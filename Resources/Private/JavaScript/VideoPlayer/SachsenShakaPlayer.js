@@ -177,6 +177,9 @@ document.addEventListener('keydown', (e) => {
   } else if (e.key == "ArrowDown") {
     e.preventDefault();
     video.volume = Math.max(0, video.volume - 0.05);
+  } else if (e.key == 'm') {
+    e.preventDefault();
+    video.muted = !video.muted;
   } else if (e.key == '.') {
     e.preventDefault();
     vifa.seekForward(1);
