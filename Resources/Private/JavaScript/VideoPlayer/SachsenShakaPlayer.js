@@ -498,69 +498,68 @@ myapp.PresentationTimeTracker = class extends shaka.ui.Element {
     this.currentTime_.classList.add('shaka-current-time');
     this.parent.appendChild(this.currentTime_);
 
-    this.activeMode = TimeMode.CurrentTime;
-    this.displayTime_(0);
+    this.state = {};
+
+    this.render({
+      totalSeconds: 0,
+      activeMode: TimeMode.CurrentTime,
+    });
 
     this.eventManager.listen(this.currentTime_, 'click', () => {
       // We toggle the time display here --> change mode on click --> values get updated in timeandseekrangeupdated event
       // current time: HH:MM:SS:FF
       // remaining time
       // current frame
-      this.activeMode = (this.activeMode + 1) % TimeMode.COUNT;
+      this.render({
+        activeMode: (this.state.activeMode + 1) % TimeMode.COUNT,
+      });
     });
 
     this.eventManager.listen(this.controls, 'timeandseekrangeupdated', () => {
-      let displayTime = this.controls.getDisplayTime();
-      this.displayTime_(displayTime);
+      this.render({
+        totalSeconds: this.controls.getDisplayTime(),
+      });
     });
   }
 
-  displayTime_(totalSeconds) {
-    const showHour = video.duration >= 3600;
+  render(state) {
+    const newState = Object.assign({}, this.state, state);
 
-    switch (this.activeMode) {
-      case TimeMode.CurrentTime:
-      default:
-        this.displayAsCurrentTime_(totalSeconds);
-        this.currentTime_.title = 'Aktuelle Laufzeit / Gesamtlaufzeit';
-        break;
-      case TimeMode.RemainingTime:
-        this.setValue_(buildTimeString(video.duration - totalSeconds, showHour));
-        this.currentTime_.title = 'Restlaufzeit';
-        break;
-      case TimeMode.CurrentFrame:
-        this.setValue_(vifa.get());
-        this.currentTime_.title = 'Frame-Nummer';
-        break;
+    const { totalSeconds, activeMode } = newState;
+    if (totalSeconds !== this.state.totalSeconds || activeMode !== this.state.activeMode) {
+      const showHour = video.duration >= 3600;
+
+      let text, title;
+
+      switch (activeMode) {
+        case TimeMode.CurrentTime:
+        default:
+          text = buildTimeString(totalSeconds, showHour);
+          if (vifa) {
+            text += ':' + ("0" + (vifa.get() % fps)).slice(-2);
+          }
+          if (video.duration) {
+            text += ' / ' + buildTimeString(video.duration, showHour);
+          }
+          title = 'Aktuelle Laufzeit / Gesamtlaufzeit';
+          break;
+
+        case TimeMode.RemainingTime:
+          text = buildTimeString(video.duration - totalSeconds, showHour);
+          title = 'Restlaufzeit';
+          break;
+
+        case TimeMode.CurrentFrame:
+          text = `${vifa.get()}`;
+          title = 'Frame-Nummer';
+          break;
+      }
+
+      this.currentTime_.textContent = text;
+      this.currentTime_.title = title;
     }
-  }
 
-  /** @private */
-  setValue_(value) {
-    // To avoid constant updates to the DOM, which makes debugging more
-    // difficult, only set the value if it has changed.  If we don't do this
-    // check, the DOM updates constantly, this element flashes in the debugger
-    // in Chrome, and you can't make changes in the CSS panel.
-    if (value != this.currentTime_.textContent) {
-      this.currentTime_.textContent = value;
-    }
-  }
-
-  displayAsCurrentTime_(totalSeconds) {
-    const showHour = video.duration >= 3600;
-
-    let value = buildTimeString(totalSeconds, showHour);
-
-    // calculate frame number and append it to the value
-    if (vifa) {
-      value += ':' + ("0" + (vifa.get() % fps)).slice(-2);
-    }
-    if (video.duration) {
-      value += ' / ' + buildTimeString(video.duration, showHour);
-    }
-    this.setValue_(value);
-    this.currentTime = value;
-    //this.currentTime_.disabled = true;
+    this.state = newState;
   }
 };
 
