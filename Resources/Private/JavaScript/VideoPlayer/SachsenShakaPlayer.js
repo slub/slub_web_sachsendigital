@@ -299,7 +299,7 @@ myapp.SkipNextButton = class extends shaka.ui.Element {
     // The actual button that will be displayed
     this.button_ = document.createElement('button');
     this.button_.className = 'material-icons-round';
-    this.button_.title = 'Einzelbild zurück';
+    this.button_.title = 'Einzelbild weiter';
     this.button_.textContent = 'skip_next'; // independent of KEY
     this.parent.appendChild(this.button_);
 
