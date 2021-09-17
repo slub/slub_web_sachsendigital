@@ -555,6 +555,11 @@ myapp.PresentationTimeTracker = class extends shaka.ui.Element {
           break;
       }
 
+      let currentChapter = chapters.timeToChapter(totalSeconds);
+      if (currentChapter) {
+        text += ` – ${currentChapter.title}`;
+      }
+
       this.currentTime_.textContent = text;
       this.currentTime_.title = title;
     }
