@@ -8,6 +8,8 @@ const { buildTimeString } = require('./util');
 require('../../Less/VideoPlayer/VideoPlayer.less');
 require('./controls.css');
 
+const PREV_CHAPTER_TOLERANCE = 5;
+
 var video;
 var controls;
 var manifestUri;
@@ -32,6 +34,61 @@ function skipSeconds(delta) {
   // TODO: Consider end of video
   video.currentTime += delta;
 }
+
+// TODO: Pull all the global variables into this class
+class SachsenShakaPlayer {
+  get currentTime() {
+    return video.currentTime;
+  }
+
+  get displayTime() {
+    return controls.getDisplayTime();
+  }
+
+  getCurrentChapter() {
+    return this.timeToChapter(this.currentTime);
+  }
+
+  timeToChapter(timecode) {
+    return chapters.timeToChapter(timecode);
+  }
+
+  /**
+   *
+   * @param {*} position Timecode or chapter
+   */
+  seekTo(position) {
+    if (position == null) {
+      return;
+    }
+
+    if (typeof position === 'number') {
+      video.currentTime = position;
+    } else if (typeof position.timecode === 'number') {
+      video.currentTime = position.timecode;
+    }
+  }
+
+  /**
+   * Within {@link PREV_CHAPTER_TOLERANCE} seconds of a chapter, jump to the
+   * start of the previous chapter. After that, jump to the start of the current
+   * chapter. As a fallback, jump to the start of the video.
+   */
+  prevChapter() {
+    this.seekTo(
+      this.timeToChapter(this.currentTime - PREV_CHAPTER_TOLERANCE) ?? 0
+    );
+  }
+
+  nextChapter() {
+    let cur = this.getCurrentChapter();
+    if (cur) {
+      this.seekTo(chapters.advance(cur, +1));
+    }
+  }
+}
+
+const sxndPlayer = new SachsenShakaPlayer();
 
 
 /**
@@ -83,7 +140,7 @@ async function initPlayer() {
       'fullscreen',
       'overflow_menu'
     ],
-    'overflowMenuButtons' : ['language', 'playback_rate', 'loop', 'quality', 'picture_in_picture', 'captions'],
+    'overflowMenuButtons': ['language', 'playback_rate', 'loop', 'quality', 'picture_in_picture', 'captions'],
     'addBigPlayButton': true,
     'seekBarColors': {
       base: 'rgba(255, 255, 255, 0.3)',
@@ -105,8 +162,8 @@ async function initPlayer() {
   vifa = VideoFrame({
     id: 'video',
     frameRate: fps,
-    callback : function(response) {
-        console.log('callback response: ' + response);
+    callback: function (response) {
+      console.log('callback response: ' + response);
     }
   });
 
@@ -126,8 +183,8 @@ async function initPlayer() {
     // This runs if the asynchronous load is successful.
     console.log('The video has now been loaded!');
     const timecode = new URL(window.location).searchParams.get('timecode');
-    if(timecode) {
-      await player.load(manifestUri,parseFloat(timecode) );
+    if (timecode) {
+      await player.load(manifestUri, parseFloat(timecode));
       //play(parseFloat(timecode));
     } else {
       await player.load(manifestUri);
@@ -139,8 +196,8 @@ async function initPlayer() {
 }
 
 function onPlayerErrorEvent(errorEvent) {
-    // Extract the shaka.util.Error object from the event.
-    onPlayerError(event.detail);
+  // Extract the shaka.util.Error object from the event.
+  onPlayerError(event.detail);
 }
 
 function onPlayerError(error) {
@@ -157,7 +214,7 @@ function initFailed(errorEvent) {
   // Handle the failure to load; errorEvent.detail.reasonCode has a
   // shaka.ui.FailReasonCode describing why.
   console.error('Unable to load the UI library!');
-  }
+}
 
 /**
  * plays the media from a individual position in media stream
@@ -216,14 +273,18 @@ function registerKeybindings() {
       video.volume = Math.max(0, video.volume - 0.05);
     } else if (e.key == "ArrowLeft") {
       e.preventDefault();
-      if (e.shiftKey) {
+      if (e.ctrlKey || e.metaKey) {
+        sxndPlayer.prevChapter();
+      } else if (e.shiftKey) {
         vifa.seekBackward(1);
       } else {
         skipSeconds(-10);
       }
     } else if (e.key == "ArrowRight") {
       e.preventDefault();
-      if (e.shiftKey) {
+      if (e.ctrlKey || e.metaKey) {
+        sxndPlayer.nextChapter();
+      } else if (e.shiftKey) {
         vifa.seekForward(1);
       } else {
         skipSeconds(+10);
@@ -244,7 +305,7 @@ function registerKeybindings() {
   });
 }
 
-class myapp {}
+class myapp { }
 
 // add some custom buttons
 
@@ -267,7 +328,7 @@ myapp.CaptureButton = class extends shaka.ui.Element {
 
     // Listen for clicks on the button
     this.eventManager.listen(this.button_, 'click', () => {
-       renderScreenshot(document.getElementById('video'));
+      renderScreenshot(document.getElementById('video'));
     });
   }
 };
