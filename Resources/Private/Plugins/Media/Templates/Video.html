@@ -1,3 +1,9 @@
+{namespace sxnd=Slub\SlubWebSachsendigital\ViewHelpers}
+
+<script>
+    window.VIDEO_CHAPTERS = {sxnd:t3ArrayToJson(value: settings.chapters, innerKey: 'chapter')};
+</script>
+
 <div class="control-bar">
     <div class="header-bar">
         <div class="brand"><f:link.page pageUid="{pageSettings.rootPage.pid}" title="{pageSettings.rootPage.title}" class="{pageSettings.rootPage.cssClass}">{pageSettings.rootPage.title}</f:link.page></div>

@@ -13,6 +13,7 @@ var manifestUri;
 var player;
 var vifa;
 var fps = 25;
+let chapters;
 let helpModal;
 let bookmarkModal;
 
@@ -31,14 +32,6 @@ function skipSeconds(delta) {
   video.currentTime += delta;
 }
 
-
-var chapters = [
-  { time: 0, title: 'Intro' },
-  { time: 5, title: 'Chapter 1' },
-  { time: 10, title: 'Chapter 2' },
-  { time: 15, title: 'Chapter 3' },
-  { time: 20, title: 'Outro' },
-];
 
 /**
  *
@@ -62,6 +55,13 @@ function initApp() {
 }
 
 async function initPlayer() {
+  chapters = window.VIDEO_CHAPTERS.map(chapter => ({
+    title: chapter.title,
+    timecode: parseInt(chapter.timecode, 10),
+  }));
+
+  console.log(chapters);
+
   // Create a Player instance.
   video = document.getElementById('video');
   manifestUri = document.getElementsByClassName('mime-type-video')[0].getAttribute('data-url') + '.mpd';
