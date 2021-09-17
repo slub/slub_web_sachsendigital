@@ -14,6 +14,10 @@ var vifa;
 var fps = 25;
 let helpModal;
 
+function skipSeconds(delta) {
+  // TODO: Consider end of video
+  video.currentTime += delta;
+}
 
 
 var chapters = [
@@ -184,6 +188,20 @@ function registerKeybindings() {
     } else if (e.key == "ArrowDown") {
       e.preventDefault();
       video.volume = Math.max(0, video.volume - 0.05);
+    } else if (e.key == "ArrowLeft") {
+      e.preventDefault();
+      if (e.shiftKey) {
+        vifa.seekBackward(1);
+      } else {
+        skipSeconds(-10);
+      }
+    } else if (e.key == "ArrowRight") {
+      e.preventDefault();
+      if (e.shiftKey) {
+        vifa.seekForward(1);
+      } else {
+        skipSeconds(+10);
+      }
     } else if (e.key == 'm') {
       e.preventDefault();
       video.muted = !video.muted;
@@ -336,7 +354,7 @@ myapp.Forward10Button = class extends shaka.ui.Element {
 
     // Listen for clicks on the button
     this.eventManager.listen(this.button_, 'click', () => {
-      video.currentTime = video.currentTime + 10;
+      skipSeconds(+10);
     });
   }
 };
@@ -373,7 +391,7 @@ myapp.Replay10Button = class extends shaka.ui.Element {
 
     // Listen for clicks on the button
     this.eventManager.listen(this.button_, 'click', () => {
-      video.currentTime = video.currentTime - 10;
+      skipSeconds(-10);
     });
   }
 };
