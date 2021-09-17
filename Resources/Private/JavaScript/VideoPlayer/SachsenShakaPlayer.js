@@ -16,6 +16,10 @@ var fps = 25;
 let helpModal;
 let bookmarkModal;
 
+function isModalOpen() {
+  return helpModal.isOpen || bookmarkModal.isOpen;
+}
+
 const actions = {
   bookmarkUrl: () => {
     bookmarkModal.setTimecode(controls.getDisplayTime()).open();
@@ -181,6 +185,23 @@ document.addEventListener('shaka-ui-load-failed', initFailed);
 
 function registerKeybindings() {
   document.addEventListener('keydown', (e) => {
+    if (e.key == 'F1') {
+      e.preventDefault();
+      helpModal.toggle();
+    } else if (e.key == 'Escape') {
+      e.preventDefault();
+
+      if (helpModal.isOpen) {
+        helpModal.close();
+      } else if (bookmarkModal.isOpen) {
+        bookmarkModal.close();
+      }
+    }
+
+    if (isModalOpen()) {
+      return;
+    }
+
     if (e.key == 'f') {
       e.preventDefault();
       controls.toggleFullScreen();
@@ -223,17 +244,6 @@ function registerKeybindings() {
     } else if (e.key == 'b') {
       e.preventDefault();
       actions.bookmarkUrl();
-    } else if (e.key == 'F1') {
-      e.preventDefault();
-      helpModal.toggle();
-    } else if (e.key == 'Escape') {
-      e.preventDefault();
-
-      if (helpModal.isOpen) {
-        helpModal.close();
-      } else if (bookmarkModal.isOpen) {
-        bookmarkModal.close();
-      }
     }
   });
 }
