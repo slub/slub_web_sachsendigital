@@ -101,6 +101,8 @@ async function initPlayer() {
     play(timecode);
   });
 
+  registerKeybindings();
+
   // Try to load a manifest.
   // This is an asynchronous process.
   try {
@@ -160,34 +162,36 @@ document.addEventListener('shaka-ui-loaded', initPlayer);
 // to load (e.g. due to lack of browser support).
 document.addEventListener('shaka-ui-load-failed', initFailed);
 
-document.addEventListener('keydown', (e) => {
-  if (e.key == 'f') {
-    e.preventDefault();
-    controls.toggleFullScreen();
-  } else if (e.key == ' ') {
-    e.preventDefault();
-    if (video.paused) {
-      video.play();
-    } else {
-      video.pause();
+function registerKeybindings() {
+  document.addEventListener('keydown', (e) => {
+    if (e.key == 'f') {
+      e.preventDefault();
+      controls.toggleFullScreen();
+    } else if (e.key == ' ') {
+      e.preventDefault();
+      if (video.paused) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    } else if (e.key == "ArrowUp") {
+      e.preventDefault();
+      video.volume = Math.min(1, video.volume + 0.05);
+    } else if (e.key == "ArrowDown") {
+      e.preventDefault();
+      video.volume = Math.max(0, video.volume - 0.05);
+    } else if (e.key == 'm') {
+      e.preventDefault();
+      video.muted = !video.muted;
+    } else if (e.key == '.') {
+      e.preventDefault();
+      vifa.seekForward(1);
+    } else if (e.key == ',') {
+      e.preventDefault();
+      vifa.seekBackward(1);
     }
-  } else if (e.key == "ArrowUp") {
-    e.preventDefault();
-    video.volume = Math.min(1, video.volume + 0.05);
-  } else if (e.key == "ArrowDown") {
-    e.preventDefault();
-    video.volume = Math.max(0, video.volume - 0.05);
-  } else if (e.key == 'm') {
-    e.preventDefault();
-    video.muted = !video.muted;
-  } else if (e.key == '.') {
-    e.preventDefault();
-    vifa.seekForward(1);
-  } else if (e.key == ',') {
-    e.preventDefault();
-    vifa.seekBackward(1);
-  }
-});
+  });
+}
 
 class myapp {}
 
