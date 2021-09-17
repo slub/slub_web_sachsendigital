@@ -26,6 +26,10 @@ class SimpleModal {
     }
   }
 
+  get isOpen() {
+    return this._state.show;
+  }
+
   open(value = true) {
     if (this._isAnimating) {
       return;

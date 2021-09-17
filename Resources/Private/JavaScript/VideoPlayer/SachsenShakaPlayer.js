@@ -214,6 +214,12 @@ function registerKeybindings() {
     } else if (e.key == 'F1') {
       e.preventDefault();
       helpModal.toggle();
+    } else if (e.key == 'Escape') {
+      e.preventDefault();
+
+      if (helpModal.isOpen) {
+        helpModal.close();
+      }
     }
   });
 }
