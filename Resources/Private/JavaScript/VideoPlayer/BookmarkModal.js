@@ -17,12 +17,17 @@ class BookmarkModal extends SimpleModal {
   render(state) {
     super.render(state);
 
-    const { timecode } = state;
+    const { show, timecode } = state;
+
     if (timecode !== null && timecode !== this._state.timecode) {
       const url = new URL(window.location);
       url.searchParams.set('timecode', state.timecode);
 
       this._urlInput.value = url.toString();
+    }
+
+    if (show && show !== this._state.show) {
+      this._urlInput.select();
     }
   }
 }

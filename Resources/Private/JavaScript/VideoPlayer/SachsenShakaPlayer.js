@@ -16,6 +16,12 @@ var fps = 25;
 let helpModal;
 let bookmarkModal;
 
+const actions = {
+  bookmarkUrl: () => {
+    bookmarkModal.setTimecode(controls.getDisplayTime()).open();
+  }
+}
+
 function skipSeconds(delta) {
   // TODO: Consider end of video
   video.currentTime += delta;
@@ -214,6 +220,9 @@ function registerKeybindings() {
     } else if (e.key == ',') {
       e.preventDefault();
       vifa.seekBackward(1);
+    } else if (e.key == 'b') {
+      e.preventDefault();
+      actions.bookmarkUrl();
     } else if (e.key == 'F1') {
       e.preventDefault();
       helpModal.toggle();
@@ -222,6 +231,8 @@ function registerKeybindings() {
 
       if (helpModal.isOpen) {
         helpModal.close();
+      } else if (bookmarkModal.isOpen) {
+        bookmarkModal.close();
       }
     }
   });
@@ -436,9 +447,7 @@ myapp.BookmarkButton = class extends shaka.ui.Element {
     this.parent.appendChild(this.button_);
 
     // Listen for clicks on the button
-    this.eventManager.listen(this.button_, 'click', () => {
-      bookmarkModal.setTimecode(controls.getDisplayTime()).open();
-    });
+    this.eventManager.listen(this.button_, 'click', actions.bookmarkUrl);
   }
 };
 
