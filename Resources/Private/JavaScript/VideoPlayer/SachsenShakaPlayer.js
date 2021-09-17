@@ -177,9 +177,12 @@ document.addEventListener('keydown', (e) => {
   } else if (e.key == "ArrowDown") {
     e.preventDefault();
     video.volume = Math.max(0, video.volume - 0.05);
-  } else if (e.key == 'p') {
+  } else if (e.key == '.') {
     e.preventDefault();
     vifa.seekForward(1);
+  } else if (e.key == ',') {
+    e.preventDefault();
+    vifa.seekBackward(1);
   }
 });
 
