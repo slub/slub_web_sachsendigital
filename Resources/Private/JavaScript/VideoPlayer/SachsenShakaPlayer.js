@@ -1,5 +1,6 @@
 const $ = require('jquery');
 const { BookmarkModal } = require('./BookmarkModal');
+const { Chapters } = require('./Chapters');
 const { SimpleModal } = require('./SimpleModal');
 const { renderScreenshot } = require('./Screenshot');
 const { buildTimeString } = require('./util');
@@ -55,12 +56,7 @@ function initApp() {
 }
 
 async function initPlayer() {
-  chapters = window.VIDEO_CHAPTERS.map(chapter => ({
-    title: chapter.title,
-    timecode: parseInt(chapter.timecode, 10),
-  }));
-
-  console.log(chapters);
+  chapters = new Chapters(window.VIDEO_CHAPTERS);
 
   // Create a Player instance.
   video = document.getElementById('video');
