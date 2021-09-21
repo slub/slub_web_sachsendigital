@@ -1,0 +1,89 @@
+/*
+ *
+ * Header
+ * ================================================
+ * Definition for header image, logo, page titles
+ * (for breadcrumb eg. look in Navigation.less)
+ *
+ * Author: Thomas Jung <thomas@tjwd.de>
+ * License: All rights reserved
+ *
+ */
+ 
+.header {
+    position: relative;
+    height: 80px;
+    margin: 0;
+    border: 0 none;
+    background: @brand-secondary;
+    .vertgrad(fade(@brand-secondary,30%), fade(@brand-primary,60%), 0, 100%);
+    .transition();
+    &:before {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: url(../Images/noise.png) repeat  0 0;
+        background-size: 90px 45px;
+        content: " ";
+        opacity: 0.1;
+    }
+    h1 {
+        margin: 0;
+        padding: 0;
+        a {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 100px;
+            height: 50px;
+            margin: 0;
+            display: block;
+            overflow: hidden;
+            text-indent: 200%;
+            white-space: nowrap;
+            padding: 0;
+            background: url('../Images/sxndLogo.svg') no-repeat left center;
+            background-size: 100% 100%;
+        }
+    }
+    @media screen and (min-width: @phoneLandscapeViewportWidth) {
+        h1 {
+            a {
+                left: 30px;
+                right: auto;
+                width: 300px;
+            }
+        }
+    }
+    @media screen and (min-width: @tabletViewportWidth) {
+        height: 100px;
+        background: @brand-secondary url(../Images/pageHeaderBg.jpg) no-repeat center bottom;
+        background-size: cover;
+        h1 {
+            a {
+                top: 25px;
+                left: 50px;
+            }
+        }
+    }
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        h1 {
+            a {
+                left: 0;
+            }
+        }
+    }
+    @media screen and (min-width: @desktopViewportWidth) {
+        height: 140px;
+        h1 {
+            a {
+                top: 40px;
+            }
+        }
+    }
+}
+
+
+// EOF

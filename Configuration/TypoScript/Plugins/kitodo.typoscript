@@ -1,0 +1,33 @@
+plugin.tx_dlf.useragent = {$config.useragent}
+
+plugin.tx_dlf_search {
+	templateFile = EXT:slub_web_ldp/Resources/Private/Plugins/Kitodo/search.tmpl
+}
+
+plugin.tx_dlf_metadata {
+	pages = {$config.storagePid}
+	linkTitle = 0
+	getTitle = 0
+	showFull = 1
+	rootline = 1
+	separator = #
+	templateFile = {$config.templateFileMeta}
+}
+
+
+plugin.tx_dlf_pagegrid {
+	pages = {$config.storagePid}
+	limit = 24
+	placeholder = EXT:slub_web_ldp/Resources/Public/Images/GridPlaceHolder.jpg
+	targetPid = #
+	templateFile = {$config.templateFileGrid}
+}
+
+# Toolbox tools
+
+plugin.tx_dlf_searchindocumenttool {
+    templateFile = {$config.templateFileSearchInDocumentTool}
+    pages = {$config.storagePid}
+    // UID of dlfCore0
+    solrcore = {$config.solrCore}
+}

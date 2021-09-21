@@ -1,0 +1,82 @@
+<div class="control-bar">
+    <div class="header-bar">
+        <div class="brand"><f:link.page pageUid="{pageSettings.rootPage.pid}" title="{pageSettings.rootPage.title}" class="{pageSettings.rootPage.cssClass}">{pageSettings.rootPage.title}</f:link.page></div>
+        <nav>
+            <ul class="secondary-nav"><f:cObject typoscriptObjectPath="lib.navigation.kitodo" /></ul>
+            <button type="button" class="nav-toggle" aria-label="<f:translate key='nav.open' extensionName='slubWebLdp' />">
+                <span></span>
+                <span class="nav-button-bar"></span>
+                <span class="nav-button-bar"></span>
+                <span class="nav-button-bar"></span>
+                <span class="nav-button-bar"></span>
+            </button>
+        </nav>
+    </div>
+    <div class="ctrldata-container">
+        <div class="metadata-wrapper">
+            <div class="tx-dlf-metadata">
+                <f:if condition="{settings.media}">
+                    <h1>{settings.media}</h1>
+                </f:if>
+                <dl class="tx-dlf-metadata-titledata">
+                    <f:for each="{settings.metadata}" as="singleMeta">
+                        <f:for each="{singleMeta}" as="item">
+                            <dt>{item.key}</dt>
+                            <dd>
+                                <f:if condition="{item.link}">
+                                    <f:then>
+                                        <f:link.external uri="{item.link}">{item.value}</f:link.external>
+                                    </f:then>
+                                    <f:else>
+                                        {item.value}
+                                    </f:else>
+                                </f:if>
+                            </dd>
+                        </f:for>
+                    </f:for>
+                </dl>
+            </div>
+            <div class="offcanvas-toggle"></div>
+        </div>
+        <div class="toc-wrapper">
+            <div class="tx-dlf-toc tx-dlf-window tx-dlf-leftwin tx-dlf-open">
+                <div class="tx-dlf-minimize"></div>
+                <div class="tx-dlf-wincontainer">
+                    <div class="tx-dlf-wincontent tx-dlf-scrollbar">
+                        <ul class="toc">
+                            <li>
+                                <a title="{settings.media}" data-title="{settings.media}">{settings.media}</a>
+                                <ul class="toc">
+                                    <f:for each="{settings.chapters}" as="chapter" >
+                                        <f:for each="{chapter}" as="item" >
+                                            <li>
+                                                <a title="{item.title}" class="chapter" onclick="play({item.timecode})" data-timecode="{item.timecode}" data-title="{item.title}">
+                                                    <span class="title">
+                                                        <span class="meta-type-icon meta-type-Video">Video</span>
+                                                        {item.title}
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        </f:for>
+                                    </f:for>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="offcanvas-toggle"></div>
+        </div>
+    </div>
+</div>
+
+<div class="document-view">
+    <f:if condition="{settings.player} == jplayer">
+        <f:then>
+            <f:render section="Player" partial="JPlayer" arguments="{_all}" />
+        </f:then>
+        <f:else>
+            <f:render section="Player" partial="Player" arguments="{_all}" />
+        </f:else>
+    </f:if>
+</div>

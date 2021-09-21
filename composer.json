@@ -1,0 +1,44 @@
+{
+  "name": "slub/slub-web-ldp",
+  "type": "typo3-cms-extension",
+  "description": "Templates, Styles and Configuration for Sachsen.Digital",
+  "homepage": "https://git.slub-dresden.de/slub-webseite/slub-web-ldp",
+  "keywords": [
+    "TYPO3",
+    "extension",
+    "slub_web_ldp"
+  ],
+  "authors": [
+    {
+      "name": "Tino Riedel",
+      "email": "tino.riedel@slub-dresden.de",
+      "role": "Developer"
+    },
+    {
+      "name": "Thomas Jung",
+      "email": "thomas.jung@slub-dresden.de",
+      "role": "Developer"
+    },
+    {
+      "name": "Alexander Bigga",
+      "email": "alexander.bigga@slub-dresden.de",
+      "role": "Developer"
+    }
+  ],
+  "license": "GPL-3.0-or-later",
+  "require": {
+    "typo3/cms-core": "~9.5.26",
+    "kitodo/presentation": "~3.2|dev-master",
+    "slub/slub-digitalcollections": "^2|dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "Slub\\SlubWebLdp\\": "Classes/"
+    }
+  },
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "slub_web_ldp"
+    }
+  }
+}

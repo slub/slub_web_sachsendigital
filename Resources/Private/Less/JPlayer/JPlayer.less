@@ -1,0 +1,339 @@
+// Helpers & variables
+@import "../Variables.less";
+@import "Iconfont.less";
+
+.desktop-only {
+    @media screen and (min-width: @desktopViewportWidth) {
+      display: flex;
+    }
+
+    @media screen and (max-width: @tabletLandscapeViewportWidth) {
+      display: none !important;
+    }
+  }
+
+  @base-color: #4e6666;
+  @base-color: @brand-secondary;
+  @light-color: lighten(@base-color,50%);
+
+  .noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+  }
+
+  .chapter {
+    cursor: pointer;
+  }
+  .media-viewport {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+
+    &.jp-video-full {
+      .control-bars {
+        margin-top: -5rem;
+      }
+    }
+
+    .mediaplayer-container {
+      position: relative;
+
+      #mediaplayer-viewport {
+        background-color: black;
+      }
+
+      .viewport-menu {
+        position: absolute;
+        background-color: rgba(@base-color, 0.9);
+        right: 2rem;
+        bottom: 6rem;
+        padding: 1.5rem;
+        text-align: left;
+        border-radius: 5px;
+        min-width: 12rem;
+
+        ul li {
+          padding-bottom: .5rem;
+          padding-top: .5rem;
+          border-bottom: 1px solid @light-color;
+          color: @light-color;
+          cursor: pointer;
+          transition: .3s ease all;
+          &.menu-item-back {
+            font-weight: bold;
+          }
+          &:hover, &:active {
+            color: white;
+          }
+          &:last-child {
+            border-bottom: none;
+          }
+        }
+      }
+
+      .dfgplayer-help {
+        position: absolute;
+        display: none;
+        top: 50%;
+        -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+        background-color: rgba(@base-color, .9);
+        color: white;
+        left: 5rem;
+        right: 5rem;
+        border-radius: 5px;
+        padding: 3rem;
+        z-index: 999999;
+
+        .headline-container {
+          position: relative;
+
+          .modal-close {
+            position: absolute;
+            top: 0;
+            right: 0;
+            cursor: pointer;
+          }
+        }
+
+        .help-container {
+          padding: 2rem;
+        }
+
+        h3 {
+          font-weight: 700;
+        }
+
+        table {
+          width: 100%;
+          padding: 5rem 0;
+
+          tr {
+            &:not(:last-child) {
+              border-bottom: 1px dotted @light-color;
+            }
+
+            &:first-child {
+              border-bottom: 1px solid @light-color;
+            }
+
+            td {
+              color: white;
+              line-height: 2rem;
+              &.legend {
+                color: @light-color;
+                font-weight: 700;
+              }
+            }
+          }
+        }
+      }
+      .control-bars {
+        position: relative;
+        display: block;
+        flex-direction: column;
+        justify-content: flex-end;
+        background-color: @base-color;
+        width: 100%;
+        color: @light-color;
+
+        #url-container {
+          position: absolute;
+          left: 20rem;
+          right: 20rem;
+          bottom: 12rem;
+          background-color: rgba(@base-color, .9);
+          color: white;
+          border-radius: 5px;
+          margin: auto;
+          line-height: 3rem;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          padding: 2rem;
+          input {
+            width: 90%;
+            height: 2rem;
+            font-size: 1rem;
+            line-height: 1rem;
+            text-align: center;
+            color: @base-color;
+          }
+          .icon-close {
+            font-size: 1.5rem;
+            height: 2rem;
+            &:before {
+              line-height: 2rem;
+            }
+          }
+        }
+        .timeline-bar {
+          display: flex;
+          justify-content: space-between;
+          font-size: .6rem;
+          padding: 0 .5rem;
+          align-items: center;
+          align-content: center;
+
+          .time-counters {
+            cursor: pointer;
+            width: 6rem;
+            line-height: 2rem;
+            text-align: left;
+            display: block;
+            position: relative;
+            &:before {
+              position: absolute;
+              left: 3.5rem;
+              font-size: 1.2rem;
+              top: 50%;
+              transform: translateY(-50%);
+            }
+          }
+
+          .jp-progress {
+            width: 100%;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            margin: 1rem 0;
+
+            .jp-seek-bar {
+              background-color: white;
+              height: 1rem;
+              border-radius: 5px;
+              position: relative;
+              .jp-play-bar {
+                background-color: @light-color;
+                height: 1rem;
+                border-radius: 5px;
+              }
+
+              .jp-chapter-marker {
+                background-color: @base-color;
+                height: 16px;
+                width: .2rem;
+                cursor: pointer;
+                top: 0;
+                transition: .3s ease all;
+
+                &:hover {
+                  width: .7rem;
+                }
+              }
+            }
+          }
+
+        }
+
+        .button-bar {
+          display: flex;
+          justify-content: space-between;
+          padding-bottom: 1rem;
+          margin: 0 2rem;
+          font-size: 2rem;
+
+          .left-controls {
+            display: flex;
+
+            .jp-volume-controls {
+              display: flex;
+              .jp-volume-bar {
+                background-color: white;
+                width: 8rem;
+                height: 1rem;margin-top: .2rem;
+                visibility: hidden;
+                opacity: 0;
+                transition: .3s ease all;
+
+                .jp-volume-bar-value {
+                  background-color: @light-color;
+                  height: 100%;
+                }
+              }
+
+              &:hover, &:active {
+                .jp-volume-bar {
+                  visibility: visible;
+                  opacity: 1;
+                }
+
+                &.right-controls {
+                  display: none !important;
+                }
+              }
+            }
+          }
+
+          .center-controls {
+            display: flex;
+            justify-content: center;
+
+            .video-title {
+              line-height: 1.5rem;
+              font-size: .6rem;
+            }
+          }
+
+          .right-controls {
+            display: flex;
+            justify-content: flex-end;
+            position: relative;
+          }
+
+          .control-button {
+            height: 100%;
+            padding: 0 .5rem;
+            cursor: pointer;
+
+            &:before {
+              height: 100%;
+              line-height: 1.5rem;
+            }
+            transition: .3s ease all;
+
+            &:hover {
+              color: white;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  #screenshot-overlay {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    height: 100%;
+    width: 100%;
+    z-index: 9999;
+    background-color: rgba(@base-color, .9);
+
+    canvas {
+      background-color: black;
+    }
+    .close-screenshot-modal {
+      color: white;
+      font-size: 2rem;
+      line-height: 4rem;
+      position: absolute;
+      height: 4rem;
+      width: 4rem;
+      top: 5rem;
+      right: 5rem;
+      cursor: pointer;
+    }
+  }
+
+  .tx-dlf-view, .mime-type-video {
+    height: 100%;
+   }

@@ -1,0 +1,72 @@
+imports:
+    - { resource: "EXT:rte_ckeditor/Configuration/RTE/Processing.yaml" }
+    - { resource: "EXT:rte_ckeditor/Configuration/RTE/Editor/Base.yaml" }
+    - { resource: "EXT:rte_ckeditor/Configuration/RTE/Editor/Plugins.yaml" }
+
+editor:
+    config:
+        contentsCss: "EXT:slub_web_ldp/Resources/Public/Css/rteStyles.css"
+
+        stylesSet:
+            - { name: "Normal", element: "p", attributes: { 'class': 'normal' } }
+            - { name: "Hinweis", element: "p", attributes: { 'class': 'hint' } }
+            - { name: "Warnung", element: "p", attributes: { 'class': 'warning' } }
+            - { name: "Zitat-Quelle (nur innerhalb Zitat-Element)", element: "p", attributes: { 'class': 'cited' } }
+            - { name: "Button Link", element: "a", attributes: { 'class': 'btn' } }
+
+        toolbarGroups:
+            - { name: styles, groups: [ format, styles ] }
+            - { name: basicstyles, groups: [ basicstyles ] }
+            - { name: paragraph, groups: [ list, indent, blocks, align ] }
+            - "/"
+            - { name: links, groups: [ links ] }
+            - { name: clipboard, groups: [ clipboard, cleanup, undo ] }
+            - { name: editing, groups: [ spellchecker ] }
+            - { name: insert, groups: [ insert ] }
+            - { name: tools, groups: [ table, specialchar ] }
+            - { name: document, groups: [ mode ] }
+
+        format_tags: "p;h2;h3;h4"
+
+        justifyClasses:
+            - text-left
+            - text-center
+            - text-right
+            - text-justify
+
+        extraPlugins:
+            - justify
+
+        removePlugins:
+            - image
+
+        removeButtons:
+            - Anchor
+            - Underline
+            - Strike
+
+# set internal page links to target="_top"
+# set external links to target="_blank" AND CSS class="external"
+buttons:
+  link:
+    page:
+      properties:
+        target:
+            default: '_top'
+    url:
+      properties:
+        class:
+          default: 'external'
+    properties:
+      class:
+        allowedClasses: 'external'
+
+classes:
+  external:
+    name: 'External Link'
+
+classesAnchor:
+  externalLink:
+    class: 'external'
+    type: 'url'
+    target: '_blank'

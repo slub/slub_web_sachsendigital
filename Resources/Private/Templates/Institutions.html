@@ -1,0 +1,16 @@
+<f:for each="{institutions}" as="institution" >
+    <f:for each="{institution.files}" as="file" >
+        <div class="institute-logo">
+            <f:if condition="{file.link}">
+                <f:then>
+                    <f:link.external uri="{file.link}" target="_blank">
+                        <f:image image="{file}" width="150" crop="FALSE" title="{file.title}" alt="Logo {file.title}" />
+                    </f:link.external>
+                </f:then>
+                <f:else>
+                    <f:image image="{file}" width="150" crop="FALSE" title="{file.title}" alt="Logo {file.title}" />
+                </f:else>
+            </f:if>
+        </div>
+    </f:for>
+</f:for>

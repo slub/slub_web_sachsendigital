@@ -1,0 +1,37 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:ce="http://typo3.org/ns/TYPO3/CMS/FluidStyledContent/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:layout name="Default" />
+
+<f:section name="Main">
+    <f:if condition="{menu}">
+        <div class="collection-menu">
+            <div class="collection-row">
+                <f:for each="{menu}" as="page">
+                    <div class="collection-entry">
+                        <f:switch expression="{page.data.layout}">
+                            <f:defaultCase><div class="collection-element ldp"></f:defaultCase>
+                            <f:case value="10"><div class="collection-element ldp"></f:case>
+                            <f:case value="11"><div class="collection-element save"></f:case>
+                        </f:switch>
+                        <f:link.page pageUid="{page.data.uid}" title="{page.data.title}">
+                            <f:if condition="{page.files}">
+                                <f:image image="{page.files.0}" title="{page.files.0.title}" alt="{page.files.0.alternative}" width="400" />
+                            </f:if>
+                            <h3>
+                                <f:if condition="{page.nav_title}">
+                                    <f:then>
+                                        {page.nav_title}
+                                    </f:then>
+                                    <f:else>
+                                        {page.title}
+                                    </f:else>
+                                </f:if>
+                            </h3>
+                        </f:link.page>
+                        </div>
+                    </div>
+                </f:for>
+            </div>
+        </div>
+    </f:if>
+</f:section>
+</html>

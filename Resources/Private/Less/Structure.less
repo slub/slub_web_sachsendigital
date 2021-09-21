@@ -1,0 +1,154 @@
+/*
+ *
+ * Structure
+ * ================================================
+ * Basic definition of body, cotainers and other
+ * structural elements
+ *
+ * Author: Thomas Jung <thomas@tjwd.de>
+ * License: All rights reserved
+ *
+ */
+
+/* basic project related html element settings  ======================================================================== */
+*,
+*:after,
+*::before {
+    box-sizing: border-box;
+}
+
+html {
+  position: relative;
+  font-size: @base-calc;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html, body, .main-wrapper, .perspective, .content-wrapper {
+    width: 100%;
+    min-height: 100%;
+}
+
+/* generic usable color classes  ======================================================================================= */
+.green { color: @brand-primary; }
+.green-bg { background-color: @brand-primary; }
+.green-light-bg { background-color: @brand-primary-light; }
+.petrol { color: @brand-secondary; }
+.petrol-bg { background-color: @brand-secondary; }
+.petrol-light-bg { background-color: @brand-secondary-light; }
+.warning { color: @ui-warning; }
+.warning-bg { background-color: @ui-warning; }
+
+/* 12 column gridsystem  =============================================================================================== */
+.container {
+    position: relative;
+    padding: 0 15px;
+    @media screen and (min-width: @phoneLandscapeViewportWidth) {
+        padding: 0 30px;
+    }
+    @media screen and (min-width: @tabletViewportWidth) {
+        padding: 0 50px;
+    }
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        width: 900px;
+        margin: 0 auto;
+        padding: 0;
+    }
+    @media screen and (min-width: @desktopViewportWidth) {
+        width: 1110px;
+    }
+}
+.row {
+    position: relative;
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        margin: 0 -15px;
+        .clearfix();
+        > div[class^="col-"] {
+            position: relative;
+            float: left;
+            padding: 0 15px;
+        }
+        .col-1 { width: 8.33333333%; }
+        .col-2 { width: 16.66666667%; }
+        .col-3 { width: 25%; }
+        .col-4 { width: 33.33333333%; }
+        .col-5 { width: 41.66666667%; }
+        .col-6 { width: 50%; }
+        .col-7 { width: 58.33333333%; }
+        .col-8 { width: 66.66666667%; }
+        .col-9 { width: 75%; }
+        .col-10 { width: 83.33333333%; }
+        .col-11 { width: 91.66666667%; }
+        .col-12 { width: 100%; }
+    }
+}
+/* basic frame design  ================================================================================================= */
+.perspective {
+    .transition();
+    .menu-open & {
+        .transform(translateX(-260px));
+    }
+    @media screen and (min-width: @phoneLandscapeViewportWidth) {
+        padding-bottom: 250px;
+    }
+    @media screen and (min-width: @tabletViewportWidth) {
+        .menu-open & {
+            .transform(translateX(-320px));
+        }
+    }
+}
+
+/* Cookie warning  ===================================================================================================== */
+#cookie-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: fade(@brand-primary,90%);
+    z-index: 1000;
+    padding: 15px 10px;
+    text-align: center;
+    color: #fff;
+    font-weight: 500;
+    line-height: 1.3;
+    p {
+        margin: 0;
+        font-size: 14px;
+    }
+    a {
+        position: relative;
+        margin: 10px 5px 5px 5px;
+        padding: 7px 15px;
+        border-radius: 0;
+        border: 0 none;
+        background: #fff;
+        display: inline-block;
+        font-size: 12px;
+        line-height: 1;
+        font-weight: normal;
+        text-transform: uppercase;
+        text-decoration: none;
+    }
+    a.btn-primary {
+        background: green;
+    }
+    @media screen and (min-width: @desktopViewportWidth) {
+        padding: 15px;
+        br {
+            display: none;
+        }
+        a {
+            margin-top: 3px;
+        }
+    }
+}
+
+// EOF

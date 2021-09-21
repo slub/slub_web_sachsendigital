@@ -1,0 +1,156 @@
+plugin.tx_news {
+    view {
+        templateRootPaths.110=EXT:slub_web_ldp/Resources/Private/Plugins/News/Templates/
+        partialRootPaths.110=EXT:slub_web_ldp/Resources/Private/Plugins/News/Partials/
+    }
+    settings {
+        listPid = {$config.newsListPid}
+        displayDummyIfNoMedia = 0
+        analytics {
+            social {
+                facebookLike = 0
+                facebookShare = 0
+                twitter = 0
+            }
+        }
+        startingpoint = {$config.newsStoragePid}
+        list {
+            media {
+                image {
+                    maxWidth = 500
+                    maxHeight = 600
+                }
+            }
+        }
+        detail {
+            media {
+                image {
+                    maxWidth = 1200
+                    maxHeight = 900
+                }
+            }
+        }
+        cropMaxCharacters = 270
+        link {
+          hrDate = 1
+          hrDate {
+            # months with leading 0: 01 .. 12
+            month = m
+            # days with leading 0: 01 .. 31
+            day = d
+          }
+        }
+    }
+}
+
+[getTSFE().beUserLogin]
+    # Feature is broken in TYPO3 9.5
+    # https://www.gt-edv.de/news/artikel/vorschau-fuer-verborgene-news-waehrend-der-erstellung-anzeigen.html
+    plugin.tx_news.settings.enablePreviewOfHiddenRecords = 1
+[END]
+
+plugin.tx_slubnewsextend {
+    settings {
+        senderEmailAddress = alexander.bigga@slub-dresden.de
+    }
+}
+
+module.tx_slubnewsextend {
+    persistence.storagePid = {$config.newsStoragePid}
+}
+
+# rss feed - news.rss
+[getTSFE().type == 9818]
+
+pageNewsRSS = PAGE
+pageNewsRSS {
+    typeNum = 9818
+    10 < tt_content.list.20.news_pi1
+    10 {
+      switchableControllerActions {
+        News {
+          1 = list
+        }
+      }
+      settings < plugin.tx_news.settings
+      settings {
+        limit = 30
+        detailPid = {$config.newsDetailPid}
+        startingpoint = {$config.newsStoragePid}
+        format = xml
+        list {
+          rss {
+            channel {
+              language = de-DE
+              link = https://sachsen.digital/feed/
+              description = Sachsen.Digital
+              title = Sachsen.Digital - Aktuelles
+              generator = TYPO3 EXT:news
+            }
+          }
+        }
+      }
+    }
+    config {
+      disableAllHeaderCode = 1
+      # no xhtml tags
+      xhtml_cleaning = none
+      # pubDate has to be in English (see RSS spec)
+      locale_all = en_GB.UTF-8
+      admPanel = 0
+      metaCharset = utf-8
+      additionalHeaders = Content-Type:application/rss+xml; charset="UTF-8"
+      disablePrefixComment = 1
+      absRefPrefix = https://sachsen.digital/
+    }
+}
+[END]
+
+# comments feed - comments.rss
+# actually, no comments are available --> empty xml
+[getTSFE().type == 9819]
+
+pageNewsRSS = PAGE
+pageNewsRSS {
+    typeNum = 9819
+    10 < tt_content.list.20.slubnewsextend_commentslist
+    10 {
+      switchableControllerActions {
+        Comment {
+          1 = recent
+        }
+      }
+      settings < plugin.tx_slubnewsextend.settings
+      settings {
+        showNumComments = 30
+        detailPid = {$config.newsDetailPid}
+        startingpoint = {$config.newsStoragePid}
+        format = xml
+        list {
+          rss {
+            channel {
+              language = de-DE
+              link = https://sachsen.digital/comments/feed/
+              description = Die Kommentare zu Sachsen.Digital
+              title = Kommentare zu Sachsen.Digital
+              generator = TYPO3 EXT:news
+            }
+          }
+        }
+      }
+    }
+    config {
+      disableAllHeaderCode = 1
+      xhtml_cleaning = none
+      # no xhtml tags
+      xhtml_cleaning = none
+      # pubDate has to be in English (see RSS spec)
+      locale_all = en_GB.UTF-8
+      admPanel = 0
+      metaCharset = utf-8
+      additionalHeaders = Content-Type:application/rss+xml; charset="UTF-8"
+      disablePrefixComment = 1
+      absRefPrefix = https://sachsen.digital/
+    }
+}
+[END]

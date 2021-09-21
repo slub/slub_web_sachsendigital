@@ -1,0 +1,33 @@
+#
+# Basic typoscript configuration
+# ------------------------------------------------------------------------------------
+#
+
+config {
+    no_cache = {$config.disableCache}
+    absRefPrefix = /
+    uniqueLinkVars = 1
+    pageTitleFirst = 1
+    renderCharset = utf-8
+    metaCharset = utf-8
+    doctype = html5
+    inlineStyle2TempFile = 1
+    admPanel = {$config.admPanel}
+    debug = 0
+
+    #Cache
+  	cache_clearAtMidnight = 1
+  	sendCacheHeaders = 1
+  	headerComment =
+    meaningfulTempFilePrefix = 1
+
+    intTarget =
+    extTarget =
+    disablePrefixComment = 1
+
+    compressJs = {$config.slub_web_ldp.compressJs}
+    compressCss = {$config.slub_web_ldp.compressCss}
+    concatenateJs = {$config.slub_web_ldp.concatenateJs}
+    concatenateCss = {$config.slub_web_ldp.concatenateCss}
+    disableWrapInBaseClass=1
+}
