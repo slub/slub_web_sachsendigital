@@ -85,35 +85,35 @@
 				<source><![CDATA[Permalink page]]></source>
 				<target><![CDATA[Permalink Seite]]></target>
 			</trans-unit>
-			<trans-unit id="tx_slubwebldp_media.imagecurated" approved="yes">
+			<trans-unit id="tx_slubwebsachsendigital_media.imagecurated" approved="yes">
 				<source><![CDATA[Media-Element for Curated Content]]></source>
 				<target><![CDATA[Bild-Element für kuratierte Inhalte]]></target>
 			</trans-unit>
-			<trans-unit id="tx_slubwebldp_media.imagecurated.description" approved="yes">
+			<trans-unit id="tx_slubwebsachsendigital_media.imagecurated.description" approved="yes">
 				<source><![CDATA[Insert curated Images with Description on Homepage.]]></source>
 				<target><![CDATA[Kuratierte Inhalte mit Beschreibung auf der Startseite]]></target>
 			</trans-unit>
-			<trans-unit id="tx_slubwebldp_media.institutions" approved="yes">
+			<trans-unit id="tx_slubwebsachsendigital_media.institutions" approved="yes">
 				<source><![CDATA[Media-Element for Institutions]]></source>
 				<target><![CDATA[Bild-Element für Institutionen]]></target>
 			</trans-unit>
-			<trans-unit id="tx_slubwebldp_media.institutions.description" approved="yes">
+			<trans-unit id="tx_slubwebsachsendigital_media.institutions.description" approved="yes">
 				<source><![CDATA[Insert Institutions-Logo with description.]]></source>
 				<target><![CDATA[Einfügen von Institutionen-Logos mit Beschreibung.]]></target>
 			</trans-unit>
-			<trans-unit id="tx_slubwebldp_media.media" approved="yes">
+			<trans-unit id="tx_slubwebsachsendigital_media.media" approved="yes">
 				<source><![CDATA[SA(V)E Media Element]]></source>
 				<target><![CDATA[SA(V)E Medien-Element]]></target>
 			</trans-unit>
-			<trans-unit id="tx_slubwebldp_media.media.description" approved="yes">
+			<trans-unit id="tx_slubwebsachsendigital_media.media.description" approved="yes">
 				<source><![CDATA[Insert Video-Player with Metadata and Chapters with Timecodes.]]></source>
 				<target><![CDATA[Video-Player mit Metadaten und Kapitel mit Timecodes einfügen.]]></target>
 			</trans-unit>
-			<trans-unit id="tx_slubwebldp_media.menu_collections" approved="yes">
+			<trans-unit id="tx_slubwebsachsendigital_media.menu_collections" approved="yes">
 				<source><![CDATA[Menu Element for Collections on Subpages]]></source>
 				<target><![CDATA[Menü-Element für Kollektionsübersicht]]></target>
 			</trans-unit>
-			<trans-unit id="tx_slubwebldp_media.menu_collections.description" approved="yes">
+			<trans-unit id="tx_slubwebsachsendigital_media.menu_collections.description" approved="yes">
 				<source><![CDATA[This shows all Subpages as Collection Tiles.]]></source>
 				<target><![CDATA[Zeigt alle Unterseiten als Kollektionskacheln an.]]></target>
 			</trans-unit>

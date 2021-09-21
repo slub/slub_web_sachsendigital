@@ -3,6 +3,6 @@
 #############
 RTE {
     default {
-        preset = slub_web_ldp
+        preset = slub_web_sachsendigital
     }
 }

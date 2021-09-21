@@ -5,7 +5,7 @@ mod {
     web_layout {
         BackendLayouts {
             media {
-                title = LLL:EXT:slub_web_ldp/Resources/Private/Language/backend.xlf:backend_layout.media
+                title = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/backend.xlf:backend_layout.media
                 config {
                     backend_layout {
                         colCount = 1
@@ -22,7 +22,7 @@ mod {
                         }
                     }
                 }
-                icon = EXT:slub_web_ldp/Resources/Public/Images/BackendLayouts/default.png
+                icon = EXT:slub_web_sachsendigital/Resources/Public/Images/BackendLayouts/default.png
             }
         }
     }

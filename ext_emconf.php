@@ -1,7 +1,7 @@
 <?php
 
 $EM_CONF[$_EXTKEY] = array(
-    'title' => 'SLUB Web LDP',
+    'title' => 'SLUB Web Sachsen.Digital',
     'description' => 'Extension for the website sachsen.digital',
     'category' => 'templates',
     'author' => 'Tino Riedel',

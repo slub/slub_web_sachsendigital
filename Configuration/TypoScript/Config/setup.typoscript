@@ -25,9 +25,9 @@ config {
     extTarget =
     disablePrefixComment = 1
 
-    compressJs = {$config.slub_web_ldp.compressJs}
-    compressCss = {$config.slub_web_ldp.compressCss}
-    concatenateJs = {$config.slub_web_ldp.concatenateJs}
-    concatenateCss = {$config.slub_web_ldp.concatenateCss}
+    compressJs = {$config.slub_web_sachsendigital.compressJs}
+    compressCss = {$config.slub_web_sachsendigital.compressCss}
+    concatenateJs = {$config.slub_web_sachsendigital.concatenateJs}
+    concatenateCss = {$config.slub_web_sachsendigital.concatenateCss}
     disableWrapInBaseClass=1
 }

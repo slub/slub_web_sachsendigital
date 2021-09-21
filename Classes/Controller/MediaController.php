@@ -1,5 +1,5 @@
 <?php
-namespace Slub\SlubWebLdp\Controller;
+namespace Slub\SlubWebSachsendigital\Controller;
 
 /***************************************************************
  *  Copyright notice

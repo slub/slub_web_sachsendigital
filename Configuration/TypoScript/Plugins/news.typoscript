@@ -1,7 +1,7 @@
 plugin.tx_news {
     view {
-        templateRootPaths.110=EXT:slub_web_ldp/Resources/Private/Plugins/News/Templates/
-        partialRootPaths.110=EXT:slub_web_ldp/Resources/Private/Plugins/News/Partials/
+        templateRootPaths.110=EXT:slub_web_sachsendigital/Resources/Private/Plugins/News/Templates/
+        partialRootPaths.110=EXT:slub_web_sachsendigital/Resources/Private/Plugins/News/Partials/
     }
     settings {
         listPid = {$config.newsListPid}

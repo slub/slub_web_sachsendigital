@@ -1,7 +1,7 @@
-plugin.tx_slubwebldp_media {
+plugin.tx_slubwebsachsendigital_media {
     view {
-        templateRootPaths.110=EXT:slub_web_ldp/Resources/Private/Plugins/Media/Templates/
-        partialRootPaths.110=EXT:slub_web_ldp/Resources/Private/Plugins/Media/Partials/
-        layoutRootPaths.110=EXT:slub_web_ldp/Resources/Private/Plugins/Media/Layouts/
+        templateRootPaths.110=EXT:slub_web_sachsendigital/Resources/Private/Plugins/Media/Templates/
+        partialRootPaths.110=EXT:slub_web_sachsendigital/Resources/Private/Plugins/Media/Partials/
+        layoutRootPaths.110=EXT:slub_web_sachsendigital/Resources/Private/Plugins/Media/Layouts/
     }
 }

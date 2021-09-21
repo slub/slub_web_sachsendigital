@@ -1,11 +1,11 @@
-# SACHSEN.digital (LDP)
+# SACHSEN.digital (LDP & SAVE)
 
 This TYPO3 extension provides the configuration and setup for the new implementation of SACHSEN.digital by the [SLUB Dresden](https://www.slub-dresden.de).
 
 ##  Installation
-This extension needs to reside in a folder called `slub_web_ldp` in TYPO3 extension folder ('typoconf/ext').
+This extension needs to reside in a folder called `slub_web_sachsendigital` in TYPO3 extension folder ('typoconf/ext').
 
-After activate the extension in the TYPO3 extension manager you need to include a static template called `SLUB Web LDP` in the template settings of the source page of the SACHSEN.digtal branch.
+After activate the extension in the TYPO3 extension manager you need to include a static template called `SLUB: Portal Sachsen.Digital` in the template settings of the source page of the SACHSEN.digtal branch.
 
 ## Frontend development (based on Grunt)
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-    <file source-language="de" datatype="plaintext" original="messages" date="2017-06-28T16:00:00Z" product-name="slub_web_ldp">
+    <file source-language="de" datatype="plaintext" original="messages" date="2017-06-28T16:00:00Z" product-name="slub_web_sachsendigital">
         <header/>
         <body>
             <trans-unit id="footer.totop">
@@ -66,28 +66,28 @@
 			<trans-unit id="purl.document">
 				<source><![CDATA[Permalink document]]></source>
 			</trans-unit>
-			<trans-unit id="tx_slubwebldp_media.media">
+			<trans-unit id="tx_slubwebsachsendigital_media.media">
 				<source>SA(V)E Media Element</source>
 			</trans-unit>
-			<trans-unit id="tx_slubwebldp_media.media.description">
+			<trans-unit id="tx_slubwebsachsendigital_media.media.description">
 				<source>Insert Video-Player with Metadata and Chapters with Timecodes.</source>
 			</trans-unit>
-			<trans-unit id="tx_slubwebldp_media.institutions">
+			<trans-unit id="tx_slubwebsachsendigital_media.institutions">
 				<source>Media-Element for Institutions</source>
 			</trans-unit>
-			<trans-unit id="tx_slubwebldp_media.institutions.description">
+			<trans-unit id="tx_slubwebsachsendigital_media.institutions.description">
 				<source>Insert Institutions-Logo with description.</source>
 			</trans-unit>
-			<trans-unit id="tx_slubwebldp_media.imagecurated">
+			<trans-unit id="tx_slubwebsachsendigital_media.imagecurated">
 				<source>Media-Element for Curated Content</source>
 			</trans-unit>
-			<trans-unit id="tx_slubwebldp_media.imagecurated.description">
+			<trans-unit id="tx_slubwebsachsendigital_media.imagecurated.description">
 				<source>Insert curated Images with Description on Homepage.</source>
 			</trans-unit>
-			<trans-unit id="tx_slubwebldp_media.menu_collections">
+			<trans-unit id="tx_slubwebsachsendigital_media.menu_collections">
 				<source>Menu Element for Collections on Subpages</source>
 			</trans-unit>
-			<trans-unit id="tx_slubwebldp_media.menu_collections.description">
+			<trans-unit id="tx_slubwebsachsendigital_media.menu_collections.description">
 				<source>This shows all Subpages as Collection Tiles.</source>
 			</trans-unit>
 			<trans-unit id="nav.open">

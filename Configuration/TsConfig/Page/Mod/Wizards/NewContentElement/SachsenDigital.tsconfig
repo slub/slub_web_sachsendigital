@@ -13,35 +13,35 @@ mod.wizards.newContentElement.wizardItems {
           list_type = slubdigitalcollections_singlecollection
         }
       }
-      tx_slubwebldp_media {
+      tx_slubwebsachsendigital_media {
         iconIdentifier = tx-dlf-audioplayer
-        title = LLL:EXT:slub_web_ldp/Resources/Private/Language/locallang.xlf:tx_slubwebldp_media.media
-        description = LLL:EXT:slub_web_ldp/Resources/Private/Language/locallang.xlf:tx_slubwebldp_media.media.description
+        title = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.media
+        description = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.media.description
         tt_content_defValues {
           CType = list
-          list_type = slubwebldp_media
+          list_type = slubwebsachsendigital_media
         }
       }
       image_ldp_institutions {
         iconIdentifier = content-image
-        title = LLL:EXT:slub_web_ldp/Resources/Private/Language/locallang.xlf:tx_slubwebldp_media.institutions
-        description = LLL:EXT:slub_web_ldp/Resources/Private/Language/locallang.xlf:tx_slubwebldp_media.institutions.description
+        title = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.institutions
+        description = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.institutions.description
         tt_content_defValues {
           CType = image_ldp_institutions
         }
       }
       image_ldp_curated {
         iconIdentifier = content-image
-        title = LLL:EXT:slub_web_ldp/Resources/Private/Language/locallang.xlf:tx_slubwebldp_media.imagecurated
-        description = LLL:EXT:slub_web_ldp/Resources/Private/Language/locallang.xlf:tx_slubwebldp_media.imagecurated.description
+        title = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.imagecurated
+        description = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.imagecurated.description
         tt_content_defValues {
           CType = image_ldp_curated
         }
       }
       menu_collections {
         iconIdentifier = content-menu-pages
-        title = LLL:EXT:slub_web_ldp/Resources/Private/Language/locallang.xlf:tx_slubwebldp_media.menu_collections
-        description = LLL:EXT:slub_web_ldp/Resources/Private/Language/locallang.xlf:tx_slubwebldp_media.menu_collections.description
+        title = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.menu_collections
+        description = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.menu_collections.description
         tt_content_defValues {
           CType = menu_collections
         }

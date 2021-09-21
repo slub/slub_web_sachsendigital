@@ -58,7 +58,7 @@ tt_content {
 #
 lib.institutions = FLUIDTEMPLATE
 lib.institutions {
-    file = EXT:slub_web_ldp/Resources/Private/Templates/Institutions.html
+    file = EXT:slub_web_sachsendigital/Resources/Private/Templates/Institutions.html
     dataProcessing.10 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
     dataProcessing.10 {
         table = tt_content
@@ -124,9 +124,9 @@ lib {
 # ------------------------------------------------------------------------------------
 #
 lib.fluidContent {
-    templateRootPaths.55 = EXT:slub_web_ldp/Resources/Private/Plugins/FluidStyledContent/Templates/
-    partialRootPaths.55 = EXT:slub_web_ldp/Resources/Private/Plugins/FluidStyledContent/Partials/
-    layoutRootPaths.55 = EXT:slub_web_ldp/Resources/Private/Plugins/FluidStyledContent/Layouts/
+    templateRootPaths.55 = EXT:slub_web_sachsendigital/Resources/Private/Plugins/FluidStyledContent/Templates/
+    partialRootPaths.55 = EXT:slub_web_sachsendigital/Resources/Private/Plugins/FluidStyledContent/Partials/
+    layoutRootPaths.55 = EXT:slub_web_sachsendigital/Resources/Private/Plugins/FluidStyledContent/Layouts/
     settings {
         media.popup {
             JSwindow = 0
@@ -141,9 +141,9 @@ lib.fluidContent {
 
 # Overwrite own CTypes
 lib.contentElement {
-    templateRootPaths.55 = EXT:slub_web_ldp/Resources/Private/Plugins/FluidStyledContent/Templates/
-    partialRootPaths.55 = EXT:slub_web_ldp/Resources/Private/Plugins/FluidStyledContent/Partials/
-    layoutRootPaths.55 = EXT:slub_web_ldp/Resources/Private/Plugins/FluidStyledContent/Layouts/
+    templateRootPaths.55 = EXT:slub_web_sachsendigital/Resources/Private/Plugins/FluidStyledContent/Templates/
+    partialRootPaths.55 = EXT:slub_web_sachsendigital/Resources/Private/Plugins/FluidStyledContent/Partials/
+    layoutRootPaths.55 = EXT:slub_web_sachsendigital/Resources/Private/Plugins/FluidStyledContent/Layouts/
 }
 
 # --- EOF ---

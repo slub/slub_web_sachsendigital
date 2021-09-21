@@ -1,73 +1,73 @@
 # LDP Constants
 config {
 
-    # cat=plugin.tx_slub_web_ldp/links/010; type=int+; label=Kitodo Storage PID
+    # cat=plugin.tx_slub_web_sachsendigital/links/010; type=int+; label=Kitodo Storage PID
     storagePid =
 
-    # cat=plugin.tx_slub_web_ldp/links/011; type=int+; label=Root Page PID
+    # cat=plugin.tx_slub_web_sachsendigital/links/011; type=int+; label=Root Page PID
     rootPageId =
 
-    # cat=plugin.tx_slub_web_ldp/links/012; type=int+; label=Kitodo Page View
+    # cat=plugin.tx_slub_web_sachsendigital/links/012; type=int+; label=Kitodo Page View
     kitodoPageView =
 
-    # cat=plugin.tx_slub_web_ldp/links/012; type=int+; label=Kitodo Searchresults Listview
+    # cat=plugin.tx_slub_web_sachsendigital/links/012; type=int+; label=Kitodo Searchresults Listview
     kitodoSearchListView =
 
-    # cat=plugin.tx_slub_web_ldp/links/020; type=int+; label=News Storage Pid
+    # cat=plugin.tx_slub_web_sachsendigital/links/020; type=int+; label=News Storage Pid
     newsStoragePid =
 
-    # cat=plugin.tx_slub_web_ldp/links/020; type=int+; label=News List Pid
+    # cat=plugin.tx_slub_web_sachsendigital/links/020; type=int+; label=News List Pid
     newsListPid =
 
-    # cat=plugin.tx_slub_web_ldp/links/020; type=int+; label=News Detail Pid
+    # cat=plugin.tx_slub_web_sachsendigital/links/020; type=int+; label=News Detail Pid
     newsDetailPid =
 
-    # cat=plugin.tx_slub_web_ldp/links/020; type=int+; label=Meta Navigation (Footer)
+    # cat=plugin.tx_slub_web_sachsendigital/links/020; type=int+; label=Meta Navigation (Footer)
     metaNav =
 
-    # cat=plugin.tx_slub_web_ldp/links/020; type=int+; label=Logo Container
+    # cat=plugin.tx_slub_web_sachsendigital/links/020; type=int+; label=Logo Container
     logoContainer =
 
-    # cat=plugin.tx_slub_web_ldp/matomo/010; type=string; label=Matomo Hostname
+    # cat=plugin.tx_slub_web_sachsendigital/matomo/010; type=string; label=Matomo Hostname
     piwik_hostname =
 
-    # cat=plugin.tx_slub_web_ldp/matomo/020; type=string; label=Matomo Idsite
+    # cat=plugin.tx_slub_web_sachsendigital/matomo/020; type=string; label=Matomo Idsite
     piwik_idsite =
 
-    # cat=plugin.tx_slub_web_ldp/matomo/030; type=string; label=Matomo Domains
+    # cat=plugin.tx_slub_web_sachsendigital/matomo/030; type=string; label=Matomo Domains
     piwik_domains =
 
-    # cat=plugin.tx_slub_web_ldp/file/100; type=file[html,htm,tmpl]; label=Metadata template file
-    templateFileMeta = EXT:slub_web_ldp/Resources/Private/Plugins/Kitodo/metadata.tmpl
+    # cat=plugin.tx_slub_web_sachsendigital/file/100; type=file[html,htm,tmpl]; label=Metadata template file
+    templateFileMeta = EXT:slub_web_sachsendigital/Resources/Private/Plugins/Kitodo/metadata.tmpl
 
-    # cat=plugin.tx_slub_web_ldp/file/100; type=file[html,htm,tmpl]; label=Page View template file
-    templateFilePage = EXT:slub_web_ldp/Resources/Private/Plugins/Kitodo/pageview.tmpl
+    # cat=plugin.tx_slub_web_sachsendigital/file/100; type=file[html,htm,tmpl]; label=Page View template file
+    templateFilePage = EXT:slub_web_sachsendigital/Resources/Private/Plugins/Kitodo/pageview.tmpl
 
-    # cat=plugin.tx_slub_web_ldp/file/100; type=file[html,htm,tmpl]; label=Page Grid template file
-    templateFileGrid = EXT:slub_web_ldp/Resources/Private/Plugins/Kitodo/pagegrid.tmpl
+    # cat=plugin.tx_slub_web_sachsendigital/file/100; type=file[html,htm,tmpl]; label=Page Grid template file
+    templateFileGrid = EXT:slub_web_sachsendigital/Resources/Private/Plugins/Kitodo/pagegrid.tmpl
 
-    # cat=plugin.tx_slub_web_ldp/file/100; type=file[html,htm,tmpl]; label=Table of Contents template file
-    templateFileToc = EXT:slub_web_ldp/Resources/Private/Plugins/Kitodo/toc.tmpl
+    # cat=plugin.tx_slub_web_sachsendigital/file/100; type=file[html,htm,tmpl]; label=Table of Contents template file
+    templateFileToc = EXT:slub_web_sachsendigital/Resources/Private/Plugins/Kitodo/toc.tmpl
 
-    # cat=plugin.tx_slub_web_ldp/file/100; type=file[html,htm,tmpl]; label=Fulltext Tool template file
-    templateFileToolFulltext = EXT:slub_web_ldp/Resources/Private/Plugins/Kitodo/fulltext.tmpl
+    # cat=plugin.tx_slub_web_sachsendigital/file/100; type=file[html,htm,tmpl]; label=Fulltext Tool template file
+    templateFileToolFulltext = EXT:slub_web_sachsendigital/Resources/Private/Plugins/Kitodo/fulltext.tmpl
 
-    # cat=plugin.tx_slub_web_ldp/fil/100; type=file[html,htm,tmpl]; label=Image manipulation template file
-    templateFileSearchInDocumentTool = EXT:slub_web_ldp/Resources/Private/Plugins/Kitodo/SearchInDocumentTool.html
+    # cat=plugin.tx_slub_web_sachsendigital/fil/100; type=file[html,htm,tmpl]; label=Image manipulation template file
+    templateFileSearchInDocumentTool = EXT:slub_web_sachsendigital/Resources/Private/Plugins/Kitodo/SearchInDocumentTool.html
 
-    # cat=plugin.tx_slub_web_ldp/page; type=string; label=Meta description
+    # cat=plugin.tx_slub_web_sachsendigital/page; type=string; label=Meta description
     meta_description = Sachsen.digital präsentiert Ihnen digitalisiertes Kulturgut aus wissenschaftlichen und öffentlichen Bibliotheken sowie aus weiteren Kultur- und Wissenschaftseinrichtungen des Freistaats Sachsen.
 
-    # cat=plugin.tx_slub_web_ldp/page; type=string; label=Meta keywords
+    # cat=plugin.tx_slub_web_sachsendigital/page; type=string; label=Meta keywords
     meta_keywords = Digitalisierung, Sachsen, Landesdigitalisierungsprogramm, Wissenschaft, Kultur, SLUB Dresden, Bibliothek, Digitalisierungsstrategie, Sächsischer Landtag, Kitodo
 
-    # cat=plugin.tx_slub_web_ldp/page; type=string; label=Meta robots
+    # cat=plugin.tx_slub_web_sachsendigital/page; type=string; label=Meta robots
     meta_robots = index,follow
 
-    # cat=plugin.tx_slub_web_ldp/page; type=string; label=Meta revisit
+    # cat=plugin.tx_slub_web_sachsendigital/page; type=string; label=Meta revisit
     meta_revisit = 7 days
 
-    # cat=plugin.tx_slub_web_ldp/page; type=int+; label=UID of solrCore
+    # cat=plugin.tx_slub_web_sachsendigital/page; type=int+; label=UID of solrCore
     solrCore =
 
 }
@@ -80,12 +80,12 @@ config {
 config {
     disableCache = 0
     admPanel = 0
-    slub_web_ldp {
+    slub_web_sachsendigital {
         prefixLocalAnchors = all
 
-        templateRootPath = EXT:slub_web_ldp/Resources/Private/Templates/
-        partialRootPath = EXT:slub_web_ldp/Resources/Private/Partials/
-        layoutRootPath = EXT:slub_web_ldp/Resources/Private/Layouts/
+        templateRootPath = EXT:slub_web_sachsendigital/Resources/Private/Templates/
+        partialRootPath = EXT:slub_web_sachsendigital/Resources/Private/Partials/
+        layoutRootPath = EXT:slub_web_sachsendigital/Resources/Private/Layouts/
 
         compressJs = 0
         compressCss = 0

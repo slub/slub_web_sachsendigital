@@ -6,7 +6,7 @@ call_user_func(function()
     /**
      * Temporary variables
      */
-    $extensionKey = 'slub_web_ldp';
+    $extensionKey = 'slub_web_sachsendigital';
 
     /**
      * Default PageTS for Sachsen.Digital

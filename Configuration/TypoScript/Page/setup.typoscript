@@ -8,8 +8,8 @@ page {
     headerData {
         40 = TEXT
         40.value (
-            <link rel="shortcut icon" type="image/png" href="/typo3conf/ext/slub_web_ldp/Resources/Public/Images/favicon.png">
-            <link rel="apple-touch-icon" href="/typo3conf/ext/slub_web_ldp/Resources/Public/Images/favicon.png">
+            <link rel="shortcut icon" type="image/png" href="/typo3conf/ext/slub_web_sachsendigital/Resources/Public/Images/favicon.png">
+            <link rel="apple-touch-icon" href="/typo3conf/ext/slub_web_sachsendigital/Resources/Public/Images/favicon.png">
         )
         50 = TEXT
         50 {
@@ -46,13 +46,13 @@ page {
      robots = {$config.meta_robots}
     }
     includeCSS {
-        sxndCss = EXT:slub_web_ldp/Resources/Public/Css/sxndStyles.css
+        sxndCss = EXT:slub_web_sachsendigital/Resources/Public/Css/sxndStyles.css
         sxndCss.forceOnTop = 1
         kitodo >
     }
     includeJSFooterlibs {
-        jQuery = EXT:slub_web_ldp/Resources/Public/JavaScript/jquery-3.5.1.min.js
-        sxndScripts = EXT:slub_web_ldp/Resources/Public/JavaScript/sxndScripts.js
+        jQuery = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/jquery-3.5.1.min.js
+        sxndScripts = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/sxndScripts.js
         kitodo-frontend >
     }
 
@@ -90,13 +90,13 @@ page {
         }
 
         templateRootPaths {
-            5 = {$config.slub_web_ldp.templateRootPath}
+            5 = {$config.slub_web_sachsendigital.templateRootPath}
         }
         partialRootPaths {
-            5 = {$config.slub_web_ldp.partialRootPath}
+            5 = {$config.slub_web_sachsendigital.partialRootPath}
         }
         layoutRootPaths {
-            5 = {$config.slub_web_ldp.layoutRootPath}
+            5 = {$config.slub_web_sachsendigital.layoutRootPath}
         }
         settings.showProviderLogo = 1
         variables {
@@ -118,7 +118,7 @@ page {
 [page["backend_layout"] == 'pagets__kitodo']
 page {
   includeCSS {
-      sxndKitodoViewerCss = EXT:slub_web_ldp/Resources/Public/Css/sxndKitodoViewer.css
+      sxndKitodoViewerCss = EXT:slub_web_sachsendigital/Resources/Public/Css/sxndKitodoViewer.css
       sxndCss >
   }
   includeJSFooterlibs {
@@ -154,10 +154,10 @@ page {
 [page["backend_layout"] == 'pagets__media']
 page {
     includeCSS {
-        sxndKitodoViewerCss = EXT:slub_web_ldp/Resources/Public/Css/sxndKitodoViewer.css
+        sxndKitodoViewerCss = EXT:slub_web_sachsendigital/Resources/Public/Css/sxndKitodoViewer.css
         sxndCss >
-        shaka = EXT:slub_web_ldp/Resources/Public/JavaScript/VideoPlayer/controls.css
-        videoplayer = EXT:slub_web_ldp/Resources/Public/Css/VideoPlayer.css
+        shaka = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/controls.css
+        videoplayer = EXT:slub_web_sachsendigital/Resources/Public/Css/VideoPlayer.css
     }
     includeJSFooterlibs {
         # must be included here as slub_digitalcollections doesn't know pagets_media
@@ -165,9 +165,9 @@ page {
         # DigitalcollectionsScripts.js is required to toggle the menus in tablet & phone view
         kitodo = EXT:slub_digitalcollections/Resources/Public/JavaScript/DigitalcollectionsScripts.js
         sxndScripts >
-        x0-shaka = EXT:slub_web_ldp/Resources/Public/JavaScript/VideoPlayer/shaka-player.ui.min.js
-        x0-sachsen = EXT:slub_web_ldp/Resources/Public/JavaScript/VideoPlayer/SachsenShakaPlayer.js
-        x2-videoframe = EXT:slub_web_ldp/Resources/Public/JavaScript/VideoPlayer/VideoFrame.min.js
+        x0-shaka = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/shaka-player.ui.min.js
+        x0-sachsen = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/SachsenShakaPlayer.js
+        x2-videoframe = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/VideoFrame.min.js
     }
     10 {
         variables {
@@ -181,18 +181,18 @@ page {
 [page["backend_layout"] == 'pagets__jplayer']
 page {
     includeCSS {
-        sxndKitodoViewerCss = EXT:slub_web_ldp/Resources/Public/Css/sxndKitodoViewer.css
+        sxndKitodoViewerCss = EXT:slub_web_sachsendigital/Resources/Public/Css/sxndKitodoViewer.css
         sxndCss >
-        videoplayer = EXT:slub_web_ldp/Resources/Public/Css/JPlayer.css
+        videoplayer = EXT:slub_web_sachsendigital/Resources/Public/Css/JPlayer.css
     }
     includeJSFooterlibs {
         # must be included here as slub_digitalcollections doesn't know pagets_media
         kitodo-frontend >
         #kitodo = EXT:slub_digitalcollections/Resources/Public/JavaScript/DigitalcollectionsScripts.js
         sxndScripts >
-        x1-jplayer = EXT:slub_web_ldp/Resources/Public/JavaScript/VideoPlayer/jquery.jplayer.min.js
-        x2-videoframe = EXT:slub_web_ldp/Resources/Public/JavaScript/VideoPlayer/VideoFrame.min.js
-        x3-mediaplayer = EXT:slub_web_ldp/Resources/Public/JavaScript/VideoPlayer/Playerscripts.js
+        x1-jplayer = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/jquery.jplayer.min.js
+        x2-videoframe = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/VideoFrame.min.js
+        x3-mediaplayer = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/Playerscripts.js
     }
     10 {
         variables {

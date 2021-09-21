@@ -1,12 +1,12 @@
 {
-  "name": "slub/slub-web-ldp",
+  "name": "slub/slub_web_sachsendigital",
   "type": "typo3-cms-extension",
   "description": "Templates, Styles and Configuration for Sachsen.Digital",
-  "homepage": "https://git.slub-dresden.de/slub-webseite/slub-web-ldp",
+  "homepage": "https://github.com/slub/slub_web_sachsendigital",
   "keywords": [
     "TYPO3",
     "extension",
-    "slub_web_ldp"
+    "slub_web_sachsendigital"
   ],
   "authors": [
     {
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Slub\\SlubWebLdp\\": "Classes/"
+      "Slub\\SlubWebSachsendigital\\": "Classes/"
     }
   },
   "extra": {
     "typo3/cms": {
-      "extension-key": "slub_web_ldp"
+      "extension-key": "slub_web_sachsendigital"
     }
   }
 }

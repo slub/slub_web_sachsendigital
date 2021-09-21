@@ -6,7 +6,7 @@ defined('TYPO3_MODE') or die();
     'tt_content',
     'CType',
     [
-        'LLL:EXT:slub_web_ldp/Resources/Private/Language/locallang.xlf:tx_slubwebldp_media.institutions',
+        'LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.institutions',
         'image_ldp_institutions',
         'content-image'
     ],
@@ -20,7 +20,7 @@ $GLOBALS['TCA']['tt_content']['types']['image_ldp_institutions'] = $GLOBALS['TCA
     'tt_content',
     'CType',
     [
-        'LLL:EXT:slub_web_ldp/Resources/Private/Language/locallang.xlf:tx_slubwebldp_media.imagecurated',
+        'LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.imagecurated',
         'image_ldp_curated',
         'content-image'
     ],
@@ -34,7 +34,7 @@ $GLOBALS['TCA']['tt_content']['types']['image_ldp_curated'] = $GLOBALS['TCA']['t
     'tt_content',
     'CType',
     [
-        'LLL:EXT:slub_web_ldp/Resources/Private/Language/locallang.xlf:tx_slubwebldp_media.menu_collections',
+        'LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.menu_collections',
         'menu_collections',
         'content-menu-pages'
     ],
@@ -45,12 +45,12 @@ $GLOBALS['TCA']['tt_content']['types']['menu_collections'] = $GLOBALS['TCA']['tt
 
 
 TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
-    'Slub.SlubWebLdp',
+    'Slub.SlubWebSachsendigital',
     'Media',
-    'LLL:EXT:slub_web_ldp/Resources/Private/Language/locallang.xlf:tx_slubwebldp_media.media'
+    'LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.media'
 );
-$GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['slubwebldp_media'] = 'pi_flexform';
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPiFlexFormValue('slubwebldp_media', 'FILE:EXT:slub_web_ldp/Configuration/Flexforms/Media.xml');
+$GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['slubwebsachsendigital_media'] = 'pi_flexform';
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPiFlexFormValue('slubwebsachsendigital_media', 'FILE:EXT:slub_web_sachsendigital/Configuration/Flexforms/Media.xml');
 
 # There's no excuse - alternative must always be set
 # stupid: the overlay from the fal media does not work here if eval = required

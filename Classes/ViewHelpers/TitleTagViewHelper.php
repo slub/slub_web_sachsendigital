@@ -1,5 +1,5 @@
 <?php
-namespace Slub\SlubWebLdp\ViewHelpers;
+namespace Slub\SlubWebSachsendigital\ViewHelpers;
 
 /**
  * (c) Kitodo. Key to digital objects e.V. <contact@kitodo.org>
