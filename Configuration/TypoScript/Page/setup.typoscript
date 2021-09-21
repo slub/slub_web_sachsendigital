@@ -177,28 +177,3 @@ page {
     }
 }
 [END]
-
-[page["backend_layout"] == 'pagets__jplayer']
-page {
-    includeCSS {
-        sxndKitodoViewerCss = EXT:slub_web_sachsendigital/Resources/Public/Css/sxndKitodoViewer.css
-        sxndCss >
-        videoplayer = EXT:slub_web_sachsendigital/Resources/Public/Css/JPlayer.css
-    }
-    includeJSFooterlibs {
-        # must be included here as slub_digitalcollections doesn't know pagets_media
-        kitodo-frontend >
-        #kitodo = EXT:slub_digitalcollections/Resources/Public/JavaScript/DigitalcollectionsScripts.js
-        sxndScripts >
-        x1-jplayer = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/jquery.jplayer.min.js
-        x2-videoframe = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/VideoFrame.min.js
-        x3-mediaplayer = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/Playerscripts.js
-    }
-    10 {
-        variables {
-            gp-id = TEXT
-            gp-id.data = GP:tx_dlf|id // GP:set|mets
-        }
-    }
-}
-[END]

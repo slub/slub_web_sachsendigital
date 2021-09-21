@@ -71,12 +71,5 @@
 </div>
 
 <div class="document-view">
-    <f:if condition="{settings.player} == jplayer">
-        <f:then>
-            <f:render section="Player" partial="JPlayer" arguments="{_all}" />
-        </f:then>
-        <f:else>
-            <f:render section="Player" partial="Player" arguments="{_all}" />
-        </f:else>
-    </f:if>
+    <f:render section="Player" partial="Player" arguments="{_all}" />
 </div>

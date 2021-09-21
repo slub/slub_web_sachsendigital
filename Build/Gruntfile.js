@@ -15,7 +15,6 @@ module.exports = function(grunt) {
                     "Resources/Public/Css/sxndStyles.css" : "Resources/Private/Less/All.less",
                     "Resources/Public/Css/rteStyles.css" : "Resources/Private/Less/Rte.less",
                     "Resources/Public/Css/sxndKitodoViewer.css" : "Resources/Private/Less/KitodoViewer.less",
-                    "Resources/Public/Css/JPlayer.css" : "Resources/Private/Less/JPlayer/JPlayer.less",
                     "Resources/Public/Css/VideoPlayer.css" : "Resources/Private/Less/VideoPlayer/VideoPlayer.less",
                 }
             }
