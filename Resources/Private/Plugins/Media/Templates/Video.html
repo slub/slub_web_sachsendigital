@@ -50,7 +50,7 @@
                                     <f:for each="{settings.chapters}" as="chapter" >
                                         <f:for each="{chapter}" as="item" >
                                             <li>
-                                                <a title="{item.title}" class="chapter" onclick="play({item.timecode})" data-timecode="{item.timecode}" data-title="{item.title}">
+                                                <a title="{item.title}" class="chapter" data-timecode="{item.timecode}" data-title="{item.title}">
                                                     <span class="title">
                                                         <span class="meta-type-icon meta-type-Video">Video</span>
                                                         {item.title}

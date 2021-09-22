@@ -112,6 +112,10 @@ async function initPlayer() {
     }
   });
 
+  $('a[data-timecode]').on('click', function () {
+    const timecode = $(this).data('timecode');
+    play(timecode);
+  });
 
   // Try to load a manifest.
   // This is an asynchronous process.
