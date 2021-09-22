@@ -1,5 +1,5 @@
 {
-  "name": "slub_web_sachsendigital",
+  "name": "slub-web-sachsendigital",
   "version": "1.0.0",
   "description": "This TYPO3 extension provides the configuration and setup for the new implementation of SACHSEN.digital",
   "main": "gruntfile.js",
