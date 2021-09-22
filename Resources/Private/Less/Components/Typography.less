@@ -1,0 +1,36 @@
+/*
+ *
+ * Typography
+ * ================================================
+ * Font sizes, line heights and other
+ * type related settings
+ *
+ * Author: Thomas Jung <thomas@tjwd.de>
+ * License: All rights reserved
+ *
+ */
+
+/* basic font settings  ================================================================================================ */
+
+// Typography
+@font-sans-normal: 'Open Sans', Helvetica, Arial, sans-serif;
+@font-sans-bold: 'Open Sans', 'Helvetica', Arial, sans-serif;
+
+body {
+    font-family: @font-sans-normal;
+    color: #333;
+    line-height: 1.7em;
+}
+
+b, strong, .bold {
+    font-family: @font-sans-bold;
+    font-weight: 700;
+}
+
+.light-italic {
+    font-family: @font-sans-normal;
+    font-style: italic;
+    font-weight: 300;
+}
+
+// EOF

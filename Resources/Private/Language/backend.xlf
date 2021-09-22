@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="de" datatype="plaintext" original="messages" date="2017-06-28T16:00:00Z">
+        <header/>
+        <body>
+            <trans-unit id="backend_layout.default">
+                <source>Sachsen.Digital Inhaltsseite</source>
+            </trans-unit>
+            <trans-unit id="backend_layout.home">
+                <source>Sachsen.Digital Startseite</source>
+            </trans-unit>
+            <trans-unit id="backend_layout.kitodo">
+                <source>Sachsen.Digital Kitodo Werkansicht</source>
+            </trans-unit>
+            <trans-unit id="backend_layout.home.mission">
+                <source>Mission</source>
+            </trans-unit>
+            <trans-unit id="backend_layout.home.highlights">
+                <source>Highlights</source>
+            </trans-unit>
+            <trans-unit id="backend_layout.home.video">
+                <source>Video</source>
+            </trans-unit>
+            <trans-unit id="backend_layout.home.institutes">
+                <source>Institute</source>
+            </trans-unit>
+            <trans-unit id="backend_layout.home.becomemember">
+                <source>Teilnehmen</source>
+            </trans-unit>
+            <trans-unit id="backend_layout.home.technology">
+                <source>Technik</source>
+            </trans-unit>
+            <trans-unit id="backend_layout.home.footer">
+                <source>Fußbereich</source>
+            </trans-unit>
+            <trans-unit id="backend_layout.media.jplayer">
+                <source>Media-Player (jPlayer)</source>
+            </trans-unit>
+            <trans-unit id="backend_layout.media">
+                <source>Media-Player (Shaka)</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

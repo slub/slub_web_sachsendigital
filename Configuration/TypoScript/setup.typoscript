@@ -1,0 +1,14 @@
+# Configuration
+<INCLUDE_TYPOSCRIPT: source="DIR:./Config/" extensions="typoscript">
+
+# Page
+<INCLUDE_TYPOSCRIPT: source="DIR:./Page/" extensions="typoscript">
+
+# Navigation
+<INCLUDE_TYPOSCRIPT: source="DIR:./Navigation/" extensions="typoscript">
+
+# Content
+<INCLUDE_TYPOSCRIPT: source="DIR:./Content/" extensions="typoscript">
+
+# Plugin
+<INCLUDE_TYPOSCRIPT: source="DIR:./Plugins/" extensions="typoscript">

@@ -1,0 +1,29 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+
+	<f:if condition="{menu}">
+		<div class="content-element menu-section" id="c{data.uid}">
+			<div class="infos">
+				<f:render partial="Header/Header" arguments="{header: data.header, layout: data.header_layout, position: data.header_position}" />
+			</div>
+			<ul>
+				<f:for each="{menu}" as="page">
+					<li>
+						<f:if condition="{page.content}">
+							<ul>
+								<f:for each="{page.content}" as="element">
+									<f:if condition="{element.data.header}">
+									<li>
+										<a href="{page.link}#c{element.data.uid}"{f:if(condition: page.target, then: ' target="{page.target}"')} title="{element.data.header}">
+											<span>{element.data.header}</span>
+										</a>
+									</li>
+									</f:if>
+								</f:for>
+							</ul>
+						</f:if>
+					</li>
+				</f:for>
+			</ul>
+		</div>
+	</f:if>
+</html>

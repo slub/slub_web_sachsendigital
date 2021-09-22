@@ -1,0 +1,38 @@
+<f:layout name="Page" />
+<div xmlns="http://www.w3.org/1999/xhtml" lang="en" xmlns:f="http://typo3.org/ns/fluid/ViewHelpers">
+    <f:section name="Content">
+        <section class="mission">
+            <div class="container">
+                <f:cObject typoscriptObjectPath="lib.dynamicContent" data="0" />
+            </div>
+        </section>
+        <section class="highlights">
+            <div class="container">
+                <f:cObject typoscriptObjectPath="lib.dynamicContent" data="1" />
+            </div>
+        </section>
+        <section class="video">
+            <div class="container">
+                <f:cObject typoscriptObjectPath="lib.dynamicContent" data="11" />
+            </div>
+        </section>
+        <section class="becomemember">
+            <div class="container">
+                <f:cObject typoscriptObjectPath="lib.dynamicContent" data="3" />
+            </div>
+        </section>
+        <section class="institutes">
+            <div class="container">
+                <f:cObject typoscriptObjectPath="lib.dynamicContent" data="2" />
+                <div class="selected-logos">
+                    <f:cObject typoscriptObjectPath="lib.institutions" />
+                </div>
+            </div>
+        </section>
+        <section class="technology">
+            <div class="container">
+                <f:cObject typoscriptObjectPath="lib.dynamicContent" data="4" />
+            </div>
+        </section>
+    </f:section>
+</div>

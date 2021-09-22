@@ -1,0 +1,4 @@
+#
+# PageTS for Sachsen.Digital
+#
+<INCLUDE_TYPOSCRIPT: source="DIR:EXT:slub_web_sachsendigital/Configuration/TsConfig/Page/" extensions="tsconfig">

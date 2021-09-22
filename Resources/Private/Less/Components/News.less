@@ -1,0 +1,329 @@
+/*
+ *
+ * News
+ * ================================================
+ * Definitions for the news extension
+ *
+ *
+ * Author: Thomas Jung <thomas@tjwd.de>
+ * License: All rights reserved
+ *
+ */
+
+// Hot news on homepage
+.level-0 .news-list-view {
+    .article {
+        position: relative;
+        margin: 30px 0;
+        border: 2px solid @brand-secondary-light;
+        border-radius: 10px;
+        padding: 10px;
+        line-height: 1.3;
+        .news-img-wrap {
+            display: none;
+        }
+        .news-header {
+            .news-list-date {
+                color: @brand-secondary;
+                font-size: 12px;
+            }
+            h3 {
+                margin: 0;
+                font-style: normal;
+                line-height: 1;
+                a {
+                    font-size: 16px;
+                    font-weight: 800;
+                    text-decoration: none;
+                }
+            }
+        }
+        .teaser-text {
+            display: none;
+        }
+        a.btn.more {
+            display: none;
+        }
+        &:before,
+        &:after {
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            margin-left: -12px;
+            width: 0;
+            height: 0;
+            border: 12px solid transparent;
+            border-bottom-width: 0;
+            content: " ";
+        }
+        &:before {
+            border-top-color: @brand-secondary-light;
+        }
+        &:after {
+            bottom: -9px;
+            border-top-color: #fff;
+            visibility: visible;
+        }
+    }
+    a.more-news {
+        color: @brand-secondary;
+        text-decoration: none;
+        margin-top: -10px;
+        display: block;
+    }
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        position: relative;
+        padding-bottom: 14px;
+        .article {
+            text-align: left;
+            .news-header {
+                width: 100%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                .news-list-date {
+                    font-size: 16px;
+                    &:after {
+                        content: "\2014";
+                        margin: 0 2px;
+                    }
+                }
+                h3 {
+                    display: inline;
+                }
+            }
+            &:before,
+            &:after {
+                left: auto;
+                right: 50px;
+            }
+        }
+        a.more-news {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            font-size: 12px;
+            display: inline-block;
+        }
+    }
+    @media screen and (min-width: @desktopViewportWidth) {
+        .article {
+            padding: 15px 160px 17px 15px;
+            a.btn.more {
+                position: absolute;
+                top: 12px;
+                right: 10px;
+                margin: 0;
+                display: block;
+                padding: 6px 25px;
+            }
+        }
+    }
+}
+
+// News list on subpage
+.content-wrapper .news-list-view {
+    text-align: center;
+    .page-navigation {
+        position: relative;
+        width: 100%;
+        margin-bottom: 30px;
+        &:before {
+            position: absolute;
+            top: 25px;
+            right: 15px;
+            left: 15px;
+            height: 1px;
+            background: @brand-secondary-light;
+            content: " "
+        }
+        p {
+            margin: 0;
+            float: none;
+            font-size: 12px;
+            font-weight: 700;
+            color: @brand-secondary;
+        }
+    }
+    .article {
+        margin-bottom: 40px;
+        .news-img-wrap {
+            position: relative;
+            float: none;
+            margin: 0;
+            background: transparent;
+            line-height: 1;
+            a {
+                float: none;
+                display: inline-block;
+                max-width: 70%;
+                border-color: @brand-secondary-light;
+                img {
+                    float: none;
+                    max-width: 100%;
+                    height: auto;
+                }
+                &[target="_blank"] {
+                    &:after {
+                        content: "";
+                        text-decoration: none;
+                    }
+                }
+            }
+        }
+        .news-header {
+            .news-list-date {
+                font-size: 12px;
+                color: @brand-secondary-mid;
+                font-weight: 800;
+            }
+            h3 {
+                margin: 0;
+                a {
+                    text-decoration: none;
+                }
+            }
+        }
+        p {
+            margin: 10px 0;
+        }
+        a.btn.more {
+            margin-top: 10px;
+            padding: 5px 20px;
+            font-size: 14px;
+            display: inline-block;
+        }
+    }
+    a.more-news {
+        display: none;
+    }
+    @media screen and (min-width: @phoneLandscapeViewportWidth) {
+        .page-navigation {
+            height: 40px;
+            &:before {
+                top: auto;
+                right: 0;
+                bottom: 0;
+                left: 0;
+            }
+            p {
+                float: left;
+            }
+            ul {
+                margin: 0 -5px 0 0;
+                float: right;
+            }
+        }
+        .article {
+            margin: 70px 0;
+            .news-img-wrap {
+                a {
+                    img {
+                        height: 200px;
+                    }
+                }
+            }
+        }
+    }
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        .article {
+            border-bottom: 1px solid @brand-secondary-light;
+            .news-header {
+                h3 {
+                    font-size: 36px;
+                    font-weight: 100;
+                    line-height: 1.2;
+                }
+            }
+            a.btn.more {
+                margin: 30px 0;
+                padding: 5px 50px;
+            }
+            .teaser-text {
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+// Detailview of selected news item
+.news-details {
+    .page-header {
+        margin-bottom: 0;
+        h2 {
+            display: none;
+        }
+    }
+    .news-single .article {
+        .news-header {
+            text-align: center;
+            h3 {
+                margin-top: 0;
+                font-size: 34px;
+                line-height: 1.1;
+            }
+        }
+        .news-meta {
+            border-top: 1px solid @brand-secondary-light;
+            margin-top: 10px;
+            text-align: center;
+            p {
+                margin: 0;
+                font-size: 12px;
+                font-weight: 800;
+                color: @brand-secondary-mid;
+            }
+            .news-list-category {
+                display: none;
+            }
+        }
+        .teaser-text {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .news-img-wrap {
+            position: relative;
+            float: none;
+            margin: 20px 0;
+            background: transparent;
+            line-height: 1;
+            width: auto;
+            .outer {
+                float: none;
+                display: inline-block;
+                border: 1px solid @brand-secondary-light;
+                padding: 5px;
+                img {
+                    float: none;
+                    max-width: 100%;
+                    height: auto;
+                }
+                p.news-img-caption {
+                    font-size: 14px;
+                    margin: 10px 0;
+                }
+            }
+        }
+        .news-text-wrap {
+            text-align: left;
+        }
+        .social-media {
+            display: none;
+        }
+        .news-backlink-wrap {
+            margin: 20px 0;
+        }
+    }
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        .news-single .article {
+            .news-img-wrap {
+                margin: 60px 0;
+                .outer {
+                    max-width: 100%;
+                }
+            }
+        }
+    }
+}
+
+// EOF

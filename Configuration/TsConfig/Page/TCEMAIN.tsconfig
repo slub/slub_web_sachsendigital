@@ -1,0 +1,24 @@
+#
+# TCEMAIN
+#
+TCEMAIN {
+    permissions {
+
+        # Configure default permission for new created pages.
+        # do anything (default):
+        user = show,edit,delete,new,editcontent
+
+        # do anything (default)
+        group = show,edit,delete,new,editcontent
+
+        # (normally everybody can do nothing)
+        everybody = show
+
+        # user: default user
+        # userid = 6
+
+        # group _Users
+        # group: sachsen.digital LDP == 88
+        #groupid = 88
+    }
+}

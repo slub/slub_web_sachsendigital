@@ -1,0 +1,30 @@
+{namespace n=GeorgRinger\News\ViewHelpers}
+<f:layout name="General" />
+<!--
+    =====================
+        Templates/News/List.html
+-->
+
+<f:section name="content">
+    <!--TYPO3SEARCH_end-->
+    <f:if condition="{news}">
+        <div class="news-list-view">
+            <f:if condition="{settings.hidePagination}">
+                <f:then>
+                    <f:for each="{news}" as="newsItem" iteration="iterator">
+                        <f:render partial="List/Item" arguments="{newsItem: newsItem,settings:settings,iterator:iterator}" />
+                    </f:for>
+                </f:then>
+                <f:else>
+                    <n:widget.paginate objects="{news}" as="paginatedNews" configuration="{settings.list.paginate}" initial="{offset:settings.offset,limit:settings.limit}">
+                        <f:for each="{paginatedNews}" as="newsItem" iteration="iterator">
+                            <f:render partial="List/Item" arguments="{newsItem: newsItem,settings:settings,iterator:iterator}" />
+                        </f:for>
+                    </n:widget.paginate>
+                </f:else>
+            </f:if>
+            <f:link.page pageUid="{settings.listPid}" title="Jetzt mehr Nachrichten anzeigen" class="more-news">Weitere Nachrichten.</f:link.page>
+        </div>
+    </f:if>
+    <!--TYPO3SEARCH_begin-->
+</f:section>

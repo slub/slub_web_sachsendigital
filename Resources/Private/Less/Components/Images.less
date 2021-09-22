@@ -1,0 +1,316 @@
+/*
+ *
+ * Images
+ * ================================================
+ * Style definitions for galleries and all
+ * image related items
+ *
+ * Author: Thomas Jung <thomas@tjwd.de>
+ * License: All rights reserved
+ *
+ */
+
+/* basic image related settings  ======================================================================================= */
+figure {
+    position: relative;
+    margin: 30px 0;
+    text-align: center;
+    img {
+        position: relative;
+        max-width: 100%;
+        height: auto;
+    }
+    > a {
+        position: relative;
+        display: inline-block;
+        font-size: 0;
+        line-height: 0;
+        margin: 0 auto;
+        &:after {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            border: 6px solid @brand-secondary;
+            opacity: 0.3;
+            content: " ";
+            pointer-events: none;
+        }
+    }
+    figcaption {
+        font-size: 12px;
+        line-height: 1.5;
+        margin: 5px 7% 5px 7%;
+        color: @brand-secondary;
+    }
+}
+
+/* Styles for images and galeries which floats in text ================================================================= */
+.textpic-container,
+.ce-textpic {
+    .csc-textpic-text {
+        margin: 0 !important;
+        min-height: 200px;
+    }
+    @media screen and (min-width: @tabletViewportWidth) {
+        position: relative;
+        .ce-gallery {
+            position: absolute;
+            top: -4px;
+            left: 0;
+            width: 260px;
+            height: 100%;
+            &:before {
+                position: absolute;
+                left: 50%;
+                top: 0;
+                bottom: 0;
+                width: 1px;
+                background: @brand-primary;
+                content: " ";
+                opacity: 0.4;
+            }
+            .ce-row {
+                display:none;
+                &:first-child {
+                    display: block;
+                }
+            }
+            figure {
+                position: absolute;
+                top: 50%;
+                .transform(translateY(-50%));
+                margin: 0;
+                line-height: 0;
+                max-height: 100%;
+                height: 175px;
+                width: 260px;
+                &.portrait {
+                    height: 347px;
+                }
+                a {
+                    display: block;
+                    height: 100%;
+                    overflow: hidden;
+                }
+                img {
+                    object-fit: cover;
+                    width: 100%;
+                    height: 100%;
+                }
+                figcaption {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    max-width: 80%;
+                    background: rgba(255,255,255,1);
+                    border: 6px solid fade(@brand-secondary,10%);
+                    border-width: 0 0 6px 6px;
+                    padding: 7px 10px;
+                    margin: 0;
+                    text-align: left;
+                }
+                &:after {
+                    position: absolute;
+                    top: 6px;
+                    right: -6px;
+                    bottom: -6px;
+                    left: 6px;
+                    border: 3px solid @brand-secondary;
+                    border-width: 0 3px 3px 0;
+                    content: " ";
+                    opacity: 0.2;
+                    pointer-events: none;
+                }
+                &:before {
+                    position: absolute;
+                    top: -6px;
+                    right: 0;
+                    bottom: -12px;
+                    left: 0;
+                    background: #fff;
+                    content: " ";
+                }
+            }
+        }
+        &.ce-right {
+            padding-right: 300px;
+            padding-left: 0;
+            left: auto;
+            .ce-gallery {
+                right: 0;
+                left: auto;
+            }
+        }
+        &.ce-left {
+            padding-left: 300px;
+        }
+    }
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        .ce-gallery {
+            width: 360px;
+            left: -100px;
+            figure {
+                width: 360px;
+                height: 270px;
+                &.portrait {
+                    height: 480px;
+                }
+            }
+        }
+        &.ce-right {
+            .ce-gallery {
+                left: auto;
+                right: -100px;
+            }
+        }
+    }
+    @media screen and (min-width: @desktopViewportWidth) {
+        .ce-gallery {
+            width: 460px;
+            left: -200px;
+            figure {
+                width: 460px;
+                height: 345px;
+                &.portrait {
+                    height: 613px;
+                }
+            }
+        }
+        &.ce-right {
+            .ce-gallery {
+                right: -200px;
+                left: auto;
+            }
+        }
+    }
+}
+
+/* Setup for fullsize image galleries  ================================================================================= */
+.ce-image {
+    .ce-gallery {
+        margin: 30px 0;
+        padding: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        background: lighten(@brand-secondary-light,10%);
+        .ce-row {
+            margin: 0;
+            padding: 10px;
+            flex: 0 1 50%;
+            a {
+                display: block;
+            }
+        }
+        @media screen and (min-width: @phoneLandscapeViewportWidth) {
+            .ce-row {
+                flex: 0 1 33.33333%;
+            }
+        }
+        @media screen and (min-width: @tabletLandscapeViewportWidth) {
+            .ce-row {
+                flex: 0 1 25%;
+            }
+        }
+    }
+}
+
+/* Setup for members listing  ========================================================================================== */
+.content-wrapper .frame-type-image_ldp_institutions {
+    h3 {
+        font-size: 16px;
+        font-weight: 800;
+        text-transform: uppercase;
+        font-style: normal;
+    }
+    .ce-gallery {
+        border-top: 1px solid lighten(@brand-primary,35%);
+        background: transparent;
+        display: block;
+        padding: 0;
+        figure {
+            display: block;
+            flex: none;
+            text-align: left;
+            padding: 0 0 0 120px;
+            height: 70px;
+            vertical-align: middle;
+            margin: 20px 0;
+            &:before {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 110px;
+                width: 1px;
+                background: @brand-secondary-light;
+                content: " ";
+            }
+            > a, > img {
+                position: absolute;
+                top: 50%;
+                left: 0;
+                width: 100px;
+                height: auto;
+                max-height: 80px;
+                .transform(translateY(-50%));
+                &:after {
+                    content: none;
+                    display: none;
+                }
+            }
+            figcaption {
+                position: absolute;
+                top: 50%;
+                .transform(translateY(-50%));
+                .text-hide();
+                margin: 0;
+                h4 {
+                    margin: 0;
+                    font-size: 14px;
+                    line-height: 1.4;
+                    a {
+                        color: @brand-secondary;
+                    }
+                }
+            }
+        }
+        @media screen and (min-width: @phoneLandscapeViewportWidth) {
+            figure {
+                padding-left: 180px;
+                height: 90px;
+                &:before {
+                    left: 160px;
+                }
+                > a, > img {
+                    width: 140px;
+                    max-height: 100px;
+                }
+                figcaption {
+                    font-size: 12px;
+                    line-height: 1.4;
+                    color: lighten(@brand-secondary, 25%);
+                    h4 {
+                        font-size: 16px;
+                    }
+                }
+            }
+        }
+        @media screen and (min-width: @tabletLandscapeViewportWidth) {
+            figure {
+                height: 110px;
+                padding-left: 220px;
+                margin: 40px 0;
+                &:before {
+                    left: 200px;
+                }
+                > a, > img {
+                    width: 180px;
+                    max-height: 120px;
+                }
+            }
+        }
+    }
+}

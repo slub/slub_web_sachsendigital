@@ -1,0 +1,56 @@
+# Add Sachsen.Digital specific content elements to newContenElement wizard
+
+mod.wizards.newContentElement.wizardItems {
+  sachsenDigital {
+    header = Sachsen.Digital
+    elements {
+      slubdigitalcollections_singlecollection {
+        iconIdentifier = tx-dlf-collection
+        title = LLL:EXT:slub_digitalcollections/Resources/Private/Language/locallang.xlf:plugins.single_collection_view
+        description = LLL:EXT:slub_digitalcollections/Resources/Private/Language/locallang.xlf:plugins.single_collection_view.description
+        tt_content_defValues {
+          CType = list
+          list_type = slubdigitalcollections_singlecollection
+        }
+      }
+      tx_slubwebsachsendigital_media {
+        iconIdentifier = tx-dlf-audioplayer
+        title = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.media
+        description = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.media.description
+        tt_content_defValues {
+          CType = list
+          list_type = slubwebsachsendigital_media
+        }
+      }
+      image_ldp_institutions {
+        iconIdentifier = content-image
+        title = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.institutions
+        description = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.institutions.description
+        tt_content_defValues {
+          CType = image_ldp_institutions
+        }
+      }
+      image_ldp_curated {
+        iconIdentifier = content-image
+        title = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.imagecurated
+        description = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.imagecurated.description
+        tt_content_defValues {
+          CType = image_ldp_curated
+        }
+      }
+      menu_collections {
+        iconIdentifier = content-menu-pages
+        title = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.menu_collections
+        description = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_media.menu_collections.description
+        tt_content_defValues {
+          CType = menu_collections
+        }
+      }
+    }
+    show = *
+  }
+  # unset extra-tab of slub_digitalcollections
+  slub_digitalcollections {
+    show =
+  }
+}

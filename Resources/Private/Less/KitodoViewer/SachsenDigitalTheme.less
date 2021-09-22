@@ -1,0 +1,353 @@
+/*
+ *
+ * SLUB Styles
+ * ================================================
+ * Color typography and adjustments
+ * for custom styling
+ *
+ * Author: Thomas Jung <thomas@jung.digital>
+ *
+ */
+
+// The paths to external Resources
+@header-logo: '../Images/sxndLogo.svg';
+@control-icons: '../Icons/viewerControlIcons.svg';
+
+// Colors
+@primary-color: @brand-primary;
+@secondary-color: @brand-secondary;
+@secondary-color-light: desaturate(lighten(@secondary-color, 27%), 22%);
+@basegrey-color: rgb(51, 51, 51);
+@lightgrey-color: lighten(@basegrey-color, 65%);
+
+body {
+    background-color: @brand-secondary;
+    &:before {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        content: " ";
+        opacity: 0.3;
+        .vertgrad(@brand-primary, darken(@brand-primary-dark,50%), 0, 100%);
+    }
+}
+
+// Typography
+@font-sans-normal: 'Open Sans', Helvetica, Arial, sans-serif;
+@font-sans-bold: 'Open Sans', 'Helvetica', Arial, sans-serif;
+@font-serif-normal: 'Open Sans', 'Helvetica', Arial, sans-serif;
+@font-serif-bold: 'Open Sans', 'Helvetica', Arial, sans-serif;
+
+// Dedicated restyling
+.control-bar {
+    .header-bar {
+        background: @brand-secondary;
+        .vertgrad(fade(@brand-secondary,30%), fade(@brand-primary,60%), 0, 100%);
+        .transition();
+        &:before {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: url(../Images/noise.png) repeat  0 0;
+            background-size: 90px 45px;
+            content: " ";
+            opacity: 0.1;
+        }
+        .brand {
+            top: 5px;
+            left: 15px;
+            width: 240px;
+            height: 45px;
+            a {
+                &:before {
+                    content: '';
+                }
+                background-size: auto 50px;
+                background-position: 0 0;
+                line-height: 24px;
+                color: #fff;
+                .text-hide();
+                background-size: 200px 35px;
+                display: block;
+            }
+        }
+    }
+
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        background: @brand-secondary;
+        &:before {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            height: auto;
+            content: " ";
+            opacity: 0.15;
+            .vertgrad(darken(@brand-primary-dark,50%), @brand-primary, 0, 100%);
+        }
+        &:after {
+            content: '';
+            background: none;
+        }
+        .header-bar {
+            background: transparent;
+            &:before {
+                background: transparent;
+            }
+            .brand {
+                top: 12px;
+                left: 30px;
+                max-width: 60%;
+                a {
+                    background-size: 100% auto;
+                }
+            }
+            nav {
+                .nav-toggle {
+                    top: 20px;
+                    right: 30px;
+                }
+            }
+        }
+
+    }
+    @media screen and (min-width: @desktopViewportWidth) {
+        .header-bar {
+            .brand {
+                top: 12px;
+                left: 30px;
+                a {
+                    font-size: 11px;
+                    line-height: 1px;
+                    background-size: 100% auto;
+                }
+            }
+        }
+
+        .metadata-wrapper, .toc-wrapper {
+            padding: 20px 5px;
+        }
+        .metadata-wrapper {
+            padding-bottom: 40px;
+        }
+    }
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        .metadata-wrapper {
+            .metadata-toggle {
+                color: white;
+                &:before {
+                    background: transparent url('@{control-icons}') no-repeat -564px -84px;
+                }
+            }
+        }
+    }
+
+}
+
+.document-view .document-functions {
+    .provider {
+        border-bottom: none;
+        > a {
+            img {
+                margin-top: 5px;
+                width: 70px;
+                height: 33px;
+            }
+        }
+    }
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        .provider {
+            > a {
+                img {
+                    width: 108px;
+                    height: 50px;
+                    border-radius: 4px;
+                }
+            }
+        }
+        > ul {
+            left: 124px;
+        }
+    }
+}
+
+.tx-dlf-metadata {
+    h1 {
+        color: white;
+    }
+    dl {
+        dt {
+            color: white;
+        }
+        dd {
+            color: white;
+            &.tx-dlf-metadata-collection {
+                color: darken(@brand-primary-dark,50%);
+            }
+            a {
+                color: white;
+            }
+
+        }
+    }
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        dl {
+            dt {
+                font-weight: bold;
+            }
+            dd {
+                a {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: inline-block;
+                    width: 80%;
+                    line-height: 16px;
+                    vertical-align: middle;
+                    &[href*="digital.slub"] {
+                        vertical-align: middle;
+                    }
+                }
+            }
+        }
+    }
+    @media screen and (min-width: @desktopViewportWidth) {
+    }
+}
+
+.tx-dlf-calendar {
+    .year-anchor {
+        padding: 0 0 10px 60px;
+        font-weight: bold;
+    }
+    .calendar-view  {
+        .year,
+        table {
+            caption {
+                font-weight: bold;
+            }
+            tr {
+                td {
+                    &.open {
+                        ul {
+                            li {
+                                color: white;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* ==============[ all issues of this newspapers (boxy year navigation) ]================= */
+.tx-dlf-calendar-years {
+    ul {
+        li {
+            margin: 20px;
+            a {
+                display: block;
+                background: @brand-secondary;
+                padding: 10px;
+                border-radius: 40px;
+                color: #fff;
+            }
+        }
+    }
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        padding: 140px;
+        vertical-align: middle;
+        ul {
+            li {
+                display: inline-block;
+                a {
+                    height: 80px;
+                    line-height: 60px;
+                    .no-touchevents & {
+                        .transition();
+                        &:hover {
+                            .transform(scale(1.2));
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.tx-dlf-pagegrid-list {
+
+    li {
+        width: 151px;
+        height: 250px;
+        position: relative;
+        img {
+            max-height: 250px;
+        }
+        .no-touchevents & {
+            .transition();
+            &:hover {
+                .transform(scale(2));
+                z-index: 10;
+            }
+        }
+    }
+    @media screen and (min-width: @tabletViewportWidth) {
+        li {
+            width: 182px;
+            height: 220px;
+        }
+    }
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        li {
+            width: 200px;
+            height: 250px;
+        }
+    }
+}
+
+.tx-dlf-toc {
+    ul.toc {
+        ul {
+            li {
+                a, span.a, > span.title {
+                    color: white;
+                }
+                @media screen and (min-width: @tabletLandscapeViewportWidth) {
+                    a, span.a, > span.title {
+                        .meta-type-icon {
+                            background-position: -90px 0px;
+                            &.meta-type-Abbildung {
+                                background-position: 0 0px;
+                            }
+                            &.meta-type-Werbung {
+                                background-position: -30px 0px;
+                            }
+                            &.meta-type-Artikel {
+                                background-position: -60px 0px;
+                            }
+                        }
+                    }
+                    &.placeholder {
+                        color: white;
+                        &:after {
+                            background: transparent;
+                        }
+                    }
+                }
+            }
+            li:nth-child(even) {
+                background: lighten(@brand-secondary,10%);
+            }
+        }
+    }
+    .tx-dlf-wincontent > ul.toc > li > a { // Based on old shitty markup, it selects the issue title
+        color: white;
+    }
+}

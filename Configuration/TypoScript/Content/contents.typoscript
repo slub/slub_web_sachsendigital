@@ -1,0 +1,149 @@
+#
+# Remap content element headlines and remove class and style attributes on p tags
+# ------------------------------------------------------------------------------------
+#
+lib.stdheader.stdWrap.dataWrap >
+lib.stdheader.10.stdWrap.wrap = |
+lib.stdheader.10.1.fontTag = |
+lib.stdheader.10.1.dataWrap = <h3>|</h3>
+lib.parseFunc_RTE.nonTypoTagStdWrap.encapsLines.addAttributes.P.class >
+lib.parseFunc_RTE.nonTypoTagStdWrap.encapsLines.addAttributes.P.style >
+
+#
+# Enable HTML parsing for table contents
+# ------------------------------------------------------------------------------------
+#
+tt_content.table {
+    20.innerStdWrap.parseFunc =< lib.parseFunc
+    20.innerStdWrap.htmlSpecialChars >
+}
+
+#
+# Dynamic content library (The heart of columns on homepage)
+# ------------------------------------------------------------------------------------
+#
+lib.dynamicContent = COA
+lib.dynamicContent {
+    5 = LOAD_REGISTER
+    5 {
+        colPos.cObject = TEXT
+        colPos.cObject {
+            value.current = 1
+            ifEmpty = 0
+        }
+    }
+    20 < styles.content.get
+    20.select.where = colPos={register:colPos}
+    20.select.where.insertData = 1
+}
+lib.dynamicContentSlide < lib.dynamicContent
+lib.dynamicContentSlide.20.slide = -1
+
+#
+# Configure unique identifier for element type and cleaning the markup
+# ------------------------------------------------------------------------------------
+#
+tt_content {
+    textpic.20 {
+        addClasses = textpic-container
+        text.wrap = |
+        imageStdWrap.dataWrap = <div class="csc-textpic-imagewrap">|</div>
+    }
+}
+
+
+#
+# Setup for random Logos on homepage
+# ------------------------------------------------------------------------------------
+#
+lib.institutions = FLUIDTEMPLATE
+lib.institutions {
+    file = EXT:slub_web_sachsendigital/Resources/Private/Templates/Institutions.html
+    dataProcessing.10 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
+    dataProcessing.10 {
+        table = tt_content
+        pidInList = {$config.logoContainer}
+        where =
+        as = institutions
+        dataProcessing {
+            10 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
+            10 {
+                references.fieldName = image
+            }
+        }
+    }
+}
+
+#
+# Render page resource image on default pages (used in collections)
+# ------------------------------------------------------------------------------------
+#
+lib {
+    pageimage = FILES
+    pageimage {
+        references {
+            data = levelmedia: -1, slide
+        }
+        renderObj = COA
+        renderObj {
+            10 = IMAGE
+            10 {
+                file {
+                    import.dataWrap = {file:current:storage}:{file:current:identifier}
+                    import.listNum = 1
+                    maxW = 500
+                }
+                altText.data = file:current:alternative
+                titleText.data = file:current:title
+                wrap = <div class="pageresource-container">|</div>
+            }
+            20 = COA
+            20 {
+                10 = TEXT
+                10 {
+                    data = file:current:title
+                    wrap = <strong>|</strong>
+                    required = 1
+                    br = 1
+                }
+                20 = TEXT
+                20 {
+                    data = file:current:description
+                    required = 1
+                    br = 1
+                }
+                wrap = <figcaption>|</figcaption>
+            }
+            wrap = <figure class="pageresource-image">|</figure>
+        }
+    }
+}
+
+#
+# Enable FSC elements in order to save the appearance of cross site news posts
+# ------------------------------------------------------------------------------------
+#
+lib.fluidContent {
+    templateRootPaths.55 = EXT:slub_web_sachsendigital/Resources/Private/Plugins/FluidStyledContent/Templates/
+    partialRootPaths.55 = EXT:slub_web_sachsendigital/Resources/Private/Plugins/FluidStyledContent/Partials/
+    layoutRootPaths.55 = EXT:slub_web_sachsendigital/Resources/Private/Plugins/FluidStyledContent/Layouts/
+    settings {
+        media.popup {
+            JSwindow = 0
+            directImageLink = 1
+            width = 1200m
+            height = 900m
+            linkParams.ATagParams.dataWrap =  class="lightbox" rel="lightbox{file:current:uid_foreign}"
+        }
+        defaultHeaderType = 3
+    }
+}
+
+# Overwrite own CTypes
+lib.contentElement {
+    templateRootPaths.55 = EXT:slub_web_sachsendigital/Resources/Private/Plugins/FluidStyledContent/Templates/
+    partialRootPaths.55 = EXT:slub_web_sachsendigital/Resources/Private/Plugins/FluidStyledContent/Partials/
+    layoutRootPaths.55 = EXT:slub_web_sachsendigital/Resources/Private/Plugins/FluidStyledContent/Layouts/
+}
+
+# --- EOF ---

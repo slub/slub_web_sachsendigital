@@ -1,0 +1,11 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:ce="http://typo3.org/ns/TYPO3/CMS/FluidStyledContent/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:if condition="{gallery.rows}">
+	<f:for each="{gallery.rows}" as="row">
+		<f:for each="{row.columns}" as="column">
+			<f:if condition="{column.media}">
+				<f:render partial="LdpCurated/Image" arguments="{file: column.media, dimensions: column.dimensions, data: data, settings: settings}" />
+			</f:if>
+		</f:for>
+	</f:for>
+</f:if>
+</html>
