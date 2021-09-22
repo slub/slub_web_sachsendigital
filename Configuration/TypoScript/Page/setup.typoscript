@@ -156,7 +156,7 @@ page {
     includeCSS {
         sxndKitodoViewerCss = EXT:slub_web_sachsendigital/Resources/Public/Css/sxndKitodoViewer.css
         sxndCss >
-        videoplayer = EXT:slub_web_sachsendigital/Resources/Public/Css/VideoPlayer.css
+        videoplayer = EXT:slub_web_sachsendigital/Resources/Public/Css/sxndShakaPlayer.css
     }
     includeJSFooterlibs {
         # must be included here as slub_digitalcollections doesn't know pagets_media

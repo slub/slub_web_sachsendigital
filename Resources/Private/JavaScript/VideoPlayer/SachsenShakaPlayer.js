@@ -1,5 +1,6 @@
 const $ = require('jquery');
 
+require('../../Less/VideoPlayer/VideoPlayer.less');
 require('./controls.css');
 
 var video;

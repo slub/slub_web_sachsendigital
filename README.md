@@ -7,17 +7,7 @@ This extension needs to reside in a folder called `slub_web_sachsendigital` in T
 
 After activate the extension in the TYPO3 extension manager you need to include a static template called `SLUB: Portal Sachsen.Digital` in the template settings of the source page of the SACHSEN.digtal branch.
 
-## Frontend development (based on Grunt)
-
-First of all this extension comes with a [Grunt](https://gruntjs.com/) setup which uses some typical [NPM packages](https://www.npmjs.com/) like jshint, terser, less aso.
-
-You can simply get it running by installing the local needings of NPM with `npm install` on your command line from the `Build` folder of this extension.
-
-After that just type `npx grunt` to start the processing which watches all the LESS and JS folders to generate new asset files on the fly if anythings changes.
-
-### Getting Started
-
-[`Build/.nvmrc`](`Build/.nvmrc`) specifies which version of Node we use (see [documentation](https://github.com/nvm-sh/nvm#nvmrc)).
+## Frontend Development
 
 ```bash
 cd Build/
@@ -26,7 +16,6 @@ npm install
 
 # Development
 npm run watch
-npm run watch-less
 
 # Production
 npm run build
@@ -35,6 +24,7 @@ npm run build
 ### Remarks
 
 - jQuery is marked as external in Webpack config
+- [`Build/.nvmrc`](`Build/.nvmrc`) specifies which version of Node we use (see [documentation](https://github.com/nvm-sh/nvm#nvmrc)).
 
 ## Dependencies
 
