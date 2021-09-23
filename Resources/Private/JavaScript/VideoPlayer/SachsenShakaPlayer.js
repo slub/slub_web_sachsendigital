@@ -19,6 +19,10 @@ var fps = 25;
 let chapters;
 let helpModal;
 let bookmarkModal;
+/**
+ * @type {SachsenShakaPlayer}
+ */
+let sxndPlayer;
 
 function isModalOpen() {
   return helpModal.isOpen || bookmarkModal.isOpen;
@@ -26,6 +30,97 @@ function isModalOpen() {
 
 // TODO: Pull all the global variables into this class
 class SachsenShakaPlayer {
+  constructor() {
+    //
+  }
+
+  async initialize() {
+    chapters = new Chapters(window.VIDEO_CHAPTERS);
+
+    // Create a Player instance.
+    video = document.getElementById('video');
+    manifestUri = document.getElementsByClassName('mime-type-video')[0].getAttribute('data-url') + '.mpd';
+    const ui = video['ui'];
+    controls = ui.getControls();
+    player = new shaka.Player(video);
+
+    const config = {
+      addSeekBar: true,
+      'controlPanelElements': [
+        'play_pause',
+        'chapters_menu',
+        myapp.PresentationTimeTracker.KEY,
+        'spacer',
+        'volume',
+        'mute',
+        myapp.Replay10Button.KEY,
+        myapp.SkipPreviousButton.KEY,
+        myapp.SkipNextButton.KEY,
+        myapp.Forward10Button.KEY,
+        myapp.CaptureButton.KEY,
+        myapp.BookmarkButton.KEY,
+        'fullscreen',
+        'overflow_menu'
+      ],
+      'overflowMenuButtons': ['language', 'playback_rate', 'loop', 'quality', 'picture_in_picture', 'captions'],
+      'addBigPlayButton': true,
+      'seekBarColors': {
+        base: 'rgba(255, 255, 255, 0.3)',
+        buffered: 'rgba(255, 255, 255, 0.54)',
+        played: 'rgb(255, 255, 255)',
+        adBreaks: 'rgb(255, 204, 0)',
+      }
+    };
+    ui.configure(config);
+
+    // Attach player to the window to make it easy to access in the JS console.
+    window.player = player;
+    window.ui = ui;
+
+    // Listen for error events.
+    player.addEventListener('error', this.onPlayerErrorEvent.bind(this));
+    controls.addEventListener('error', this.onUiErrorEvent.bind(this));
+
+    vifa = VideoFrame({
+      id: 'video',
+      frameRate: fps,
+      callback: function (response) {
+        console.log('callback response: ' + response);
+      }
+    });
+
+    // Try to load a manifest.
+    // This is an asynchronous process.
+    try {
+      // This runs if the asynchronous load is successful.
+      console.log('The video has now been loaded!');
+      const timecode = new URL(window.location).searchParams.get('timecode');
+      if (timecode) {
+        await player.load(manifestUri, parseFloat(timecode));
+      } else {
+        await player.load(manifestUri);
+      }
+    } catch (e) {
+      // onError is executed if the asynchronous load fails.
+      onError(e);
+    }
+  }
+
+  onPlayerErrorEvent(event) {
+    // Extract the shaka.util.Error object from the event.
+    this.onPlayerError(event.detail);
+  }
+
+  onUiErrorEvent(event) {
+    // Extract the shaka.util.Error object from the event.
+    this.onPlayerError(event.detail);
+  }
+
+  onPlayerError(error) {
+    // Handle player error
+    console.error('Error code', error.code, 'object', error);
+  }
+
   get currentTime() {
     return video.currentTime;
   }
@@ -90,9 +185,6 @@ class SachsenShakaPlayer {
   }
 }
 
-const sxndPlayer = new SachsenShakaPlayer();
-
-
 /**
  *
  * Initialize the Shaka-Player App
@@ -114,60 +206,10 @@ function initApp() {
 
 }
 
-async function initPlayer() {
-  chapters = new Chapters(window.VIDEO_CHAPTERS);
-
-  // Create a Player instance.
-  video = document.getElementById('video');
-  manifestUri = document.getElementsByClassName('mime-type-video')[0].getAttribute('data-url') + '.mpd';
-  const ui = video['ui'];
-  controls = ui.getControls();
-  player = new shaka.Player(video);
-
-  const config = {
-    addSeekBar: true,
-    'controlPanelElements': [
-      'play_pause',
-      'chapters_menu',
-      myapp.PresentationTimeTracker.KEY,
-      'spacer',
-      'volume',
-      'mute',
-      myapp.Replay10Button.KEY,
-      myapp.SkipPreviousButton.KEY,
-      myapp.SkipNextButton.KEY,
-      myapp.Forward10Button.KEY,
-      myapp.CaptureButton.KEY,
-      myapp.BookmarkButton.KEY,
-      'fullscreen',
-      'overflow_menu'
-    ],
-    'overflowMenuButtons': ['language', 'playback_rate', 'loop', 'quality', 'picture_in_picture', 'captions'],
-    'addBigPlayButton': true,
-    'seekBarColors': {
-      base: 'rgba(255, 255, 255, 0.3)',
-      buffered: 'rgba(255, 255, 255, 0.54)',
-      played: 'rgb(255, 255, 255)',
-      adBreaks: 'rgb(255, 204, 0)',
-    }
-  };
-  ui.configure(config);
-
-  // Attach player to the window to make it easy to access in the JS console.
-  window.player = player;
-  window.ui = ui;
-
-  // Listen for error events.
-  player.addEventListener('error', onPlayerErrorEvent);
-  controls.addEventListener('error', onUIErrorEvent);
-
-  vifa = VideoFrame({
-    id: 'video',
-    frameRate: fps,
-    callback: function (response) {
-      console.log('callback response: ' + response);
-    }
-  });
+// Listen to the custom shaka-ui-loaded event, to wait until the UI is loaded.
+document.addEventListener('shaka-ui-loaded', () => {
+  sxndPlayer = new SachsenShakaPlayer();
+  sxndPlayer.initialize();
 
   $('a[data-timecode]').on('click', function () {
     const timecode = $(this).data('timecode');
@@ -179,51 +221,15 @@ async function initPlayer() {
   bookmarkModal = new BookmarkModal(document.querySelector('.bookmark-modal'));
 
   registerKeybindings();
+});
 
-  // Try to load a manifest.
-  // This is an asynchronous process.
-  try {
-    // This runs if the asynchronous load is successful.
-    console.log('The video has now been loaded!');
-    const timecode = new URL(window.location).searchParams.get('timecode');
-    if (timecode) {
-      await player.load(manifestUri, parseFloat(timecode));
-    } else {
-      await player.load(manifestUri);
-    }
-  } catch (e) {
-    // onError is executed if the asynchronous load fails.
-    onError(e);
-  }
-}
-
-function onPlayerErrorEvent(errorEvent) {
-  // Extract the shaka.util.Error object from the event.
-  onPlayerError(event.detail);
-}
-
-function onPlayerError(error) {
-  // Handle player error
-  console.error('Error code', error.code, 'object', error);
-}
-
-function onUIErrorEvent(errorEvent) {
-  // Extract the shaka.util.Error object from the event.
-  onPlayerError(event.detail);
-}
-
-function initFailed(errorEvent) {
+// Listen to the custom shaka-ui-load-failed event, in case Shaka Player fails
+// to load (e.g. due to lack of browser support).
+document.addEventListener('shaka-ui-load-failed', (errorEvent) => {
   // Handle the failure to load; errorEvent.detail.reasonCode has a
   // shaka.ui.FailReasonCode describing why.
   console.error('Unable to load the UI library!');
-}
-
-
-// Listen to the custom shaka-ui-loaded event, to wait until the UI is loaded.
-document.addEventListener('shaka-ui-loaded', initPlayer);
-// Listen to the custom shaka-ui-load-failed event, in case Shaka Player fails
-// to load (e.g. due to lack of browser support).
-document.addEventListener('shaka-ui-load-failed', initFailed);
+});
 
 function registerKeybindings() {
   document.addEventListener('keydown', (e) => {
