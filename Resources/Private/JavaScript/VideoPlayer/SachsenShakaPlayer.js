@@ -22,16 +22,23 @@ function isModalOpen() {
 }
 
 class SachsenShakaPlayer {
-  constructor() {
-    //
+  /**
+   *
+   * @param {object} config
+   * @param {HTMLVideoElement} config.video
+   * @param {string} config.manifestUri
+   * @param {number?} config.timecode
+   */
+  constructor(config) {
+    this.video = config.video;
+    this.manifestUri = config.manifestUri;
+    this.initialTimecode = config.timecode;
   }
 
   async initialize() {
     this.chapters = new Chapters(window.VIDEO_CHAPTERS);
 
     this.fps = 25;
-    this.video = document.getElementById('video');
-    const manifestUri = document.getElementsByClassName('mime-type-video')[0].getAttribute('data-url') + '.mpd';
     const ui = this.video['ui'];
     this.controls = ui.getControls();
     this.player = new shaka.Player(this.video);
@@ -70,7 +77,7 @@ class SachsenShakaPlayer {
     this.controls.addEventListener('error', this.onUiErrorEvent.bind(this));
 
     this.vifa = VideoFrame({
-      id: 'video',
+      id: this.video.id,
       frameRate: this.fps,
       callback: function (response) {
         console.log('callback response: ' + response);
@@ -82,12 +89,7 @@ class SachsenShakaPlayer {
     try {
       // This runs if the asynchronous load is successful.
       console.log('The video has now been loaded!');
-      const timecode = new URL(window.location).searchParams.get('timecode');
-      if (timecode) {
-        await this.player.load(manifestUri, parseFloat(timecode));
-      } else {
-        await this.player.load(manifestUri);
-      }
+      await this.player.load(this.manifestUri, this.initialTimecode);
     } catch (e) {
       // onError is executed if the asynchronous load fails.
       onError(e);
@@ -196,7 +198,14 @@ function initApp() {
 
 // Listen to the custom shaka-ui-loaded event, to wait until the UI is loaded.
 document.addEventListener('shaka-ui-loaded', () => {
-  sxndPlayer = new SachsenShakaPlayer();
+  const timecode = new URL(window.location).searchParams.get('timecode');
+
+  sxndPlayer = new SachsenShakaPlayer({
+    video: document.getElementById('video'),
+    manifestUri: document.getElementsByClassName('mime-type-video')[0].getAttribute('data-url') + '.mpd',
+    timecode: timecode ? parseFloat(timecode) : undefined,
+  });
+
   sxndPlayer.initialize();
 
   $('a[data-timecode]').on('click', function () {
