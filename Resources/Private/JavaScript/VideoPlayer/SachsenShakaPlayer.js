@@ -10,13 +10,6 @@ require('./controls.css');
 
 const PREV_CHAPTER_TOLERANCE = 5;
 
-var video;
-var controls;
-var manifestUri;
-var player;
-var vifa;
-var fps = 25;
-let chapters;
 let helpModal;
 let bookmarkModal;
 /**
@@ -28,21 +21,20 @@ function isModalOpen() {
   return helpModal.isOpen || bookmarkModal.isOpen;
 }
 
-// TODO: Pull all the global variables into this class
 class SachsenShakaPlayer {
   constructor() {
     //
   }
 
   async initialize() {
-    chapters = new Chapters(window.VIDEO_CHAPTERS);
+    this.chapters = new Chapters(window.VIDEO_CHAPTERS);
 
-    // Create a Player instance.
-    video = document.getElementById('video');
-    manifestUri = document.getElementsByClassName('mime-type-video')[0].getAttribute('data-url') + '.mpd';
-    const ui = video['ui'];
-    controls = ui.getControls();
-    player = new shaka.Player(video);
+    this.fps = 25;
+    this.video = document.getElementById('video');
+    const manifestUri = document.getElementsByClassName('mime-type-video')[0].getAttribute('data-url') + '.mpd';
+    const ui = this.video['ui'];
+    this.controls = ui.getControls();
+    this.player = new shaka.Player(this.video);
 
     const config = {
       addSeekBar: true,
@@ -73,17 +65,13 @@ class SachsenShakaPlayer {
     };
     ui.configure(config);
 
-    // Attach player to the window to make it easy to access in the JS console.
-    window.player = player;
-    window.ui = ui;
-
     // Listen for error events.
-    player.addEventListener('error', this.onPlayerErrorEvent.bind(this));
-    controls.addEventListener('error', this.onUiErrorEvent.bind(this));
+    this.player.addEventListener('error', this.onPlayerErrorEvent.bind(this));
+    this.controls.addEventListener('error', this.onUiErrorEvent.bind(this));
 
-    vifa = VideoFrame({
+    this.vifa = VideoFrame({
       id: 'video',
-      frameRate: fps,
+      frameRate: this.fps,
       callback: function (response) {
         console.log('callback response: ' + response);
       }
@@ -96,9 +84,9 @@ class SachsenShakaPlayer {
       console.log('The video has now been loaded!');
       const timecode = new URL(window.location).searchParams.get('timecode');
       if (timecode) {
-        await player.load(manifestUri, parseFloat(timecode));
+        await this.player.load(manifestUri, parseFloat(timecode));
       } else {
-        await player.load(manifestUri);
+        await this.player.load(manifestUri);
       }
     } catch (e) {
       // onError is executed if the asynchronous load fails.
@@ -122,11 +110,11 @@ class SachsenShakaPlayer {
   }
 
   get currentTime() {
-    return video.currentTime;
+    return this.video.currentTime;
   }
 
   get displayTime() {
-    return controls.getDisplayTime();
+    return this.controls.getDisplayTime();
   }
 
   getCurrentChapter() {
@@ -134,11 +122,11 @@ class SachsenShakaPlayer {
   }
 
   timeToChapter(timecode) {
-    return chapters.timeToChapter(timecode);
+    return this.chapters.timeToChapter(timecode);
   }
 
   play() {
-    video.play();
+    this.video.play();
   }
 
   /**
@@ -151,15 +139,15 @@ class SachsenShakaPlayer {
     }
 
     if (typeof position === 'number') {
-      video.currentTime = position;
+      this.video.currentTime = position;
     } else if (typeof position.timecode === 'number') {
-      video.currentTime = position.timecode;
+      this.video.currentTime = position.timecode;
     }
   }
 
   skipSeconds(delta) {
     // TODO: Consider end of video
-    video.currentTime += delta;
+    this.video.currentTime += delta;
   }
 
   /**
@@ -176,12 +164,12 @@ class SachsenShakaPlayer {
   nextChapter() {
     let cur = this.getCurrentChapter();
     if (cur) {
-      this.seekTo(chapters.advance(cur, +1));
+      this.seekTo(this.chapters.advance(cur, +1));
     }
   }
 
   showBookmarkUrl() {
-    bookmarkModal.setTimecode(controls.getDisplayTime()).open();
+    bookmarkModal.setTimecode(this.displayTime).open();
   }
 }
 
@@ -252,26 +240,26 @@ function registerKeybindings() {
 
     if (e.key == 'f') {
       e.preventDefault();
-      controls.toggleFullScreen();
+      sxndPlayer.controls.toggleFullScreen();
     } else if (e.key == ' ') {
       e.preventDefault();
-      if (video.paused) {
-        video.play();
+      if (sxndPlayer.video.paused) {
+        sxndPlayer.video.play();
       } else {
-        video.pause();
+        sxndPlayer.video.pause();
       }
     } else if (e.key == "ArrowUp") {
       e.preventDefault();
-      video.volume = Math.min(1, video.volume + 0.05);
+      sxndPlayer.video.volume = Math.min(1, sxndPlayer.video.volume + 0.05);
     } else if (e.key == "ArrowDown") {
       e.preventDefault();
-      video.volume = Math.max(0, video.volume - 0.05);
+      sxndPlayer.video.volume = Math.max(0, sxndPlayer.video.volume - 0.05);
     } else if (e.key == "ArrowLeft") {
       e.preventDefault();
       if (e.ctrlKey || e.metaKey) {
         sxndPlayer.prevChapter();
       } else if (e.shiftKey) {
-        vifa.seekBackward(1);
+        sxndPlayer.vifa.seekBackward(1);
       } else {
         sxndPlayer.skipSeconds(-10);
       }
@@ -280,19 +268,19 @@ function registerKeybindings() {
       if (e.ctrlKey || e.metaKey) {
         sxndPlayer.nextChapter();
       } else if (e.shiftKey) {
-        vifa.seekForward(1);
+        sxndPlayer.vifa.seekForward(1);
       } else {
         sxndPlayer.skipSeconds(+10);
       }
     } else if (e.key == 'm') {
       e.preventDefault();
-      video.muted = !video.muted;
+      sxndPlayer.video.muted = !sxndPlayer.video.muted;
     } else if (e.key == '.') {
       e.preventDefault();
-      vifa.seekForward(1);
+      sxndPlayer.vifa.seekForward(1);
     } else if (e.key == ',') {
       e.preventDefault();
-      vifa.seekBackward(1);
+      sxndPlayer.vifa.seekBackward(1);
     } else if (e.key == 'b') {
       e.preventDefault();
       sxndPlayer.showBookmarkUrl();
@@ -361,7 +349,7 @@ myapp.SkipNextButton = class extends shaka.ui.Element {
 
     // Listen for clicks on the button
     this.eventManager.listen(this.button_, 'click', () => {
-      vifa.seekForward(1);
+      sxndPlayer.vifa.seekForward(1);
     });
   }
 };
@@ -399,7 +387,7 @@ myapp.SkipPreviousButton = class extends shaka.ui.Element {
 
     // Listen for clicks on the button
     this.eventManager.listen(this.button_, 'click', () => {
-      vifa.seekBackward(1);
+      sxndPlayer.vifa.seekBackward(1);
     });
   }
 };
@@ -583,7 +571,7 @@ myapp.PresentationTimeTracker = class extends shaka.ui.Element {
 
     const { totalSeconds, activeMode } = newState;
     if (totalSeconds !== this.state.totalSeconds || activeMode !== this.state.activeMode) {
-      const showHour = video.duration >= 3600;
+      const showHour = sxndPlayer.video.duration >= 3600;
 
       let text, title;
 
@@ -591,27 +579,27 @@ myapp.PresentationTimeTracker = class extends shaka.ui.Element {
         case TimeMode.CurrentTime:
         default:
           text = buildTimeString(totalSeconds, showHour);
-          if (vifa) {
-            text += ':' + ("0" + (vifa.get() % fps)).slice(-2);
+          if (sxndPlayer.vifa) {
+            text += ':' + ("0" + (sxndPlayer.vifa.get() % sxndPlayer.fps)).slice(-2);
           }
-          if (video.duration) {
-            text += ' / ' + buildTimeString(video.duration, showHour);
+          if (sxndPlayer.video.duration) {
+            text += ' / ' + buildTimeString(sxndPlayer.video.duration, showHour);
           }
           title = 'Aktuelle Laufzeit / Gesamtlaufzeit';
           break;
 
         case TimeMode.RemainingTime:
-          text = buildTimeString(video.duration - totalSeconds, showHour);
+          text = buildTimeString(sxndPlayer.video.duration - totalSeconds, showHour);
           title = 'Restlaufzeit';
           break;
 
         case TimeMode.CurrentFrame:
-          text = `${vifa.get()}`;
+          text = `${sxndPlayer.vifa.get()}`;
           title = 'Frame-Nummer';
           break;
       }
 
-      let currentChapter = chapters.timeToChapter(totalSeconds);
+      let currentChapter = sxndPlayer.chapters.timeToChapter(totalSeconds);
       if (currentChapter) {
         text += ` – ${currentChapter.title}`;
       }
