@@ -24,17 +24,6 @@ function isModalOpen() {
   return helpModal.isOpen || bookmarkModal.isOpen;
 }
 
-const actions = {
-  bookmarkUrl: () => {
-    bookmarkModal.setTimecode(controls.getDisplayTime()).open();
-  }
-}
-
-function skipSeconds(delta) {
-  // TODO: Consider end of video
-  video.currentTime += delta;
-}
-
 // TODO: Pull all the global variables into this class
 class SachsenShakaPlayer {
   get currentTime() {
@@ -53,6 +42,10 @@ class SachsenShakaPlayer {
     return chapters.timeToChapter(timecode);
   }
 
+  play() {
+    video.play();
+  }
+
   /**
    *
    * @param {*} position Timecode or chapter
@@ -67,6 +60,11 @@ class SachsenShakaPlayer {
     } else if (typeof position.timecode === 'number') {
       video.currentTime = position.timecode;
     }
+  }
+
+  skipSeconds(delta) {
+    // TODO: Consider end of video
+    video.currentTime += delta;
   }
 
   /**
@@ -85,6 +83,10 @@ class SachsenShakaPlayer {
     if (cur) {
       this.seekTo(chapters.advance(cur, +1));
     }
+  }
+
+  showBookmarkUrl() {
+    bookmarkModal.setTimecode(controls.getDisplayTime()).open();
   }
 }
 
@@ -169,7 +171,8 @@ async function initPlayer() {
 
   $('a[data-timecode]').on('click', function () {
     const timecode = $(this).data('timecode');
-    play(timecode);
+    sxndPlayer.play();
+    sxndPlayer.seekTo(timecode);
   });
 
   helpModal = new SimpleModal(document.querySelector('.dfgplayer-help'));
@@ -185,7 +188,6 @@ async function initPlayer() {
     const timecode = new URL(window.location).searchParams.get('timecode');
     if (timecode) {
       await player.load(manifestUri, parseFloat(timecode));
-      //play(parseFloat(timecode));
     } else {
       await player.load(manifestUri);
     }
@@ -216,19 +218,6 @@ function initFailed(errorEvent) {
   console.error('Unable to load the UI library!');
 }
 
-/**
- * plays the media from a individual position in media stream
- * @param seconds
- */
-function play(seconds) {
-
-  if (video.paused) {
-    // if video is pause, we have to start it first
-    video.play();
-  }
-  // set position to currenTime
-  video.currentTime = seconds;
-}
 
 // Listen to the custom shaka-ui-loaded event, to wait until the UI is loaded.
 document.addEventListener('shaka-ui-loaded', initPlayer);
@@ -278,7 +267,7 @@ function registerKeybindings() {
       } else if (e.shiftKey) {
         vifa.seekBackward(1);
       } else {
-        skipSeconds(-10);
+        sxndPlayer.skipSeconds(-10);
       }
     } else if (e.key == "ArrowRight") {
       e.preventDefault();
@@ -287,7 +276,7 @@ function registerKeybindings() {
       } else if (e.shiftKey) {
         vifa.seekForward(1);
       } else {
-        skipSeconds(+10);
+        sxndPlayer.skipSeconds(+10);
       }
     } else if (e.key == 'm') {
       e.preventDefault();
@@ -300,7 +289,7 @@ function registerKeybindings() {
       vifa.seekBackward(1);
     } else if (e.key == 'b') {
       e.preventDefault();
-      actions.bookmarkUrl();
+      sxndPlayer.showBookmarkUrl();
     }
   });
 }
@@ -441,7 +430,7 @@ myapp.Forward10Button = class extends shaka.ui.Element {
 
     // Listen for clicks on the button
     this.eventManager.listen(this.button_, 'click', () => {
-      skipSeconds(+10);
+      sxndPlayer.skipSeconds(+10);
     });
   }
 };
@@ -478,7 +467,7 @@ myapp.Replay10Button = class extends shaka.ui.Element {
 
     // Listen for clicks on the button
     this.eventManager.listen(this.button_, 'click', () => {
-      skipSeconds(-10);
+      sxndPlayer.skipSeconds(-10);
     });
   }
 };
@@ -514,7 +503,7 @@ myapp.BookmarkButton = class extends shaka.ui.Element {
     this.parent.appendChild(this.button_);
 
     // Listen for clicks on the button
-    this.eventManager.listen(this.button_, 'click', actions.bookmarkUrl);
+    this.eventManager.listen(this.button_, 'click', () => sxndPlayer.showBookmarkUrl());
   }
 };
 
