@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import BookmarkModal from './BookmarkModal';
 import Chapters from './Chapters';
+import { renderScreenshot } from './Screenshot';
 import SimpleModal from './SimpleModal';
 
 import CaptureButton from './controls/CaptureButton';
@@ -336,6 +337,9 @@ function registerKeybindings() {
     } else if (e.key == 'b') {
       e.preventDefault();
       sxndPlayer.showBookmarkUrl();
+    } else if (e.key == 's') {
+      e.preventDefault();
+      renderScreenshot(sxndPlayer.video);
     }
   });
 }
