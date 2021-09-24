@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import BookmarkModal from './BookmarkModal';
 import Chapters from './Chapters';
+import Modals from './Modals';
 import { renderScreenshot } from './Screenshot';
 import SimpleModal from './SimpleModal';
 
@@ -17,16 +18,12 @@ import './controls.css';
 
 const PREV_CHAPTER_TOLERANCE = 5;
 
-let helpModal;
-let bookmarkModal;
+let modals;
+
 /**
  * @type {SachsenShakaPlayer}
  */
 let sxndPlayer;
-
-function isModalOpen() {
-  return helpModal.isOpen || bookmarkModal.isOpen;
-}
 
 class SachsenShakaPlayer {
   /**
@@ -220,7 +217,7 @@ class SachsenShakaPlayer {
 
   showBookmarkUrl() {
     this.pause();
-    bookmarkModal.setTimecode(this.displayTime).open();
+    modals.bookmark.setTimecode(this.displayTime).open();
   }
 
   showScreenshot() {
@@ -268,8 +265,10 @@ document.addEventListener('shaka-ui-loaded', () => {
     sxndPlayer.seekTo(timecode);
   });
 
-  helpModal = new SimpleModal(document.querySelector('.dfgplayer-help'));
-  bookmarkModal = new BookmarkModal(document.querySelector('.bookmark-modal'));
+  modals = Modals({
+    help: new SimpleModal(document.querySelector('.dfgplayer-help')),
+    bookmark: new BookmarkModal(document.querySelector('.bookmark-modal')),
+  });
 
   registerKeybindings();
 });
@@ -286,18 +285,13 @@ function registerKeybindings() {
   document.addEventListener('keydown', (e) => {
     if (e.key == 'F1') {
       e.preventDefault();
-      helpModal.toggle();
+      modals.help.toggle();
     } else if (e.key == 'Escape') {
       e.preventDefault();
-
-      if (helpModal.isOpen) {
-        helpModal.close();
-      } else if (bookmarkModal.isOpen) {
-        bookmarkModal.close();
-      }
+      modals.closeNext();
     }
 
-    if (isModalOpen()) {
+    if (modals.hasOpen()) {
       return;
     }
 
