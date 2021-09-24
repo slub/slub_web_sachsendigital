@@ -1,4 +1,7 @@
 import $ from 'jquery';
+import shaka from 'shaka-player/dist/shaka-player.ui';
+import 'shaka-player/ui/controls.less';
+
 import BookmarkModal from './BookmarkModal';
 import Chapters from './Chapters';
 import Modals from './Modals';
@@ -14,7 +17,6 @@ import Forward10Button from './controls/Forward10Button';
 import BookmarkButton from './controls/BookmarkButton';
 
 import '../../Less/VideoPlayer/VideoPlayer.less';
-import './controls.css';
 
 const PREV_CHAPTER_TOLERANCE = 5;
 

@@ -1,3 +1,5 @@
+import shaka from 'shaka-player/dist/shaka-player.ui';
+
 export default class Forward10Button extends shaka.ui.Element {
   static KEY = 'forward_10';
 

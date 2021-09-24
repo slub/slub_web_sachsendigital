@@ -1,3 +1,5 @@
+import shaka from 'shaka-player/dist/shaka-player.ui';
+
 import { buildTimeString } from '../util';
 
 const TimeMode = {

@@ -63,6 +63,19 @@ module.exports = {
     jquery: 'jQuery',
   },
   optimization: {
+    splitChunks: {
+      chunks(chunk) {
+        return chunk.name === 'SxndShakaPlayer';
+      },
+      maxInitialRequests: Infinity,
+      minSize: 0,
+      cacheGroups: {
+        shakaVendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "SxndShakaVendor"
+        },
+      },
+    },
     minimizer: [
       `...`,
       new CssMinimizerPlugin(),

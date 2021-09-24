@@ -1,3 +1,5 @@
+import shaka from 'shaka-player/dist/shaka-player.ui';
+
 export default class Replay10Button extends shaka.ui.Element {
   static KEY = 'replay_10';
 
