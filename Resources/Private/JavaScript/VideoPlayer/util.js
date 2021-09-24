@@ -5,7 +5,7 @@
   * @param {boolean} showHour
   * @return {string}
   */
-function buildTimeString(totalSeconds, showHour) {
+export function buildTimeString(totalSeconds, showHour) {
   const segments = showHour
     ? [totalSeconds / 3600, (totalSeconds / 60) % 60, totalSeconds % 60]
     : [totalSeconds / 60, totalSeconds % 60];
@@ -17,5 +17,3 @@ function buildTimeString(totalSeconds, showHour) {
       .join(':')
   );
 }
-
-module.exports = { buildTimeString };

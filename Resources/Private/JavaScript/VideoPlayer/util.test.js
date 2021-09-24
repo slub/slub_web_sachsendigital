@@ -1,4 +1,4 @@
-const { buildTimeString } = require("./util");
+import { buildTimeString } from './util';
 
 describe('buildTimeString', () => {
   test('basic', () => {

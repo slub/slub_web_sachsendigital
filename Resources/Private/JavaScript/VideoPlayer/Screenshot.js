@@ -1,4 +1,4 @@
-function renderScreenshot(videoDomElement) {
+export function renderScreenshot(videoDomElement) {
   // add canvas overlay to DOM
   const domTemplate = document.createElement("template");
   domTemplate.innerHTML = `<div id="screenshot-overlay"><span class="close-screenshot-modal icon-close"></span><canvas></canvas></div>`;
@@ -25,7 +25,7 @@ function renderScreenshot(videoDomElement) {
  * @param {HTMLVideoElement} videoDomElement Source video element from which the screenshot is taken
  * @param {any} metadataArray Output of {@link generateMetadataObject}
  */
-function drawCanvas(target, videoDomElement, metadataArray) {
+export function drawCanvas(target, videoDomElement, metadataArray) {
   const [targetCanvas, context] =
     target instanceof HTMLCanvasElement
       ? [target, target.getContext('2d')]
@@ -60,7 +60,7 @@ function drawCanvas(target, videoDomElement, metadataArray) {
  *
  * @param {HTMLDataElement} dataDomElement
  */
-function generateMetadataObject(dataDomElement) {
+export function generateMetadataObject(dataDomElement) {
   var metadataObject = {
     metadata: {},
     screenshotFields: dataDomElement.getAttribute('data-screenshotfields').split(','),
@@ -74,5 +74,3 @@ function generateMetadataObject(dataDomElement) {
 
   return metadataObject;
 }
-
-module.exports = { drawCanvas, renderScreenshot, generateMetadataObject };

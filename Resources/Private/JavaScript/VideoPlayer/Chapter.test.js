@@ -1,4 +1,4 @@
-const { Chapters } = require('./Chapters');
+import Chapters from './Chapters';
 
 function getTestChapters() {
   return new Chapters([

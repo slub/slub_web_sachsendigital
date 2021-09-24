@@ -1,8 +1,8 @@
-const $ = require('jquery');
+import $ from 'jquery';
 
-require('./vendor/modernizrCustom');
-require('./vendor/jquery.cookiebar');
-require('magnific-popup');
+import './vendor/modernizrCustom';
+import './vendor/jquery.cookiebar';
+import 'magnific-popup';
 
 
 /*

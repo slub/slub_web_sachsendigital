@@ -1,6 +1,6 @@
-const $ = require('jquery');
+import $ from 'jquery';
 
-class SimpleModal {
+export default class SimpleModal {
   /**
    *
    * @param {HTMLElement} element
@@ -70,5 +70,3 @@ class SimpleModal {
     }
   }
 }
-
-module.exports = { SimpleModal };

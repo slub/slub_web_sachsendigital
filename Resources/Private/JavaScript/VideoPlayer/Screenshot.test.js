@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-const { renderScreenshot, drawCanvas, generateMetadataObject } = require('./Screenshot');
+import { renderScreenshot, drawCanvas, generateMetadataObject } from './Screenshot';
 
 function createMetadataDom() {
   const template = document.createElement("template");

@@ -1,12 +1,12 @@
-const $ = require('jquery');
-const { BookmarkModal } = require('./BookmarkModal');
-const { Chapters } = require('./Chapters');
-const { SimpleModal } = require('./SimpleModal');
-const { renderScreenshot } = require('./Screenshot');
-const { buildTimeString } = require('./util');
+import $ from 'jquery';
+import BookmarkModal from './BookmarkModal';
+import Chapters from './Chapters';
+import SimpleModal from './SimpleModal';
+import { renderScreenshot } from './Screenshot';
+import { buildTimeString } from './util';
 
-require('../../Less/VideoPlayer/VideoPlayer.less');
-require('./controls.css');
+import '../../Less/VideoPlayer/VideoPlayer.less';
+import './controls.css';
 
 const PREV_CHAPTER_TOLERANCE = 5;
 

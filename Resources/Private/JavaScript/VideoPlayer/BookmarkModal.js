@@ -1,6 +1,6 @@
-const { SimpleModal } = require('./SimpleModal');
+import SimpleModal from './SimpleModal';
 
-class BookmarkModal extends SimpleModal {
+export default class BookmarkModal extends SimpleModal {
   constructor(element) {
     super(element, {
       timecode: null,
@@ -31,5 +31,3 @@ class BookmarkModal extends SimpleModal {
     }
   }
 }
-
-module.exports = { BookmarkModal };

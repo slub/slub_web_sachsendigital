@@ -1,6 +1,6 @@
 let _chapterCnt = 0;
 
-class Chapters {
+export default class Chapters {
   /**
    *
    * @param {{ title: string; timecode: string }[]} chapters
@@ -57,5 +57,3 @@ class Chapters {
     return this._chapters.values();
   }
 }
-
-module.exports = { Chapters };
