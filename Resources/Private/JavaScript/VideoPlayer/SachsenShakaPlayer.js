@@ -72,6 +72,8 @@ class SachsenShakaPlayer {
     };
     ui.configure(config);
 
+    this.renderChapterMarkers();
+
     // Listen for error events.
     this.player.addEventListener('error', this.onPlayerErrorEvent.bind(this));
     this.controls.addEventListener('error', this.onUiErrorEvent.bind(this));
@@ -93,6 +95,38 @@ class SachsenShakaPlayer {
     } catch (e) {
       // onError is executed if the asynchronous load fails.
       onError(e);
+    }
+  }
+
+  renderChapterMarkers() {
+    const seekBar = document.querySelector('.shaka-seek-bar-container');
+
+    for (const chapter of this.chapters) {
+      const relative = chapter.timecode / this.video.duration;
+
+      // In particular, make sure that we don't put markers outside of the
+      // seekbar for wrong timestamps.
+      if (!(0 <= relative && relative < 1)) {
+        continue;
+      }
+
+      // The outer <span /> is to give some leeway, making the chapter marker
+      // easier to hit.
+
+      const marker = document.createElement('span');
+      marker.className = 'sxnd-chapter-marker';
+      marker.style.position = 'absolute';
+      marker.style.left = `${chapter.timecode / this.video.duration * 100}%`;
+      marker.title = chapter.title;
+      marker.addEventListener('click', () => {
+        this.play();
+        this.seekTo(chapter);
+      });
+
+      const markerInner = document.createElement('span');
+      marker.append(markerInner);
+
+      seekBar.append(marker);
     }
   }
 
@@ -637,70 +671,3 @@ shaka.ui.Controls.registerElement(
   myapp.PresentationTimeTracker.KEY,
   new myapp.PresentationTimeTracker.Factory()
 );
-
-
-
-
-// myapp.ChaptersMenu = class extends shaka.ui.Element {
-//   constructor(parent, controls, chapters) {
-//     super(parent, controls);
-
-//     this.chapters_ = chapters;
-
-//     // The actual button that will be displayed
-//     this.button_ = document.createElement('button');
-//     this.button_.className = 'shaka-overflow-menu-button shaka-no-propagation material-icons-round';
-//     this.button_.title = 'Chapters';
-//     this.button_.textContent = 'toc';
-//     this.button_.innerHTML = '<ul><li>hallo</li></ul>';
-//     this.parent.appendChild(this.button_);
-
-
-//   }
-// };
-
-// myapp.ChaptersMenu.Factory = class {
-//   constructor(chapters) {
-//     this.chapters_ = chapters;
-//   }
-
-//   create(rootElement, controls) {
-//     return new myapp.ChaptersMenu (rootElement, controls, this.chapters_);
-//   }
-// };
-
-// shaka.ui.Controls.registerElement(
-//     'chapters_menu',
-//     new myapp.ChaptersMenu.Factory(() => {
-//       chapters;
-//       // Calculate and return chapter metadata here
-//     }));
-
-
-// /**
-//  * generates timeline markers for chapter selection
-//  */
-// function generateChapters() {
-//   var length = getMediaLength();
-//   var seekBar = $('.jp-seek-bar');
-
-//   $('.chapter').each(function() {
-//       var timecode = $(this).data('timecode');
-//       var title = $(this).data('title');
-//       $('<span />', {
-//           'class': 'jp-chapter-marker',
-//           title: $(this).data('title'),
-//           style: 'position: absolute; left: ' + ((timecode -0.5) * 100 / length) + '%',
-//           click: function() {
-//               play(timecode);
-//           }
-
-//       }).appendTo(seekBar);
-//   });
-// }
-
-
-// This will add three buttons to the controls panel (in that order): shaka-provided
-// rewind and fast forward button and out custom skip button, referenced by the name
-// we used when registering the factory with the controls.
-//ui['controlPanelElements'] = ['rewind', 'fast_forward', 'skip'];

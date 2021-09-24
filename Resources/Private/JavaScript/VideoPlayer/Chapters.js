@@ -52,6 +52,10 @@ class Chapters {
       }
     }
   }
+
+  [Symbol.iterator]() {
+    return this._chapters.values();
+  }
 }
 
 module.exports = { Chapters };
