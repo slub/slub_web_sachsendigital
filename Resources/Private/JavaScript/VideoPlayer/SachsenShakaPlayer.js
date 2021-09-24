@@ -51,16 +51,16 @@ class SachsenShakaPlayer {
       'controlPanelElements': [
         'play_pause',
         'chapters_menu',
-        myapp.PresentationTimeTracker.KEY,
+        PresentationTimeTracker.KEY,
         'spacer',
         'volume',
         'mute',
-        myapp.Replay10Button.KEY,
-        myapp.SkipPreviousButton.KEY,
-        myapp.SkipNextButton.KEY,
-        myapp.Forward10Button.KEY,
-        myapp.CaptureButton.KEY,
-        myapp.BookmarkButton.KEY,
+        Replay10Button.KEY,
+        SkipPreviousButton.KEY,
+        SkipNextButton.KEY,
+        Forward10Button.KEY,
+        CaptureButton.KEY,
+        BookmarkButton.KEY,
         'fullscreen',
         'overflow_menu'
       ],
@@ -334,15 +334,7 @@ function registerKeybindings() {
   });
 }
 
-class myapp { }
-
-// add some custom buttons
-
-// -----------------------------------------------------------------------
-// 1. Capture-Button
-// -----------------------------------------------------------------------
-// Use shaka.ui.Element as a base class
-myapp.CaptureButton = class extends shaka.ui.Element {
+class CaptureButton extends shaka.ui.Element {
   static KEY = 'capture';
 
   constructor(parent, controls) {
@@ -362,25 +354,18 @@ myapp.CaptureButton = class extends shaka.ui.Element {
   }
 };
 
-
-// Factory that will create a button at run time.
-myapp.CaptureButton.Factory = class {
+CaptureButton.Factory = class {
   create(rootElement, controls) {
-    return new myapp.CaptureButton(rootElement, controls);
+    return new CaptureButton(rootElement, controls);
   }
 };
 
-// Register our factory with the controls, so controls can create button instances.
 shaka.ui.Controls.registerElement(
-  myapp.CaptureButton.KEY,
-  new myapp.CaptureButton.Factory()
+  CaptureButton.KEY,
+  new CaptureButton.Factory()
 );
 
-// -----------------------------------------------------------------------
-// 2. Skip-Next-Button
-// -----------------------------------------------------------------------
-// Use shaka.ui.Element as a base class
-myapp.SkipNextButton = class extends shaka.ui.Element {
+class SkipNextButton extends shaka.ui.Element {
   static KEY = 'skip_next';
 
   constructor(parent, controls) {
@@ -400,25 +385,18 @@ myapp.SkipNextButton = class extends shaka.ui.Element {
   }
 };
 
-
-// Factory that will create a button at run time.
-myapp.SkipNextButton.Factory = class {
+SkipNextButton.Factory = class {
   create(rootElement, controls) {
-    return new myapp.SkipNextButton(rootElement, controls);
+    return new SkipNextButton(rootElement, controls);
   }
 };
 
-// Register our factory with the controls, so controls can create button instances.
 shaka.ui.Controls.registerElement(
-  myapp.SkipNextButton.KEY,
-  new myapp.SkipNextButton.Factory()
+  SkipNextButton.KEY,
+  new SkipNextButton.Factory()
 );
 
-// -----------------------------------------------------------------------
-// 3. Skip-Previous-Button
-// -----------------------------------------------------------------------
-// Use shaka.ui.Element as a base class
-myapp.SkipPreviousButton = class extends shaka.ui.Element {
+class SkipPreviousButton extends shaka.ui.Element {
   static KEY = 'skip_previous';
 
   constructor(parent, controls) {
@@ -438,24 +416,18 @@ myapp.SkipPreviousButton = class extends shaka.ui.Element {
   }
 };
 
-// Factory that will create a button at run time.
-myapp.SkipPreviousButton.Factory = class {
+SkipPreviousButton.Factory = class {
   create(rootElement, controls) {
-    return new myapp.SkipPreviousButton(rootElement, controls);
+    return new SkipPreviousButton(rootElement, controls);
   }
 };
 
-// Register our factory with the controls, so controls can create button instances.
 shaka.ui.Controls.registerElement(
-  myapp.SkipPreviousButton.KEY,
-  new myapp.SkipPreviousButton.Factory()
+  SkipPreviousButton.KEY,
+  new SkipPreviousButton.Factory()
 );
 
-// -----------------------------------------------------------------------
-// 4. Foward 10seconds Button
-// -----------------------------------------------------------------------
-// Use shaka.ui.Element as a base class
-myapp.Forward10Button = class extends shaka.ui.Element {
+class Forward10Button extends shaka.ui.Element {
   static KEY = 'forward_10';
 
   constructor(parent, controls) {
@@ -475,24 +447,18 @@ myapp.Forward10Button = class extends shaka.ui.Element {
   }
 };
 
-// Factory that will create a button at run time.
-myapp.Forward10Button.Factory = class {
+Forward10Button.Factory = class {
   create(rootElement, controls) {
-    return new myapp.Forward10Button(rootElement, controls);
+    return new Forward10Button(rootElement, controls);
   }
 };
 
-// Register our factory with the controls, so controls can create button instances.
 shaka.ui.Controls.registerElement(
-  myapp.Forward10Button.KEY,
-  new myapp.Forward10Button.Factory()
+  Forward10Button.KEY,
+  new Forward10Button.Factory()
 );
 
-// -----------------------------------------------------------------------
-// 5. Replay 10seconds Button
-// -----------------------------------------------------------------------
-// Use shaka.ui.Element as a base class
-myapp.Replay10Button = class extends shaka.ui.Element {
+class Replay10Button extends shaka.ui.Element {
   static KEY = 'replay_10';
 
   constructor(parent, controls) {
@@ -512,24 +478,18 @@ myapp.Replay10Button = class extends shaka.ui.Element {
   }
 };
 
-// Factory that will create a button at run time.
-myapp.Replay10Button.Factory = class {
+Replay10Button.Factory = class {
   create(rootElement, controls) {
-    return new myapp.Replay10Button(rootElement, controls);
+    return new Replay10Button(rootElement, controls);
   }
 };
 
-// Register our factory with the controls, so controls can create button instances.
 shaka.ui.Controls.registerElement(
-  myapp.Replay10Button.KEY,
-  new myapp.Replay10Button.Factory()
+  Replay10Button.KEY,
+  new Replay10Button.Factory()
 );
 
-// -----------------------------------------------------------------------
-// 6. Bookmark-Button
-// -----------------------------------------------------------------------
-// Use shaka.ui.Element as a base class
-myapp.BookmarkButton = class extends shaka.ui.Element {
+class BookmarkButton extends shaka.ui.Element {
   static KEY = 'bookmark';
 
   constructor(parent, controls) {
@@ -548,17 +508,15 @@ myapp.BookmarkButton = class extends shaka.ui.Element {
 };
 
 
-// Factory that will create a button at run time.
-myapp.BookmarkButton.Factory = class {
+BookmarkButton.Factory = class {
   create(rootElement, controls) {
-    return new myapp.BookmarkButton(rootElement, controls);
+    return new BookmarkButton(rootElement, controls);
   }
 };
 
-// Register our factory with the controls, so controls can create button instances.
 shaka.ui.Controls.registerElement(
-  myapp.BookmarkButton.KEY,
-  new myapp.BookmarkButton.Factory()
+  BookmarkButton.KEY,
+  new BookmarkButton.Factory()
 );
 
 const TimeMode = {
@@ -568,12 +526,7 @@ const TimeMode = {
   COUNT: 3,
 };
 
-/**
- * @extends {shaka.ui.Element}
- * @final
- * @export
- */
-myapp.PresentationTimeTracker = class extends shaka.ui.Element {
+class PresentationTimeTracker extends shaka.ui.Element {
   static KEY = 'time_and_duration_frame';
 
   /**
@@ -663,16 +616,14 @@ myapp.PresentationTimeTracker = class extends shaka.ui.Element {
 
 /**
  * @implements {shaka.extern.IUIElement.Factory}
- * @final
  */
-myapp.PresentationTimeTracker.Factory = class {
-  /** @override */
+PresentationTimeTracker.Factory = class {
   create(rootElement, controls) {
-    return new myapp.PresentationTimeTracker(rootElement, controls);
+    return new PresentationTimeTracker(rootElement, controls);
   }
 };
 
 shaka.ui.Controls.registerElement(
-  myapp.PresentationTimeTracker.KEY,
-  new myapp.PresentationTimeTracker.Factory()
+  PresentationTimeTracker.KEY,
+  new PresentationTimeTracker.Factory()
 );
