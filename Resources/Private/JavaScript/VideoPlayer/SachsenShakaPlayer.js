@@ -175,6 +175,10 @@ class SachsenShakaPlayer {
     this.video.play();
   }
 
+  pause() {
+    this.video.pause();
+  }
+
   /**
    *
    * @param {*} position Timecode or chapter
@@ -215,10 +219,12 @@ class SachsenShakaPlayer {
   }
 
   showBookmarkUrl() {
+    this.pause();
     bookmarkModal.setTimecode(this.displayTime).open();
   }
 
   showScreenshot() {
+    this.pause();
     renderScreenshot(this.video);
   }
 }
