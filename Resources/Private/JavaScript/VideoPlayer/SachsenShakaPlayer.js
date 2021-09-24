@@ -43,6 +43,9 @@ class SachsenShakaPlayer {
     this.controls = ui.getControls();
     this.player = new shaka.Player(this.video);
 
+    // Store player instance so that our custom controls may access it
+    this.controls.elSxndPlayer = this;
+
     const config = {
       addSeekBar: true,
       'controlPanelElements': [
@@ -392,7 +395,7 @@ myapp.SkipNextButton = class extends shaka.ui.Element {
 
     // Listen for clicks on the button
     this.eventManager.listen(this.button_, 'click', () => {
-      sxndPlayer.vifa.seekForward(1);
+      this.controls.elSxndPlayer.vifa.seekForward(1);
     });
   }
 };
@@ -430,7 +433,7 @@ myapp.SkipPreviousButton = class extends shaka.ui.Element {
 
     // Listen for clicks on the button
     this.eventManager.listen(this.button_, 'click', () => {
-      sxndPlayer.vifa.seekBackward(1);
+      this.controls.elSxndPlayer.vifa.seekBackward(1);
     });
   }
 };
@@ -467,7 +470,7 @@ myapp.Forward10Button = class extends shaka.ui.Element {
 
     // Listen for clicks on the button
     this.eventManager.listen(this.button_, 'click', () => {
-      sxndPlayer.skipSeconds(+10);
+      this.controls.elSxndPlayer.skipSeconds(+10);
     });
   }
 };
@@ -504,7 +507,7 @@ myapp.Replay10Button = class extends shaka.ui.Element {
 
     // Listen for clicks on the button
     this.eventManager.listen(this.button_, 'click', () => {
-      sxndPlayer.skipSeconds(-10);
+      this.controls.elSxndPlayer.skipSeconds(-10);
     });
   }
 };
@@ -540,7 +543,7 @@ myapp.BookmarkButton = class extends shaka.ui.Element {
     this.parent.appendChild(this.button_);
 
     // Listen for clicks on the button
-    this.eventManager.listen(this.button_, 'click', () => sxndPlayer.showBookmarkUrl());
+    this.eventManager.listen(this.button_, 'click', () => this.controls.elSxndPlayer.showBookmarkUrl());
   }
 };
 
@@ -614,7 +617,9 @@ myapp.PresentationTimeTracker = class extends shaka.ui.Element {
 
     const { totalSeconds, activeMode } = newState;
     if (totalSeconds !== this.state.totalSeconds || activeMode !== this.state.activeMode) {
-      const showHour = sxndPlayer.video.duration >= 3600;
+      const elSxndPlayer = this.controls.elSxndPlayer;
+
+      const showHour = elSxndPlayer.video.duration >= 3600;
 
       let text, title;
 
@@ -622,27 +627,27 @@ myapp.PresentationTimeTracker = class extends shaka.ui.Element {
         case TimeMode.CurrentTime:
         default:
           text = buildTimeString(totalSeconds, showHour);
-          if (sxndPlayer.vifa) {
-            text += ':' + ("0" + (sxndPlayer.vifa.get() % sxndPlayer.fps)).slice(-2);
+          if (elSxndPlayer.vifa) {
+            text += ':' + ("0" + (elSxndPlayer.vifa.get() % elSxndPlayer.fps)).slice(-2);
           }
-          if (sxndPlayer.video.duration) {
-            text += ' / ' + buildTimeString(sxndPlayer.video.duration, showHour);
+          if (elSxndPlayer.video.duration) {
+            text += ' / ' + buildTimeString(elSxndPlayer.video.duration, showHour);
           }
           title = 'Aktuelle Laufzeit / Gesamtlaufzeit';
           break;
 
         case TimeMode.RemainingTime:
-          text = buildTimeString(sxndPlayer.video.duration - totalSeconds, showHour);
+          text = buildTimeString(elSxndPlayer.video.duration - totalSeconds, showHour);
           title = 'Restlaufzeit';
           break;
 
         case TimeMode.CurrentFrame:
-          text = `${sxndPlayer.vifa.get()}`;
+          text = `${elSxndPlayer.vifa.get()}`;
           title = 'Frame-Nummer';
           break;
       }
 
-      let currentChapter = sxndPlayer.chapters.timeToChapter(totalSeconds);
+      let currentChapter = elSxndPlayer.chapters.timeToChapter(totalSeconds);
       if (currentChapter) {
         text += ` – ${currentChapter.title}`;
       }
