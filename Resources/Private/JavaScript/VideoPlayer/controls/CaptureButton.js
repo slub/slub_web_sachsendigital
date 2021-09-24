@@ -1,5 +1,3 @@
-import { renderScreenshot } from '../Screenshot';
-
 export default class CaptureButton extends shaka.ui.Element {
   static KEY = 'capture';
 
@@ -15,7 +13,7 @@ export default class CaptureButton extends shaka.ui.Element {
 
     // Listen for clicks on the button
     this.eventManager.listen(this.button_, 'click', () => {
-      renderScreenshot(this.controls.elSxndPlayer.video);
+      this.controls.elSxndPlayer.showScreenshot();
     });
   }
 };

@@ -217,6 +217,10 @@ class SachsenShakaPlayer {
   showBookmarkUrl() {
     bookmarkModal.setTimecode(this.displayTime).open();
   }
+
+  showScreenshot() {
+    renderScreenshot(this.video);
+  }
 }
 
 /**
@@ -339,7 +343,7 @@ function registerKeybindings() {
       sxndPlayer.showBookmarkUrl();
     } else if (e.key == 's') {
       e.preventDefault();
-      renderScreenshot(sxndPlayer.video);
+      sxndPlayer.showScreenshot();
     }
   });
 }
