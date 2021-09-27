@@ -1,24 +1,3 @@
-export function renderScreenshot(videoDomElement) {
-  // add canvas overlay to DOM
-  const domTemplate = document.createElement("template");
-  domTemplate.innerHTML = `<div id="screenshot-overlay"><span class="close-screenshot-modal icon-close"></span><canvas></canvas></div>`;
-  const domElement = domTemplate.content.firstElementChild;
-  document.body.append(domElement);
-
-  const canvas = domElement.querySelector("canvas");
-  const closeButton = domElement.querySelector('.close-screenshot-modal');
-
-  // bind close action
-  closeButton.addEventListener('click', () => {
-    domElement.remove();
-  });
-
-  // lets go
-  const metadataElement = document.getElementById('metadata');
-  const metadataArray = generateMetadataObject(metadataElement);
-  drawCanvas(canvas, videoDomElement, metadataArray);
-}
-
 /**
  *
  * @param {HTMLCanvasElement | CanvasRenderingContext2D} target Canvas on which the screenshot is drawn
@@ -51,9 +30,6 @@ export function drawCanvas(target, videoDomElement, metadataArray) {
   context.shadowBlur = 5;
   context.shadowColor = "black";
   context.fillText(infoString, targetCanvas.width - textPad, targetCanvas.height - textPad);
-
-  targetCanvas.style.width = '80%';
-  targetCanvas.style.height = 'auto';
 }
 
 /**

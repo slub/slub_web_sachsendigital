@@ -6,6 +6,7 @@ import BookmarkModal from './BookmarkModal';
 import Chapters from './Chapters';
 import Modals from './Modals';
 import { renderScreenshot } from './Screenshot';
+import ScreenshotModal from './ScreenshotModal';
 import SimpleModal from './SimpleModal';
 
 import CaptureButton from './controls/CaptureButton';
@@ -224,7 +225,8 @@ class SachsenShakaPlayer {
 
   showScreenshot() {
     this.pause();
-    renderScreenshot(this.video);
+    modals.screenshot.takeScreenshot(this.video).open();
+    // renderScreenshot(this.video);
   }
 }
 
@@ -270,6 +272,7 @@ document.addEventListener('shaka-ui-loaded', () => {
   modals = Modals({
     help: new SimpleModal(document.querySelector('.dfgplayer-help')),
     bookmark: new BookmarkModal(document.querySelector('.bookmark-modal')),
+    screenshot: new ScreenshotModal(document.querySelector('.screenshot-modal')),
   });
 
   registerKeybindings();
