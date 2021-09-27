@@ -224,7 +224,7 @@ class SachsenShakaPlayer {
 
   showScreenshot() {
     this.pause();
-    modals.screenshot.takeScreenshot(this.video).open();
+    modals.screenshot.open();
     // renderScreenshot(this.video);
   }
 }
@@ -273,7 +273,7 @@ document.addEventListener('shaka-ui-loaded', () => {
   modals = Modals({
     help: new HelpModal(container),
     bookmark: new BookmarkModal(container),
-    screenshot: new ScreenshotModal(container),
+    screenshot: new ScreenshotModal(container, sxndPlayer.video),
   });
 
   registerKeybindings();
