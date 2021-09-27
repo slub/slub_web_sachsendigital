@@ -31,11 +31,13 @@ class SachsenShakaPlayer {
   /**
    *
    * @param {object} config
+   * @param {HTMLElement} config.container
    * @param {HTMLVideoElement} config.video
    * @param {string} config.manifestUri
    * @param {number?} config.timecode
    */
   constructor(config) {
+    this.container = config.container;
     this.video = config.video;
     this.manifestUri = config.manifestUri;
     this.initialTimecode = config.timecode;
@@ -45,9 +47,9 @@ class SachsenShakaPlayer {
     this.chapters = new Chapters(window.VIDEO_CHAPTERS);
 
     this.fps = 25;
-    const ui = this.video['ui'];
-    this.controls = ui.getControls();
     this.player = new shaka.Player(this.video);
+    const ui = new shaka.ui.Overlay(this.player, this.container, this.video);
+    this.controls = ui.getControls();
 
     // Store player instance so that our custom controls may access it
     this.controls.elSxndPlayer = this;
@@ -81,8 +83,6 @@ class SachsenShakaPlayer {
     };
     ui.configure(config);
 
-    this.renderChapterMarkers();
-
     // Listen for error events.
     this.player.addEventListener('error', this.onPlayerErrorEvent.bind(this));
     this.controls.addEventListener('error', this.onUiErrorEvent.bind(this));
@@ -105,6 +105,8 @@ class SachsenShakaPlayer {
       // onError is executed if the asynchronous load fails.
       onError(e);
     }
+
+    this.renderChapterMarkers();
   }
 
   renderChapterMarkers() {
@@ -252,9 +254,11 @@ function initApp() {
 
 // Listen to the custom shaka-ui-loaded event, to wait until the UI is loaded.
 document.addEventListener('shaka-ui-loaded', () => {
+  const container = document.querySelector('.mediaplayer-container');
   const timecode = new URL(window.location).searchParams.get('timecode');
 
   sxndPlayer = new SachsenShakaPlayer({
+    container: container,
     video: document.getElementById('video'),
     manifestUri: document.getElementsByClassName('mime-type-video')[0].getAttribute('data-url') + '.mpd',
     timecode: timecode ? parseFloat(timecode) : undefined,
@@ -267,8 +271,6 @@ document.addEventListener('shaka-ui-loaded', () => {
     sxndPlayer.play();
     sxndPlayer.seekTo(timecode);
   });
-
-  const container = document.querySelector('.mediaplayer-container');
 
   modals = Modals({
     help: new HelpModal(container),
