@@ -4,10 +4,9 @@ import 'shaka-player/ui/controls.less';
 
 import BookmarkModal from './BookmarkModal';
 import Chapters from './Chapters';
+import HelpModal from './HelpModal';
 import Modals from './Modals';
-import { renderScreenshot } from './Screenshot';
 import ScreenshotModal from './ScreenshotModal';
-import SimpleModal from './SimpleModal';
 
 import CaptureButton from './controls/CaptureButton';
 import PresentationTimeTracker from './controls/PresentationTimeTracker';
@@ -269,10 +268,12 @@ document.addEventListener('shaka-ui-loaded', () => {
     sxndPlayer.seekTo(timecode);
   });
 
+  const container = document.querySelector('.mediaplayer-container');
+
   modals = Modals({
-    help: new SimpleModal(document.querySelector('.dfgplayer-help')),
-    bookmark: new BookmarkModal(document.querySelector('.bookmark-modal')),
-    screenshot: new ScreenshotModal(document.querySelector('.screenshot-modal')),
+    help: new HelpModal(container),
+    bookmark: new BookmarkModal(container),
+    screenshot: new ScreenshotModal(container),
   });
 
   registerKeybindings();

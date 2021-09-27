@@ -5,8 +5,19 @@ export default class BookmarkModal extends SimpleModal {
     super(element, {
       timecode: null,
     });
+  }
 
-    this._urlInput = this._element.querySelector('.url-input');
+  _createDom() {
+    const dom = super._createDom("bookmark-modal");
+
+    dom.title.innerText = "Bookmark-URL";
+
+    dom.url = document.createElement("input");
+    dom.url.type = "url";
+    dom.url.value = "https://sachsen.digital";
+    dom.body.append(dom.url);
+
+    return dom;
   }
 
   setTimecode(timecode) {
@@ -23,11 +34,11 @@ export default class BookmarkModal extends SimpleModal {
       const url = new URL(window.location);
       url.searchParams.set('timecode', state.timecode);
 
-      this._urlInput.value = url.toString();
+      this._dom.url.value = url.toString();
     }
 
     if (show && show !== this._state.show) {
-      this._urlInput.select();
+      this._dom.url.select();
     }
   }
 }

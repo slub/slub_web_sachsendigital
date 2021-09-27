@@ -3,11 +3,10 @@ import $ from 'jquery';
 export default class SimpleModal {
   /**
    *
-   * @param {HTMLElement} element
+   * @param {HTMLElement} parent
    */
-  constructor(element, state = {}) {
-    this._element = element;
-    this._$element = $(element);
+  constructor(parent, state = {}) {
+    this._parent = parent;
 
     /**
      * Whether a show or hide animation is currently running. This is to avoid
@@ -21,10 +20,35 @@ export default class SimpleModal {
       ...state,
     };
 
-    this._closeButton = this._element.querySelector('.modal-close');
-    if (this._closeButton) {
-      this._closeButton.addEventListener('click', this.close.bind(this));
-    }
+    this._dom = this._createDom();
+    this._dom.close.addEventListener('click', this.close.bind(this));
+
+    this._parent.append(this._dom.main);
+
+    this._$main = $(this._dom.main);
+  }
+
+  /**
+   * @protected
+   */
+  _createDom(className = "") {
+    const dom = {
+      main: document.createElement("div"),
+      headline: document.createElement("div"),
+      title: document.createElement("h3"),
+      close: document.createElement("span"),
+      body: document.createElement("div"),
+    };
+
+    dom.main.className = `sxnd-modal ${className}`;
+    dom.headline.className = "headline-container";
+    dom.close.className = "modal-close icon-close";
+    dom.body.className = "body-container";
+
+    dom.main.append(dom.headline, dom.body);
+    dom.headline.append(dom.title, dom.close);
+
+    return dom;
   }
 
   get isOpen() {
@@ -61,7 +85,7 @@ export default class SimpleModal {
     if (show != this._state.show) {
       this._isAnimating = true;
       const fn = show ? 'show' : 'hide';
-      this._$element[fn]({
+      this._$main[fn]({
         duration: 'fast',
         complete: () => {
           this._isAnimating = false;
