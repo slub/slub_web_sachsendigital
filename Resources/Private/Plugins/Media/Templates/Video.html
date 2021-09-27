@@ -1,7 +1,7 @@
 {namespace sxnd=Slub\SlubWebSachsendigital\ViewHelpers}
 
 <script>
-    window.VIDEO_CHAPTERS = {sxnd:t3ArrayToJson(value: settings.chapters, innerKey: 'chapter')};
+    window.VIDEO = {sxnd:videoToJson(settings: settings)};
 </script>
 
 <div class="control-bar">

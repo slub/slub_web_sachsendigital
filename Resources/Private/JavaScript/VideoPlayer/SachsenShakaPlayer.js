@@ -44,7 +44,7 @@ class SachsenShakaPlayer {
   }
 
   async initialize() {
-    this.chapters = new Chapters(window.VIDEO_CHAPTERS);
+    this.chapters = new Chapters(window.VIDEO.chapters);
 
     this.fps = 25;
     this.player = new shaka.Player(this.video);
