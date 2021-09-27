@@ -64,92 +64,14 @@
         }
       }
 
-      .dfgplayer-help {
-        position: absolute;
-        display: none;
-        top: 50%;
-        -ms-transform: translateY(-50%);
-        transform: translateY(-50%);
-        background-color: rgba(@base-color, .9);
-        color: white;
-        left: 5rem;
-        right: 5rem;
-        border-radius: 5px;
-        padding: 3rem;
-        z-index: 999999;
 
-        .headline-container {
-          position: relative;
-
-          .modal-close {
-            position: absolute;
-            top: 0;
-            right: 0;
-            cursor: pointer;
-          }
-        }
-
-        .help-container {
-          padding: 2rem;
-        }
-
-        h3 {
-          font-weight: 700;
-        }
-
-        table {
-          width: 100%;
-          padding: 5rem 0;
-
-          tr {
-            &:not(:last-child) {
-              border-bottom: 1px dotted @light-color;
-            }
-
-            &:first-child {
-              border-bottom: 1px solid @light-color;
-            }
-
-            td {
-              color: white;
-              line-height: 2rem;
-              &.legend {
-                color: @light-color;
-                font-weight: 700;
-              }
-            }
-          }
-        }
-      }
-      #url-container {
-        position: absolute;
-        left: 20rem;
-        right: 20rem;
-        bottom: 12rem;
-        background-color: rgba(@base-color, .9);
-        color: white;
-        border-radius: 5px;
-        margin: auto;
-        line-height: 3rem;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        padding: 2rem;
-        z-index: 10;
+    .bookmark-modal {
         input {
           width: 90%;
           height: 2rem;
           font-size: 1rem;
           line-height: 1rem;
-          text-align: center;
           color: @base-color;
-        }
-        .icon-close {
-          font-size: 1.5rem;
-          height: 2rem;
-          &:before {
-            line-height: 2rem;
-          }
         }
       }
     .control-bars {
@@ -270,6 +192,65 @@
     height: 95vh;
 
   }
+
+.sxnd-modal {
+  position: absolute;
+  display: none;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  background-color: rgba(@base-color, .9);
+  color: white;
+  left: 5rem;
+  right: 5rem;
+  border-radius: 5px;
+  padding: 3rem;
+  z-index: 999999;
+
+  .headline-container {
+    position: relative;
+
+    .modal-close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      cursor: pointer;
+    }
+  }
+
+  .body-container {
+    padding: 2rem;
+  }
+
+  h3 {
+    font-weight: 700;
+  }
+
+  table {
+    width: 100%;
+    padding: 5rem 0;
+
+    tr {
+      &:not(:last-child) {
+        border-bottom: 1px dotted @light-color;
+      }
+
+      &:first-child {
+        border-bottom: 1px solid @light-color;
+      }
+
+      td {
+        color: white;
+        line-height: 2rem;
+
+        &.legend {
+          color: @light-color;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+}
 
 .sxnd-chapter-marker {
     width: 6px;

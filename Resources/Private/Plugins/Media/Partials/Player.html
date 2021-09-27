@@ -15,16 +15,21 @@
                     style="width:100%;height:100%">
                     <source src="https://media.sachsen.digital/{settings.movieDir}/{settings.movieDir}.mp4" type="video/mp4">
                 </video>
-                <div id="url-container" class="bookmark-modal" style="display: none;">
-                    <input type="text" id="url-field" class="url-input" value="https://sachsen.digital" onclick="this.select();">
-                    <span class="modal-close icon-close"></span>
+                <div class="sxnd-modal bookmark-modal" style="display: none;">
+                    <div class="headline-container">
+                        <h3>Bookmark-URL</h3>
+                        <span class="modal-close icon-close"></span>
+                    </div>
+                    <div class="body-container">
+                        <input type="text" id="url-field" class="url-input" value="https://sachsen.digital" onclick="this.select();">
+                    </div>
                 </div>
-                <div class="dfgplayer-help modal">
+                <div class="sxnd-modal dfgplayer-help">
                     <div class="headline-container">
                         <h3>Tastaturbelegung</h3>
                         <span class="modal-close icon-close"></span>
                     </div>
-                    <div class="help-container">
+                    <div class="body-container">
                         <table>
                             <tbody>
                                 <tr>
