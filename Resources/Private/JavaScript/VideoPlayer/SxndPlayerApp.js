@@ -9,7 +9,8 @@ import SachsenShakaPlayer from './SachsenShakaPlayer';
 import ScreenshotModal from './ScreenshotModal';
 
 class SxndPlayerApp {
-  constructor(videoInfo, locale) {
+  constructor(container, videoInfo, locale) {
+    this.container = container;
     this.videoInfo = videoInfo;
     this.locale = locale;
 
@@ -20,19 +21,17 @@ class SxndPlayerApp {
   }
 
   onShakaUiLoaded() {
-    const container = document.querySelector('.mediaplayer-container');
-
     const video = document.createElement("video");
     video.id = 'video';
     video.poster = this.videoInfo.url.poster;
     video.style.width = "100%";
     video.style.height = "100%";
-    container.append(video);
+    this.container.append(video);
 
     const timecode = new URL(window.location).searchParams.get('timecode');
 
     const sxndPlayer = new SachsenShakaPlayer({
-      container: container,
+      container: this.container,
       video: document.getElementById('video'),
       manifestUri: this.videoInfo.url.manifest,
       timecode: timecode ? parseFloat(timecode) : undefined,
@@ -50,9 +49,9 @@ class SxndPlayerApp {
     });
 
     this.modals = Modals({
-      help: new HelpModal(container),
-      bookmark: new BookmarkModal(container),
-      screenshot: new ScreenshotModal(container, sxndPlayer.video),
+      help: new HelpModal(this.container),
+      bookmark: new BookmarkModal(this.container),
+      screenshot: new ScreenshotModal(this.container, sxndPlayer.video),
     });
 
     this.sxndPlayer = sxndPlayer;
