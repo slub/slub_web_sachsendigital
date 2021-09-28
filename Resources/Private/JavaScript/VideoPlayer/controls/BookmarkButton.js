@@ -14,7 +14,9 @@ export default class BookmarkButton extends shaka.ui.Element {
     this.parent.appendChild(this.button_);
 
     // Listen for clicks on the button
-    this.eventManager.listen(this.button_, 'click', () => this.controls.elSxndPlayer.showBookmarkUrl());
+    this.eventManager.listen(this.button_, 'click', () => {
+      BookmarkButton.onClick(); // TODO: Inject
+    });
   }
 };
 

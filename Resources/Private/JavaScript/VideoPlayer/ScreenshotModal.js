@@ -1,9 +1,10 @@
-import { drawCanvas, generateMetadataObject } from './Screenshot';
+import { drawCanvas } from './Screenshot';
 import SimpleModal from './SimpleModal';
 
 export default class ScreenshotModal extends SimpleModal {
   constructor(parent, videoDomElement) {
     super(parent, {
+      metadata: null,
       showMetadata: true,
     });
 
@@ -40,6 +41,11 @@ export default class ScreenshotModal extends SimpleModal {
     return dom;
   }
 
+  setMetadata(metadata) {
+    this.setState({ metadata });
+    return this;
+  }
+
   handleChangeShowMetadata(e) {
     this.setState({
       showMetadata: e.target.checked,
@@ -61,11 +67,11 @@ export default class ScreenshotModal extends SimpleModal {
   render(state) {
     super.render(state);
 
-    const { show, showMetadata } = state;
+    const { show, metadata, showMetadata } = state;
 
     if (show) {
-      const metadataArray = showMetadata
-        ? window.VIDEO.metadata
+      const metadataArray = showMetadata && metadata
+        ? metadata
         : { metadata: {}, screenshotFields: [] };
 
       drawCanvas(this._dom.canvas, this._videoDomElement, metadataArray);

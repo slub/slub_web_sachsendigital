@@ -28,15 +28,12 @@ function getTestMetadataArray() {
 test('can open screenshot overlay', () => {
   const overlay = () => document.querySelector('.screenshot-modal');
 
-  window.VIDEO = {
-    metadata: getTestMetadataArray(),
-  };
-
   // not opened yet
   expect(overlay()).toBeNull();
 
   // opened; exact tags are in snapshot
   const modal = new ScreenshotModal(document.body, new VideoMock(1920, 1080));
+  modal.setMetadata(getTestMetadataArray());
   modal.open();
   expect(overlay()).toMatchSnapshot();
 });

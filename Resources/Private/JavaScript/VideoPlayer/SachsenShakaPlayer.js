@@ -1,12 +1,7 @@
-import $ from 'jquery';
 import shaka from 'shaka-player/dist/shaka-player.ui';
 import 'shaka-player/ui/controls.less';
 
-import BookmarkModal from './BookmarkModal';
 import Chapters from './Chapters';
-import HelpModal from './HelpModal';
-import Modals from './Modals';
-import ScreenshotModal from './ScreenshotModal';
 
 import CaptureButton from './controls/CaptureButton';
 import PresentationTimeTracker from './controls/PresentationTimeTracker';
@@ -20,14 +15,7 @@ import '../../Less/VideoPlayer/VideoPlayer.less';
 
 const PREV_CHAPTER_TOLERANCE = 5;
 
-let modals;
-
-/**
- * @type {SachsenShakaPlayer}
- */
-let sxndPlayer;
-
-class SachsenShakaPlayer {
+export default class SachsenShakaPlayer {
   /**
    *
    * @param {object} config
@@ -35,23 +23,23 @@ class SachsenShakaPlayer {
    * @param {HTMLVideoElement} config.video
    * @param {string} config.manifestUri
    * @param {number?} config.timecode
+   * @param {any} config.videoInfo
    */
   constructor(config) {
     this.container = config.container;
     this.video = config.video;
     this.manifestUri = config.manifestUri;
     this.initialTimecode = config.timecode;
+    this.videoInfo = config.videoInfo;
   }
 
   async initialize() {
-    this.chapters = new Chapters(window.VIDEO.chapters);
+    this.chapters = new Chapters(this.videoInfo.chapters);
 
     this.fps = 25;
     this.player = new shaka.Player(this.video);
     const ui = new shaka.ui.Overlay(this.player, this.container, this.video);
     this.controls = ui.getControls();
-
-    this.controls.getLocalization().changeLocale([window.LANG]);
 
     // Store player instance so that our custom controls may access it
     this.controls.elSxndPlayer = this;
@@ -109,6 +97,10 @@ class SachsenShakaPlayer {
     }
 
     this.renderChapterMarkers();
+  }
+
+  setLocale(locale) {
+    this.controls.getLocalization().changeLocale([locale]);
   }
 
   renderChapterMarkers() {
@@ -220,17 +212,6 @@ class SachsenShakaPlayer {
       this.seekTo(this.chapters.advance(cur, +1));
     }
   }
-
-  showBookmarkUrl() {
-    this.pause();
-    modals.bookmark.setTimecode(this.displayTime).open();
-  }
-
-  showScreenshot() {
-    this.pause();
-    modals.screenshot.open();
-    // renderScreenshot(this.video);
-  }
 }
 
 /**
@@ -254,43 +235,6 @@ function initApp() {
 
 }
 
-// Listen to the custom shaka-ui-loaded event, to wait until the UI is loaded.
-document.addEventListener('shaka-ui-loaded', () => {
-  const container = document.querySelector('.mediaplayer-container');
-
-  const video = document.createElement("video");
-  video.id = 'video';
-  video.poster = window.VIDEO.url.poster;
-  video.style.width = "100%";
-  video.style.height = "100%";
-  container.append(video);
-
-  const timecode = new URL(window.location).searchParams.get('timecode');
-
-  sxndPlayer = new SachsenShakaPlayer({
-    container: container,
-    video: document.getElementById('video'),
-    manifestUri: window.VIDEO.url.manifest,
-    timecode: timecode ? parseFloat(timecode) : undefined,
-  });
-
-  sxndPlayer.initialize();
-
-  $('a[data-timecode]').on('click', function () {
-    const timecode = $(this).data('timecode');
-    sxndPlayer.play();
-    sxndPlayer.seekTo(timecode);
-  });
-
-  modals = Modals({
-    help: new HelpModal(container),
-    bookmark: new BookmarkModal(container),
-    screenshot: new ScreenshotModal(container, sxndPlayer.video),
-  });
-
-  registerKeybindings();
-});
-
 // Listen to the custom shaka-ui-load-failed event, in case Shaka Player fails
 // to load (e.g. due to lack of browser support).
 document.addEventListener('shaka-ui-load-failed', (errorEvent) => {
@@ -298,70 +242,3 @@ document.addEventListener('shaka-ui-load-failed', (errorEvent) => {
   // shaka.ui.FailReasonCode describing why.
   console.error('Unable to load the UI library!');
 });
-
-function registerKeybindings() {
-  document.addEventListener('keydown', (e) => {
-    if (e.key == 'F1') {
-      e.preventDefault();
-      modals.help.toggle();
-    } else if (e.key == 'Escape') {
-      e.preventDefault();
-      modals.closeNext();
-    }
-
-    if (modals.hasOpen()) {
-      return;
-    }
-
-    if (e.key == 'f') {
-      e.preventDefault();
-      sxndPlayer.controls.toggleFullScreen();
-    } else if (e.key == ' ') {
-      e.preventDefault();
-      if (sxndPlayer.video.paused) {
-        sxndPlayer.video.play();
-      } else {
-        sxndPlayer.video.pause();
-      }
-    } else if (e.key == "ArrowUp") {
-      e.preventDefault();
-      sxndPlayer.video.volume = Math.min(1, sxndPlayer.video.volume + 0.05);
-    } else if (e.key == "ArrowDown") {
-      e.preventDefault();
-      sxndPlayer.video.volume = Math.max(0, sxndPlayer.video.volume - 0.05);
-    } else if (e.key == "ArrowLeft") {
-      e.preventDefault();
-      if (e.ctrlKey || e.metaKey) {
-        sxndPlayer.prevChapter();
-      } else if (e.shiftKey) {
-        sxndPlayer.vifa.seekBackward(1);
-      } else {
-        sxndPlayer.skipSeconds(-10);
-      }
-    } else if (e.key == "ArrowRight") {
-      e.preventDefault();
-      if (e.ctrlKey || e.metaKey) {
-        sxndPlayer.nextChapter();
-      } else if (e.shiftKey) {
-        sxndPlayer.vifa.seekForward(1);
-      } else {
-        sxndPlayer.skipSeconds(+10);
-      }
-    } else if (e.key == 'm') {
-      e.preventDefault();
-      sxndPlayer.video.muted = !sxndPlayer.video.muted;
-    } else if (e.key == '.') {
-      e.preventDefault();
-      sxndPlayer.vifa.seekForward(1);
-    } else if (e.key == ',') {
-      e.preventDefault();
-      sxndPlayer.vifa.seekBackward(1);
-    } else if (e.key == 'b') {
-      e.preventDefault();
-      sxndPlayer.showBookmarkUrl();
-    } else if (e.key == 's') {
-      e.preventDefault();
-      sxndPlayer.showScreenshot();
-    }
-  });
-}

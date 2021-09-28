@@ -15,7 +15,7 @@ export default class CaptureButton extends shaka.ui.Element {
 
     // Listen for clicks on the button
     this.eventManager.listen(this.button_, 'click', () => {
-      this.controls.elSxndPlayer.showScreenshot();
+      CaptureButton.onClick(); // TODO: Inject
     });
   }
 };
