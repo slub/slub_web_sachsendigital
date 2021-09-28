@@ -236,15 +236,54 @@ Array [
 
 exports[`can open screenshot overlay 1`] = `
 <div
-  id="screenshot-overlay"
+  class="sxnd-modal screenshot-modal"
 >
-  <span
-    class="close-screenshot-modal icon-close"
-  />
-  <canvas
-    height="0"
-    style="width: 80%; height: auto;"
-    width="0"
-  />
+  <div
+    class="headline-container"
+  >
+    <h3 />
+    <span
+      class="modal-close icon-close"
+    />
+  </div>
+  <div
+    class="body-container"
+  >
+    <div
+      class="screenshot-config"
+    >
+      
+        
+      <input
+        class="show-metadata"
+        id="cb-show-metadata"
+        type="checkbox"
+      />
+      <!--
+        -->
+      <label
+        for="cb-show-metadata"
+      >
+         Metadaten einblenden
+      </label>
+      
+
+        ·
+
+        
+      <a
+        class="download-image"
+        href="#"
+      >
+        Bild herunterladen
+      </a>
+      
+      
+    </div>
+    <canvas
+      height="1080"
+      width="1920"
+    />
+  </div>
 </div>
 `;

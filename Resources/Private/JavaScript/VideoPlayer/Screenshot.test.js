@@ -3,31 +3,43 @@
  */
 
 import { drawCanvas } from './Screenshot';
+import ScreenshotModal from './ScreenshotModal';
 
 beforeEach(() => {
   // TODO: Reset JSDOM in a more robust way
   document.body.innerHTML = '';
 });
 
-// TODO: Rewrite this using ScreenshotModal
-// test('can open screenshot overlay', () => {
-//   const overlay = () => document.getElementById('screenshot-overlay');
+function getTestMetadataArray() {
+  return {
+    metadata: {
+      title: "Test Video",
+      year: "1912",
+      not_a_string: 123,
+    },
+    screenshotFields: [
+      "title",
+      "year",
+      "not_a_string",
+    ],
+  };
+}
 
-//   document.body.append(
-//     createMetadataDom()
-//   );
+test('can open screenshot overlay', () => {
+  const overlay = () => document.querySelector('.screenshot-modal');
 
-//   // not opened yet
-//   expect(overlay()).toBeNull();
+  window.VIDEO = {
+    metadata: getTestMetadataArray(),
+  };
 
-//   // opened; exact tags are in snapshot
-//   renderScreenshot(document.createElement("video"));
-//   expect(overlay()).toMatchSnapshot();
+  // not opened yet
+  expect(overlay()).toBeNull();
 
-//   // close
-//   document.querySelector('.close-screenshot-modal').dispatchEvent(new Event('click'));
-//   expect(overlay()).toBeNull();
-// });
+  // opened; exact tags are in snapshot
+  const modal = new ScreenshotModal(document.body, new VideoMock(1920, 1080));
+  modal.open();
+  expect(overlay()).toMatchSnapshot();
+});
 
 class VideoMock extends HTMLVideoElement {
   constructor(width, height) {
@@ -49,18 +61,7 @@ class VideoMock extends HTMLVideoElement {
 customElements.define('video-mock', VideoMock, { extends: 'video' });
 
 test('can draw to canvas', () => {
-  const metadata = {
-    metadata: {
-      title: "Test Video",
-      year: "1912",
-      not_a_string: 123,
-    },
-    screenshotFields: [
-      "title",
-      "year",
-      "not_a_string",
-    ],
-  };
+  const metadata = getTestMetadataArray();
 
   const snapshotWithSize = (videoWidth, videoHeight) => {
     const video = new VideoMock(videoWidth, videoHeight);
