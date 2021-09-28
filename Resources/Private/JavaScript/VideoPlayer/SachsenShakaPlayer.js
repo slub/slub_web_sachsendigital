@@ -51,6 +51,8 @@ class SachsenShakaPlayer {
     const ui = new shaka.ui.Overlay(this.player, this.container, this.video);
     this.controls = ui.getControls();
 
+    this.controls.getLocalization().changeLocale([window.LANG]);
+
     // Store player instance so that our custom controls may access it
     this.controls.elSxndPlayer = this;
 
