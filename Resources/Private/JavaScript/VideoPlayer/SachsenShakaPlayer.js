@@ -257,12 +257,20 @@ function initApp() {
 // Listen to the custom shaka-ui-loaded event, to wait until the UI is loaded.
 document.addEventListener('shaka-ui-loaded', () => {
   const container = document.querySelector('.mediaplayer-container');
+
+  const video = document.createElement("video");
+  video.id = 'video';
+  video.poster = window.VIDEO.url.poster;
+  video.style.width = "100%";
+  video.style.height = "100%";
+  container.append(video);
+
   const timecode = new URL(window.location).searchParams.get('timecode');
 
   sxndPlayer = new SachsenShakaPlayer({
     container: container,
     video: document.getElementById('video'),
-    manifestUri: document.getElementsByClassName('mime-type-video')[0].getAttribute('data-url') + '.mpd',
+    manifestUri: window.VIDEO.url.manifest,
     timecode: timecode ? parseFloat(timecode) : undefined,
   });
 

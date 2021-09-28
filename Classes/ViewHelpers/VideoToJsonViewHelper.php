@@ -32,6 +32,7 @@ class VideoToJsonViewHelper extends AbstractViewHelper
         RenderingContextInterface $renderingContext
     ) {
         $settings = $arguments['settings'];
+        $movieDir = $settings['movieDir'];
 
         $result = [
             'chapters' => array_map(function ($item) {
@@ -46,7 +47,12 @@ class VideoToJsonViewHelper extends AbstractViewHelper
                 'screenshotFields' => [
                     'title',
                 ],
-            ]
+            ],
+
+            'url' => [
+                'manifest' => "https://media.sachsen.digital/$movieDir/$movieDir.mpd",
+                'poster' => "https://media.sachsen.digital/$movieDir/$movieDir.jpg",
+            ],
         ];
 
         return json_encode($result);
