@@ -2,20 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { drawCanvas, generateMetadataObject } from './Screenshot';
-
-function createMetadataDom() {
-  const template = document.createElement("template");
-  template.innerHTML = `
-    <data id="metadata" data-screenshotfields="title,year" style="display: none;">
-      <data id="title" value="Some Video">Some Video</data>
-      <data id="year" value="1922">1922</data>
-      <data id="creator" value="Someone">Someone</data>
-    </data>
-  `;
-
-  return template.content.firstElementChild;
-}
+import { drawCanvas } from './Screenshot';
 
 beforeEach(() => {
   // TODO: Reset JSDOM in a more robust way
@@ -89,21 +76,4 @@ test('can draw to canvas', () => {
 
   snapshotWithSize(1920, 1080);
   snapshotWithSize(960, 540);
-});
-
-test('can generate metadata object', () => {
-  const dataDomElement = createMetadataDom();
-  const metadataObject = generateMetadataObject(dataDomElement);
-
-  expect(metadataObject).toEqual({
-    metadata: {
-      title: "Some Video",
-      year: "1922",
-      creator: "Someone",
-    },
-    screenshotFields: [
-      "title",
-      "year",
-    ],
-  });
 });

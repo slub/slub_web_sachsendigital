@@ -37,6 +37,16 @@ class VideoToJsonViewHelper extends AbstractViewHelper
             'chapters' => array_map(function ($item) {
                 return $item['chapter'];
             }, array_values($settings['chapters'])),
+
+            'metadata' => [
+                'metadata' => [
+                    'title' => $settings['media'],
+                ],
+
+                'screenshotFields' => [
+                    'title',
+                ],
+            ]
         ];
 
         return json_encode($result);

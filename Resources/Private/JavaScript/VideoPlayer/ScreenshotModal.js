@@ -65,7 +65,7 @@ export default class ScreenshotModal extends SimpleModal {
 
     if (show) {
       const metadataArray = showMetadata
-        ? generateMetadataObject(document.getElementById('metadata'))
+        ? window.VIDEO.metadata
         : { metadata: {}, screenshotFields: [] };
 
       drawCanvas(this._dom.canvas, this._videoDomElement, metadataArray);

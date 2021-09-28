@@ -2,7 +2,7 @@
  *
  * @param {HTMLCanvasElement | CanvasRenderingContext2D} target Canvas on which the screenshot is drawn
  * @param {HTMLVideoElement} videoDomElement Source video element from which the screenshot is taken
- * @param {any} metadataArray Output of {@link generateMetadataObject}
+ * @param {any} metadataArray
  */
 export function drawCanvas(target, videoDomElement, metadataArray) {
   const [targetCanvas, context] =
@@ -30,23 +30,4 @@ export function drawCanvas(target, videoDomElement, metadataArray) {
   context.shadowBlur = 5;
   context.shadowColor = "black";
   context.fillText(infoString, targetCanvas.width - textPad, targetCanvas.height - textPad);
-}
-
-/**
- *
- * @param {HTMLDataElement} dataDomElement
- */
-export function generateMetadataObject(dataDomElement) {
-  var metadataObject = {
-    metadata: {},
-    screenshotFields: dataDomElement.getAttribute('data-screenshotfields').split(','),
-  };
-
-  for (const child of dataDomElement.children) {
-    if (child.value) {
-      metadataObject.metadata[child.id] = child.value;
-    }
-  }
-
-  return metadataObject;
 }
