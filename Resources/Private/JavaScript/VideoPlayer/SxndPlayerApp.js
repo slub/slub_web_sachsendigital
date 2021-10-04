@@ -18,6 +18,13 @@ class SxndPlayerApp {
     BookmarkButton.onClick = this.showBookmarkUrl.bind(this);
 
     document.addEventListener('shaka-ui-loaded', this.onShakaUiLoaded.bind(this));
+
+    // This is a hack against the keyup handler in `slub_digitalcollections`,
+    // which adds/removes a `fullscreen` CSS class when releasing `f`/`Esc`.
+    // TODO: Find a better solution for this.
+    window.addEventListener('keyup', e => {
+      e.stopImmediatePropagation();
+    }, { capture: true });
   }
 
   onShakaUiLoaded() {
