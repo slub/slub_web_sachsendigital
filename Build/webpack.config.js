@@ -10,14 +10,14 @@ const PUBLIC_PATH = path.resolve(__dirname, '../Resources/Public');
 module.exports = {
   devtool: "source-map",
   entry: {
-    'sxndScripts': `${PRIVATE_PATH}/JavaScript/sxndScripts.js`,
+    'SxndScripts': `${PRIVATE_PATH}/JavaScript/SxndScripts.js`,
 
     // We only list the entry JS here; the Less and CSS are imported there.
-    'sxndShakaPlayer': `${PRIVATE_PATH}/JavaScript/VideoPlayer/SachsenShakaPlayer.js`,
+    'SxndShakaPlayer': `${PRIVATE_PATH}/JavaScript/VideoPlayer/SachsenShakaPlayer.js`,
 
-    'sxndStyles' : `${PRIVATE_PATH}/Less/All.less`,
-    'rteStyles': `${PRIVATE_PATH}/Less/Rte.less`,
-    'sxndKitodoViewer': `${PRIVATE_PATH}/Less/KitodoViewer.less`,
+    'SxndStyles' : `${PRIVATE_PATH}/Less/All.less`,
+    'RteStyles': `${PRIVATE_PATH}/Less/Rte.less`,
+    'SxndKitodoViewer': `${PRIVATE_PATH}/Less/KitodoViewer.less`,
   },
   output: {
     filename: 'JavaScript/[name].js',
