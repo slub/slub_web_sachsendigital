@@ -50,7 +50,7 @@
                                     <f:for each="{settings.chapters}" as="chapter" >
                                         <f:for each="{chapter}" as="item" >
                                             <li>
-                                                <a title="{item.title}" class="chapter" onclick="play({item.timecode})" data-timecode="{item.timecode}" data-title="{item.title}">
+                                                <a title="{item.title}" class="chapter" data-timecode="{item.timecode}" data-title="{item.title}">
                                                     <span class="title">
                                                         <span class="meta-type-icon meta-type-Video">Video</span>
                                                         {item.title}
@@ -71,12 +71,5 @@
 </div>
 
 <div class="document-view">
-    <f:if condition="{settings.player} == jplayer">
-        <f:then>
-            <f:render section="Player" partial="JPlayer" arguments="{_all}" />
-        </f:then>
-        <f:else>
-            <f:render section="Player" partial="Player" arguments="{_all}" />
-        </f:else>
-    </f:if>
+    <f:render section="Player" partial="Player" arguments="{_all}" />
 </div>

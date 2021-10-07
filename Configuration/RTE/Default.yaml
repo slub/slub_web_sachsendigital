@@ -5,7 +5,7 @@ imports:
 
 editor:
     config:
-        contentsCss: "EXT:slub_web_sachsendigital/Resources/Public/Css/rteStyles.css"
+        contentsCss: "EXT:slub_web_sachsendigital/Resources/Public/Css/RteStyles.css"
 
         stylesSet:
             - { name: "Normal", element: "p", attributes: { 'class': 'normal' } }

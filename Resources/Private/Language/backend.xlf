@@ -33,9 +33,6 @@
             <trans-unit id="backend_layout.home.footer">
                 <source>Fußbereich</source>
             </trans-unit>
-            <trans-unit id="backend_layout.media.jplayer">
-                <source>Media-Player (jPlayer)</source>
-            </trans-unit>
             <trans-unit id="backend_layout.media">
                 <source>Media-Player (Shaka)</source>
             </trans-unit>

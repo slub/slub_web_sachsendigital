@@ -1,3 +1,6 @@
+// NOTE: This is based on https://raw.githubusercontent.com/missing-code/jquery-cookiebar/1.0.1/jquery.cookiebar.js
+//       - 'SameSite=Strict; Secure' has been removed from `cookieEntry`
+
 /*
   Copyright (C) 2012 PrimeBox (info@primebox.co.uk)
  *

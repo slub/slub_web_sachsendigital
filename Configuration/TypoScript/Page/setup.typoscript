@@ -46,13 +46,13 @@ page {
      robots = {$config.meta_robots}
     }
     includeCSS {
-        sxndCss = EXT:slub_web_sachsendigital/Resources/Public/Css/sxndStyles.css
+        sxndCss = EXT:slub_web_sachsendigital/Resources/Public/Css/SxndStyles.css
         sxndCss.forceOnTop = 1
         kitodo >
     }
     includeJSFooterlibs {
         jQuery = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/jquery-3.5.1.min.js
-        sxndScripts = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/sxndScripts.js
+        sxndScripts = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/SxndScripts.js
         kitodo-frontend >
     }
 
@@ -118,7 +118,7 @@ page {
 [page["backend_layout"] == 'pagets__kitodo']
 page {
   includeCSS {
-      sxndKitodoViewerCss = EXT:slub_web_sachsendigital/Resources/Public/Css/sxndKitodoViewer.css
+      sxndKitodoViewerCss = EXT:slub_web_sachsendigital/Resources/Public/Css/SxndKitodoViewer.css
       sxndCss >
   }
   includeJSFooterlibs {
@@ -154,10 +154,9 @@ page {
 [page["backend_layout"] == 'pagets__media']
 page {
     includeCSS {
-        sxndKitodoViewerCss = EXT:slub_web_sachsendigital/Resources/Public/Css/sxndKitodoViewer.css
+        sxndKitodoViewerCss = EXT:slub_web_sachsendigital/Resources/Public/Css/SxndKitodoViewer.css
         sxndCss >
-        shaka = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/controls.css
-        videoplayer = EXT:slub_web_sachsendigital/Resources/Public/Css/VideoPlayer.css
+        videoplayer = EXT:slub_web_sachsendigital/Resources/Public/Css/SxndShakaPlayer.css
     }
     includeJSFooterlibs {
         # must be included here as slub_digitalcollections doesn't know pagets_media
@@ -166,33 +165,8 @@ page {
         kitodo = EXT:slub_digitalcollections/Resources/Public/JavaScript/DigitalcollectionsScripts.js
         sxndScripts >
         x0-shaka = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/shaka-player.ui.min.js
-        x0-sachsen = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/SachsenShakaPlayer.js
+        x0-sachsen = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/SxndShakaPlayer.js
         x2-videoframe = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/VideoFrame.min.js
-    }
-    10 {
-        variables {
-            gp-id = TEXT
-            gp-id.data = GP:tx_dlf|id // GP:set|mets
-        }
-    }
-}
-[END]
-
-[page["backend_layout"] == 'pagets__jplayer']
-page {
-    includeCSS {
-        sxndKitodoViewerCss = EXT:slub_web_sachsendigital/Resources/Public/Css/sxndKitodoViewer.css
-        sxndCss >
-        videoplayer = EXT:slub_web_sachsendigital/Resources/Public/Css/JPlayer.css
-    }
-    includeJSFooterlibs {
-        # must be included here as slub_digitalcollections doesn't know pagets_media
-        kitodo-frontend >
-        #kitodo = EXT:slub_digitalcollections/Resources/Public/JavaScript/DigitalcollectionsScripts.js
-        sxndScripts >
-        x1-jplayer = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/jquery.jplayer.min.js
-        x2-videoframe = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/VideoFrame.min.js
-        x3-mediaplayer = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/Playerscripts.js
     }
     10 {
         variables {

@@ -1,3 +1,10 @@
+const $ = require('jquery');
+
+require('./vendor/modernizrCustom');
+require('./vendor/jquery.cookiebar');
+require('magnific-popup');
+
+
 /*
  *
  * JS functions

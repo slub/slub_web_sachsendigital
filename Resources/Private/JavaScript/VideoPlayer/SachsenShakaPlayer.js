@@ -1,3 +1,8 @@
+const $ = require('jquery');
+
+require('../../Less/VideoPlayer/VideoPlayer.less');
+require('./controls.css');
+
 var video;
 var controls;
 var manifestUri;
@@ -112,6 +117,10 @@ async function initPlayer() {
     }
   });
 
+  $('a[data-timecode]').on('click', function () {
+    const timecode = $(this).data('timecode');
+    play(timecode);
+  });
 
   // Try to load a manifest.
   // This is an asynchronous process.
@@ -658,7 +667,7 @@ function drawCanvas() {
 
   videoDomElement = document.getElementById('video');
   canvas = document.getElementById('screenshot-canvas');
-  var metadataArray = this.generateMetadataObject();
+  var metadataArray = generateMetadataObject();
 
   for (var i = 0; i < metadataArray.screenshotFields.length; i++) {
     if(typeof(metadataArray.metadata[metadataArray.screenshotFields[i]]) === 'string') {
@@ -726,9 +735,9 @@ function resizeVideoCanvas() {
 function generateUrl() {
   var $timecodeUrl = document.URL, $urlInput = $('#url-field'), urlContainer = $('#url-container');
   if(getParams($timecodeUrl)) {
-      $timecodeUrl = $timecodeUrl + '&timecode=' + this.controls.getDisplayTime();
+      $timecodeUrl = $timecodeUrl + '&timecode=' + controls.getDisplayTime();
   } else {
-      $timecodeUrl = $timecodeUrl + '?timecode=' + this.controls.getDisplayTime();
+      $timecodeUrl = $timecodeUrl + '?timecode=' + controls.getDisplayTime();
   }
 
   $urlInput.val($timecodeUrl);
