@@ -47,6 +47,10 @@ npm test
 
 # (Alternative) Watch mode
 npm test -- --watch
+
+# With coverage report
+npm test -- --coverage
+xdg-open coverage/lcov-report/index.html
 ```
 
 ### Remarks

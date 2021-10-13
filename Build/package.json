@@ -43,6 +43,11 @@
     ],
     "setupFiles": [
       "<rootDir>/Build/node_modules/jest-canvas-mock"
-    ]
+    ],
+    "collectCoverageFrom": [
+      "Resources/Private/JavaScript/**/*.js"
+    ],
+    "coverageDirectory": "Build/coverage",
+    "coverageProvider": "v8"
   }
 }
