@@ -20,6 +20,10 @@ indent_size = 2
 [*.json]
 indent_style = tab
 
+# Exception for package.json because NPM uses spaces
+[package.json]
+indent_style = space
+
 # ReST-Files
 [*.rst]
 indent_size = 3

@@ -40,6 +40,19 @@ nvm use  # If you use NVM
 npm run build
 ```
 
+### Running Tests
+
+```bash
+npm test
+
+# (Alternative) Watch mode
+npm test -- --watch
+
+# With coverage report
+npm test -- --coverage
+xdg-open coverage/lcov-report/index.html
+```
+
 ### Remarks
 
 - jQuery is marked as external in Webpack config
