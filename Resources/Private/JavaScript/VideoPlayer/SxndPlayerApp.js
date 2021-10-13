@@ -4,6 +4,7 @@ import BookmarkModal from './BookmarkModal';
 import BookmarkButton from './controls/BookmarkButton';
 import CaptureButton from './controls/CaptureButton';
 import HelpModal from './HelpModal';
+import { Modifier, modifiersFromEvent } from './Keyboard';
 import Modals from './Modals';
 import SachsenShakaPlayer from './SachsenShakaPlayer';
 import ScreenshotModal from './ScreenshotModal';
@@ -67,10 +68,12 @@ class SxndPlayerApp {
   }
 
   onKeyDown(e) {
-    if (e.key == 'F1') {
+    const mod = modifiersFromEvent(e);
+
+    if (e.key == 'F1' && mod == Modifier.None) {
       e.preventDefault();
       this.modals.help.toggle();
-    } else if (e.key == 'Escape') {
+    } else if (e.key == 'Escape' && mod == Modifier.None) {
       e.preventDefault();
       this.modals.closeNext();
     }
@@ -79,53 +82,58 @@ class SxndPlayerApp {
       return;
     }
 
-    if (e.key == 'f') {
+    if (e.key == 'f' && mod === Modifier.None) {
       e.preventDefault();
       this.sxndPlayer.controls.toggleFullScreen();
-    } else if (e.key == ' ') {
-      e.preventDefault();
+    } else if (e.key == ' ' && mod === Modifier.None) {
       if (this.sxndPlayer.video.paused) {
+        e.preventDefault();
         this.sxndPlayer.video.play();
       } else {
+        e.preventDefault();
         this.sxndPlayer.video.pause();
       }
-    } else if (e.key == "ArrowUp") {
+    } else if (e.key == "ArrowUp" && mod === Modifier.None) {
       e.preventDefault();
       this.sxndPlayer.video.volume = Math.min(1, this.sxndPlayer.video.volume + 0.05);
-    } else if (e.key == "ArrowDown") {
+    } else if (e.key == "ArrowDown" && mod === Modifier.None) {
       e.preventDefault();
       this.sxndPlayer.video.volume = Math.max(0, this.sxndPlayer.video.volume - 0.05);
     } else if (e.key == "ArrowLeft") {
-      e.preventDefault();
-      if (e.ctrlKey || e.metaKey) {
+      if (mod === Modifier.CtrlMeta) {
+        e.preventDefault();
         this.sxndPlayer.prevChapter();
-      } else if (e.shiftKey) {
+      } else if (mod === Modifier.Shift) {
+        e.preventDefault();
         this.sxndPlayer.vifa.seekBackward(1);
-      } else {
+      } else if (mod === Modifier.None) {
+        e.preventDefault();
         this.sxndPlayer.skipSeconds(-10);
       }
     } else if (e.key == "ArrowRight") {
-      e.preventDefault();
-      if (e.ctrlKey || e.metaKey) {
+      if (mod === Modifier.CtrlMeta) {
+        e.preventDefault();
         this.sxndPlayer.nextChapter();
-      } else if (e.shiftKey) {
+      } else if (mod === Modifier.Shift) {
+        e.preventDefault();
         this.sxndPlayer.vifa.seekForward(1);
-      } else {
+      } else if (mod === Modifier.None) {
+        e.preventDefault();
         this.sxndPlayer.skipSeconds(+10);
       }
-    } else if (e.key == 'm') {
+    } else if (e.key == 'm' && mod === Modifier.None) {
       e.preventDefault();
       this.sxndPlayer.video.muted = !this.sxndPlayer.video.muted;
-    } else if (e.key == '.') {
+    } else if (e.key == '.' && mod === Modifier.None) {
       e.preventDefault();
       this.sxndPlayer.vifa.seekForward(1);
-    } else if (e.key == ',') {
+    } else if (e.key == ',' && mod === Modifier.None) {
       e.preventDefault();
       this.sxndPlayer.vifa.seekBackward(1);
-    } else if (e.key == 'b') {
+    } else if (e.key == 'b' && mod === Modifier.None) {
       e.preventDefault();
       this.showBookmarkUrl();
-    } else if (e.key == 's') {
+    } else if (e.key == 's' && mod === Modifier.None) {
       e.preventDefault();
       this.showScreenshot();
     }
