@@ -26,7 +26,6 @@ plugin.tx_dlf_pagegrid {
 # Toolbox tools
 
 plugin.tx_dlf_searchindocumenttool {
-    templateFile = {$config.templateFileSearchInDocumentTool}
     pages = {$config.storagePid}
     // UID of dlfCore0
     solrcore = {$config.solrCore}

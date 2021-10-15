@@ -52,9 +52,6 @@ config {
     # cat=plugin.tx_slub_web_sachsendigital/file/100; type=file[html,htm,tmpl]; label=Fulltext Tool template file
     templateFileToolFulltext = EXT:slub_web_sachsendigital/Resources/Private/Plugins/Kitodo/fulltext.tmpl
 
-    # cat=plugin.tx_slub_web_sachsendigital/fil/100; type=file[html,htm,tmpl]; label=Image manipulation template file
-    templateFileSearchInDocumentTool = EXT:slub_web_sachsendigital/Resources/Private/Plugins/Kitodo/SearchInDocumentTool.html
-
     # cat=plugin.tx_slub_web_sachsendigital/page; type=string; label=Meta description
     meta_description = Sachsen.digital präsentiert Ihnen digitalisiertes Kulturgut aus wissenschaftlichen und öffentlichen Bibliotheken sowie aus weiteren Kultur- und Wissenschaftseinrichtungen des Freistaats Sachsen.
 
