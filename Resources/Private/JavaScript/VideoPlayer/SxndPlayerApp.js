@@ -85,7 +85,7 @@ class SxndPlayerApp {
     this.modals = Modals({
       help: new HelpModal(this.container),
       bookmark: new BookmarkModal(this.container),
-      screenshot: new ScreenshotModal(this.container, sxndPlayer.video),
+      screenshot: new ScreenshotModal(this.container, sxndPlayer.video, this.env),
     });
 
     this.sxndPlayer = sxndPlayer;

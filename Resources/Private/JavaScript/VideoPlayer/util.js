@@ -17,3 +17,12 @@ export function buildTimeString(totalSeconds, showHour) {
       .join(':')
   );
 }
+
+/**
+ * Extracts the mime type from a data URL.
+ *
+ * @param {string} dataUrl
+ */
+export function dataUrlMime(dataUrl) {
+  return dataUrl.match(/data:(.*);/)[1];
+}

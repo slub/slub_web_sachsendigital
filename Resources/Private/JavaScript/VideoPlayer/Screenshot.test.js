@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import Environment from './Environment';
 import { drawCanvas } from './Screenshot';
 import ScreenshotModal from './ScreenshotModal';
 
@@ -32,7 +33,7 @@ test('can open screenshot overlay', () => {
   expect(overlay()).toBeNull();
 
   // opened; exact tags are in snapshot
-  const modal = new ScreenshotModal(document.body, new VideoMock(1920, 1080));
+  const modal = new ScreenshotModal(document.body, new VideoMock(1920, 1080), new Environment());
   modal.setMetadata(getTestMetadataArray());
   modal.open();
   expect(overlay()).toMatchSnapshot();

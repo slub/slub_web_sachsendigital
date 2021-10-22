@@ -1,4 +1,4 @@
-import { buildTimeString } from './util';
+import { buildTimeString, dataUrlMime } from './util';
 
 describe('buildTimeString', () => {
   test('basic', () => {
@@ -11,5 +11,11 @@ describe('buildTimeString', () => {
     expect(buildTimeString(3600, false)).toBe("60:00");
     expect(buildTimeString(3600, true)).toBe("1:00:00");
     expect(buildTimeString(3600 * 123, true)).toBe("123:00:00");
+  });
+});
+
+describe('dataUrlMime', () => {
+  test('basic', () => {
+    expect(dataUrlMime('data:image/png;abc')).toBe("image/png");
   });
 });

@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import Environment from './Environment';
 
 describe('mkid', () => {
@@ -8,5 +12,14 @@ describe('mkid', () => {
     const id_2 = env.mkid();
 
     expect(id_1).not.toBe(id_2);
+  });
+});
+
+describe('supportsCanvasExport', () => {
+  test('basic', () => {
+    const env = new Environment();
+    expect(env.supportsCanvasExport('image/png')).toBe(true);
+    expect(env.supportsCanvasExport('video/mp4')).toBe(false);
+    expect(env.supportsCanvasExport('not-a-mimetype')).toBe(false);
   });
 });
