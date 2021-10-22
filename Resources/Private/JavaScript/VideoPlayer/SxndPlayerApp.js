@@ -3,6 +3,7 @@ import $ from 'jquery';
 import BookmarkModal from './BookmarkModal';
 import BookmarkButton from './controls/BookmarkButton';
 import CaptureButton from './controls/CaptureButton';
+import OverflowMenuButton from './controls/OverflowMenuButton';
 import HelpModal from './HelpModal';
 import { Modifier, modifiersFromEvent } from './Keyboard';
 import Modals from './Modals';
@@ -44,6 +45,15 @@ class SxndPlayerApp {
       manifestUri: this.videoInfo.url.manifest,
       timecode: timecode ? parseFloat(timecode) : undefined,
       videoInfo: this.videoInfo,
+      overflowMenuButtons: [
+        OverflowMenuButton.register({
+          material_icon: 'help_outline',
+          name: "Hilfe",
+          onClick: () => {
+            this.modals.help.open();
+          },
+        }),
+      ],
     });
 
     sxndPlayer.initialize();

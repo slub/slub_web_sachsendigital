@@ -24,6 +24,7 @@ export default class SachsenShakaPlayer {
    * @param {string} config.manifestUri
    * @param {number?} config.timecode
    * @param {any} config.videoInfo
+   * @param {string[]} config.overflowMenuButtons
    */
   constructor(config) {
     this.container = config.container;
@@ -31,6 +32,7 @@ export default class SachsenShakaPlayer {
     this.manifestUri = config.manifestUri;
     this.initialTimecode = config.timecode;
     this.videoInfo = config.videoInfo;
+    this.overflowMenuButtons = config.overflowMenuButtons ?? [];
   }
 
   async initialize() {
@@ -62,7 +64,7 @@ export default class SachsenShakaPlayer {
         'fullscreen',
         'overflow_menu'
       ],
-      'overflowMenuButtons': ['language', 'playback_rate', 'loop', 'quality', 'picture_in_picture', 'captions'],
+      'overflowMenuButtons': ['language', 'playback_rate', 'loop', 'quality', 'picture_in_picture', 'captions', ...this.overflowMenuButtons],
       'addBigPlayButton': true,
       'seekBarColors': {
         base: 'rgba(255, 255, 255, 0.3)',
