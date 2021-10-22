@@ -3,6 +3,7 @@ import $ from 'jquery';
 import BookmarkModal from './BookmarkModal';
 import ControlPanelButton from './controls/ControlPanelButton';
 import OverflowMenuButton from './controls/OverflowMenuButton';
+import Environment from './Environment';
 import HelpModal from './HelpModal';
 import { Modifier, modifiersFromEvent } from './Keyboard';
 import Modals from './Modals';
@@ -14,6 +15,8 @@ class SxndPlayerApp {
     this.container = container;
     this.videoInfo = videoInfo;
     this.locale = locale;
+
+    this.env = new Environment();
 
     document.addEventListener('shaka-ui-loaded', this.onShakaUiLoaded.bind(this));
 
@@ -36,20 +39,21 @@ class SxndPlayerApp {
     const timecode = new URL(window.location).searchParams.get('timecode');
 
     const sxndPlayer = new SachsenShakaPlayer({
+      env: this.env,
       container: this.container,
       video: document.getElementById('video'),
       manifestUri: this.videoInfo.url.manifest,
       timecode: timecode ? parseFloat(timecode) : undefined,
       videoInfo: this.videoInfo,
       controlPanelButtons: [
-        ControlPanelButton.register({
+        ControlPanelButton.register(this.env, {
           material_icon: 'photo_camera',
           title: "Screenshot",
           onClick: () => {
             this.showScreenshot();
           },
         }),
-        ControlPanelButton.register({
+        ControlPanelButton.register(this.env, {
           material_icon: 'bookmark_border',
           title: "Bookmark",
           onClick: () => {
@@ -58,7 +62,7 @@ class SxndPlayerApp {
         }),
       ],
       overflowMenuButtons: [
-        OverflowMenuButton.register({
+        OverflowMenuButton.register(this.env, {
           material_icon: 'help_outline',
           name: "Hilfe",
           onClick: () => {

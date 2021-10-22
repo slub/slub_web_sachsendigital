@@ -7,6 +7,7 @@ import PresentationTimeTracker from './controls/PresentationTimeTracker';
 
 import '../../Less/VideoPlayer/VideoPlayer.less';
 import ControlPanelButton from './controls/ControlPanelButton';
+import Environment from './Environment';
 
 const PREV_CHAPTER_TOLERANCE = 5;
 
@@ -14,6 +15,7 @@ export default class SachsenShakaPlayer {
   /**
    *
    * @param {object} config
+   * @param {Environment} config.env
    * @param {HTMLElement} config.container
    * @param {HTMLVideoElement} config.video
    * @param {string} config.manifestUri
@@ -23,6 +25,7 @@ export default class SachsenShakaPlayer {
    * @param {string[]} config.overflowMenuButtons
    */
   constructor(config) {
+    this.env = config.env;
     this.container = config.container;
     this.video = config.video;
     this.manifestUri = config.manifestUri;
@@ -52,28 +55,28 @@ export default class SachsenShakaPlayer {
         'spacer',
         'volume',
         'mute',
-        ControlPanelButton.register({
+        ControlPanelButton.register(this.env, {
           material_icon: 'replay_10',
           title: "10 Sekunden zurück",
           onClick: () => {
             this.skipSeconds(-10);
           },
         }),
-        ControlPanelButton.register({
+        ControlPanelButton.register(this.env, {
           material_icon: 'skip_previous',
           title: "Einzelbild zurück",
           onClick: () => {
             this.vifa.seekBackward(1);
           },
         }),
-        ControlPanelButton.register({
+        ControlPanelButton.register(this.env, {
           material_icon: 'skip_next',
           title: "Einzelbild zurück",
           onClick: () => {
             this.vifa.seekForward(1);
           },
         }),
-        ControlPanelButton.register({
+        ControlPanelButton.register(this.env, {
           material_icon: 'forward_10',
           title: "10 Sekunden vor",
           onClick: () => {

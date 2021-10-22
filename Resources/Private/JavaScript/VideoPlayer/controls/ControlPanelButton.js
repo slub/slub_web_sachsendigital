@@ -1,4 +1,5 @@
 import shaka from 'shaka-player/dist/shaka-player.ui';
+import Environment from '../Environment';
 
 /**
  * @typedef {{
@@ -7,8 +8,6 @@ import shaka from 'shaka-player/dist/shaka-player.ui';
  *  onClick: () => void;
  * }} Config
  */
-
-let __cnt = 0;
 
 export default class ControlPanelButton extends shaka.ui.Element {
   /**
@@ -34,10 +33,11 @@ export default class ControlPanelButton extends shaka.ui.Element {
 
   /**
    *
+   * @param {Environment} env
    * @param {Partial<Config>} config
    */
-  static register(config = {}) {
-    const key = `__control_autokey_${++__cnt}`;
+  static register(env, config = {}) {
+    const key = env.mkid();
 
     shaka.ui.Controls.registerElement(key, {
       create(rootElement, controls) {

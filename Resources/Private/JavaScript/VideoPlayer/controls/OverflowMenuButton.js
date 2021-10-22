@@ -1,4 +1,5 @@
 import shaka from 'shaka-player/dist/shaka-player.ui';
+import Environment from '../Environment';
 
 /**
  * @typedef {{
@@ -7,8 +8,6 @@ import shaka from 'shaka-player/dist/shaka-player.ui';
  *  onClick: () => void;
  * }} Config
  */
-
-let __cnt = 0;
 
 export default class OverflowMenuButton extends shaka.ui.SettingsMenu {
   /**
@@ -31,9 +30,11 @@ export default class OverflowMenuButton extends shaka.ui.SettingsMenu {
 
   /**
    *
+   * @param {Environment} env
    * @param {Partial<Config>} config
    */
-  static register(config = {}) {
+  static register(env, config = {}) {
+    const key = env.mkid();
 
     shaka.ui.OverflowMenu.registerElement(key, {
       create(rootElement, controls) {
