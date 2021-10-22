@@ -1,8 +1,7 @@
 import $ from 'jquery';
 
 import BookmarkModal from './BookmarkModal';
-import BookmarkButton from './controls/BookmarkButton';
-import CaptureButton from './controls/CaptureButton';
+import ControlPanelButton from './controls/ControlPanelButton';
 import OverflowMenuButton from './controls/OverflowMenuButton';
 import HelpModal from './HelpModal';
 import { Modifier, modifiersFromEvent } from './Keyboard';
@@ -15,9 +14,6 @@ class SxndPlayerApp {
     this.container = container;
     this.videoInfo = videoInfo;
     this.locale = locale;
-
-    CaptureButton.onClick = this.showScreenshot.bind(this);
-    BookmarkButton.onClick = this.showBookmarkUrl.bind(this);
 
     document.addEventListener('shaka-ui-loaded', this.onShakaUiLoaded.bind(this));
 
@@ -45,6 +41,22 @@ class SxndPlayerApp {
       manifestUri: this.videoInfo.url.manifest,
       timecode: timecode ? parseFloat(timecode) : undefined,
       videoInfo: this.videoInfo,
+      controlPanelButtons: [
+        ControlPanelButton.register({
+          material_icon: 'photo_camera',
+          title: "Screenshot",
+          onClick: () => {
+            this.showScreenshot();
+          },
+        }),
+        ControlPanelButton.register({
+          material_icon: 'bookmark_border',
+          title: "Bookmark",
+          onClick: () => {
+            this.showBookmarkUrl();
+          },
+        }),
+      ],
       overflowMenuButtons: [
         OverflowMenuButton.register({
           material_icon: 'help_outline',

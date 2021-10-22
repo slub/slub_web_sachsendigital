@@ -3,15 +3,10 @@ import 'shaka-player/ui/controls.less';
 
 import Chapters from './Chapters';
 
-import CaptureButton from './controls/CaptureButton';
 import PresentationTimeTracker from './controls/PresentationTimeTracker';
-import Replay10Button from './controls/Replay10Button';
-import SkipPreviousButton from './controls/SkipPreviousButton';
-import SkipNextButton from './controls/SkipNextButton';
-import Forward10Button from './controls/Forward10Button';
-import BookmarkButton from './controls/BookmarkButton';
 
 import '../../Less/VideoPlayer/VideoPlayer.less';
+import ControlPanelButton from './controls/ControlPanelButton';
 
 const PREV_CHAPTER_TOLERANCE = 5;
 
@@ -24,6 +19,7 @@ export default class SachsenShakaPlayer {
    * @param {string} config.manifestUri
    * @param {number?} config.timecode
    * @param {any} config.videoInfo
+   * @param {string[]} config.controlPanelButtons
    * @param {string[]} config.overflowMenuButtons
    */
   constructor(config) {
@@ -32,6 +28,7 @@ export default class SachsenShakaPlayer {
     this.manifestUri = config.manifestUri;
     this.initialTimecode = config.timecode;
     this.videoInfo = config.videoInfo;
+    this.controlPanelButtons = config.controlPanelButtons ?? [];
     this.overflowMenuButtons = config.overflowMenuButtons ?? [];
   }
 
@@ -55,12 +52,35 @@ export default class SachsenShakaPlayer {
         'spacer',
         'volume',
         'mute',
-        Replay10Button.KEY,
-        SkipPreviousButton.KEY,
-        SkipNextButton.KEY,
-        Forward10Button.KEY,
-        CaptureButton.KEY,
-        BookmarkButton.KEY,
+        ControlPanelButton.register({
+          material_icon: 'replay_10',
+          title: "10 Sekunden zurück",
+          onClick: () => {
+            this.skipSeconds(-10);
+          },
+        }),
+        ControlPanelButton.register({
+          material_icon: 'skip_previous',
+          title: "Einzelbild zurück",
+          onClick: () => {
+            this.vifa.seekBackward(1);
+          },
+        }),
+        ControlPanelButton.register({
+          material_icon: 'skip_next',
+          title: "Einzelbild zurück",
+          onClick: () => {
+            this.vifa.seekForward(1);
+          },
+        }),
+        ControlPanelButton.register({
+          material_icon: 'forward_10',
+          title: "10 Sekunden vor",
+          onClick: () => {
+            this.skipSeconds(+10);
+          },
+        }),
+        ...this.controlPanelButtons,
         'fullscreen',
         'overflow_menu'
       ],
