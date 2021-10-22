@@ -1,15 +1,20 @@
 import shaka from 'shaka-player/dist/shaka-player.ui';
 
+/**
+ * @typedef {{
+ *  material_icon: string;
+ *  title: string;
+ *  onClick: () => void;
+ * }} Config
+ */
+
 let __cnt = 0;
 
 export default class ControlPanelButton extends shaka.ui.Element {
   /**
    * @param {!HTMLElement} parent
    * @param {!shaka.ui.Controls} controls
-   * @param {object} config
-   * @param {string?} config.material_icon
-   * @param {string?} config.title
-   * @param {(() => void)?} config.onClick
+   * @param {Partial<Config>} config
    */
   constructor(parent, controls, config = {}) {
     super(parent, controls, config.material_icon);
@@ -27,6 +32,10 @@ export default class ControlPanelButton extends shaka.ui.Element {
     }
   }
 
+  /**
+   *
+   * @param {Partial<Config>} config
+   */
   static register(config = {}) {
     const key = `__control_autokey_${++__cnt}`;
 
