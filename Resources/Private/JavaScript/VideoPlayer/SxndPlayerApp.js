@@ -174,7 +174,10 @@ class SxndPlayerApp {
 
   showScreenshot() {
     this.sxndPlayer.pause();
-    this.modals.screenshot.setMetadata(this.videoInfo.metadata).open();
+    this.modals.screenshot
+      .setMetadata(this.videoInfo.metadata)
+      .setTimecode(this.sxndPlayer.displayTime)
+      .open();
   }
 }
 

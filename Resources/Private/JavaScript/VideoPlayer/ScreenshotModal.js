@@ -2,7 +2,7 @@ import Environment from './Environment';
 import PNG from './image/png';
 import { drawCanvas } from './Screenshot';
 import SimpleModal from './SimpleModal';
-import { blobToBinaryString, blobToDataURL, canvasToBlob } from './util';
+import { blobToBinaryString, blobToDataURL, buildTimeString, canvasToBlob, sanitizeBasename } from './util';
 
 const imageFormats = [
   {
@@ -39,6 +39,7 @@ export default class ScreenshotModal extends SimpleModal {
       env,
       metadata: null,
       showMetadata: true,
+      timecode: null,
       supportedImageFormats,
       selectedImageFormat: supportedImageFormats[0],
     });
@@ -111,6 +112,11 @@ export default class ScreenshotModal extends SimpleModal {
     return this;
   }
 
+  setTimecode(timecode) {
+    this.setState({ timecode });
+    return this;
+  }
+
   handleChangeShowMetadata(e) {
     this.setState({
       showMetadata: e.target.checked,
@@ -132,9 +138,13 @@ export default class ScreenshotModal extends SimpleModal {
     let outputBlob = imageBlob;
 
     if (image) {
+      // TODO: Extract this to avoid redundancy with BookmarkModal?
+      const url = new URL(window.location);
+      url.searchParams.set('timecode', this._state.timecode);
+
       image.addMetadata({
         title: this._state.metadata.metadata.title,
-        comment: `Screenshot taken on Sachsen.Digital.\n\n${window.location.href}`,
+        comment: `Screenshot taken on Sachsen.Digital.\n\n${url.toString()}`,
       });
       const buffer = image.toArrayBuffer();
       outputBlob = new Blob([buffer], { type: imageBlob.type });
@@ -144,7 +154,7 @@ export default class ScreenshotModal extends SimpleModal {
 
     const a = document.createElement("a");
     a.href = dataUrl;
-    a.download = "screenshot";
+    a.download = sanitizeBasename(`screenshot-T${buildTimeString(this._state.timecode, true)}`);
     a.click();
   }
 

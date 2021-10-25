@@ -75,3 +75,12 @@ export function blobToDataURL(blob) {
     reader.readAsDataURL(blob);
   });
 }
+
+/**
+ *
+ * @param {string} str
+ */
+export function sanitizeBasename(str) {
+  const result = str.replace(/[^a-zA-Z0-9()]+/g, "_");
+  return result.length > 0 ? result : "_";
+}

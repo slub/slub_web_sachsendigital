@@ -1,4 +1,4 @@
-import { buildTimeString, dataUrlMime } from './util';
+import { buildTimeString, dataUrlMime, sanitizeBasename } from './util';
 
 describe('buildTimeString', () => {
   test('basic', () => {
@@ -18,4 +18,13 @@ describe('dataUrlMime', () => {
   test('basic', () => {
     expect(dataUrlMime('data:image/png;abc')).toBe("image/png");
   });
+});
+
+describe('sanitizeBasename', () => {
+  test('basic', () => {
+    expect(sanitizeBasename("")).not.toBe("");
+    expect(sanitizeBasename("Just for Fun")).toBe("Just_for_Fun");
+    expect(sanitizeBasename("..")).toBe("_");
+    expect(sanitizeBasename("1:2:3")).toBe("1_2_3");
+  })
 });
