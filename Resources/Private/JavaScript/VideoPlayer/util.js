@@ -26,3 +26,52 @@ export function buildTimeString(totalSeconds, showHour) {
 export function dataUrlMime(dataUrl) {
   return dataUrl.match(/data:(.*);/)[1];
 }
+
+/**
+ *
+ * @param {HTMLCanvasElement} canvas
+ * @param {string?} type
+ * @param {quality} quality
+ * @returns {Promise<Blob>}
+ */
+export function canvasToBlob(canvas, type, quality) {
+  return new Promise(resolve => {
+    canvas.toBlob(resolve, type, quality)
+  });
+}
+
+/**
+ *
+ * @param {Blob} blob
+ * @returns {Promise<string>}
+ */
+export function blobToBinaryString(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      resolve(e.target.result);
+    };
+    reader.onerror = (e) => {
+      reject(e.target.error);
+    };
+    reader.readAsBinaryString(blob);
+  });
+}
+
+/**
+ *
+ * @param {Blob} blob
+ * @returns {Promise<string>}
+ */
+export function blobToDataURL(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      resolve(e.target.result);
+    };
+    reader.onerror = (e) => {
+      reject(e.target.error);
+    };
+    reader.readAsDataURL(blob);
+  });
+}

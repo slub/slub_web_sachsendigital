@@ -1,18 +1,25 @@
+import PNG from './image/png';
 import { drawCanvas } from './Screenshot';
 import SimpleModal from './SimpleModal';
+import { blobToBinaryString, blobToDataURL, canvasToBlob } from './util';
 
 const imageFormats = [
   {
     mimeType: 'image/png',
     label: "PNG",
+    parseBinaryString: (s) => {
+      return PNG.fromBinaryString(s);
+    },
   },
   {
     mimeType: 'image/jpeg',
     label: "JPEG",
+    parseBinaryString: () => { },
   },
   {
     mimeType: 'image/tiff',
     label: "TIFF",
+    parseBinaryString: () => { },
   },
 ];
 
@@ -102,14 +109,33 @@ export default class ScreenshotModal extends SimpleModal {
     });
   }
 
-  handleDownloadImage(e) {
+  async handleDownloadImage(e) {
     e.preventDefault();
 
     // We could've set `downloadImage.href` in `render()` or in the radio box
     // change listener, but avoid this for performance reasons
 
+    const imageFormat = this._state.selectedImageFormat;
+
+    const imageBlob = await canvasToBlob(this._dom.canvas, imageFormat.mimeType);
+    const imageDataStr = await blobToBinaryString(imageBlob);
+    const image = imageFormat.parseBinaryString(imageDataStr);
+
+    let outputBlob = imageBlob;
+
+    if (image) {
+      image.addMetadata({
+        title: this._state.metadata.metadata.title,
+        comment: `Screenshot taken on Sachsen.Digital.\n\n${window.location.href}`,
+      });
+      const buffer = image.toArrayBuffer();
+      outputBlob = new Blob([buffer], { type: imageBlob.type });
+    }
+
+    const dataUrl = await blobToDataURL(outputBlob);
+
     const a = document.createElement("a");
-    a.href = this._dom.canvas.toDataURL(this._state.selectedImageFormat.mimeType);
+    a.href = dataUrl;
     a.download = "screenshot";
     a.click();
   }
