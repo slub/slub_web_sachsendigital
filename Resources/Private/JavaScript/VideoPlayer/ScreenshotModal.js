@@ -1,3 +1,4 @@
+import Environment from './Environment';
 import PNG from './image/png';
 import { drawCanvas } from './Screenshot';
 import SimpleModal from './SimpleModal';
@@ -24,7 +25,14 @@ const imageFormats = [
 ];
 
 export default class ScreenshotModal extends SimpleModal {
-  constructor(parent, videoDomElement, env) {
+  /**
+   *
+   * @param {HTMLElement} parent
+   * @param {Environment} env
+   * @param {object} config
+   * @param {HTMLVideoElement} video
+   */
+  constructor(parent, env, config) {
     const supportedImageFormats = imageFormats.filter(format => env.supportsCanvasExport(format.mimeType));
 
     super(parent, {
@@ -35,7 +43,7 @@ export default class ScreenshotModal extends SimpleModal {
       selectedImageFormat: supportedImageFormats[0],
     });
 
-    this._videoDomElement = videoDomElement;
+    this._videoDomElement = config.video;
   }
 
   _createDom() {

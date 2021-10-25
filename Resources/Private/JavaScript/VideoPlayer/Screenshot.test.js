@@ -33,7 +33,9 @@ test('can open screenshot overlay', async () => {
   expect(overlay()).toBeNull();
 
   // opened; exact tags are in snapshot
-  const modal = new ScreenshotModal(document.body, new VideoMock(1920, 1080), new Environment());
+  const modal = new ScreenshotModal(document.body, new Environment(), {
+    video: new VideoMock(1920, 1080),
+  });
   modal.setMetadata(getTestMetadataArray());
   modal.open();
   await modal.update();
