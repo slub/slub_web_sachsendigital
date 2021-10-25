@@ -26,7 +26,7 @@ function getTestMetadataArray() {
   };
 }
 
-test('can open screenshot overlay', () => {
+test('can open screenshot overlay', async () => {
   const overlay = () => document.querySelector('.screenshot-modal');
 
   // not opened yet
@@ -36,6 +36,7 @@ test('can open screenshot overlay', () => {
   const modal = new ScreenshotModal(document.body, new VideoMock(1920, 1080), new Environment());
   modal.setMetadata(getTestMetadataArray());
   modal.open();
+  await modal.update();
   expect(overlay()).toMatchSnapshot();
 });
 
