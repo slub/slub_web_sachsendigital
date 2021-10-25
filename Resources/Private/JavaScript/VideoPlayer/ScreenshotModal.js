@@ -130,6 +130,7 @@ export default class ScreenshotModal extends SimpleModal {
     // change listener, but avoid this for performance reasons
 
     const imageFormat = this._state.selectedImageFormat;
+    const imageTitle = this._state.metadata.metadata.title;
 
     const imageBlob = await canvasToBlob(this._dom.canvas, imageFormat.mimeType);
     const imageDataStr = await blobToBinaryString(imageBlob);
@@ -143,7 +144,7 @@ export default class ScreenshotModal extends SimpleModal {
       url.searchParams.set('timecode', this._state.timecode);
 
       image.addMetadata({
-        title: this._state.metadata.metadata.title,
+        title: imageTitle,
         comment: `Screenshot taken on Sachsen.Digital.\n\n${url.toString()}`,
       });
       const buffer = image.toArrayBuffer();
@@ -154,7 +155,7 @@ export default class ScreenshotModal extends SimpleModal {
 
     const a = document.createElement("a");
     a.href = dataUrl;
-    a.download = sanitizeBasename(`screenshot-T${buildTimeString(this._state.timecode, true)}`);
+    a.download = sanitizeBasename(`Screenshot-${imageTitle}-T${buildTimeString(this._state.timecode, true)}`);
     a.click();
   }
 
