@@ -138,18 +138,6 @@ export default class PNG {
   }
 
   /**
-   * @returns {ArrayBuffer}
-   */
-  toArrayBuffer() {
-    const data = this.toBinaryString();
-    let buffer = new Uint8Array(data.length);
-    for (let i = 0; i < data.length; i++) {
-      buffer[i] = data.charCodeAt(i);
-    }
-    return buffer;
-  }
-
-  /**
    *
    * @param {Partial<import("../metadata").ImageMetadata>} metadata
    */

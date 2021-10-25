@@ -1,8 +1,9 @@
 import Environment from './Environment';
+import JPEG from './image/jpeg';
 import PNG from './image/png';
 import { drawCanvas } from './Screenshot';
 import SimpleModal from './SimpleModal';
-import { blobToBinaryString, blobToDataURL, buildTimeString, canvasToBlob, sanitizeBasename } from './util';
+import { binaryStringToArrayBuffer, blobToBinaryString, blobToDataURL, buildTimeString, canvasToBlob, sanitizeBasename } from './util';
 
 const imageFormats = [
   {
@@ -15,7 +16,9 @@ const imageFormats = [
   {
     mimeType: 'image/jpeg',
     label: "JPEG",
-    parseBinaryString: () => { },
+    parseBinaryString: (s) => {
+      return JPEG.fromBinaryString(s);
+    },
   },
   {
     mimeType: 'image/tiff',
@@ -147,7 +150,7 @@ export default class ScreenshotModal extends SimpleModal {
         title: imageTitle,
         comment: `Screenshot taken on Sachsen.Digital.\n\n${url.toString()}`,
       });
-      const buffer = image.toArrayBuffer();
+      const buffer = binaryStringToArrayBuffer(image.toBinaryString());
       outputBlob = new Blob([buffer], { type: imageBlob.type });
     }
 

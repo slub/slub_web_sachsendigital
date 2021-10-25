@@ -78,6 +78,19 @@ export function blobToDataURL(blob) {
 
 /**
  *
+ * @param {string} s
+ * @returns {ArrayBuffer}
+ */
+export function binaryStringToArrayBuffer(s) {
+  const buffer = new Uint8Array(s.length);
+  for (let i = 0; i < s.length; i++) {
+    buffer[i] = s.charCodeAt(i);
+  }
+  return buffer;
+}
+
+/**
+ *
  * @param {string} str
  */
 export function sanitizeBasename(str) {
