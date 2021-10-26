@@ -1,4 +1,5 @@
-import { buildTimeString, dataUrlMime, numberIntoRange, sanitizeBasename } from './util';
+import { Blob } from 'buffer';
+import { buildTimeString, dataUrlMime, numberIntoRange, sanitizeBasename, withObjectUrl } from './util';
 
 describe('numberIntoRange', () => {
   test('basic', () => {
@@ -25,6 +26,27 @@ describe('buildTimeString', () => {
 describe('dataUrlMime', () => {
   test('basic', () => {
     expect(dataUrlMime('data:image/png;abc')).toBe("image/png");
+  });
+});
+
+describe('withObjectUrl', () => {
+  test('returns result of callback', () => {
+    expect(withObjectUrl(new Blob(), () => 1)).toBe(1);
+  })
+
+  test('revokes despite throw', () => {
+    const spyRevoke = jest.spyOn(URL, 'revokeObjectURL');
+
+    let blobObjectUrl;
+
+    expect(() => {
+      withObjectUrl(new Blob(), (objectUrl) => {
+        blobObjectUrl = objectUrl;
+        throw new Error();
+      });
+    }).toThrow();
+
+    expect(spyRevoke).toHaveBeenCalledWith(blobObjectUrl);
   });
 });
 

@@ -3,7 +3,7 @@ import JPEG from './image/jpeg';
 import PNG from './image/png';
 import { drawCanvas } from './Screenshot';
 import SimpleModal from './SimpleModal';
-import { binaryStringToArrayBuffer, blobToBinaryString, blobToDataURL, buildTimeString, canvasToBlob, sanitizeBasename } from './util';
+import { binaryStringToArrayBuffer, blobToBinaryString, buildTimeString, canvasToBlob, sanitizeBasename, withObjectUrl } from './util';
 
 const imageFormats = [
   {
@@ -154,12 +154,12 @@ export default class ScreenshotModal extends SimpleModal {
       outputBlob = new Blob([buffer], { type: imageBlob.type });
     }
 
-    const dataUrl = await blobToDataURL(outputBlob);
-
-    const a = document.createElement("a");
-    a.href = dataUrl;
-    a.download = sanitizeBasename(`Screenshot-${imageTitle}-T${buildTimeString(this._state.timecode, true)}`);
-    a.click();
+    withObjectUrl(outputBlob, (objectUrl) => {
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = sanitizeBasename(`Screenshot-${imageTitle}-T${buildTimeString(this._state.timecode, true)}`);
+      a.click();
+    });
   }
 
   render(state) {

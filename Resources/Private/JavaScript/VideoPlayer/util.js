@@ -102,21 +102,22 @@ export function blobToBinaryString(blob) {
 }
 
 /**
- *
- * @param {Blob} blob
- * @returns {Promise<string>}
+ * @template T
+ * @param {Blob | MediaSource} obj
+ * @param {(objectUrl: string) => T} callback
+ * @returns {T}
  */
-export function blobToDataURL(blob) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      resolve(e.target.result);
-    };
-    reader.onerror = (e) => {
-      reject(e.target.error);
-    };
-    reader.readAsDataURL(blob);
-  });
+export function withObjectUrl(obj, callback) {
+  // Outside of try-catch because no cleanup needed if this throws
+  const objectUrl = URL.createObjectURL(obj);
+
+  try {
+    return callback(objectUrl);
+  } catch (e) {
+    throw e;
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
 }
 
 /**
