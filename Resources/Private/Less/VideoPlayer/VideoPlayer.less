@@ -22,6 +22,26 @@
         align-items: center;
         flex-wrap: wrap;
     }
+
+    .thumbnail-display {
+        // Use `visibility` instead of `display` because we want to use
+        // `offsetWidth`, which is zero for elements with `display: none`.
+        visibility: hidden;
+        // Ensure that only the current tile is shown (not the full tileset)
+        overflow: hidden;
+        position: absolute;
+        bottom: 50px;
+        // Don't be shadowed by Shaka controlbar
+        z-index: 1;
+        width: 160px;
+        height: 90px;
+        border: 1px solid white;
+        box-sizing: content-box;
+
+        &.shown {
+            visibility: visible;
+        }
+    }
 }
 
 .screenshot-modal {

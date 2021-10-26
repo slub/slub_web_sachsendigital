@@ -1,4 +1,47 @@
 /**
+ *
+ * @param {number} value
+ * @param {[number; number]} range
+ * @returns {number}
+ */
+export function numberIntoRange(value, range) {
+  if (value < range[0]) {
+    return range[0];
+  }
+
+  if (value > range[1]) {
+    return range[1];
+  }
+
+  return value;
+}
+
+/**
+ *
+ * @param {number} value
+ * @param {[number; number]} range
+ * @param {number?} tolerance
+ */
+export function isValueInRange(value, range, tolerance = 0) {
+  const min = range[0] - tolerance;
+  const max = range[1] + tolerance;
+  return min <= value && value <= max;
+}
+
+/**
+ *
+ * @param {DOMRect} rect
+ * @param {{ x: number; y: number; toleranceX?: number; toleranceY?: number }} pos
+ */
+export function isPosInRect(rect, pos) {
+  // TODO: inclusive/exclusive?
+  return (
+    isValueInRange(pos.x, [rect.left, rect.right], pos.toleranceX)
+    && isValueInRange(pos.y, [rect.top, rect.bottom], pos.toleranceY)
+  );
+}
+
+/**
   * Builds a time string, e.g., 01:04:23, from |totalSeconds|.
   *
   * @param {number} totalSeconds (in seconds)
@@ -96,4 +139,16 @@ export function binaryStringToArrayBuffer(s) {
 export function sanitizeBasename(str) {
   const result = str.replace(/[^a-zA-Z0-9()]+/g, "_");
   return result.length > 0 ? result : "_";
+}
+
+export const HttpStatusGroup = {
+  Informational: 1,
+  Success: 2,
+  Redirection: 3,
+  ClientError: 4,
+  ServerError: 5,
+};
+
+export function getHttpStatusGroup(code) {
+  return Math.floor(code / 100);
 }

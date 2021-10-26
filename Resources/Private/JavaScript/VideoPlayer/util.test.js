@@ -1,4 +1,12 @@
-import { buildTimeString, dataUrlMime, sanitizeBasename } from './util';
+import { buildTimeString, dataUrlMime, numberIntoRange, sanitizeBasename } from './util';
+
+describe('numberIntoRange', () => {
+  test('basic', () => {
+    expect(numberIntoRange(1, [2, 3])).toBe(2);
+    expect(numberIntoRange(2.5, [2, 3])).toBe(2.5);
+    expect(numberIntoRange(4, [2, 3])).toBe(3);
+  });
+});
 
 describe('buildTimeString', () => {
   test('basic', () => {

@@ -8,6 +8,8 @@ import PresentationTimeTracker from './controls/PresentationTimeTracker';
 import '../../Less/VideoPlayer/VideoPlayer.less';
 import ControlPanelButton from './controls/ControlPanelButton';
 import Environment from './Environment';
+import ImageFetcher from './ImageFetcher';
+import ThumbnailPreview from './ThumbnailPreview';
 
 const PREV_CHAPTER_TOLERANCE = 5;
 
@@ -121,6 +123,15 @@ export default class SachsenShakaPlayer {
       onError(e);
     }
 
+    this.seekBar = this.container.querySelector('.shaka-seek-bar-container');
+    this.thumbnailPreview = new ThumbnailPreview({
+      mainContainer: this.container,
+      seekBar: this.seekBar,
+      seekThumbSize: 12,
+      player: this.player,
+      network: new ImageFetcher(),
+    });
+
     this.renderChapterMarkers();
   }
 
@@ -129,8 +140,6 @@ export default class SachsenShakaPlayer {
   }
 
   renderChapterMarkers() {
-    const seekBar = document.querySelector('.shaka-seek-bar-container');
-
     for (const chapter of this.chapters) {
       const relative = chapter.timecode / this.video.duration;
 
@@ -156,7 +165,7 @@ export default class SachsenShakaPlayer {
       const markerInner = document.createElement('span');
       marker.append(markerInner);
 
-      seekBar.append(marker);
+      this.seekBar.append(marker);
     }
   }
 
