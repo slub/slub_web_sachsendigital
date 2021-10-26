@@ -2,7 +2,7 @@ import shaka from 'shaka-player/dist/shaka-player.ui';
 
 import Component from './Component';
 import ImageFetcher from './ImageFetcher';
-import { isPosInRect, numberIntoRange } from './util';
+import { buildTimeString, isPosInRect, numberIntoRange } from './util';
 
 /**
  * @typedef {{ absolute: number; relative: number; seconds: number }} SeekPosition
@@ -57,12 +57,25 @@ export default class ThumbnailPreview extends Component {
     this.player = config.player;
     this.network = config.network;
 
-    this.dom = {};
-    this.dom.display = document.createElement("div");
-    this.dom.display.className = "thumbnail-display";
-    this.dom.image = document.createElement("img");
-    this.dom.display.append(this.dom.image);
-    this.seekBar.append(this.dom.display);
+    const domTmpl = document.createElement("template");
+    domTmpl.innerHTML = `
+      <div class="thumbnail-preview">
+        <div class="display">
+          <img>
+        </div>
+        <span class="timecode"></span>
+      </div>
+    `;
+    const container = domTmpl.content.firstElementChild;
+
+    this.dom = {
+      container,
+      display: container.querySelector('.display'),
+      image: container.querySelector('img'),
+      timecode: container.querySelector('.timecode'),
+    };
+
+    this.seekBar.append(this.dom.container);
 
     this.handlers = {
       onMouseMove: this.onMouseMove.bind(this),
@@ -189,25 +202,27 @@ export default class ThumbnailPreview extends Component {
         this.dom.image.addEventListener('load', () => {
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-              this.dom.display.classList.add('shown');
+              this.dom.container.classList.add('shown');
             });
           });
         }, { once: true });
 
         this.dom.image.src = tilesetObjectUrl;
       } else if (!showDisplay(this._state)) {
-        this.dom.display.classList.add('shown');
+        this.dom.container.classList.add('shown');
       }
 
-      // Align the display so that the mouse underneath is centered,
+      // Align the container so that the mouse underneath is centered,
       // but avoid overflowing at the left or right of the seek bar
-      const displayX = numberIntoRange(
-        seekPosition.absolute - this.dom.display.offsetWidth / 2,
-        [0, this.seekBar.clientWidth - this.dom.display.offsetWidth]
+      const containerX = numberIntoRange(
+        seekPosition.absolute - this.dom.container.offsetWidth / 2,
+        [0, this.seekBar.clientWidth - this.dom.container.offsetWidth]
       );
-      this.dom.display.style.left = `${displayX}px`;
+      this.dom.container.style.left = `${containerX}px`;
+
+      this.dom.timecode.innerText = buildTimeString(seekPosition.seconds, this.getVideoDuration() >= 3600);
     } else {
-      this.dom.display.classList.remove('shown');
+      this.dom.container.classList.remove('shown');
     }
   }
 }

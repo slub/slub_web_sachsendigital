@@ -23,23 +23,34 @@
         flex-wrap: wrap;
     }
 
-    .thumbnail-display {
+    .thumbnail-preview {
         // Use `visibility` instead of `display` because we want to use
         // `offsetWidth`, which is zero for elements with `display: none`.
         visibility: hidden;
-        // Ensure that only the current tile is shown (not the full tileset)
-        overflow: hidden;
         position: absolute;
         bottom: 50px;
         // Don't be shadowed by Shaka controlbar
         z-index: 1;
-        width: 160px;
-        height: 90px;
-        border: 1px solid white;
-        box-sizing: content-box;
 
         &.shown {
             visibility: visible;
+        }
+
+        .display {
+            // Ensure that only the current tile is shown (not the full tileset)
+            overflow: hidden;
+            width: 160px;
+            height: 90px;
+            border: 1px solid white;
+            box-sizing: content-box;
+        }
+
+        .timecode {
+            display: inline-block;
+            padding-top: 1em;
+            // Same color and font-size as `.shaka-current-time`
+            color: white;
+            font-size: 14px;
         }
     }
 }
