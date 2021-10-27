@@ -45,10 +45,10 @@ export default class ThumbnailPreview extends Component {
        */
       tilesetRemoteUrl: null,
       /**
-       * Local object URL of the currently used and loaded thumbnail tileset.
-       * @type {string | null}
+       * The currently used and loaded thumbnail tileset.
+       * @type {HTMLImageElement | null}
        */
-      tilesetObjectUrl: null,
+      tilesetImage: null,
     });
 
     this.mainContainer = config.mainContainer;
@@ -61,7 +61,7 @@ export default class ThumbnailPreview extends Component {
     domTmpl.innerHTML = `
       <div class="thumbnail-preview">
         <div class="display">
-          <img>
+          <canvas>
         </div>
         <span class="timecode"></span>
       </div>
@@ -71,9 +71,13 @@ export default class ThumbnailPreview extends Component {
     this.dom = {
       container,
       display: container.querySelector('.display'),
-      image: container.querySelector('img'),
+      /** @type {HTMLCanvasElement} */
+      canvas: container.querySelector('canvas'),
       timecode: container.querySelector('.timecode'),
     };
+
+    this.ctx = this.dom.canvas.getContext('2d');
+    this.lastRenderedThumb = null;
 
     this.seekBar.append(this.dom.container);
 
@@ -155,10 +159,10 @@ export default class ThumbnailPreview extends Component {
       this._state.tilesetRemoteUrl = null;
 
       this.network.get(uri)
-        .then(imageUri => {
+        .then(image => {
           this.setState({
             tilesetRemoteUrl: uri,
-            tilesetObjectUrl: imageUri,
+            tilesetImage: image,
           });
         })
         .catch(() => {
@@ -176,40 +180,20 @@ export default class ThumbnailPreview extends Component {
   }
 
   render(state) {
-    const { seekPosition, thumb, tilesetObjectUrl } = state;
+    const { seekPosition, thumb, tilesetImage } = state;
 
     if (showDisplay(state)) {
-      // The condition is a proxy to see if it's another thumbnail
-      if (thumb.startTime !== this._state.thumb.startTime) {
-        const scale = this.dom.display.clientWidth / thumb.width;
-        this.dom.image.style.transform = [
-          `scale(${scale})`,
-          `translateX(-${thumb.positionX}px)`,
-          `translateY(-${thumb.positionY}px)`,
-        ].join(' ');
-        this.dom.image.style.transformOrigin = 'left top';
-      }
+      // Check if it's another thumbnail (`startTime` as a proxy)
+      if (this.lastRenderedThumb === null || thumb.startTime !== this.lastRenderedThumb.startTime) {
+        this.ctx.drawImage(
+          tilesetImage,
+          // position and size on source image
+          thumb.positionX, thumb.positionY, thumb.width, thumb.height,
+          // position and size on destination canvas
+          0, 0, this.dom.canvas.width, this.dom.canvas.height
+        );
 
-      // There are two visual glitches that we combat here:
-      // (1) A flicker when the container is already shown but the image not
-      //     yet rendered.
-      // (2) The previous thumbnail is shown while the next is being rendererd
-      if (tilesetObjectUrl !== this._state.tilesetObjectUrl) {
-        // Make sure that the user won't see the previous tile (for a short moment)
-        this.dom.image.src = "";
-
-        // https://stackoverflow.com/a/24674486
-        this.dom.image.addEventListener('load', () => {
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              this.dom.container.classList.add('shown');
-            });
-          });
-        }, { once: true });
-
-        this.dom.image.src = tilesetObjectUrl;
-      } else if (!showDisplay(this._state)) {
-        this.dom.container.classList.add('shown');
+        this.lastRenderedThumb = thumb;
       }
 
       // Align the container so that the mouse underneath is centered,
@@ -221,6 +205,8 @@ export default class ThumbnailPreview extends Component {
       this.dom.container.style.left = `${containerX}px`;
 
       this.dom.timecode.innerText = buildTimeString(seekPosition.seconds, this.getVideoDuration() >= 3600);
+
+      this.dom.container.classList.add('shown');
     } else {
       this.dom.container.classList.remove('shown');
     }

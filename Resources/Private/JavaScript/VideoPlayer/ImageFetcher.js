@@ -15,7 +15,7 @@ export default class ImageFetcher {
     /**
      * Map from URL to task.
      * @private
-     * @type {Record<string, Task<string>>}
+     * @type {Record<string, Task<HTMLImageElement>>}
      */
     this.tasks = {};
   }
@@ -32,7 +32,7 @@ export default class ImageFetcher {
   /**
    *
    * @param {string} url
-   * @returns {Promise<string>}
+   * @returns {Promise<HTMLImageElement>}
    */
   get(url) {
     if (!this.tasks[url]) {
@@ -44,12 +44,17 @@ export default class ImageFetcher {
         request = new XMLHttpRequest();
         request.responseType = 'blob';
         request.onload = (e) => {
+          this.tasks[url].loaded = true;
+
           if (getHttpStatusGroup(request.status) === HttpStatusGroup.Success) {
-            // TODO: Cleanup (`revokeObjectURL`)
-            const imageUrl = URL.createObjectURL(request.response);
-            this.tasks[url].loaded = true;
-            this.tasks[url].response = imageUrl;
-            resolve(imageUrl); //
+            const objectUrl = URL.createObjectURL(request.response);
+            const image = document.createElement('img');
+            image.onload = () => {
+              URL.revokeObjectURL(objectUrl);
+              this.tasks[url].response = image;
+              resolve(image);
+            };
+            image.src = objectUrl;
           } else {
             request.onerror(e);
           }
