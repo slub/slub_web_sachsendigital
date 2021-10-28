@@ -179,36 +179,50 @@ export default class ThumbnailPreview extends Component {
     });
   }
 
+  renderImage(thumb, tilesetImage) {
+    // Check if it's another thumbnail (`startTime` as a proxy)
+    if (this.lastRenderedThumb === null || thumb.startTime !== this.lastRenderedThumb.startTime) {
+      this.ctx.drawImage(
+        tilesetImage,
+        // position and size on source image
+        thumb.positionX, thumb.positionY, thumb.width, thumb.height,
+        // position and size on destination canvas
+        0, 0, this.dom.canvas.width, this.dom.canvas.height
+      );
+
+      this.lastRenderedThumb = thumb;
+    }
+  }
+
+  renderSeekPosition(seekPosition) {
+    // Align the container so that the mouse underneath is centered,
+    // but avoid overflowing at the left or right of the seek bar
+    const containerX = numberIntoRange(
+      seekPosition.absolute - this.dom.container.offsetWidth / 2,
+      [0, this.seekBar.clientWidth - this.dom.container.offsetWidth]
+    );
+    this.dom.container.style.left = `${containerX}px`;
+
+    this.dom.timecode.innerText = buildTimeString(seekPosition.seconds, this.getVideoDuration() >= 3600);
+  }
+
+  setIsVisible(value) {
+    if (value) {
+      this.dom.container.classList.add('shown');
+    } else {
+      this.dom.container.classList.remove('shown');
+    }
+  }
+
   render(state) {
     const { seekPosition, thumb, tilesetImage } = state;
 
     if (showDisplay(state)) {
-      // Check if it's another thumbnail (`startTime` as a proxy)
-      if (this.lastRenderedThumb === null || thumb.startTime !== this.lastRenderedThumb.startTime) {
-        this.ctx.drawImage(
-          tilesetImage,
-          // position and size on source image
-          thumb.positionX, thumb.positionY, thumb.width, thumb.height,
-          // position and size on destination canvas
-          0, 0, this.dom.canvas.width, this.dom.canvas.height
-        );
-
-        this.lastRenderedThumb = thumb;
-      }
-
-      // Align the container so that the mouse underneath is centered,
-      // but avoid overflowing at the left or right of the seek bar
-      const containerX = numberIntoRange(
-        seekPosition.absolute - this.dom.container.offsetWidth / 2,
-        [0, this.seekBar.clientWidth - this.dom.container.offsetWidth]
-      );
-      this.dom.container.style.left = `${containerX}px`;
-
-      this.dom.timecode.innerText = buildTimeString(seekPosition.seconds, this.getVideoDuration() >= 3600);
-
-      this.dom.container.classList.add('shown');
+      this.renderImage(thumb, tilesetImage);
+      this.renderSeekPosition(seekPosition);
+      this.setIsVisible(true);
     } else {
-      this.dom.container.classList.remove('shown');
+      this.setIsVisible(false);
     }
   }
 }
