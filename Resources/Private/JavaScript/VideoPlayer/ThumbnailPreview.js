@@ -60,11 +60,24 @@ export default class ThumbnailPreview {
     this.seekBar.append(this.dom.container);
 
     this.handlers = {
+      onWindowBlur: this.onWindowBlur.bind(this),
       onMouseMove: this.onMouseMove.bind(this),
     };
 
+    window.addEventListener('blur', this.handlers.onWindowBlur);
     // TODO: Find a better solution for this
     this.mainContainer.addEventListener('mousemove', this.handlers.onMouseMove);
+  }
+
+  /**
+   * @protected
+   */
+   onWindowBlur() {
+    // The blur event is fired, for example, when the user switches the tab via
+    // Ctrl+Tab. If they then move the mouse and return to the player tab, it may
+    // be surprising to have the thumbnail preview still open. Thus, close the
+    // preview to avoid that.
+    this.hidePreview(false);
   }
 
   /**
