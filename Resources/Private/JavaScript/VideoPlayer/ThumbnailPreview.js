@@ -1,30 +1,23 @@
 import shaka from 'shaka-player/dist/shaka-player.ui';
 
-import Component from './Component';
 import ImageFetcher from './ImageFetcher';
 import { buildTimeString, isPosInRect, numberIntoRange } from './util';
 
 /**
  * @typedef {{ absolute: number; relative: number; seconds: number }} SeekPosition
+ * @typedef {{
+ *  uri: string;
+ *  thumb: any;
+ *  tilesetImage: HTMLImageElement;
+ * }} LastRendered
  */
-
-/**
- * Check if the thumbnail display should be shown given `state`.
- */
-function showDisplay(state) {
-  return (
-    state.seekPosition !== null
-    && state.thumb !== null
-    && state.tilesetRemoteUrl === state.thumb.uris[0]
-  );
-}
 
 /**
  * Component for a thumbnail preview when sliding over the seekbar.
  *
  * Oriented at https://github.com/google/shaka-player/issues/3371#issuecomment-830001465.
  */
-export default class ThumbnailPreview extends Component {
+export default class ThumbnailPreview {
   /**
    *
    * @param {object} config
@@ -35,22 +28,6 @@ export default class ThumbnailPreview extends Component {
    * @param {ImageFetcher} config.network
    */
   constructor(config) {
-    super({
-      /** @type {SeekPosition | null} */
-      seekPosition: null,
-      thumb: null,
-      /**
-       * Remote URL of the currently used thumbnail tileset.
-       * @type {string | null}
-       */
-      tilesetRemoteUrl: null,
-      /**
-       * The currently used and loaded thumbnail tileset.
-       * @type {HTMLImageElement | null}
-       */
-      tilesetImage: null,
-    });
-
     this.mainContainer = config.mainContainer;
     this.seekBar = config.seekBar;
     this.seekThumbSize = config.seekThumbSize;
@@ -77,7 +54,8 @@ export default class ThumbnailPreview extends Component {
     };
 
     this.ctx = this.dom.canvas.getContext('2d');
-    this.lastRenderedThumb = null;
+    /** @type {LastRendered | null} */
+    this.lastRendered = null;
 
     this.seekBar.append(this.dom.container);
 
@@ -141,47 +119,44 @@ export default class ThumbnailPreview extends Component {
   async onMouseMove(e) {
     const thumbsTrack = this.getThumbsTrack();
     if (thumbsTrack === undefined) {
-      return this.resetSeek();
+      return this.hidePreview();
     }
 
     const seekPosition = this.mouseEventToPosition(e);
     if (seekPosition === undefined) {
-      return this.resetSeek();
+      return this.hidePreview();
     }
 
     const thumb = await this.player.getThumbnails(thumbsTrack.id, seekPosition.seconds);
     if (thumb === null || thumb.uris.length === 0) {
-      return this.resetSeek();
+      return this.hidePreview();
     }
 
     const uri = thumb.uris[0];
-    if (uri !== this._state.tilesetRemoteUrl) {
-      this._state.tilesetRemoteUrl = null;
-
+    if (this.lastRendered === null || uri !== this.lastRendered.uri) {
       this.network.get(uri)
         .then(image => {
-          this.setState({
-            tilesetRemoteUrl: uri,
-            tilesetImage: image,
-          });
+          this.renderImage(uri, thumb, image);
+          this.setIsVisible(true);
         })
         .catch(() => {
-          this.resetSeek();
+          this.hidePreview();
         });
+    } else {
+      this.renderImage(uri, thumb, this.lastRendered.tilesetImage);
+      this.setIsVisible(true);
     }
 
-    this.setState({ seekPosition, thumb });
+    this.renderSeekPosition(seekPosition);
   }
 
-  resetSeek() {
-    this.setState({
-      seekPosition: null,
-    });
+  hidePreview() {
+    this.setIsVisible(false);
   }
 
-  renderImage(thumb, tilesetImage) {
+  renderImage(uri, thumb, tilesetImage) {
     // Check if it's another thumbnail (`startTime` as a proxy)
-    if (this.lastRenderedThumb === null || thumb.startTime !== this.lastRenderedThumb.startTime) {
+    if (this.lastRendered === null || thumb.startTime !== this.lastRendered.thumb.startTime) {
       this.ctx.drawImage(
         tilesetImage,
         // position and size on source image
@@ -190,7 +165,7 @@ export default class ThumbnailPreview extends Component {
         0, 0, this.dom.canvas.width, this.dom.canvas.height
       );
 
-      this.lastRenderedThumb = thumb;
+      this.lastRendered = { uri, thumb, tilesetImage };
     }
   }
 
@@ -211,18 +186,6 @@ export default class ThumbnailPreview extends Component {
       this.dom.container.classList.add('shown');
     } else {
       this.dom.container.classList.remove('shown');
-    }
-  }
-
-  render(state) {
-    const { seekPosition, thumb, tilesetImage } = state;
-
-    if (showDisplay(state)) {
-      this.renderImage(thumb, tilesetImage);
-      this.renderSeekPosition(seekPosition);
-      this.setIsVisible(true);
-    } else {
-      this.setIsVisible(false);
     }
   }
 }
