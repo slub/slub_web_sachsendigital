@@ -43,20 +43,6 @@ Array [
   },
   Object {
     "props": Object {
-      "value": "end",
-    },
-    "transform": Array [
-      1,
-      0,
-      0,
-      1,
-      0,
-      0,
-    ],
-    "type": "textAlign",
-  },
-  Object {
-    "props": Object {
       "value": "#ffffff",
     },
     "transform": Array [
@@ -96,6 +82,113 @@ Array [
       0,
     ],
     "type": "shadowColor",
+  },
+  Object {
+    "props": Object {
+      "value": "left",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "textAlign",
+  },
+  Object {
+    "props": Object {
+      "maxWidth": null,
+      "text": "top left",
+      "x": 10,
+      "y": 10,
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "fillText",
+  },
+  Object {
+    "props": Object {
+      "value": "right",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "textAlign",
+  },
+  Object {
+    "props": Object {
+      "maxWidth": null,
+      "text": "top right",
+      "x": 1910,
+      "y": 10,
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "fillText",
+  },
+  Object {
+    "props": Object {
+      "value": "left",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "textAlign",
+  },
+  Object {
+    "props": Object {
+      "maxWidth": null,
+      "text": "bottom left",
+      "x": 10,
+      "y": 1070,
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "fillText",
+  },
+  Object {
+    "props": Object {
+      "value": "right",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "textAlign",
   },
   Object {
     "props": Object {
@@ -160,20 +253,6 @@ Array [
   },
   Object {
     "props": Object {
-      "value": "end",
-    },
-    "transform": Array [
-      1,
-      0,
-      0,
-      1,
-      0,
-      0,
-    ],
-    "type": "textAlign",
-  },
-  Object {
-    "props": Object {
       "value": "#ffffff",
     },
     "transform": Array [
@@ -213,6 +292,113 @@ Array [
       0,
     ],
     "type": "shadowColor",
+  },
+  Object {
+    "props": Object {
+      "value": "left",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "textAlign",
+  },
+  Object {
+    "props": Object {
+      "maxWidth": null,
+      "text": "top left",
+      "x": 5,
+      "y": 5,
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "fillText",
+  },
+  Object {
+    "props": Object {
+      "value": "right",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "textAlign",
+  },
+  Object {
+    "props": Object {
+      "maxWidth": null,
+      "text": "top right",
+      "x": 955,
+      "y": 5,
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "fillText",
+  },
+  Object {
+    "props": Object {
+      "value": "left",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "textAlign",
+  },
+  Object {
+    "props": Object {
+      "maxWidth": null,
+      "text": "bottom left",
+      "x": 5,
+      "y": 535,
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "fillText",
+  },
+  Object {
+    "props": Object {
+      "value": "right",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "textAlign",
   },
   Object {
     "props": Object {

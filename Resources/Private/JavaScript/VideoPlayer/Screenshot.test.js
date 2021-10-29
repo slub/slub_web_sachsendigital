@@ -5,6 +5,7 @@
 import Environment from './Environment';
 import { drawCanvas } from './Screenshot';
 import ScreenshotModal from './ScreenshotModal';
+import { metadataArrayToString } from './util';
 
 beforeEach(() => {
   // TODO: Reset JSDOM in a more robust way
@@ -70,7 +71,14 @@ test('can draw to canvas', () => {
     const canvas = document.createElement("canvas");
     const context = canvas.getContext('2d');
 
-    drawCanvas(context, video, metadata);
+    drawCanvas(context, video, {
+      captions: [
+        { v: 'top', h: 'left', text: "top left" },
+        { v: 'top', h: 'right', text: "top right" },
+        { v: 'bottom', h: 'left', text: "bottom left" },
+        { v: 'bottom', h: 'right', text: metadataArrayToString(metadata) },
+      ]
+    });
 
     const events = context.__getEvents();
     expect(events).toMatchSnapshot();

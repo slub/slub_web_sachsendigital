@@ -3,7 +3,7 @@ import JPEG from './image/jpeg';
 import PNG from './image/png';
 import { drawCanvas } from './Screenshot';
 import SimpleModal from './SimpleModal';
-import { binaryStringToArrayBuffer, blobToBinaryString, buildTimeString, canvasToBlob, sanitizeBasename, withObjectUrl } from './util';
+import { binaryStringToArrayBuffer, blobToBinaryString, buildTimeString, canvasToBlob, metadataArrayToString, sanitizeBasename, withObjectUrl } from './util';
 
 const imageFormats = [
   {
@@ -168,11 +168,14 @@ export default class ScreenshotModal extends SimpleModal {
     const { show, metadata, showMetadata } = state;
 
     if (show && (!this._state.show || showMetadata !== this._state.showMetadata)) {
-      const metadataArray = showMetadata && metadata
-        ? metadata
-        : { metadata: {}, screenshotFields: [] };
-
-      drawCanvas(this._dom.canvas, this._videoDomElement, metadataArray);
+      drawCanvas(this._dom.canvas, this._videoDomElement, {
+        captions: showMetadata
+          ? [
+            { v: 'bottom', h: 'left', text: "https://sachsen.digital" },
+            { v: 'bottom', h: 'right', text: metadataArrayToString(metadata) },
+          ]
+          : []
+      });
     }
   }
 }

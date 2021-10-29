@@ -1,3 +1,10 @@
+export function metadataArrayToString(metadataArray) {
+  return metadataArray.screenshotFields
+    .map(field => metadataArray.metadata[field])
+    .filter(value => typeof value === 'string')
+    .join(' / ');
+}
+
 /**
  *
  * @param {number} value

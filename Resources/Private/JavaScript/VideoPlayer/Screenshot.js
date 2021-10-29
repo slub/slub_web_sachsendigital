@@ -1,20 +1,21 @@
 /**
+ * @typedef {{ h: 'left' | 'right'; v: 'top' | 'bottom'; text: string; }} ScreenshotCaption
+ * @typedef {{
+ *  captions: ScreenshotCaption[];
+ * }} ScreenshotConfig
+ */
+
+/**
  *
  * @param {HTMLCanvasElement | CanvasRenderingContext2D} target Canvas on which the screenshot is drawn
  * @param {HTMLVideoElement} videoDomElement Source video element from which the screenshot is taken
- * @param {any} metadataArray
+ * @param {ScreenshotConfig} config
  */
-export function drawCanvas(target, videoDomElement, metadataArray) {
+export function drawCanvas(target, videoDomElement, config) {
   const [targetCanvas, context] =
     target instanceof HTMLCanvasElement
       ? [target, target.getContext('2d')]
       : [target.canvas, target];
-
-  const infoString =
-    metadataArray.screenshotFields
-      .map(field => metadataArray.metadata[field])
-      .filter(value => typeof value === 'string')
-      .join(' / ');
 
   targetCanvas.width = videoDomElement.videoWidth;
   targetCanvas.height = videoDomElement.videoHeight;
@@ -25,9 +26,15 @@ export function drawCanvas(target, videoDomElement, metadataArray) {
   const textPad = 10 * unitHeight;
 
   context.font = `${Math.floor(25 * unitHeight)}px Arial`;
-  context.textAlign = 'end';
   context.fillStyle = "#FFFFFF";
   context.shadowBlur = 5;
   context.shadowColor = "black";
-  context.fillText(infoString, targetCanvas.width - textPad, targetCanvas.height - textPad);
+
+  for (const caption of config.captions) {
+    const x = caption.h === 'left' ? textPad : targetCanvas.width - textPad;
+    const y = caption.v === 'top' ? textPad : targetCanvas.height - textPad;
+
+    context.textAlign = caption.h;
+    context.fillText(caption.text, x, y);
+  }
 }
