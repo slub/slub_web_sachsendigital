@@ -142,6 +142,16 @@ export function binaryStringToArrayBuffer(s) {
 
 /**
  *
+ * @param {string} html
+ */
+export function templateElement(html) {
+  const template = document.createElement("template");
+  template.innerHTML = html;
+  return template.content.firstElementChild;
+}
+
+/**
+ *
  * @param {string} str
  */
 export function sanitizeBasename(str) {

@@ -1,7 +1,7 @@
 import shaka from 'shaka-player/dist/shaka-player.ui';
 
 import ImageFetcher from './ImageFetcher';
-import { buildTimeString, isPosInRect, numberIntoRange } from './util';
+import { buildTimeString, isPosInRect, numberIntoRange, templateElement } from './util';
 
 /**
  * @typedef {{ absolute: number; relative: number; seconds: number }} SeekPosition
@@ -34,16 +34,14 @@ export default class ThumbnailPreview {
     this.player = config.player;
     this.network = config.network;
 
-    const domTmpl = document.createElement("template");
-    domTmpl.innerHTML = `
+    const container = templateElement(`
       <div class="thumbnail-preview">
         <div class="display">
           <canvas>
         </div>
         <span class="timecode"></span>
       </div>
-    `;
-    const container = domTmpl.content.firstElementChild;
+    `);
 
     this.dom = {
       container,

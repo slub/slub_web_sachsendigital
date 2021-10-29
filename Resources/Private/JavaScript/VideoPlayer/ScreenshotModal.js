@@ -3,7 +3,7 @@ import JPEG from './image/jpeg';
 import PNG from './image/png';
 import { drawCanvas } from './Screenshot';
 import SimpleModal from './SimpleModal';
-import { binaryStringToArrayBuffer, blobToBinaryString, buildTimeString, canvasToBlob, metadataArrayToString, sanitizeBasename, withObjectUrl } from './util';
+import { binaryStringToArrayBuffer, blobToBinaryString, buildTimeString, canvasToBlob, metadataArrayToString, sanitizeBasename, templateElement, withObjectUrl } from './util';
 
 const imageFormats = [
   {
@@ -58,8 +58,7 @@ export default class ScreenshotModal extends SimpleModal {
 
     const idShowMetadata = env.mkid();
 
-    const configTmpl = document.createElement("template");
-    configTmpl.innerHTML = `
+    dom.config = templateElement(`
       <div class="screenshot-config">
         <input type="checkbox" id="${idShowMetadata}" class="show-metadata"><!--
         --><label for="${idShowMetadata}"> Metadaten einblenden</label>
@@ -73,8 +72,7 @@ export default class ScreenshotModal extends SimpleModal {
 
         <a href="#" class="download-image">Bild herunterladen</a>
       </div>
-    `;
-    dom.config = configTmpl.content.firstElementChild;
+    `);
     dom.showMetadata = dom.config.querySelector('.show-metadata');
     dom.showMetadata.checked = this._state.showMetadata;
     dom.showMetadata.addEventListener('change', this.handleChangeShowMetadata.bind(this));
