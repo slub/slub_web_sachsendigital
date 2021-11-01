@@ -4,22 +4,16 @@ export default class HelpModal extends SimpleModal {
   _createDom() {
     const dom = super._createDom("help-modal");
 
-    dom.title.innerText = "Tastaturbelegung";
+    dom.title.innerText = "Bedienhinweise";
 
     dom.body.innerHTML = `
-      <table>
+      <h3 class="subheader">Navigation</h3>
+
+      <table class="keybindings-table">
         <tbody>
           <tr>
             <td class="legend">Taste</td>
             <td class="legend">Funktion</td>
-          </tr>
-          <tr>
-            <td>Leertaste</td>
-            <td>Abspielen / Pausieren</td>
-          </tr>
-          <tr>
-            <td>Taste F</td>
-            <td>Vollbild an / aus</td>
           </tr>
           <tr>
             <td>Pfeil rechts</td>
@@ -45,13 +39,24 @@ export default class HelpModal extends SimpleModal {
             <td>Umschalt + links <em>oder</em> Komma</td>
             <td>Einzelbild zurück</td>
           </tr>
+        </tbody>
+      </table>
+
+      <h3 class="subheader">Weitere Tastenkürzel</h3>
+
+      <table class="keybindings-table">
+        <tbody>
           <tr>
-            <td>Pfeil oben</td>
-            <td>Lautstärke erhöhen</td>
+            <td class="legend">Taste</td>
+            <td class="legend">Funktion</td>
           </tr>
           <tr>
-            <td>Pfeil unten</td>
-            <td>Lautstärke verringern</td>
+            <td>Leertaste</td>
+            <td>Abspielen / Pausieren</td>
+          </tr>
+          <tr>
+            <td>Taste F</td>
+            <td>Vollbild an / aus</td>
           </tr>
           <tr>
             <td>Taste M</td>
@@ -59,7 +64,7 @@ export default class HelpModal extends SimpleModal {
           </tr>
           <tr>
             <td>Taste B</td>
-            <td>Bookmark-Link anzeigen</td>
+            <td>Bookmark (Link teilen)</td>
           </tr>
           <tr>
             <td>Taste S</td>
@@ -67,7 +72,7 @@ export default class HelpModal extends SimpleModal {
           </tr>
           <tr>
             <td>F1</td>
-            <td>Hilfe (dieses Fenster)</td>
+            <td>Bedienhinweise (dieses Fenster)</td>
           </tr>
           <tr>
             <td>Escape</td>

@@ -61,7 +61,7 @@ class SxndPlayerApp {
         }),
         ControlPanelButton.register(this.env, {
           material_icon: 'help_outline',
-          title: "Hilfe",
+          title: "Bedienhinweise",
           onClick: () => {
             this.modals.help.open();
           },
