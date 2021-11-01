@@ -92,14 +92,20 @@ class SxndPlayerApp {
     document.addEventListener('keydown', this.onKeyDown.bind(this));
   }
 
+  hideThumbnailPreview() {
+    this.sxndPlayer.thumbnailPreview.hidePreview();
+  }
+
   onKeyDown(e) {
     const mod = modifiersFromEvent(e);
 
     if (e.key == 'F1' && mod == Modifier.None) {
       e.preventDefault();
+      this.hideThumbnailPreview();
       this.modals.help.toggle();
     } else if (e.key == 'Escape' && mod == Modifier.None) {
       e.preventDefault();
+      this.hideThumbnailPreview();
       this.modals.closeNext();
     }
 
@@ -109,6 +115,7 @@ class SxndPlayerApp {
 
     if (e.key == 'f' && mod === Modifier.None) {
       e.preventDefault();
+      this.hideThumbnailPreview();
       this.sxndPlayer.controls.toggleFullScreen();
     } else if (e.key == ' ' && mod === Modifier.None) {
       if (this.sxndPlayer.video.paused) {
@@ -166,11 +173,13 @@ class SxndPlayerApp {
 
   showBookmarkUrl() {
     this.sxndPlayer.pause();
+    this.hideThumbnailPreview();
     this.modals.bookmark.setTimecode(this.sxndPlayer.displayTime).open();
   }
 
   showScreenshot() {
     this.sxndPlayer.pause();
+    this.hideThumbnailPreview();
     this.modals.screenshot
       .setMetadata(this.videoInfo.metadata)
       .setTimecode(this.sxndPlayer.displayTime)
