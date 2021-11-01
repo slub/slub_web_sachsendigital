@@ -2,7 +2,6 @@ import $ from 'jquery';
 
 import BookmarkModal from './BookmarkModal';
 import ControlPanelButton from './controls/ControlPanelButton';
-import OverflowMenuButton from './controls/OverflowMenuButton';
 import Environment from './Environment';
 import HelpModal from './HelpModal';
 import { Modifier, modifiersFromEvent } from './Keyboard';
@@ -60,11 +59,9 @@ class SxndPlayerApp {
             this.showBookmarkUrl();
           },
         }),
-      ],
-      overflowMenuButtons: [
-        OverflowMenuButton.register(this.env, {
+        ControlPanelButton.register(this.env, {
           material_icon: 'help_outline',
-          name: "Hilfe",
+          title: "Hilfe",
           onClick: () => {
             this.modals.help.open();
           },

@@ -6,7 +6,6 @@ import Chapters from './Chapters';
 import PresentationTimeTracker from './controls/PresentationTimeTracker';
 
 import '../../Less/VideoPlayer/VideoPlayer.less';
-import ControlPanelButton from './controls/ControlPanelButton';
 import Environment from './Environment';
 import ImageFetcher from './ImageFetcher';
 import ThumbnailPreview from './ThumbnailPreview';
@@ -57,34 +56,6 @@ export default class SachsenShakaPlayer {
         'spacer',
         'volume',
         'mute',
-        ControlPanelButton.register(this.env, {
-          material_icon: 'replay_10',
-          title: "10 Sekunden zurück",
-          onClick: () => {
-            this.skipSeconds(-10);
-          },
-        }),
-        ControlPanelButton.register(this.env, {
-          material_icon: 'skip_previous',
-          title: "Einzelbild zurück",
-          onClick: () => {
-            this.vifa.seekBackward(1);
-          },
-        }),
-        ControlPanelButton.register(this.env, {
-          material_icon: 'skip_next',
-          title: "Einzelbild zurück",
-          onClick: () => {
-            this.vifa.seekForward(1);
-          },
-        }),
-        ControlPanelButton.register(this.env, {
-          material_icon: 'forward_10',
-          title: "10 Sekunden vor",
-          onClick: () => {
-            this.skipSeconds(+10);
-          },
-        }),
         ...this.controlPanelButtons,
         'fullscreen',
         'overflow_menu'
