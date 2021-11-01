@@ -1,6 +1,7 @@
 import $ from 'jquery';
 
 import BookmarkModal from './BookmarkModal';
+import Chapters from './Chapters';
 import ControlPanelButton from './controls/ControlPanelButton';
 import Environment from './Environment';
 import HelpModal from './HelpModal';
@@ -43,7 +44,7 @@ class SxndPlayerApp {
       video: document.getElementById('video'),
       manifestUri: this.videoInfo.url.manifest,
       timecode: timecode ? parseFloat(timecode) : undefined,
-      videoInfo: this.videoInfo,
+      chapters: new Chapters(this.videoInfo.chapters),
       controlPanelButtons: [
         ControlPanelButton.register(this.env, {
           material_icon: 'photo_camera',

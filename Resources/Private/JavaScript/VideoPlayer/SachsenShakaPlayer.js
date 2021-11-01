@@ -21,7 +21,7 @@ export default class SachsenShakaPlayer {
    * @param {HTMLVideoElement} config.video
    * @param {string} config.manifestUri
    * @param {number?} config.timecode
-   * @param {any} config.videoInfo
+   * @param {Chapters} config.chapters
    * @param {string[]} config.controlPanelButtons
    * @param {string[]} config.overflowMenuButtons
    */
@@ -31,14 +31,12 @@ export default class SachsenShakaPlayer {
     this.video = config.video;
     this.manifestUri = config.manifestUri;
     this.initialTimecode = config.timecode;
-    this.videoInfo = config.videoInfo;
+    this.chapters = config.chapters;
     this.controlPanelButtons = config.controlPanelButtons ?? [];
     this.overflowMenuButtons = config.overflowMenuButtons ?? [];
   }
 
   async initialize() {
-    this.chapters = new Chapters(this.videoInfo.chapters);
-
     this.fps = 25;
     this.player = new shaka.Player(this.video);
     const ui = new shaka.ui.Overlay(this.player, this.container, this.video);
