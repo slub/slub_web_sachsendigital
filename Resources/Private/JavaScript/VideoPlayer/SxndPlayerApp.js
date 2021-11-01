@@ -36,7 +36,12 @@ class SxndPlayerApp {
     video.style.height = "100%";
     this.container.append(video);
 
-    const timecode = new URL(window.location).searchParams.get('timecode');
+    const chapters = new Chapters(this.videoInfo.chapters);
+
+    let timecode = new URL(window.location).searchParams.get('timecode');
+    if (timecode === null && this.videoInfo.pageNo !== undefined) {
+      timecode = chapters.at(this.videoInfo.pageNo - 1).timecode;
+    }
 
     const sxndPlayer = new SachsenShakaPlayer({
       env: this.env,
@@ -44,7 +49,7 @@ class SxndPlayerApp {
       video: document.getElementById('video'),
       manifestUri: this.videoInfo.url.manifest,
       timecode: timecode ? parseFloat(timecode) : undefined,
-      chapters: new Chapters(this.videoInfo.chapters),
+      chapters,
       controlPanelButtons: [
         ControlPanelButton.register(this.env, {
           material_icon: 'photo_camera',
