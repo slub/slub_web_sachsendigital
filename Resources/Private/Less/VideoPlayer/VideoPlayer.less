@@ -115,6 +115,20 @@
     height: 95vh;
 }
 
+.sxnd-modal-cover {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100000;
+
+    &.shown {
+        display: block;
+    }
+}
+
 .sxnd-modal {
     position: absolute;
     display: none;

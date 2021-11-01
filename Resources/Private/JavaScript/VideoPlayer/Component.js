@@ -5,6 +5,14 @@ export default class Component {
     this._pendingStateUpdates = [];
     this._renderTimeout = null;
     this._renderPromise = Promise.resolve();
+
+    this._eventCallbacks = {
+      'updated': [],
+    };
+  }
+
+  on(event, callback) {
+    this._eventCallbacks[event].push(callback);
   }
 
   update() {
@@ -26,6 +34,9 @@ export default class Component {
           this._pendingStateUpdates = [];
           this._renderTimeout = null;
           this._renderPromise = Promise.resolve();
+          for (const handler of this._eventCallbacks.updated) {
+            handler(newState);
+          }
           resolve();
         });
       })
