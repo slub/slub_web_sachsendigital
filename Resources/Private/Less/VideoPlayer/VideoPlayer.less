@@ -76,12 +76,28 @@
 }
 
 .bookmark-modal {
-    input {
-        width: 90%;
-        height: 2rem;
-        font-size: 1rem;
-        line-height: 1rem;
-        color: @base-color;
+    text-align: left;
+
+    .url-line {
+        display: flex;
+
+        input {
+            width: 90%;
+            height: 2rem;
+            font-size: 1rem;
+            line-height: 1rem;
+            color: @base-color;
+            margin-right: 4pt;
+        }
+    }
+
+    .start-at {
+        display: none;
+        margin-top: 1em;
+
+        &.shown {
+            display: block;
+        }
     }
 }
 
