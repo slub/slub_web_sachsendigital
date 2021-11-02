@@ -107,7 +107,9 @@ class SxndPlayerApp {
 
     this.sxndPlayer = sxndPlayer;
 
-    document.addEventListener('keydown', this.onKeyDown.bind(this));
+    // Capturing is used, in particular, to suppress Shaka's default keybindings
+    // TODO: Find a better solution
+    document.addEventListener('keydown', this.onKeyDown.bind(this), { capture: true });
   }
 
   hideThumbnailPreview() {
@@ -121,11 +123,18 @@ class SxndPlayerApp {
       e.preventDefault();
       this.hideThumbnailPreview();
       this.modals.help.toggle();
+      return;
     } else if (e.key == 'Escape' && mod == Modifier.None) {
       e.preventDefault();
       this.hideThumbnailPreview();
       this.modals.closeNext();
+      return;
     }
+
+    // We don't stop propagation for Esc, because Shaka should take this for
+    // closing the overflow menu.
+    // TODO: Refactor and tweak this behavior
+    e.stopImmediatePropagation();
 
     if (this.modals.hasOpen()) {
       return;
