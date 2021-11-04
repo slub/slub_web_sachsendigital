@@ -1,75 +1,40 @@
-function renderScreenshot(videoDomElement) {
-  // add canvas overlay to DOM
-  const domTemplate = document.createElement("template");
-  domTemplate.innerHTML = `<div id="screenshot-overlay"><span class="close-screenshot-modal icon-close"></span><canvas></canvas></div>`;
-  const domElement = domTemplate.content.firstElementChild;
-  document.body.append(domElement);
-
-  const canvas = domElement.querySelector("canvas");
-  const closeButton = domElement.querySelector('.close-screenshot-modal');
-
-  // bind close action
-  closeButton.addEventListener('click', () => {
-    domElement.remove();
-  });
-
-  // lets go
-  const metadataElement = document.getElementById('metadata');
-  const metadataArray = generateMetadataObject(metadataElement);
-  drawCanvas(canvas, videoDomElement, metadataArray);
-}
+/**
+ * @typedef {{ h: 'left' | 'right'; v: 'top' | 'bottom'; text: string; }} ScreenshotCaption
+ * @typedef {{
+ *  captions: ScreenshotCaption[];
+ * }} ScreenshotConfig
+ */
 
 /**
  *
  * @param {HTMLCanvasElement | CanvasRenderingContext2D} target Canvas on which the screenshot is drawn
  * @param {HTMLVideoElement} videoDomElement Source video element from which the screenshot is taken
- * @param {any} metadataArray Output of {@link generateMetadataObject}
+ * @param {ScreenshotConfig} config
  */
-function drawCanvas(target, videoDomElement, metadataArray) {
+export function drawCanvas(target, videoDomElement, config) {
   const [targetCanvas, context] =
     target instanceof HTMLCanvasElement
       ? [target, target.getContext('2d')]
       : [target.canvas, target];
-
-  const infoString =
-    metadataArray.screenshotFields
-      .map(field => metadataArray.metadata[field])
-      .filter(value => typeof value === 'string')
-      .join(' / ');
 
   targetCanvas.width = videoDomElement.videoWidth;
   targetCanvas.height = videoDomElement.videoHeight;
 
   context.drawImage(videoDomElement, 0, 0, targetCanvas.width, targetCanvas.height);
 
-  context.font = '25px Arial';
-  context.textAlign = 'end';
+  const unitHeight = targetCanvas.height / 1080;
+  const textPad = 10 * unitHeight;
+
+  context.font = `${Math.floor(25 * unitHeight)}px Arial`;
   context.fillStyle = "#FFFFFF";
   context.shadowBlur = 5;
   context.shadowColor = "black";
-  context.fillText(infoString, targetCanvas.width - 10, targetCanvas.height - 10);
 
-  targetCanvas.style.width = '80%';
-  targetCanvas.style.height = 'auto';
-}
+  for (const caption of config.captions) {
+    const x = caption.h === 'left' ? textPad : targetCanvas.width - textPad;
+    const y = caption.v === 'top' ? textPad : targetCanvas.height - textPad;
 
-/**
- *
- * @param {HTMLDataElement} dataDomElement
- */
-function generateMetadataObject(dataDomElement) {
-  var metadataObject = {
-    metadata: {},
-    screenshotFields: dataDomElement.getAttribute('data-screenshotfields').split(','),
-  };
-
-  for (const child of dataDomElement.children) {
-    if (child.value) {
-      metadataObject.metadata[child.id] = child.value;
-    }
+    context.textAlign = caption.h;
+    context.fillText(caption.text, x, y);
   }
-
-  return metadataObject;
 }
-
-module.exports = { drawCanvas, renderScreenshot, generateMetadataObject };

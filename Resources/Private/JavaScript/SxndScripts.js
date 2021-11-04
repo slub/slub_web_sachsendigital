@@ -1,8 +1,8 @@
-const $ = require('jquery');
+import $ from 'jquery';
 
-require('./vendor/modernizrCustom');
-require('./vendor/jquery.cookiebar');
-require('magnific-popup');
+import './vendor/modernizrCustom';
+import './vendor/jquery.cookiebar';
+import 'magnific-popup';
 
 
 /*
@@ -34,9 +34,8 @@ $(function() {
 
     // retrieve image aspect ratio and add class
     $('figure').each(function() {
-        aspectRatioClass = ($(this).find('img').attr('height') / $(this).find('img').attr('width') < 1) ? 'landscape' : 'portrait';
+        const aspectRatioClass = ($(this).find('img').attr('height') / $(this).find('img').attr('width') < 1) ? 'landscape' : 'portrait';
         $(this).addClass(aspectRatioClass);
-        delete aspectRatioClass;
     });
 
     // Wrap all tables into a responsive element
@@ -70,13 +69,13 @@ $(function() {
 
     // Dirty Headline solution for LDPs member listings
     $('.ldp-member-listing figure').each(function() {
-        titleDuplicate = ($(this).find('a')[0]) ? '<a href="'+$(this).find('a').attr('href')+'" target="_blank">' + $(this).find('a').attr('title') + '</a>' : $(this).find('img').attr('title');
+        const titleDuplicate = ($(this).find('a')[0]) ? '<a href="'+$(this).find('a').attr('href')+'" target="_blank">' + $(this).find('a').attr('title') + '</a>' : $(this).find('img').attr('title');
         if(titleDuplicate) { $(this).find('figcaption').prepend('<h4>'+titleDuplicate+'</h4>'); }
     });
 
     // Also dirty but fast. Set width of caption to the same value as the image above
     $('.pageresource-image').each(function() {
-        getWidth = $(this).find('.pageresource-container').width();
+        const getWidth = $(this).find('.pageresource-container').width();
         $('.pageresource-image figcaption').css('width', getWidth);
     });
 
@@ -106,7 +105,7 @@ $(function() {
                 tError: '<a href="%url%">Das Bild #%curr%</a> konnte nicht geladen werden.',
                 titleSrc: false,
                 titleSrc: function(item) {
-                    imageDesc = '';
+                    let imageDesc = '';
                     if(item.el.find('img').attr('title')) {
                         imageDesc += '<h3>'+ item.el.find('img').attr('title') +'</h3>';
                     }
@@ -133,7 +132,7 @@ $(function() {
     // Fixes display bug in IE browsers which don't support the object-fit feature
     if (!Modernizr.objectfit) {
         $('figure > a, .collection-element > a').each(function () {
-            imageUrl = $(this).find('img').attr('src');
+            const imageUrl = $(this).find('img').attr('src');
             if (imageUrl) {
                 $(this).css('backgroundImage', 'url(' + imageUrl + ')').addClass('fix-object-fit');
             }

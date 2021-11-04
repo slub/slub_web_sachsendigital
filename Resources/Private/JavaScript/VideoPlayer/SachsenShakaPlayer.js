@@ -1,48 +1,221 @@
-const $ = require('jquery');
-const { renderScreenshot } = require('./Screenshot');
+import shaka from 'shaka-player/dist/shaka-player.ui';
+import 'shaka-player/ui/controls.less';
 
-require('../../Less/VideoPlayer/VideoPlayer.less');
-require('./controls.css');
+import Chapters from './Chapters';
 
-var video;
-var controls;
-var manifestUri;
-var player;
-var vifa;
-var fps = 25;
+import PresentationTimeTracker from './controls/PresentationTimeTracker';
 
+import '../../Less/VideoPlayer/VideoPlayer.less';
+import Environment from './Environment';
+import ImageFetcher from './ImageFetcher';
+import ThumbnailPreview from './ThumbnailPreview';
 
+const PREV_CHAPTER_TOLERANCE = 5;
 
-var chapters = [
-  { time: 0, title: 'Intro' },
-  { time: 5, title: 'Chapter 1' },
-  { time: 10, title: 'Chapter 2' },
-  { time: 15, title: 'Chapter 3' },
-  { time: 20, title: 'Outro' },
-];
-
-/**
- * Get the URL parameters
- * source: https://css-tricks.com/snippets/javascript/get-url-variables/
- * @param  {String} url The URL
- * @return {Object}     The URL parameters
- */
-var getParams = function (url) {
-  var params = {};
-  var parser = document.createElement('a');
-  parser.href = url;
-  var query = parser.search.substring(1);
-  var vars = query.split('&');
-  if(vars[0].length) {
-      for (var i = 0; i < vars.length; i++) {
-          var pair = vars[i].split('=');
-          params[pair[0]] = decodeURIComponent(pair[1]);
-      }
-      return params;
-  } else {
-      return false;
+export default class SachsenShakaPlayer {
+  /**
+   *
+   * @param {object} config
+   * @param {Environment} config.env
+   * @param {HTMLElement} config.container
+   * @param {HTMLVideoElement} config.video
+   * @param {string} config.manifestUri
+   * @param {number?} config.timecode
+   * @param {Chapters} config.chapters
+   * @param {string[]} config.controlPanelButtons
+   * @param {string[]} config.overflowMenuButtons
+   */
+  constructor(config) {
+    this.env = config.env;
+    this.container = config.container;
+    this.video = config.video;
+    this.manifestUri = config.manifestUri;
+    this.initialTimecode = config.timecode;
+    this.chapters = config.chapters;
+    this.controlPanelButtons = config.controlPanelButtons ?? [];
+    this.overflowMenuButtons = config.overflowMenuButtons ?? [];
   }
-};
+
+  async initialize() {
+    this.fps = 25;
+    this.player = new shaka.Player(this.video);
+    const ui = new shaka.ui.Overlay(this.player, this.container, this.video);
+    this.controls = ui.getControls();
+
+    // Store player instance so that our custom controls may access it
+    this.controls.elSxndPlayer = this;
+
+    const config = {
+      addSeekBar: true,
+      'controlPanelElements': [
+        'play_pause',
+        'chapters_menu',
+        PresentationTimeTracker.KEY,
+        'spacer',
+        'volume',
+        'mute',
+        ...this.controlPanelButtons,
+        'fullscreen',
+        'overflow_menu'
+      ],
+      'overflowMenuButtons': ['language', 'playback_rate', 'loop', 'quality', 'picture_in_picture', 'captions', ...this.overflowMenuButtons],
+      'addBigPlayButton': true,
+      'seekBarColors': {
+        base: 'rgba(255, 255, 255, 0.3)',
+        buffered: 'rgba(255, 255, 255, 0.54)',
+        played: 'rgb(255, 255, 255)',
+        adBreaks: 'rgb(255, 204, 0)',
+      }
+    };
+    ui.configure(config);
+
+    // Listen for error events.
+    this.player.addEventListener('error', this.onPlayerErrorEvent.bind(this));
+    this.controls.addEventListener('error', this.onUiErrorEvent.bind(this));
+
+    this.vifa = VideoFrame({
+      id: this.video.id,
+      frameRate: this.fps,
+      callback: function (response) {
+        console.log('callback response: ' + response);
+      }
+    });
+
+    // Try to load a manifest.
+    // This is an asynchronous process.
+    try {
+      // This runs if the asynchronous load is successful.
+      console.log('The video has now been loaded!');
+      await this.player.load(this.manifestUri, this.initialTimecode);
+    } catch (e) {
+      // onError is executed if the asynchronous load fails.
+      onError(e);
+    }
+
+    this.seekBar = this.container.querySelector('.shaka-seek-bar-container');
+    this.thumbnailPreview = new ThumbnailPreview({
+      mainContainer: this.container,
+      seekBar: this.seekBar,
+      seekThumbSize: 12,
+      player: this.player,
+      network: new ImageFetcher(),
+    });
+
+    this.renderChapterMarkers();
+  }
+
+  setLocale(locale) {
+    this.controls.getLocalization().changeLocale([locale]);
+  }
+
+  renderChapterMarkers() {
+    for (const chapter of this.chapters) {
+      const relative = chapter.timecode / this.video.duration;
+
+      // In particular, make sure that we don't put markers outside of the
+      // seekbar for wrong timestamps.
+      if (!(0 <= relative && relative < 1)) {
+        continue;
+      }
+
+      // The outer <span /> is to give some leeway, making the chapter marker
+      // easier to hit.
+
+      const marker = document.createElement('span');
+      marker.className = 'sxnd-chapter-marker';
+      marker.style.position = 'absolute';
+      marker.style.left = `${chapter.timecode / this.video.duration * 100}%`;
+      marker.title = chapter.title;
+      marker.addEventListener('click', () => {
+        this.play();
+        this.seekTo(chapter);
+      });
+
+      const markerInner = document.createElement('span');
+      marker.append(markerInner);
+
+      this.seekBar.append(marker);
+    }
+  }
+
+  onPlayerErrorEvent(event) {
+    // Extract the shaka.util.Error object from the event.
+    this.onPlayerError(event.detail);
+  }
+
+  onUiErrorEvent(event) {
+    // Extract the shaka.util.Error object from the event.
+    this.onPlayerError(event.detail);
+  }
+
+  onPlayerError(error) {
+    // Handle player error
+    console.error('Error code', error.code, 'object', error);
+  }
+
+  get currentTime() {
+    return this.video.currentTime;
+  }
+
+  get displayTime() {
+    return this.controls.getDisplayTime();
+  }
+
+  getCurrentChapter() {
+    return this.timeToChapter(this.currentTime);
+  }
+
+  timeToChapter(timecode) {
+    return this.chapters.timeToChapter(timecode);
+  }
+
+  play() {
+    this.video.play();
+  }
+
+  pause() {
+    this.video.pause();
+  }
+
+  /**
+   *
+   * @param {*} position Timecode or chapter
+   */
+  seekTo(position) {
+    if (position == null) {
+      return;
+    }
+
+    if (typeof position === 'number') {
+      this.video.currentTime = position;
+    } else if (typeof position.timecode === 'number') {
+      this.video.currentTime = position.timecode;
+    }
+  }
+
+  skipSeconds(delta) {
+    // TODO: Consider end of video
+    this.video.currentTime += delta;
+  }
+
+  /**
+   * Within {@link PREV_CHAPTER_TOLERANCE} seconds of a chapter, jump to the
+   * start of the previous chapter. After that, jump to the start of the current
+   * chapter. As a fallback, jump to the start of the video.
+   */
+  prevChapter() {
+    this.seekTo(
+      this.timeToChapter(this.currentTime - PREV_CHAPTER_TOLERANCE) ?? 0
+    );
+  }
+
+  nextChapter() {
+    let cur = this.getCurrentChapter();
+    if (cur) {
+      this.seekTo(this.chapters.advance(cur, +1));
+    }
+  }
+}
 
 /**
  *
@@ -65,614 +238,10 @@ function initApp() {
 
 }
 
-async function initPlayer() {
-  // Create a Player instance.
-  video = document.getElementById('video');
-  manifestUri = document.getElementsByClassName('mime-type-video')[0].getAttribute('data-url') + '.mpd';
-  const ui = video['ui'];
-  controls = ui.getControls();
-  player = new shaka.Player(video);
-
-  const config = {
-    addSeekBar: true,
-    'controlPanelElements': [
-      'play_pause',
-      'chapters_menu',
-      'time_and_duration_frame',
-      'spacer',
-      'volume',
-      'mute',
-      'replay_10',
-      'skip_previous',
-      'skip_next',
-      'forward_10',
-      'capture',
-      'bookmark',
-      'fullscreen',
-      'overflow_menu'
-    ],
-    'overflowMenuButtons' : ['language', 'playback_rate', 'loop', 'quality', 'picture_in_picture', 'captions'],
-    'addBigPlayButton': true,
-    'seekBarColors': {
-      base: 'rgba(255, 255, 255, 0.3)',
-      buffered: 'rgba(255, 255, 255, 0.54)',
-      played: 'rgb(255, 255, 255)',
-      adBreaks: 'rgb(255, 204, 0)',
-    }
-  };
-  ui.configure(config);
-
-  // Attach player to the window to make it easy to access in the JS console.
-  window.player = player;
-  window.ui = ui;
-
-  // Listen for error events.
-  player.addEventListener('error', onPlayerErrorEvent);
-  controls.addEventListener('error', onUIErrorEvent);
-
-  vifa = VideoFrame({
-    id: 'video',
-    frameRate: fps,
-    callback : function(response) {
-        console.log('callback response: ' + response);
-    }
-  });
-
-  $('a[data-timecode]').on('click', function () {
-    const timecode = $(this).data('timecode');
-    play(timecode);
-  });
-
-  // Try to load a manifest.
-  // This is an asynchronous process.
-  try {
-    // This runs if the asynchronous load is successful.
-    console.log('The video has now been loaded!');
-    if(getParams(document.URL)['timecode']) {
-      await player.load(manifestUri,parseFloat(getParams(document.URL)['timecode']) );
-      //play(parseFloat(getParams(document.URL)['timecode']));
-    } else {
-      await player.load(manifestUri);
-    }
-  } catch (e) {
-    // onError is executed if the asynchronous load fails.
-    onError(e);
-  }
-}
-
-function onPlayerErrorEvent(errorEvent) {
-    // Extract the shaka.util.Error object from the event.
-    onPlayerError(event.detail);
-}
-
-function onPlayerError(error) {
-  // Handle player error
-  console.error('Error code', error.code, 'object', error);
-}
-
-function onUIErrorEvent(errorEvent) {
-  // Extract the shaka.util.Error object from the event.
-  onPlayerError(event.detail);
-}
-
-function initFailed(errorEvent) {
+// Listen to the custom shaka-ui-load-failed event, in case Shaka Player fails
+// to load (e.g. due to lack of browser support).
+document.addEventListener('shaka-ui-load-failed', (errorEvent) => {
   // Handle the failure to load; errorEvent.detail.reasonCode has a
   // shaka.ui.FailReasonCode describing why.
   console.error('Unable to load the UI library!');
-  }
-
-/**
- * plays the media from a individual position in media stream
- * @param seconds
- */
-function play(seconds) {
-
-  if (video.paused) {
-    // if video is pause, we have to start it first
-    video.play();
-  }
-  // set position to currenTime
-  video.currentTime = seconds;
-}
-
-
-  // Listen to the custom shaka-ui-loaded event, to wait until the UI is loaded.
-  document.addEventListener('shaka-ui-loaded', initPlayer);
-  // Listen to the custom shaka-ui-load-failed event, in case Shaka Player fails
-  // to load (e.g. due to lack of browser support).
-  document.addEventListener('shaka-ui-load-failed', initFailed);
-
-  document.addEventListener('keydown', (e) => {
-    const videoContainer = document.querySelector('video');
-    let is_fullscreen = () => !!document.fullscreenElement
-    let audio_vol = video.volume;
-
-    if (e.key == 'f') {
-        if (is_fullscreen()) {
-            document.exitFullscreen();
-        } else {
-            videoContainer.requestFullscreen();
-        }
-        e.preventDefault();
-    } else if (e.key == ' ') {
-        if (video.paused) {
-            video.play();
-        } else {
-            video.pause();
-        }
-        e.preventDefault();
-    } else if (e.key == "ArrowUp") {
-        e.preventDefault();
-        if (audio_vol != 1) {
-            try {
-                video.volume = audio_vol + 0.05;
-            }
-            catch (err) {
-                video.volume = 1;
-            }
-        }
-    } else if (e.key == "ArrowDown") {
-        e.preventDefault();
-        if (audio_vol != 0) {
-            try {
-                video.volume = audio_vol - 0.05;
-            }
-            catch (err) {
-                video.volume = 0;
-            }
-        }
-    } else if (e.key == 'p') {
-      e.preventDefault();
-      vifa.seekForward(1);
-    }
 });
-
-class myapp {}
-
-// add some custom buttons
-
-// -----------------------------------------------------------------------
-// 1. Capture-Button
-// -----------------------------------------------------------------------
-// Use shaka.ui.Element as a base class
-myapp.CaptureButton = class extends shaka.ui.Element {
-  constructor(parent, controls) {
-    super(parent, controls);
-
-    // The actual button that will be displayed
-    this.button_ = document.createElement('button');
-    this.button_.className = 'material-icons-round';
-    this.button_.title = 'Screenshot';
-    this.button_.textContent = 'photo_camera';
-    this.parent.appendChild(this.button_);
-
-    // Listen for clicks on the button
-    this.eventManager.listen(this.button_, 'click', () => {
-       renderScreenshot(document.getElementById('video'));
-    });
-  }
-};
-
-
-// Factory that will create a button at run time.
-myapp.CaptureButton.Factory = class {
-  create(rootElement, controls) {
-    return new myapp.CaptureButton(rootElement, controls);
-  }
-};
-
-// Register our factory with the controls, so controls can create button instances.
-shaka.ui.Controls.registerElement(
-  /* This name will serve as a reference to the button in the UI configuration object */ 'capture',
-  new myapp.CaptureButton.Factory()
-);
-
-// -----------------------------------------------------------------------
-// 2. Skip-Next-Button
-// -----------------------------------------------------------------------
-// Use shaka.ui.Element as a base class
-myapp.SkipNextButton = class extends shaka.ui.Element {
-  constructor(parent, controls) {
-    super(parent, controls);
-
-    // The actual button that will be displayed
-    this.button_ = document.createElement('button');
-    this.button_.className = 'material-icons-round';
-    this.button_.title = 'Einzelbild zurück';
-    this.button_.textContent = 'skip_next';
-    this.parent.appendChild(this.button_);
-
-    // Listen for clicks on the button
-    this.eventManager.listen(this.button_, 'click', () => {
-      vifa.seekForward(1);
-    });
-  }
-};
-
-
-// Factory that will create a button at run time.
-myapp.SkipNextButton.Factory = class {
-  create(rootElement, controls) {
-    return new myapp.SkipNextButton(rootElement, controls);
-  }
-};
-
-// Register our factory with the controls, so controls can create button instances.
-shaka.ui.Controls.registerElement(
-  /* This name will serve as a reference to the button in the UI configuration object */ 'skip_next',
-  new myapp.SkipNextButton.Factory()
-);
-
-// -----------------------------------------------------------------------
-// 3. Skip-Previous-Button
-// -----------------------------------------------------------------------
-// Use shaka.ui.Element as a base class
-myapp.SkipPreviousButton = class extends shaka.ui.Element {
-  constructor(parent, controls) {
-    super(parent, controls);
-
-    // The actual button that will be displayed
-    this.button_ = document.createElement('button');
-    this.button_.className = 'material-icons-round';
-    this.button_.title = 'Einzelbild zurück';
-    this.button_.textContent = 'skip_previous';
-    this.parent.appendChild(this.button_);
-
-    // Listen for clicks on the button
-    this.eventManager.listen(this.button_, 'click', () => {
-      vifa.seekBackward(1);
-    });
-  }
-};
-
-// Factory that will create a button at run time.
-myapp.SkipPreviousButton.Factory = class {
-  create(rootElement, controls) {
-    return new myapp.SkipPreviousButton(rootElement, controls);
-  }
-};
-
-// Register our factory with the controls, so controls can create button instances.
-shaka.ui.Controls.registerElement(
-  /* This name will serve as a reference to the button in the UI configuration object */ 'skip_previous',
-  new myapp.SkipPreviousButton.Factory()
-);
-
-// -----------------------------------------------------------------------
-// 4. Foward 10seconds Button
-// -----------------------------------------------------------------------
-// Use shaka.ui.Element as a base class
-myapp.Forward10Button = class extends shaka.ui.Element {
-  constructor(parent, controls) {
-    super(parent, controls);
-
-    // The actual button that will be displayed
-    this.button_ = document.createElement('button');
-    this.button_.className = 'material-icons-round';
-    this.button_.title = '10 Sekunden vor';
-    this.button_.textContent = 'forward_10';
-    this.parent.appendChild(this.button_);
-
-    // Listen for clicks on the button
-    this.eventManager.listen(this.button_, 'click', () => {
-      video.currentTime = video.currentTime + 10;
-    });
-  }
-};
-
-// Factory that will create a button at run time.
-myapp.Forward10Button.Factory = class {
-  create(rootElement, controls) {
-    return new myapp.Forward10Button(rootElement, controls);
-  }
-};
-
-// Register our factory with the controls, so controls can create button instances.
-shaka.ui.Controls.registerElement(
-  /* This name will serve as a reference to the button in the UI configuration object */ 'forward_10',
-  new myapp.Forward10Button.Factory()
-);
-
-// -----------------------------------------------------------------------
-// 5. Replay 10seconds Button
-// -----------------------------------------------------------------------
-// Use shaka.ui.Element as a base class
-myapp.Replay10Button = class extends shaka.ui.Element {
-  constructor(parent, controls) {
-    super(parent, controls);
-
-    // The actual button that will be displayed
-    this.button_ = document.createElement('button');
-    this.button_.className = 'material-icons-round';
-    this.button_.title = '10 Sekunden zurück';
-    this.button_.textContent = 'replay_10';
-    this.parent.appendChild(this.button_);
-
-    // Listen for clicks on the button
-    this.eventManager.listen(this.button_, 'click', () => {
-      video.currentTime = video.currentTime - 10;
-    });
-  }
-};
-
-// Factory that will create a button at run time.
-myapp.Replay10Button.Factory = class {
-  create(rootElement, controls) {
-    return new myapp.Replay10Button(rootElement, controls);
-  }
-};
-
-// Register our factory with the controls, so controls can create button instances.
-shaka.ui.Controls.registerElement(
-  /* This name will serve as a reference to the button in the UI configuration object */ 'replay_10',
-  new myapp.Replay10Button.Factory()
-);
-
-// -----------------------------------------------------------------------
-// 6. Bookmark-Button
-// -----------------------------------------------------------------------
-// Use shaka.ui.Element as a base class
-myapp.BookmarkButton = class extends shaka.ui.Element {
-  constructor(parent, controls) {
-    super(parent, controls);
-
-    // The actual button that will be displayed
-    this.button_ = document.createElement('button');
-    this.button_.className = 'material-icons-round';
-    this.button_.title = 'Bookmark';
-    this.button_.textContent = 'bookmark_border';
-    this.parent.appendChild(this.button_);
-
-    // Listen for clicks on the button
-    this.eventManager.listen(this.button_, 'click', () => {
-      generateUrl();
-    });
-  }
-};
-
-
-// Factory that will create a button at run time.
-myapp.BookmarkButton.Factory = class {
-  create(rootElement, controls) {
-    return new myapp.BookmarkButton(rootElement, controls);
-  }
-};
-
-// Register our factory with the controls, so controls can create button instances.
-shaka.ui.Controls.registerElement(
-  /* This name will serve as a reference to the button in the UI configuration object */ 'bookmark',
-  new myapp.BookmarkButton.Factory()
-);
-
-
-/**
- * @extends {shaka.ui.Element}
- * @final
- * @export
- */
-myapp.PresentationTimeTracker = class extends shaka.ui.Element {
-  /**
-   * @param {!HTMLElement} parent
-   * @param {!shaka.ui.Controls} controls
-   */
-  constructor(parent, controls) {
-    super(parent, controls);
-
-    /** @type {!HTMLButtonElement} */
-    this.currentTime_ = document.createElement('button');
-    this.currentTime_.classList.add('shaka-current-time');
-    this.currentTime_.title = 'Aktuelle Laufzeit / Gesamtlaufzeit';
-    this.setValue_('0:00');
-    this.parent.appendChild(this.currentTime_);
-    this.mode = ['currentTime', 'remainingTime', 'currentFrame'];
-    this.modeActive = this.mode[0];
-
-    this.eventManager.listen(this.currentTime_, 'click', () => {
-      // We toggle the time display here --> change mode on click --> values get updated in timeandseekrangeupdated event
-      // current time: HH:MM:SS:FF
-      // remaining time
-      // current frame
-      switch (this.modeActive) {
-        case 'currentTime':
-        default:
-          this.modeActive = this.mode[1];
-          break;
-        case 'remainingTime':
-          this.modeActive = this.mode[2];
-          break;
-        case 'currentFrame':
-          this.modeActive = this.mode[0];
-          break;
-      }
-    });
-
-    this.eventManager.listen(this.controls, 'timeandseekrangeupdated', () => {
-      let displayTime = this.controls.getDisplayTime();
-      const showHour = video.duration >= 3600;
-
-      switch (this.modeActive) {
-        case 'currentTime':
-        default:
-          this.updateTime_();
-          break;
-        case 'remainingTime':
-          this.setValue_(this.buildTimeString_(video.duration - displayTime, showHour));
-          this.currentTime_.title = 'Restlaufzeit';
-          break;
-        case 'currentFrame':
-          this.setValue_(vifa.get());
-          this.currentTime_.title = 'Frame-Nummer';
-          break;
-      }
-    });
-
-  }
-
-  /** @private */
-  setValue_(value) {
-    // To avoid constant updates to the DOM, which makes debugging more
-    // difficult, only set the value if it has changed.  If we don't do this
-    // check, the DOM updates constantly, this element flashes in the debugger
-    // in Chrome, and you can't make changes in the CSS panel.
-    if (value != this.currentTime_.textContent) {
-      this.currentTime_.textContent = value;
-    }
-  }
-
-  updateTime_() {
-    const showHour = video.duration >= 3600;
-    let displayTime = this.controls.getDisplayTime();
-
-    let value = this.buildTimeString_(displayTime, showHour);
-
-    // calculate frame number and append it to the value
-    value += ':' + ("0" + (vifa.get() % fps)).slice(-2);
-    if (video.duration) {
-      value += ' / ' + this.buildTimeString_(video.duration, showHour);
-    }
-    this.setValue_(value);
-    this.currentTime = value;
-    //this.currentTime_.disabled = true;
-  }
-  /**
-   * Builds a time string, e.g., 01:04:23, from |displayTime|.
-   *
-   * @param {number} displayTime (in seconds)
-   * @param {boolean} showHour
-   * @return {string}
-   */
-  buildTimeString_(displayTime, showHour) {
-    const h = Math.floor(displayTime / 3600);
-    const m = Math.floor((displayTime / 60) % 60);
-    let s = Math.floor(displayTime % 60);
-    if (s < 10) {
-      s = '0' + s;
-    }
-    let text = m + ':' + s;
-    if (showHour) {
-      if (m < 10) {
-        text = '0' + text;
-      }
-      text = h + ':' + text;
-    }
-    return text;
-  }
-
-};
-
-
-/**
- * @implements {shaka.extern.IUIElement.Factory}
- * @final
- */
-myapp.PresentationTimeTracker.Factory = class {
-  /** @override */
-  create(rootElement, controls) {
-    return new myapp.PresentationTimeTracker(rootElement, controls);
-  }
-};
-
-shaka.ui.Controls.registerElement(
-    'time_and_duration_frame', new myapp.PresentationTimeTracker.Factory()
-);
-
-
-
-
-// myapp.ChaptersMenu = class extends shaka.ui.Element {
-//   constructor(parent, controls, chapters) {
-//     super(parent, controls);
-
-//     this.chapters_ = chapters;
-
-//     // The actual button that will be displayed
-//     this.button_ = document.createElement('button');
-//     this.button_.className = 'shaka-overflow-menu-button shaka-no-propagation material-icons-round';
-//     this.button_.title = 'Chapters';
-//     this.button_.textContent = 'toc';
-//     this.button_.innerHTML = '<ul><li>hallo</li></ul>';
-//     this.parent.appendChild(this.button_);
-
-
-//   }
-// };
-
-// myapp.ChaptersMenu.Factory = class {
-//   constructor(chapters) {
-//     this.chapters_ = chapters;
-//   }
-
-//   create(rootElement, controls) {
-//     return new myapp.ChaptersMenu (rootElement, controls, this.chapters_);
-//   }
-// };
-
-// shaka.ui.Controls.registerElement(
-//     'chapters_menu',
-//     new myapp.ChaptersMenu.Factory(() => {
-//       chapters;
-//       // Calculate and return chapter metadata here
-//     }));
-
-
-// /**
-//  * generates timeline markers for chapter selection
-//  */
-// function generateChapters() {
-//   var length = getMediaLength();
-//   var seekBar = $('.jp-seek-bar');
-
-//   $('.chapter').each(function() {
-//       var timecode = $(this).data('timecode');
-//       var title = $(this).data('title');
-//       $('<span />', {
-//           'class': 'jp-chapter-marker',
-//           title: $(this).data('title'),
-//           style: 'position: absolute; left: ' + ((timecode -0.5) * 100 / length) + '%',
-//           click: function() {
-//               play(timecode);
-//           }
-
-//       }).appendTo(seekBar);
-//   });
-// }
-
-
-// This will add three buttons to the controls panel (in that order): shaka-provided
-// rewind and fast forward button and out custom skip button, referenced by the name
-// we used when registering the factory with the controls.
-//ui['controlPanelElements'] = ['rewind', 'fast_forward', 'skip'];
-
-
-/**
- * Helper functions
- */
-
-function resizeVideoCanvas() {
-    var view, player, video;
-    view = $('.document-view');
-    player = $('.mediaplayer-container');
-    video = $("video");
-    video.css({
-        width: '100%',
-        height: 'auto',
-    });
-    if(player.height() > view.height()) {
-        video.css({
-            width: '80%',
-            height: 'auto',
-        });
-    }
-}
-
-function generateUrl() {
-  var $timecodeUrl = document.URL, $urlInput = $('#url-field'), urlContainer = $('#url-container');
-  if(getParams($timecodeUrl)) {
-      $timecodeUrl = $timecodeUrl + '&timecode=' + controls.getDisplayTime();
-  } else {
-      $timecodeUrl = $timecodeUrl + '?timecode=' + controls.getDisplayTime();
-  }
-
-  $urlInput.val($timecodeUrl);
-  urlContainer.show('fast');
-}

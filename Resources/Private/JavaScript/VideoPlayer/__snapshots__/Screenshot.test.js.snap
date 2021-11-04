@@ -43,20 +43,6 @@ Array [
   },
   Object {
     "props": Object {
-      "value": "end",
-    },
-    "transform": Array [
-      1,
-      0,
-      0,
-      1,
-      0,
-      0,
-    ],
-    "type": "textAlign",
-  },
-  Object {
-    "props": Object {
       "value": "#ffffff",
     },
     "transform": Array [
@@ -96,6 +82,113 @@ Array [
       0,
     ],
     "type": "shadowColor",
+  },
+  Object {
+    "props": Object {
+      "value": "left",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "textAlign",
+  },
+  Object {
+    "props": Object {
+      "maxWidth": null,
+      "text": "top left",
+      "x": 10,
+      "y": 10,
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "fillText",
+  },
+  Object {
+    "props": Object {
+      "value": "right",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "textAlign",
+  },
+  Object {
+    "props": Object {
+      "maxWidth": null,
+      "text": "top right",
+      "x": 1910,
+      "y": 10,
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "fillText",
+  },
+  Object {
+    "props": Object {
+      "value": "left",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "textAlign",
+  },
+  Object {
+    "props": Object {
+      "maxWidth": null,
+      "text": "bottom left",
+      "x": 10,
+      "y": 1070,
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "fillText",
+  },
+  Object {
+    "props": Object {
+      "value": "right",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "textAlign",
   },
   Object {
     "props": Object {
@@ -146,7 +239,7 @@ Array [
   },
   Object {
     "props": Object {
-      "value": "25px Arial",
+      "value": "12px Arial",
     },
     "transform": Array [
       1,
@@ -157,20 +250,6 @@ Array [
       0,
     ],
     "type": "font",
-  },
-  Object {
-    "props": Object {
-      "value": "end",
-    },
-    "transform": Array [
-      1,
-      0,
-      0,
-      1,
-      0,
-      0,
-    ],
-    "type": "textAlign",
   },
   Object {
     "props": Object {
@@ -216,10 +295,117 @@ Array [
   },
   Object {
     "props": Object {
+      "value": "left",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "textAlign",
+  },
+  Object {
+    "props": Object {
+      "maxWidth": null,
+      "text": "top left",
+      "x": 5,
+      "y": 5,
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "fillText",
+  },
+  Object {
+    "props": Object {
+      "value": "right",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "textAlign",
+  },
+  Object {
+    "props": Object {
+      "maxWidth": null,
+      "text": "top right",
+      "x": 955,
+      "y": 5,
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "fillText",
+  },
+  Object {
+    "props": Object {
+      "value": "left",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "textAlign",
+  },
+  Object {
+    "props": Object {
+      "maxWidth": null,
+      "text": "bottom left",
+      "x": 5,
+      "y": 535,
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "fillText",
+  },
+  Object {
+    "props": Object {
+      "value": "right",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "textAlign",
+  },
+  Object {
+    "props": Object {
       "maxWidth": null,
       "text": "Test Video / 1912",
-      "x": 950,
-      "y": 530,
+      "x": 955,
+      "y": 535,
     },
     "transform": Array [
       1,
@@ -236,15 +422,80 @@ Array [
 
 exports[`can open screenshot overlay 1`] = `
 <div
-  id="screenshot-overlay"
+  class="sxnd-modal screenshot-modal"
 >
-  <span
-    class="close-screenshot-modal icon-close"
-  />
-  <canvas
-    height="0"
-    style="width: 80%; height: auto;"
-    width="0"
-  />
+  <div
+    class="headline-container"
+  >
+    <h3 />
+    <span
+      class="modal-close icon-close"
+    />
+  </div>
+  <div
+    class="body-container"
+  >
+    <div
+      class="screenshot-config"
+    >
+      
+        
+      <input
+        class="show-metadata"
+        id="__autoid_1"
+        type="checkbox"
+      />
+      <!--
+        -->
+      <label
+        for="__autoid_1"
+      >
+         Metadaten einblenden
+      </label>
+      
+
+        ·
+
+        Dateiformat:
+        
+      <span
+        class="image-formats"
+      >
+        <input
+          id="__autoid_3"
+          name="__autoid_2"
+          type="radio"
+        />
+        <label
+          for="__autoid_3"
+        />
+        <input
+          id="__autoid_4"
+          name="__autoid_2"
+          type="radio"
+        />
+        <label
+          for="__autoid_4"
+        />
+      </span>
+      
+
+        ·
+
+        
+      <a
+        class="download-image"
+        href="#"
+      >
+        Bild herunterladen
+      </a>
+      
+      
+    </div>
+    <canvas
+      height="1080"
+      width="1920"
+    />
+  </div>
 </div>
 `;

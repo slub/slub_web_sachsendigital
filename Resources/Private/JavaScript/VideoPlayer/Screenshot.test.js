@@ -2,43 +2,45 @@
  * @jest-environment jsdom
  */
 
-const { renderScreenshot, drawCanvas, generateMetadataObject } = require('./Screenshot');
-
-function createMetadataDom() {
-  const template = document.createElement("template");
-  template.innerHTML = `
-    <data id="metadata" data-screenshotfields="title,year" style="display: none;">
-      <data id="title" value="Some Video">Some Video</data>
-      <data id="year" value="1922">1922</data>
-      <data id="creator" value="Someone">Someone</data>
-    </data>
-  `;
-
-  return template.content.firstElementChild;
-}
+import Environment from './Environment';
+import { drawCanvas } from './Screenshot';
+import ScreenshotModal from './ScreenshotModal';
+import { metadataArrayToString } from './util';
 
 beforeEach(() => {
   // TODO: Reset JSDOM in a more robust way
   document.body.innerHTML = '';
 });
 
-test('can open screenshot overlay', () => {
-  const overlay = () => document.getElementById('screenshot-overlay');
+function getTestMetadataArray() {
+  return {
+    metadata: {
+      title: "Test Video",
+      year: "1912",
+      not_a_string: 123,
+    },
+    screenshotFields: [
+      "title",
+      "year",
+      "not_a_string",
+    ],
+  };
+}
 
-  document.body.append(
-    createMetadataDom()
-  );
+test('can open screenshot overlay', async () => {
+  const overlay = () => document.querySelector('.screenshot-modal');
 
   // not opened yet
   expect(overlay()).toBeNull();
 
   // opened; exact tags are in snapshot
-  renderScreenshot(document.createElement("video"));
+  const modal = new ScreenshotModal(document.body, new Environment(), {
+    video: new VideoMock(1920, 1080),
+  });
+  modal.setMetadata(getTestMetadataArray());
+  modal.open();
+  await modal.update();
   expect(overlay()).toMatchSnapshot();
-
-  // close
-  document.querySelector('.close-screenshot-modal').dispatchEvent(new Event('click'));
-  expect(overlay()).toBeNull();
 });
 
 class VideoMock extends HTMLVideoElement {
@@ -61,18 +63,7 @@ class VideoMock extends HTMLVideoElement {
 customElements.define('video-mock', VideoMock, { extends: 'video' });
 
 test('can draw to canvas', () => {
-  const metadata = {
-    metadata: {
-      title: "Test Video",
-      year: "1912",
-      not_a_string: 123,
-    },
-    screenshotFields: [
-      "title",
-      "year",
-      "not_a_string",
-    ],
-  };
+  const metadata = getTestMetadataArray();
 
   const snapshotWithSize = (videoWidth, videoHeight) => {
     const video = new VideoMock(videoWidth, videoHeight);
@@ -80,7 +71,14 @@ test('can draw to canvas', () => {
     const canvas = document.createElement("canvas");
     const context = canvas.getContext('2d');
 
-    drawCanvas(context, video, metadata);
+    drawCanvas(context, video, {
+      captions: [
+        { v: 'top', h: 'left', text: "top left" },
+        { v: 'top', h: 'right', text: "top right" },
+        { v: 'bottom', h: 'left', text: "bottom left" },
+        { v: 'bottom', h: 'right', text: metadataArrayToString(metadata) },
+      ]
+    });
 
     const events = context.__getEvents();
     expect(events).toMatchSnapshot();
@@ -88,21 +86,4 @@ test('can draw to canvas', () => {
 
   snapshotWithSize(1920, 1080);
   snapshotWithSize(960, 540);
-});
-
-test('can generate metadata object', () => {
-  const dataDomElement = createMetadataDom();
-  const metadataObject = generateMetadataObject(dataDomElement);
-
-  expect(metadataObject).toEqual({
-    metadata: {
-      title: "Some Video",
-      year: "1922",
-      creator: "Someone",
-    },
-    screenshotFields: [
-      "title",
-      "year",
-    ],
-  });
 });

@@ -13,7 +13,7 @@ module.exports = {
     'SxndScripts': `${PRIVATE_PATH}/JavaScript/SxndScripts.js`,
 
     // We only list the entry JS here; the Less and CSS are imported there.
-    'SxndShakaPlayer': `${PRIVATE_PATH}/JavaScript/VideoPlayer/SachsenShakaPlayer.js`,
+    'SxndPlayerApp': `${PRIVATE_PATH}/JavaScript/VideoPlayer/SxndPlayerApp.js`,
 
     'SxndStyles' : `${PRIVATE_PATH}/Less/All.less`,
     'RteStyles': `${PRIVATE_PATH}/Less/Rte.less`,
@@ -63,6 +63,19 @@ module.exports = {
     jquery: 'jQuery',
   },
   optimization: {
+    splitChunks: {
+      chunks(chunk) {
+        return chunk.name === 'SxndPlayerApp';
+      },
+      maxInitialRequests: Infinity,
+      minSize: 0,
+      cacheGroups: {
+        playerVendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "SxndPlayerVendor"
+        },
+      },
+    },
     minimizer: [
       `...`,
       new CssMinimizerPlugin(),
