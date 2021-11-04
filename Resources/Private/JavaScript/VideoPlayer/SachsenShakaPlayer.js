@@ -10,8 +10,6 @@ import Environment from './Environment';
 import ImageFetcher from './ImageFetcher';
 import ThumbnailPreview from './ThumbnailPreview';
 
-const PREV_CHAPTER_TOLERANCE = 5;
-
 export default class SachsenShakaPlayer {
   /**
    *
@@ -24,6 +22,8 @@ export default class SachsenShakaPlayer {
    * @param {Chapters} config.chapters
    * @param {string[]} config.controlPanelButtons
    * @param {string[]} config.overflowMenuButtons
+   * @param {object} config.constants
+   * @param {number} config.constants.prevChapterTolerance
    */
   constructor(config) {
     this.env = config.env;
@@ -34,6 +34,10 @@ export default class SachsenShakaPlayer {
     this.chapters = config.chapters;
     this.controlPanelButtons = config.controlPanelButtons ?? [];
     this.overflowMenuButtons = config.overflowMenuButtons ?? [];
+
+    this.constants = Object.assign({
+      prevChapterTolerance: 5,
+    }, config.constants);
   }
 
   async initialize() {
@@ -199,13 +203,13 @@ export default class SachsenShakaPlayer {
   }
 
   /**
-   * Within {@link PREV_CHAPTER_TOLERANCE} seconds of a chapter, jump to the
-   * start of the previous chapter. After that, jump to the start of the current
-   * chapter. As a fallback, jump to the start of the video.
+   * Within configured number of seconds of a chapter, jump to the start of the
+   * previous chapter. After that, jump to the start of the current chapter. As
+   * a fallback, jump to the start of the video.
    */
   prevChapter() {
     this.seekTo(
-      this.timeToChapter(this.currentTime - PREV_CHAPTER_TOLERANCE) ?? 0
+      this.timeToChapter(this.currentTime - this.constants.prevChapterTolerance) ?? 0
     );
   }
 
