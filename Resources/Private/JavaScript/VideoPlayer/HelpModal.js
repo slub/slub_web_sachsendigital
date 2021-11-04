@@ -1,7 +1,18 @@
 import SimpleModal from './SimpleModal';
 
 export default class HelpModal extends SimpleModal {
+  constructor(parent, env, config) {
+    super(parent, {
+      env,
+      config,
+    });
+  }
+
   _createDom() {
+    const { config: { constants } } = this._state;
+
+    const volumeStepPercent = Math.round(constants.volumeStep * 100);
+
     const dom = super._createDom("help-modal");
 
     dom.title.innerText = "Bedienhinweise";
@@ -17,11 +28,11 @@ export default class HelpModal extends SimpleModal {
           </tr>
           <tr>
             <td>Pfeil rechts</td>
-            <td>10 Sekunden weiter</td>
+            <td>${constants.seekStep} Sekunden weiter</td>
           </tr>
           <tr>
             <td>Pfeil links</td>
-            <td>10 Sekunden zurück</tr>
+            <td>${constants.seekStep} Sekunden zurück</tr>
           </tr>
           <tr>
             <td>Strg + rechts</td>
@@ -53,6 +64,14 @@ export default class HelpModal extends SimpleModal {
           <tr>
             <td>Leertaste</td>
             <td>Abspielen / Pausieren</td>
+          </tr>
+          <tr>
+            <td>Pfeil oben</td>
+            <td>Lauter (+${volumeStepPercent}%P)</td>
+          </tr>
+          <tr>
+            <td>Pfeil unten</td>
+            <td>Leiser (-${volumeStepPercent} %P)</tr>
           </tr>
           <tr>
             <td>Taste F</td>

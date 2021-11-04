@@ -19,6 +19,10 @@ class SxndPlayerApp {
     this.constants = {
       /** Number of seconds in which to still rewind to previous chapter. */
       prevChapterTolerance: 5,
+      /** Volume increase/decrease in relevant keybinding. */
+      volumeStep: 0.05,
+      /** Number of seconds to seek or rewind in relevant keybinding. */
+      seekStep: 10,
     };
 
     // TODO: Use arrays inside the app, avoid this transformation?
@@ -104,7 +108,9 @@ class SxndPlayerApp {
     });
 
     this.modals = Modals({
-      help: new HelpModal(this.container),
+      help: new HelpModal(this.container, this.env, {
+        constants: this.constants,
+      }),
       bookmark: new BookmarkModal(this.container, this.env),
       screenshot: new ScreenshotModal(this.container, this.env, {
         video: sxndPlayer.video,
@@ -160,10 +166,10 @@ class SxndPlayerApp {
       }
     } else if (e.key == "ArrowUp" && mod === Modifier.None) {
       e.preventDefault();
-      this.sxndPlayer.video.volume = Math.min(1, this.sxndPlayer.video.volume + 0.05);
+      this.sxndPlayer.video.volume = Math.min(1, this.sxndPlayer.video.volume + this.constants.volumeStep);
     } else if (e.key == "ArrowDown" && mod === Modifier.None) {
       e.preventDefault();
-      this.sxndPlayer.video.volume = Math.max(0, this.sxndPlayer.video.volume - 0.05);
+      this.sxndPlayer.video.volume = Math.max(0, this.sxndPlayer.video.volume - this.constants.volumeStep);
     } else if (e.key == "ArrowLeft") {
       if (mod === Modifier.CtrlMeta) {
         e.preventDefault();
@@ -173,7 +179,7 @@ class SxndPlayerApp {
         this.sxndPlayer.vifa.seekBackward(1);
       } else if (mod === Modifier.None) {
         e.preventDefault();
-        this.sxndPlayer.skipSeconds(-10);
+        this.sxndPlayer.skipSeconds(-this.constants.seekStep);
       }
     } else if (e.key == "ArrowRight") {
       if (mod === Modifier.CtrlMeta) {
@@ -184,7 +190,7 @@ class SxndPlayerApp {
         this.sxndPlayer.vifa.seekForward(1);
       } else if (mod === Modifier.None) {
         e.preventDefault();
-        this.sxndPlayer.skipSeconds(+10);
+        this.sxndPlayer.skipSeconds(+this.constants.seekStep);
       }
     } else if (e.key == 'm' && mod === Modifier.None) {
       e.preventDefault();
