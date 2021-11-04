@@ -16,6 +16,11 @@ class SxndPlayerApp {
     this.videoInfo = videoInfo;
     this.locale = locale;
 
+    this.constants = {
+      /** Number of seconds in which to still rewind to previous chapter. */
+      prevChapterTolerance: 5,
+    };
+
     // TODO: Use arrays inside the app, avoid this transformation?
     const videoMetadata = this.videoInfo.metadata.metadata;
     for (const key of Object.keys(videoMetadata)) {
@@ -85,6 +90,7 @@ class SxndPlayerApp {
           },
         }),
       ],
+      constants: this.constants,
     });
 
     sxndPlayer.initialize();
