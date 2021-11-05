@@ -1,0 +1,93 @@
+[
+	{
+		"key": "Escape",
+		"action": "cancel",
+		"propagate": true
+	},
+	{
+		"key": "F1",
+		"action": "modal.help.toggle"
+	},
+	{
+		"key": "b",
+		"scope": "player",
+		"action": "modal.bookmark.open"
+	},
+	{
+		"key": "s",
+		"scope": "player",
+		"action": "modal.screenshot.open"
+	},
+	{
+		"key": "f",
+		"repeat": false,
+		"scope": "player",
+		"action": "fullscreen.toggle"
+	},
+	{
+		"key": " ",
+		"repeat": false,
+		"scope": "player",
+		"action": "playback.toggle"
+	},
+	{
+		"key": "m",
+		"repeat": false,
+		"scope": "player",
+		"action": "playback.volume.mute.toggle"
+	},
+	{
+		"key": "ArrowUp",
+		"scope": "player",
+		"action": "playback.volume.inc"
+	},
+	{
+		"key": "ArrowDown",
+		"scope": "player",
+		"action": "playback.volume.dec"
+	},
+	{
+		"key": "ArrowLeft",
+		"scope": "player",
+		"action": "navigate.rewind"
+	},
+	{
+		"key": "ArrowRight",
+		"scope": "player",
+		"action": "navigate.seek"
+	},
+	{
+		"mod": "CtrlMeta",
+		"key": "ArrowLeft",
+		"scope": "player",
+		"action": "navigate.chapter.prev"
+	},
+	{
+		"mod": "CtrlMeta",
+		"key": "ArrowRight",
+		"scope": "player",
+		"action": "navigate.chapter.next"
+	},
+	{
+		"mod": "Shift",
+		"key": "ArrowLeft",
+		"scope": "player",
+		"action": "navigate.frame.prev"
+	},
+	{
+		"mod": "Shift",
+		"key": "ArrowRight",
+		"scope": "player",
+		"action": "navigate.frame.next"
+	},
+	{
+		"key": ",",
+		"scope": "player",
+		"action": "navigate.frame.prev"
+	},
+	{
+		"key": ".",
+		"scope": "player",
+		"action": "navigate.frame.next"
+	}
+]
