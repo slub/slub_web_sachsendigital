@@ -10,6 +10,12 @@ import Modals from './Modals';
 import SachsenShakaPlayer from './SachsenShakaPlayer';
 import ScreenshotModal from './ScreenshotModal';
 
+import keybindings from './keybindings.json';
+
+/**
+ * @typedef {'player' | 'modal'} KeyboardScope Currently active target/scope for mapping keybindings.
+ */
+
 class SxndPlayerApp {
   constructor(container, videoInfo, locale) {
     this.container = container;
@@ -38,6 +44,67 @@ class SxndPlayerApp {
     }
 
     this.env = new Environment();
+
+    this.actions = {
+      'cancel': () => {
+        this.hideThumbnailPreview();
+        this.modals.closeNext();
+      },
+      'modal.help.open': () => {
+        this.hideThumbnailPreview();
+        this.modals.help.open();
+      },
+      'modal.help.toggle': () => {
+        this.hideThumbnailPreview();
+        this.modals.help.toggle();
+      },
+      'modal.bookmark.open': () => {
+        this.showBookmarkUrl();
+      },
+      'modal.screenshot.open': () => {
+        this.showScreenshot();
+      },
+      'fullscreen.toggle': () => {
+        this.hideThumbnailPreview();
+        this.sxndPlayer.controls.toggleFullScreen();
+      },
+      'playback.toggle': () => {
+        if (this.sxndPlayer.video.paused) {
+          this.sxndPlayer.video.play();
+        } else {
+          this.sxndPlayer.video.pause();
+        }
+      },
+      'playback.volume.mute.toggle': () => {
+        this.sxndPlayer.video.muted = !this.sxndPlayer.video.muted;
+      },
+      'playback.volume.inc': () => {
+        this.sxndPlayer.video.volume = Math.min(1, this.sxndPlayer.video.volume + this.constants.volumeStep);
+      },
+      'playback.volume.dec': () => {
+        this.sxndPlayer.video.volume = Math.max(0, this.sxndPlayer.video.volume - this.constants.volumeStep);
+      },
+      'navigate.rewind': () => {
+        this.sxndPlayer.skipSeconds(-this.constants.seekStep);
+      },
+      'navigate.seek': () => {
+        this.sxndPlayer.skipSeconds(+this.constants.seekStep);
+      },
+      'navigate.chapter.prev': () => {
+        this.sxndPlayer.prevChapter();
+      },
+      'navigate.chapter.next': () => {
+        this.sxndPlayer.nextChapter();
+      },
+      'navigate.frame.prev': () => {
+        this.sxndPlayer.vifa.seekBackward(1);
+      },
+      'navigate.frame.next': () => {
+        this.sxndPlayer.vifa.seekForward(1);
+      },
+    };
+
+    this.keybindings = keybindings;
 
     document.addEventListener('shaka-ui-loaded', this.onShakaUiLoaded.bind(this));
 
@@ -75,23 +142,17 @@ class SxndPlayerApp {
         ControlPanelButton.register(this.env, {
           material_icon: 'photo_camera',
           title: "Screenshot",
-          onClick: () => {
-            this.showScreenshot();
-          },
+          onClick: this.actions['modal.screenshot.open'],
         }),
         ControlPanelButton.register(this.env, {
           material_icon: 'bookmark_border',
           title: "Bookmark",
-          onClick: () => {
-            this.showBookmarkUrl();
-          },
+          onClick: this.actions['modal.bookmark.open'],
         }),
         ControlPanelButton.register(this.env, {
           material_icon: 'help_outline',
           title: "Bedienhinweise",
-          onClick: () => {
-            this.modals.help.open();
-          },
+          onClick: this.actions['modal.help.open'],
         }),
       ],
       constants: this.constants,
@@ -128,85 +189,50 @@ class SxndPlayerApp {
     this.sxndPlayer.thumbnailPreview.hidePreview();
   }
 
-  onKeyDown(e) {
-    const mod = modifiersFromEvent(e);
-
-    if (e.key == 'F1' && mod == Modifier.None) {
-      e.preventDefault();
-      this.hideThumbnailPreview();
-      this.modals.help.toggle();
-      return;
-    } else if (e.key == 'Escape' && mod == Modifier.None) {
-      e.preventDefault();
-      this.hideThumbnailPreview();
-      this.modals.closeNext();
-      return;
-    }
-
-    // We don't stop propagation for Esc, because Shaka should take this for
-    // closing the overflow menu.
-    // TODO: Refactor and tweak this behavior
-    e.stopImmediatePropagation();
-
+  /**
+   *
+   * @returns {KeyboardScope}
+   */
+  getKeyboardScope() {
     if (this.modals.hasOpen()) {
-      return;
+      return 'modal';
     }
 
-    if (e.key == 'f' && mod === Modifier.None) {
+    return 'player';
+  }
+
+  /**
+   *
+   * @param {KeyboardEvent} e
+   */
+  onKeyDown(e) {
+    let stopPropagation = true;
+
+    const mod = modifiersFromEvent(e);
+    const curKbScope = this.getKeyboardScope();
+
+    const keybinding = this.keybindings.find(kb => (
+      typeof this.actions[kb.action] === 'function'
+      && kb.key === e.key
+      && (kb.repeat == null || kb.repeat === e.repeat)
+      && (kb.scope == null || kb.scope === curKbScope)
+      && Modifier[kb.mod ?? 'None'] === mod
+    ));
+
+    if (keybinding) {
       e.preventDefault();
-      this.hideThumbnailPreview();
-      this.sxndPlayer.controls.toggleFullScreen();
-    } else if (e.key == ' ' && mod === Modifier.None) {
-      if (this.sxndPlayer.video.paused) {
-        e.preventDefault();
-        this.sxndPlayer.video.play();
-      } else {
-        e.preventDefault();
-        this.sxndPlayer.video.pause();
+      this.actions[keybinding.action]();
+
+      if (keybinding.propagate === true) {
+        stopPropagation = false;
       }
-    } else if (e.key == "ArrowUp" && mod === Modifier.None) {
-      e.preventDefault();
-      this.sxndPlayer.video.volume = Math.min(1, this.sxndPlayer.video.volume + this.constants.volumeStep);
-    } else if (e.key == "ArrowDown" && mod === Modifier.None) {
-      e.preventDefault();
-      this.sxndPlayer.video.volume = Math.max(0, this.sxndPlayer.video.volume - this.constants.volumeStep);
-    } else if (e.key == "ArrowLeft") {
-      if (mod === Modifier.CtrlMeta) {
-        e.preventDefault();
-        this.sxndPlayer.prevChapter();
-      } else if (mod === Modifier.Shift) {
-        e.preventDefault();
-        this.sxndPlayer.vifa.seekBackward(1);
-      } else if (mod === Modifier.None) {
-        e.preventDefault();
-        this.sxndPlayer.skipSeconds(-this.constants.seekStep);
-      }
-    } else if (e.key == "ArrowRight") {
-      if (mod === Modifier.CtrlMeta) {
-        e.preventDefault();
-        this.sxndPlayer.nextChapter();
-      } else if (mod === Modifier.Shift) {
-        e.preventDefault();
-        this.sxndPlayer.vifa.seekForward(1);
-      } else if (mod === Modifier.None) {
-        e.preventDefault();
-        this.sxndPlayer.skipSeconds(+this.constants.seekStep);
-      }
-    } else if (e.key == 'm' && mod === Modifier.None) {
-      e.preventDefault();
-      this.sxndPlayer.video.muted = !this.sxndPlayer.video.muted;
-    } else if (e.key == '.' && mod === Modifier.None) {
-      e.preventDefault();
-      this.sxndPlayer.vifa.seekForward(1);
-    } else if (e.key == ',' && mod === Modifier.None) {
-      e.preventDefault();
-      this.sxndPlayer.vifa.seekBackward(1);
-    } else if (e.key == 'b' && mod === Modifier.None) {
-      e.preventDefault();
-      this.showBookmarkUrl();
-    } else if (e.key == 's' && mod === Modifier.None) {
-      e.preventDefault();
-      this.showScreenshot();
+    }
+
+    if (stopPropagation) {
+      // For example, we may not want to stop propagation for Esc, because Shaka
+      // should take this for closing the overflow menu.
+      // TODO: Tweak this behavior
+      e.stopImmediatePropagation();
     }
   }
 
