@@ -7,7 +7,11 @@
 
     <script>
         window.addEventListener('DOMContentLoaded', function () {
-            var app = new SxndPlayerApp(document.querySelector('.mediaplayer-container'), {sxnd:videoToJson(settings: settings)}, "{langCode}");
+            var container = document.querySelector('.mediaplayer-container');
+            var videoConfig = {sxnd:videoToJson(settings: settings)};
+            var lang = {f:format.json(value: lang) -> f:format.raw()};
+
+            var app = new SxndPlayerApp(container, videoConfig, lang);
         });
     </script>
 </f:section>

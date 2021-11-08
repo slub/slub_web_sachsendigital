@@ -23,3 +23,19 @@ describe('supportsCanvasExport', () => {
     expect(env.supportsCanvasExport('not-a-mimetype')).toBe(false);
   });
 });
+
+describe('setLang / t', () => {
+  test('basic', () => {
+    const env = new Environment();
+    env.setLang({
+      locale: 'en',
+      phrases: {
+        'apple': "{count, plural, =0 {no apple} one {one apple} other {# apples}}",
+      },
+    });
+
+    expect(env.t('apple', { count: 0 })).toBe("no apple");
+    expect(env.t('apple', { count: 1 })).toBe("one apple");
+    expect(env.t('apple', { count: 3 })).toBe("3 apples");
+  });
+});
