@@ -34,10 +34,12 @@
     "webpack-remove-empty-scripts": "^0.7.1"
   },
   "dependencies": {
+    "intl-messageformat": "^9.9.4",
     "jquery": "3.5.1",
     "magnific-popup": "1.1.0",
     "piexifjs": "^1.0.6",
-    "shaka-player": "3.2.0"
+    "shaka-player": "3.2.0",
+    "tslib": "^2.3.1"
   },
   "jest": {
     "rootDir": "..",

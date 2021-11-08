@@ -8,6 +8,8 @@
  * @property {ScopeT | null | undefined} scope Active keyboard scope for which the keybinding is relevant; undefined or null to allow any scope.
  * @property {ActionT} action Key of the action to be executed for that keybinding.
  * @property {boolean?} propagate
+ * @property {string} kind Kind of keybinding as used for grouping in help modal.
+ * @property {number} order Order value (relative to `kind`) as used in help modal.
  */
 
 /**

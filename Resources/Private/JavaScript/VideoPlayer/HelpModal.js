@@ -1,4 +1,43 @@
 import SimpleModal from './SimpleModal';
+import { templateElement } from './util';
+
+/**
+ * @typedef {string} KeybindingKind See `Keybinding::kind`.
+ * @typedef {string} KeybindingAction See `Keybinding::action`.
+ * @typedef {import('./Keyboard').Keybinding<string, KeybindingAction>} ShownKeybinding
+ * @typedef {Record<KeybindingKind, Record<KeybindingAction, ShownKeybinding[]>>} KeybindingGroups
+ */
+
+/**
+ *
+ * @param {ShownKeybinding[]} keybindings
+ * @returns {KeybindingGroups}
+ */
+function groupKeybindings(keybindings) {
+  // Prepopulate to determine an order
+  /** @type {KeybindingGroups} */
+  const result = {
+    'navigate': {},
+    'other': {},
+  };
+
+  const keybindingsSorted = keybindings.slice();
+  keybindingsSorted.sort((a, b) => a.order - b.order);
+
+  for (const kb of keybindingsSorted) {
+    if (!result[kb.kind]) {
+      result[kb.kind] = {};
+    }
+
+    if (!result[kb.kind][kb.action]) {
+      result[kb.kind][kb.action] = [];
+    }
+
+    result[kb.kind][kb.action].push(kb);
+  }
+
+  return result;
+}
 
 export default class HelpModal extends SimpleModal {
   constructor(parent, env, config) {
@@ -9,97 +48,84 @@ export default class HelpModal extends SimpleModal {
   }
 
   _createDom() {
-    const { config: { constants } } = this._state;
-
-    const volumeStepPercent = Math.round(constants.volumeStep * 100);
+    const { env, config: { constants, keybindings } } = this._state;
 
     const dom = super._createDom("help-modal");
 
-    dom.title.innerText = "Bedienhinweise";
+    dom.title.innerText = env.t('modal.help.title');
 
-    dom.body.innerHTML = `
-      <h3 class="subheader">Navigation</h3>
+    const allKbGrouped = groupKeybindings(keybindings);
 
-      <table class="keybindings-table">
-        <tbody>
-          <tr>
-            <td class="legend">Taste</td>
-            <td class="legend">Funktion</td>
-          </tr>
-          <tr>
-            <td>Pfeil rechts</td>
-            <td>${constants.seekStep} Sekunden weiter</td>
-          </tr>
-          <tr>
-            <td>Pfeil links</td>
-            <td>${constants.seekStep} Sekunden zurück</tr>
-          </tr>
-          <tr>
-            <td>Strg + rechts</td>
-            <td>Kapitel weiter</td>
-          </tr>
-          <tr>
-            <td>Strg + links</td>
-            <td>Kapitel zurück</td>
-          </tr>
-          <tr>
-            <td>Umschalt + rechts <em>oder</em> Punkt</td>
-            <td>Einzelbild weiter</td>
-          </tr>
-          <tr>
-            <td>Umschalt + links <em>oder</em> Komma</td>
-            <td>Einzelbild zurück</td>
-          </tr>
-        </tbody>
-      </table>
+    for (const [kind, kbGrouped] of Object.entries(allKbGrouped)) {
+      const keybindings = [...Object.entries(kbGrouped)];
+      if (keybindings.length === 0) {
+        continue;
+      }
 
-      <h3 class="subheader">Weitere Tastenkürzel</h3>
+      const h3 = templateElement(`<h3 class="subheader"></h3>`);
+      h3.innerText = env.t(`action.kind.${kind}`);
+      dom.body.append(h3);
 
-      <table class="keybindings-table">
-        <tbody>
-          <tr>
-            <td class="legend">Taste</td>
-            <td class="legend">Funktion</td>
-          </tr>
-          <tr>
-            <td>Leertaste</td>
-            <td>Abspielen / Pausieren</td>
-          </tr>
-          <tr>
-            <td>Pfeil oben</td>
-            <td>Lauter (+${volumeStepPercent}%P)</td>
-          </tr>
-          <tr>
-            <td>Pfeil unten</td>
-            <td>Leiser (-${volumeStepPercent} %P)</tr>
-          </tr>
-          <tr>
-            <td>Taste F</td>
-            <td>Vollbild an / aus</td>
-          </tr>
-          <tr>
-            <td>Taste M</td>
-            <td>Stummschaltung an / aus</td>
-          </tr>
-          <tr>
-            <td>Taste B</td>
-            <td>Bookmark (Link teilen)</td>
-          </tr>
-          <tr>
-            <td>Taste S</td>
-            <td>Screenshot anzeigen</td>
-          </tr>
-          <tr>
-            <td>F1</td>
-            <td>Bedienhinweise (dieses Fenster)</td>
-          </tr>
-          <tr>
-            <td>Escape</td>
-            <td>Aktuelle Aktion beenden (Fenster, Vollbild, ...)</td>
-          </tr>
-        </tbody>
-      </table>
-    `;
+      const table = templateElement(`
+        <table class="keybindings-table">
+          <tbody>
+            <tr>
+              <td class="legend key"></td>
+              <td class="legend action"></td>
+            </tr>
+          </tbody>
+        </table>
+      `);
+
+      const legendKey = table.querySelector('.legend.key');
+      legendKey.innerText = env.t('modal.help.key');
+
+      const legendAction = table.querySelector('.legend.action');
+      legendAction.innerText = env.t('modal.help.action');
+
+      const trTemplate = templateElement(`
+        <tr>
+          <td class="key"></td>
+          <td class="action"></td>
+        </tr>
+      `);
+
+      const tbody = table.querySelector('tbody');
+
+      for (const [action, kbs] of keybindings) {
+        const tr = trTemplate.cloneNode(true);
+
+        // There may be multiple keybinidngs to the same action. Concatenate
+        // these using an "or" as separator.
+        const tdKey = tr.querySelector('.key');
+        for (let i = 0; i < kbs.length; i++) {
+          const kb = kbs[i];
+
+          if (i > 0) {
+            const sep = templateElement(`<span class="or-sep"></span>`)
+            sep.innerText = env.t('or');
+
+            tdKey.append(sep);
+          }
+
+          const text = kb.mod
+            ? env.t(`key.mod.${kb.mod}`) + " + " + env.t(`key.${kb.key}.mod`)
+            : env.t(`key.${kb.key}`);
+
+          tdKey.append(
+            document.createTextNode(text)
+          );
+        }
+
+        const tdAction = tr.querySelector('.action');
+        tdAction.innerText = env.t(`action.${action}`, constants);
+
+        tbody.append(tr);
+      }
+
+      table.append(tbody);
+      dom.body.append(table);
+    }
 
     return dom;
   }

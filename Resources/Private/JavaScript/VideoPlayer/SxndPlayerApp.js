@@ -17,10 +17,18 @@ import keybindings from './keybindings.json';
  */
 
 class SxndPlayerApp {
-  constructor(container, videoInfo, locale) {
+  /**
+   *
+   * @param {HTMLElement} container
+   * @param {any} videoInfo
+   * @param {object} lang
+   * @param {string} lang.locale
+   * @param {Record<string, string>} lang.phrases
+   */
+  constructor(container, videoInfo, lang) {
     this.container = container;
     this.videoInfo = videoInfo;
-    this.locale = locale;
+    this.lang = lang;
 
     this.constants = {
       /** Number of seconds in which to still rewind to previous chapter. */
@@ -44,6 +52,7 @@ class SxndPlayerApp {
     }
 
     this.env = new Environment();
+    this.env.setLang(lang);
 
     this.actions = {
       'cancel': () => {
@@ -151,7 +160,7 @@ class SxndPlayerApp {
         }),
         ControlPanelButton.register(this.env, {
           material_icon: 'help_outline',
-          title: "Bedienhinweise",
+          title: this.env.t('control.help.tooltip'),
           onClick: this.actions['modal.help.open'],
         }),
       ],
@@ -160,7 +169,7 @@ class SxndPlayerApp {
 
     sxndPlayer.initialize();
 
-    sxndPlayer.setLocale(this.locale);
+    sxndPlayer.setLocale(this.lang.locale);
 
     $('a[data-timecode]').on('click', function () {
       const timecode = $(this).data('timecode');
@@ -171,6 +180,7 @@ class SxndPlayerApp {
     this.modals = Modals({
       help: new HelpModal(this.container, this.env, {
         constants: this.constants,
+        keybindings: this.keybindings,
       }),
       bookmark: new BookmarkModal(this.container, this.env),
       screenshot: new ScreenshotModal(this.container, this.env, {

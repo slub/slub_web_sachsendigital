@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2021-11-08T10:01:57Z">
+		<header>
+			<generator>LFEditor</generator>
+		</header>
+		<body>
+			<trans-unit id="action.cancel">
+				<source><![CDATA[Cancel current action (window, full screen, ...)]]></source>
+			</trans-unit>
+			<trans-unit id="action.fullscreen.toggle">
+				<source><![CDATA[Toggle full screen]]></source>
+			</trans-unit>
+			<trans-unit id="action.kind.navigate">
+				<source><![CDATA[Navigate]]></source>
+			</trans-unit>
+			<trans-unit id="action.kind.other">
+				<source><![CDATA[Other Shortcuts]]></source>
+			</trans-unit>
+			<trans-unit id="action.modal.bookmark.open">
+				<source><![CDATA[Bookmark (share link)]]></source>
+			</trans-unit>
+			<trans-unit id="action.modal.help.toggle">
+				<source><![CDATA[Toggle help (this window)]]></source>
+			</trans-unit>
+			<trans-unit id="action.modal.screenshot.open">
+				<source><![CDATA[Screenshot]]></source>
+			</trans-unit>
+			<trans-unit id="action.navigate.chapter.next">
+				<source><![CDATA[Next chapter]]></source>
+			</trans-unit>
+			<trans-unit id="action.navigate.chapter.prev">
+				<source><![CDATA[Previous chapter]]></source>
+			</trans-unit>
+			<trans-unit id="action.navigate.frame.next">
+				<source><![CDATA[Next frame]]></source>
+			</trans-unit>
+			<trans-unit id="action.navigate.frame.prev">
+				<source><![CDATA[Previous frame]]></source>
+			</trans-unit>
+			<trans-unit id="action.navigate.rewind">
+				<source><![CDATA[Rewind {seekStep, plural, one {one second} other {# seconds}}]]></source>
+			</trans-unit>
+			<trans-unit id="action.navigate.seek">
+				<source><![CDATA[Seek {seekStep, plural, one {one second} other {# seconds}}]]></source>
+			</trans-unit>
+			<trans-unit id="action.playback.toggle">
+				<source><![CDATA[Play / Pause]]></source>
+			</trans-unit>
+			<trans-unit id="action.playback.volume.dec">
+				<source><![CDATA[Decrease volume (-{volumeStep, number, ::percent}P)]]></source>
+			</trans-unit>
+			<trans-unit id="action.playback.volume.inc">
+				<source><![CDATA[Increase volume (+{volumeStep, number, ::percent}P)]]></source>
+			</trans-unit>
+			<trans-unit id="action.playback.volume.mute.toggle">
+				<source><![CDATA[Mute / Unmute]]></source>
+			</trans-unit>
+			<trans-unit id="control.help.tooltip">
+				<source><![CDATA[Show Help]]></source>
+			</trans-unit>
+			<trans-unit id="key. ">
+				<source><![CDATA[Space Bar]]></source>
+			</trans-unit>
+			<trans-unit id="key.,">
+				<source><![CDATA[Comma]]></source>
+			</trans-unit>
+			<trans-unit id="key..">
+				<source><![CDATA[Period]]></source>
+			</trans-unit>
+			<trans-unit id="key.ArrowDown">
+				<source><![CDATA[Arrow Down]]></source>
+			</trans-unit>
+			<trans-unit id="key.ArrowLeft">
+				<source><![CDATA[Arrow Left]]></source>
+			</trans-unit>
+			<trans-unit id="key.ArrowLeft.mod">
+				<source><![CDATA[Left]]></source>
+			</trans-unit>
+			<trans-unit id="key.ArrowRight">
+				<source><![CDATA[Arrow Right]]></source>
+			</trans-unit>
+			<trans-unit id="key.ArrowRight.mod">
+				<source><![CDATA[Right]]></source>
+			</trans-unit>
+			<trans-unit id="key.ArrowUp">
+				<source><![CDATA[Arrow Up]]></source>
+			</trans-unit>
+			<trans-unit id="key.Escape">
+				<source><![CDATA[Escape]]></source>
+			</trans-unit>
+			<trans-unit id="key.F1">
+				<source><![CDATA[F1]]></source>
+			</trans-unit>
+			<trans-unit id="key.b">
+				<source><![CDATA[Key B]]></source>
+			</trans-unit>
+			<trans-unit id="key.f">
+				<source><![CDATA[Key F]]></source>
+			</trans-unit>
+			<trans-unit id="key.m">
+				<source><![CDATA[Key M]]></source>
+			</trans-unit>
+			<trans-unit id="key.mod.CtrlMeta">
+				<source><![CDATA[Ctrl]]></source>
+			</trans-unit>
+			<trans-unit id="key.mod.Shift">
+				<source><![CDATA[Shift]]></source>
+			</trans-unit>
+			<trans-unit id="key.s">
+				<source><![CDATA[Key S]]></source>
+			</trans-unit>
+			<trans-unit id="modal.help.action">
+				<source><![CDATA[Action]]></source>
+			</trans-unit>
+			<trans-unit id="modal.help.key">
+				<source><![CDATA[Key]]></source>
+			</trans-unit>
+			<trans-unit id="modal.help.title">
+				<source><![CDATA[How to Use]]></source>
+			</trans-unit>
+			<trans-unit id="or">
+				<source><![CDATA[or]]></source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
