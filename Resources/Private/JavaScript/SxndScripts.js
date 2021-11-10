@@ -17,9 +17,6 @@ import 'magnific-popup';
 
 $(function() {
 
-    // inital javascript "hello, i'm here!"
-    $('html').removeClass('no-js');
-
     // sub entry toggle in list views
     $('.tx-dlf-morevolumes, .tx-dlf-hidevolumes').on('click', function (event) {
         $(this).parent().toggleClass('tx-dlf-volumes-open').find('.tx-dlf-volume').slideToggle();
