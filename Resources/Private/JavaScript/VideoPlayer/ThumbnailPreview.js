@@ -70,7 +70,7 @@ export default class ThumbnailPreview {
   /**
    * @protected
    */
-   onWindowBlur() {
+  onWindowBlur() {
     // The blur event is fired, for example, when the user switches the tab via
     // Ctrl+Tab. If they then move the mouse and return to the player tab, it may
     // be surprising to have the thumbnail preview still open. Thus, close the
