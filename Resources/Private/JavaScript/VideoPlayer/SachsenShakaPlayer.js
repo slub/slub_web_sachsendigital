@@ -39,6 +39,10 @@ export default class SachsenShakaPlayer {
     this.constants = Object.assign({
       prevChapterTolerance: 5,
     }, config.constants);
+
+    this.handlers = {
+      onTrackChange: this.onTrackChange.bind(this),
+    };
   }
 
   /**
@@ -89,7 +93,9 @@ export default class SachsenShakaPlayer {
   }
 
   async initialize() {
-    this.fps = 25;
+    this.fps = null;
+    this.vifa = null;
+
     this.player = new shaka.Player(this.video);
     const ui = new shaka.ui.Overlay(this.player, this.container, this.video);
     this.controls = ui.getControls();
@@ -125,13 +131,8 @@ export default class SachsenShakaPlayer {
     this.player.addEventListener('error', this.onPlayerErrorEvent.bind(this));
     this.controls.addEventListener('error', this.onUiErrorEvent.bind(this));
 
-    this.vifa = VideoFrame({
-      id: this.video.id,
-      frameRate: this.fps,
-      callback: function (response) {
-        console.log('callback response: ' + response);
-      }
-    });
+    this.player.addEventListener('adaptation', this.handlers.onTrackChange);
+    this.player.addEventListener('variantchanged', this.handlers.onTrackChange);
 
     // Try to load a manifest.
     // This is an asynchronous process.
@@ -154,6 +155,26 @@ export default class SachsenShakaPlayer {
     });
 
     this.renderChapterMarkers();
+  }
+
+  onTrackChange() {
+    this.updateFrameRate();
+  }
+
+  updateFrameRate() {
+    // There should always be at most one active variant
+    const fps = this.player.getVariantTracks().find(track => track.active)?.frameRate ?? null;
+
+    if (fps === null) {
+      this.fps = null;
+      this.vifa = null;
+    } else if (fps !== this.fps) {
+      this.fps = fps;
+      this.vifa = VideoFrame({
+        id: this.video.id,
+        frameRate: fps,
+      });
+    }
   }
 
   setLocale(locale) {

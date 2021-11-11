@@ -78,7 +78,7 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
           break;
 
         case TimeMode.CurrentFrame:
-          text = `${elSxndPlayer.vifa.get()}`;
+          text = `${elSxndPlayer.vifa?.get() ?? "(Frame-Nummer unbekannt)"}`;
           title = 'Frame-Nummer';
           break;
       }

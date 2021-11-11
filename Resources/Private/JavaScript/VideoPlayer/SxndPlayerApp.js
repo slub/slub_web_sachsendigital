@@ -120,10 +120,10 @@ class SxndPlayerApp {
         this.sxndPlayer.nextChapter();
       },
       'navigate.frame.prev': () => {
-        this.sxndPlayer.vifa.seekBackward(1);
+        this.sxndPlayer.vifa?.seekBackward(1);
       },
       'navigate.frame.next': () => {
-        this.sxndPlayer.vifa.seekForward(1);
+        this.sxndPlayer.vifa?.seekForward(1);
       },
     };
 
