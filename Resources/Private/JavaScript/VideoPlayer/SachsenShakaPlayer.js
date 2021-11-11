@@ -12,6 +12,7 @@ import ThumbnailPreview from './ThumbnailPreview';
 
 export default class SachsenShakaPlayer {
   /**
+   * Please call {@link initSupport} once before instantiating players.
    *
    * @param {object} config
    * @param {Environment} config.env
@@ -44,16 +45,44 @@ export default class SachsenShakaPlayer {
    * Installs polyfills and returns the supported manifest formats in order of
    * preference.
    *
-   * @returns {'mpd'[]}
+   * @param {boolean} modHlsParser Whether or not to install modified HLS parser. Needed for display of thumbnail preview in HLS.
+   * @returns {('mpd' | 'hls')[]}
    */
-  static initSupport() {
+  static initSupport(modHlsParser = true) {
     shaka.polyfill.installAll();
 
     if (shaka.Player.isBrowserSupported()) {
+      if (modHlsParser) {
+        // The HLS parser apparently does not report dimensions of thumbnails,
+        // so `getThumbnails()` will not return correct size and position of a
+        // thumbnail within the tileset. By setting width = 1 and height = 1,
+        // we will at least receive the relative size and position, which in
+        // `ThumbnailPreview::renderImage()` we scale to the absolute values.
+        // (TODO: Dispense of this; at least, don't override parser globally)
+
+        class CustomHlsParser extends shaka.hls.HlsParser {
+          async start(uri, playerInterface) {
+            const manifest = await super.start(uri, playerInterface);
+            for (const imageStream of manifest.imageStreams) {
+              imageStream.width = 1;
+              imageStream.height = 1;
+            }
+            return manifest;
+          }
+        }
+
+        shaka.media.ManifestParser.registerParserByExtension(
+          'm3u8', () => new CustomHlsParser());
+        shaka.media.ManifestParser.registerParserByMime(
+          'application/x-mpegurl', () => new CustomHlsParser());
+        shaka.media.ManifestParser.registerParserByMime(
+          'application/vnd.apple.mpegurl', () => new CustomHlsParser());
+      }
+
       // Conditions taken from shaka.util.Platform.supportsMediaSource()
       return window.MediaSource && window.MediaSource.isTypeSupported
-        ? ['mpd']
-        : [];
+        ? ['mpd', 'hls']
+        : ['hls'];
     } else {
       return [];
     }
