@@ -40,6 +40,22 @@ class SxndPlayerApp {
       seekStep: 10,
     };
 
+    this.env = new Environment();
+    this.env.setLang(lang);
+
+    // Check if we've got a URL for a supported manifest format
+    this.manifestUri = null;
+    for (const format of SachsenShakaPlayer.initSupport()) {
+      if (videoInfo.url[format]) {
+        this.manifestUri = videoInfo.url[format];
+        break;
+      }
+    }
+    if (this.manifestUri === null) {
+      this.failWithError('error.playback-not-supported');
+      return;
+    }
+
     // TODO: Use arrays inside the app, avoid this transformation?
     const videoMetadata = this.videoInfo.metadata.metadata;
     for (const key of Object.keys(videoMetadata)) {
@@ -51,9 +67,6 @@ class SxndPlayerApp {
         }
       }
     }
-
-    this.env = new Environment();
-    this.env.setLang(lang);
 
     this.actions = {
       'cancel': () => {
@@ -126,6 +139,15 @@ class SxndPlayerApp {
     }, { capture: true });
   }
 
+  failWithError(langKey) {
+    const errorBox = document.createElement('div');
+    errorBox.className = "sxnd-player-fatal-error";
+    errorBox.innerText = this.env.t(langKey);
+
+    this.container.innerHTML = "";
+    this.container.append(errorBox);
+  }
+
   onShakaUiLoaded() {
     const video = document.createElement("video");
     video.id = 'video';
@@ -145,7 +167,7 @@ class SxndPlayerApp {
       env: this.env,
       container: this.container,
       video: document.getElementById('video'),
-      manifestUri: this.videoInfo.url.manifest,
+      manifestUri: this.manifestUri,
       timecode: timecode ? parseFloat(timecode) : undefined,
       chapters,
       controlPanelButtons: [

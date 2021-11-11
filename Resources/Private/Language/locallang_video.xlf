@@ -59,6 +59,9 @@
 			<trans-unit id="control.help.tooltip">
 				<source><![CDATA[Show Help]]></source>
 			</trans-unit>
+			<trans-unit id="error.playback-not-supported">
+				<source><![CDATA[This video cannot be played back in your browser.]]></source>
+			</trans-unit>
 			<trans-unit id="key. ">
 				<source><![CDATA[Space Bar]]></source>
 			</trans-unit>

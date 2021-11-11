@@ -77,6 +77,10 @@
 				<source><![CDATA[Show Help]]></source>
 				<target><![CDATA[Bedienhinweise]]></target>
 			</trans-unit>
+			<trans-unit id="error.playback-not-supported" approved="yes">
+				<source><![CDATA[This video cannot be played back in your browser.]]></source>
+				<target><![CDATA[Dieses Video kann in Ihrem Browser nicht wiedergegeben werden.]]></target>
+			</trans-unit>
 			<trans-unit id="key. " approved="yes">
 				<source><![CDATA[Space Bar]]></source>
 				<target><![CDATA[Leertaste]]></target>

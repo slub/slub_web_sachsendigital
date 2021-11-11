@@ -40,6 +40,25 @@ export default class SachsenShakaPlayer {
     }, config.constants);
   }
 
+  /**
+   * Installs polyfills and returns the supported manifest formats in order of
+   * preference.
+   *
+   * @returns {'mpd'[]}
+   */
+  static initSupport() {
+    shaka.polyfill.installAll();
+
+    if (shaka.Player.isBrowserSupported()) {
+      // Conditions taken from shaka.util.Platform.supportsMediaSource()
+      return window.MediaSource && window.MediaSource.isTypeSupported
+        ? ['mpd']
+        : [];
+    } else {
+      return [];
+    }
+  }
+
   async initialize() {
     this.fps = 25;
     this.player = new shaka.Player(this.video);
@@ -219,27 +238,6 @@ export default class SachsenShakaPlayer {
       this.seekTo(this.chapters.advance(cur, +1));
     }
   }
-}
-
-/**
- *
- * Initialize the Shaka-Player App
- *
- */
-
-function initApp() {
-  // Install built-in polyfills to patch browser incompatibilities.
-  shaka.polyfill.installAll();
-
-  // Check to see if the browser supports the basic APIs Shaka needs.
-  if (shaka.Player.isBrowserSupported()) {
-    // Everything looks good!
-    initPlayer();
-  } else {
-    // This browser does not have the minimum set of APIs we need.
-    console.error('Browser not supported!');
-  }
-
 }
 
 // Listen to the custom shaka-ui-load-failed event, in case Shaka Player fails
