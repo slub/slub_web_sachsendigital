@@ -23,6 +23,7 @@ class SxndPlayerApp {
    * @param {any} videoInfo
    * @param {object} lang
    * @param {string} lang.locale
+   * @param {string} lang.twoLetterIsoCode
    * @param {Record<string, string>} lang.phrases
    */
   constructor(container, videoInfo, lang) {
@@ -169,7 +170,7 @@ class SxndPlayerApp {
 
     sxndPlayer.initialize();
 
-    sxndPlayer.setLocale(this.lang.locale);
+    sxndPlayer.setLocale(this.lang.twoLetterIsoCode);
 
     $('a[data-timecode]').on('click', function () {
       const timecode = $(this).data('timecode');

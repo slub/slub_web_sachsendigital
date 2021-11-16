@@ -9,7 +9,7 @@
         window.addEventListener('DOMContentLoaded', function () {
             var container = document.querySelector('.mediaplayer-container');
             var videoConfig = {sxnd:videoToJson(settings: settings)};
-            var lang = {f:format.json(value: lang) -> f:format.raw()};
+            var lang = {sxnd:translations(baseFile: settings.playerTranslations.baseFile) -> f:format.json() -> f:format.raw()};
 
             var app = new SxndPlayerApp(container, videoConfig, lang);
         });

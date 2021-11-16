@@ -24,8 +24,6 @@ namespace Slub\SlubWebSachsendigital\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Localization\LocalizationFactory;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class MediaController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 {
@@ -39,29 +37,6 @@ class MediaController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
         $pageSettings = $pageSettings['page.']['10.']['settings.'];
         $pageSettings = GeneralUtility::removeDotsFromTS($pageSettings);
 
-        // Thanks https://gist.github.com/fedetibaldo/83881a8d61edc3c54c83f2f1b23fa8b2
-        // TODO: Avoid the deprecated global TYPO3_REQUEST, probably using dependency injection after migrating to TYPO3 v10
-        //       See https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/SiteHandling/AccessingSiteConfiguration.html
-        $locale = $GLOBALS['TYPO3_REQUEST']->getAttribute('language')->getTwoLetterIsoCode();
-
-        // Prepare passing translation strings to the JS frontend code. First,
-        // grab the available translation keys from the translation base file
-        // (without language prefix); we treat this as authoritative on which
-        // keys exist in case a translated file (such as de.locallang_video.xlf)
-        // is missing or adding extra keys.
-        $localizationFactory = GeneralUtility::makeInstance(LocalizationFactory::class);
-        $baseTranslationFile = "EXT:slub_web_sachsendigital/Resources/Private/Language/locallang_video.xlf";
-        $translationKeys = array_keys($localizationFactory->getParsedData($baseTranslationFile, 'default')['default']);
-
-        // Then translate each available key as per the selected language. This
-        // also handles fallback to the default language if a key/phrase isn't
-        // translated.
-        $phrases = [];
-        foreach ($translationKeys as $transKey) {
-            $phrases[$transKey] = LocalizationUtility::translate("LLL:$baseTranslationFile:$transKey");
-        }
-
-        $this->view->assign('lang', compact('locale', 'phrases'));
         $this->view->assign('pageSettings', $pageSettings);
     }
 }

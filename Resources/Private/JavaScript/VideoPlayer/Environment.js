@@ -49,12 +49,12 @@ export default class Environment {
    * interpolation and pluralization.
    *
    * @param {object} lang
-   * @param {string} lang.locale
+   * @param {string} lang.twoLetterIsoCode
    * @param {Record<string, string>} lang.phrases
    */
   setLang(lang) {
     this._lang = {
-      locale: lang.locale,
+      twoLetterIsoCode: lang.twoLetterIsoCode,
       phrasesInput: lang.phrases,
       phrasesCompiled: {},
     };
@@ -75,7 +75,7 @@ export default class Environment {
         return key;
       }
 
-      this._lang.phrasesCompiled[key] = new IntlMessageFormat(this._lang.phrasesInput[key], this._lang.locale);
+      this._lang.phrasesCompiled[key] = new IntlMessageFormat(this._lang.phrasesInput[key], this._lang.twoLetterIsoCode);
     }
 
     return this._lang.phrasesCompiled[key].format(values);
