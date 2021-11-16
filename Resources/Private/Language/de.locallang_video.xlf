@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2021-11-08T10:01:57Z">
+		<header>
+			<generator>LFEditor</generator>
+		</header>
+		<body>
+			<trans-unit id="action.cancel" approved="yes">
+				<source><![CDATA[Cancel current action (window, full screen, ...)]]></source>
+				<target><![CDATA[Aktuelle Aktion beenden (Fenster, Vollbild, ...)]]></target>
+			</trans-unit>
+			<trans-unit id="action.fullscreen.toggle" approved="yes">
+				<source><![CDATA[Toggle full screen]]></source>
+				<target><![CDATA[Vollbild an / aus]]></target>
+			</trans-unit>
+			<trans-unit id="action.kind.navigate" approved="yes">
+				<source><![CDATA[Navigate]]></source>
+				<target><![CDATA[Navigation]]></target>
+			</trans-unit>
+			<trans-unit id="action.kind.other" approved="yes">
+				<source><![CDATA[Other Shortcuts]]></source>
+				<target><![CDATA[Weitere Tastenkürzel]]></target>
+			</trans-unit>
+			<trans-unit id="action.modal.bookmark.open" approved="yes">
+				<source><![CDATA[Bookmark (share link)]]></source>
+				<target><![CDATA[Bookmark (Link teilen)]]></target>
+			</trans-unit>
+			<trans-unit id="action.modal.help.toggle" approved="yes">
+				<source><![CDATA[Toggle help (this window)]]></source>
+				<target><![CDATA[Bedienhinweise (dieses Fenster)]]></target>
+			</trans-unit>
+			<trans-unit id="action.modal.screenshot.open" approved="yes">
+				<source><![CDATA[Screenshot]]></source>
+				<target><![CDATA[Screenshot anzeigen]]></target>
+			</trans-unit>
+			<trans-unit id="action.navigate.chapter.next" approved="yes">
+				<source><![CDATA[Next chapter]]></source>
+				<target><![CDATA[Kapitel weiter]]></target>
+			</trans-unit>
+			<trans-unit id="action.navigate.chapter.prev" approved="yes">
+				<source><![CDATA[Previous chapter]]></source>
+				<target><![CDATA[Kapitel zurück]]></target>
+			</trans-unit>
+			<trans-unit id="action.navigate.frame.next" approved="yes">
+				<source><![CDATA[Next frame]]></source>
+				<target><![CDATA[Frame weiter]]></target>
+			</trans-unit>
+			<trans-unit id="action.navigate.frame.prev" approved="yes">
+				<source><![CDATA[Previous frame]]></source>
+				<target><![CDATA[Frame zurück]]></target>
+			</trans-unit>
+			<trans-unit id="action.navigate.rewind" approved="yes">
+				<source><![CDATA[Rewind {seekStep, plural, one {one second} other {# seconds}}]]></source>
+				<target><![CDATA[{seekStep, plural, one {Eine Sekunde} other {# Sekunden}} zurück]]></target>
+			</trans-unit>
+			<trans-unit id="action.navigate.seek" approved="yes">
+				<source><![CDATA[Seek {seekStep, plural, one {one second} other {# seconds}}]]></source>
+				<target><![CDATA[{seekStep, plural, one {Eine Sekunde} other {# Sekunden}} weiter]]></target>
+			</trans-unit>
+			<trans-unit id="action.playback.toggle" approved="yes">
+				<source><![CDATA[Play / Pause]]></source>
+				<target><![CDATA[Abspielen / Pausieren]]></target>
+			</trans-unit>
+			<trans-unit id="action.playback.volume.dec" approved="yes">
+				<source><![CDATA[Decrease volume (-{volumeStep, number, ::percent}P)]]></source>
+				<target><![CDATA[Leiser (-{volumeStep, number, ::percent}P)]]></target>
+			</trans-unit>
+			<trans-unit id="action.playback.volume.inc" approved="yes">
+				<source><![CDATA[Increase volume (+{volumeStep, number, ::percent}P)]]></source>
+				<target><![CDATA[Lauter (+{volumeStep, number, ::percent}P)]]></target>
+			</trans-unit>
+			<trans-unit id="action.playback.volume.mute.toggle" approved="yes">
+				<source><![CDATA[Mute / Unmute]]></source>
+				<target><![CDATA[Stummschaltung an / aus]]></target>
+			</trans-unit>
+			<trans-unit id="control.help.tooltip" approved="yes">
+				<source><![CDATA[Show Help]]></source>
+				<target><![CDATA[Bedienhinweise]]></target>
+			</trans-unit>
+			<trans-unit id="key. " approved="yes">
+				<source><![CDATA[Space Bar]]></source>
+				<target><![CDATA[Leertaste]]></target>
+			</trans-unit>
+			<trans-unit id="key.," approved="yes">
+				<source><![CDATA[Comma]]></source>
+				<target><![CDATA[Komma]]></target>
+			</trans-unit>
+			<trans-unit id="key.." approved="yes">
+				<source><![CDATA[Period]]></source>
+				<target><![CDATA[Punkt]]></target>
+			</trans-unit>
+			<trans-unit id="key.ArrowDown" approved="yes">
+				<source><![CDATA[Arrow Down]]></source>
+				<target><![CDATA[Pfeil unten]]></target>
+			</trans-unit>
+			<trans-unit id="key.ArrowLeft" approved="yes">
+				<source><![CDATA[Arrow Left]]></source>
+				<target><![CDATA[Pfeil links]]></target>
+			</trans-unit>
+			<trans-unit id="key.ArrowLeft.mod" approved="yes">
+				<source><![CDATA[Left]]></source>
+				<target><![CDATA[links]]></target>
+			</trans-unit>
+			<trans-unit id="key.ArrowRight" approved="yes">
+				<source><![CDATA[Arrow Right]]></source>
+				<target><![CDATA[Pfeil rechts]]></target>
+			</trans-unit>
+			<trans-unit id="key.ArrowRight.mod" approved="yes">
+				<source><![CDATA[Right]]></source>
+				<target><![CDATA[rechts]]></target>
+			</trans-unit>
+			<trans-unit id="key.ArrowUp" approved="yes">
+				<source><![CDATA[Arrow Up]]></source>
+				<target><![CDATA[Pfeil oben]]></target>
+			</trans-unit>
+			<trans-unit id="key.Escape" approved="yes">
+				<source><![CDATA[Escape]]></source>
+				<target><![CDATA[Escape]]></target>
+			</trans-unit>
+			<trans-unit id="key.F1" approved="yes">
+				<source><![CDATA[F1]]></source>
+				<target><![CDATA[F1]]></target>
+			</trans-unit>
+			<trans-unit id="key.b" approved="yes">
+				<source><![CDATA[Key B]]></source>
+				<target><![CDATA[Taste B]]></target>
+			</trans-unit>
+			<trans-unit id="key.f" approved="yes">
+				<source><![CDATA[Key F]]></source>
+				<target><![CDATA[Taste F]]></target>
+			</trans-unit>
+			<trans-unit id="key.m" approved="yes">
+				<source><![CDATA[Key M]]></source>
+				<target><![CDATA[Taste M]]></target>
+			</trans-unit>
+			<trans-unit id="key.mod.CtrlMeta" approved="yes">
+				<source><![CDATA[Ctrl]]></source>
+				<target><![CDATA[Strg]]></target>
+			</trans-unit>
+			<trans-unit id="key.mod.Shift" approved="yes">
+				<source><![CDATA[Shift]]></source>
+				<target><![CDATA[Umschalt]]></target>
+			</trans-unit>
+			<trans-unit id="key.s" approved="yes">
+				<source><![CDATA[Key S]]></source>
+				<target><![CDATA[Taste S]]></target>
+			</trans-unit>
+			<trans-unit id="modal.help.action" approved="yes">
+				<source><![CDATA[Action]]></source>
+				<target><![CDATA[Funktion]]></target>
+			</trans-unit>
+			<trans-unit id="modal.help.key" approved="yes">
+				<source><![CDATA[Key]]></source>
+				<target><![CDATA[Taste]]></target>
+			</trans-unit>
+			<trans-unit id="modal.help.title" approved="yes">
+				<source><![CDATA[How to Use]]></source>
+				<target><![CDATA[Bedienhinweise]]></target>
+			</trans-unit>
+			<trans-unit id="or" approved="yes">
+				<source><![CDATA[or]]></source>
+				<target><![CDATA[oder]]></target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

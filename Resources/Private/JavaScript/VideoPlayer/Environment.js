@@ -1,3 +1,5 @@
+import IntlMessageFormat from 'intl-messageformat';
+
 import { dataUrlMime } from './util';
 
 /**
@@ -12,6 +14,11 @@ export default class Environment {
   constructor() {
     this._idCnt = 0;
     this._testCanvas = null;
+    this._lang = {
+      locale: 'en',
+      phrasesInput: {},
+      phrasesCompiled: {},
+    };
   }
 
   /**
@@ -33,6 +40,45 @@ export default class Environment {
     const dataUrl = this._getTestCanvas().toDataURL(mimeType);
     const actualMime = dataUrlMime(dataUrl);
     return actualMime === mimeType;
+  }
+
+  /**
+   * Set locale and phrases for subsequent calls to {@link t}.
+   *
+   * Translation phrases should use the ICU MessageFormat syntax for
+   * interpolation and pluralization.
+   *
+   * @param {object} lang
+   * @param {string} lang.twoLetterIsoCode
+   * @param {Record<string, string>} lang.phrases
+   */
+  setLang(lang) {
+    this._lang = {
+      twoLetterIsoCode: lang.twoLetterIsoCode,
+      phrasesInput: lang.phrases,
+      phrasesCompiled: {},
+    };
+  }
+
+  /**
+   * Get translated phrase of given {@link key}, using locale and phrases that
+   * have been provided by the latest call to {@link setLang}.
+   *
+   * @param {string} key
+   * @param {Record<string, string | number>?} values
+   * @returns {string}
+   */
+  t(key, values = {}) {
+    if (!(key in this._lang.phrasesCompiled)) {
+      if (!(key in this._lang.phrasesInput)) {
+        console.error(`Warning: Translation key '${key}' not defined.`);
+        return key;
+      }
+
+      this._lang.phrasesCompiled[key] = new IntlMessageFormat(this._lang.phrasesInput[key], this._lang.twoLetterIsoCode);
+    }
+
+    return this._lang.phrasesCompiled[key].format(values);
   }
 
   _getTestCanvas() {
