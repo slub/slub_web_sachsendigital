@@ -76,16 +76,12 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
         switch (activeMode) {
           case TimeMode.CurrentTime:
           default:
-            text = buildTimeString(totalSeconds, showHour);
-            if (elSxndPlayer.vifa) {
-              text += ':' + ("0" + (elSxndPlayer.vifa.get() % elSxndPlayer.fps)).slice(-2);
-            }
-            text += ' / ' + buildTimeString(duration, showHour);
+            text = `${buildTimeString(totalSeconds, showHour, elSxndPlayer.fps)} / ${buildTimeString(duration, showHour, elSxndPlayer.fps)}`;
             title = this.env.t('control.time.current-time.tooltip');
             break;
 
           case TimeMode.RemainingTime:
-            text = this.env.t('control.time.remaining-time.text', { timecode: buildTimeString(elSxndPlayer.video.duration - totalSeconds, showHour) });
+            text = this.env.t('control.time.remaining-time.text', { timecode: buildTimeString(elSxndPlayer.video.duration - totalSeconds, showHour, elSxndPlayer.fps) });
             title = this.env.t('control.time.remaining-time.tooltip');
             break;
 

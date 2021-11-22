@@ -49,20 +49,25 @@ export function isPosInRect(rect, pos) {
 }
 
 /**
-  * Builds a time string, e.g., 01:04:23, from |totalSeconds|.
+  * Builds a time string, e.g., 1:04:23, from |totalSeconds|.
   *
   * @param {number} totalSeconds (in seconds)
   * @param {boolean} showHour
+  * @param {number?} fps
   * @return {string}
   */
-export function buildTimeString(totalSeconds, showHour) {
+export function buildTimeString(totalSeconds, showHour, fps) {
   const segments = showHour
     ? [totalSeconds / 3600, (totalSeconds / 60) % 60, totalSeconds % 60]
     : [totalSeconds / 60, totalSeconds % 60];
 
+  if (fps) {
+    segments.push(Math.floor((totalSeconds % 1) * fps));
+  }
+
   return (
     segments
-      // Don't pad the first segment (TODO: This contradicts the documented behavior)
+      // Don't pad the first segment
       .map((n, i) => Math.floor(n).toString().padStart(i == 0 ? 0 : 2, '0'))
       .join(':')
   );
