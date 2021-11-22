@@ -18,8 +18,6 @@ export default class SachsenShakaPlayer {
    * @param {Environment} config.env
    * @param {HTMLElement} config.container
    * @param {HTMLVideoElement} config.video
-   * @param {string} config.manifestUri
-   * @param {number?} config.timecode
    * @param {Chapters} config.chapters
    * @param {string[]} config.controlPanelButtons
    * @param {string[]} config.overflowMenuButtons
@@ -30,8 +28,6 @@ export default class SachsenShakaPlayer {
     this.env = config.env;
     this.container = config.container;
     this.video = config.video;
-    this.manifestUri = config.manifestUri;
-    this.initialTimecode = config.timecode;
     this.chapters = config.chapters;
     this.controlPanelButtons = config.controlPanelButtons ?? [];
     this.overflowMenuButtons = config.overflowMenuButtons ?? [];
@@ -92,7 +88,7 @@ export default class SachsenShakaPlayer {
     }
   }
 
-  async initialize() {
+  initialize() {
     this.fps = null;
     this.vifa = null;
 
@@ -134,17 +130,6 @@ export default class SachsenShakaPlayer {
     this.player.addEventListener('adaptation', this.handlers.onTrackChange);
     this.player.addEventListener('variantchanged', this.handlers.onTrackChange);
 
-    // Try to load a manifest.
-    // This is an asynchronous process.
-    try {
-      // This runs if the asynchronous load is successful.
-      console.log('The video has now been loaded!');
-      await this.player.load(this.manifestUri, this.initialTimecode);
-    } catch (e) {
-      // onError is executed if the asynchronous load fails.
-      onError(e);
-    }
-
     this.seekBar = this.container.querySelector('.shaka-seek-bar-container');
     this.thumbnailPreview = new ThumbnailPreview({
       mainContainer: this.container,
@@ -153,7 +138,10 @@ export default class SachsenShakaPlayer {
       player: this.player,
       network: new ImageFetcher(),
     });
+  }
 
+  async loadManifest(manifestUri, startTime) {
+    await this.player.load(manifestUri, startTime);
     this.renderChapterMarkers();
   }
 
@@ -306,11 +294,3 @@ export default class SachsenShakaPlayer {
     }
   }
 }
-
-// Listen to the custom shaka-ui-load-failed event, in case Shaka Player fails
-// to load (e.g. due to lack of browser support).
-document.addEventListener('shaka-ui-load-failed', (errorEvent) => {
-  // Handle the failure to load; errorEvent.detail.reasonCode has a
-  // shaka.ui.FailReasonCode describing why.
-  console.error('Unable to load the UI library!');
-});

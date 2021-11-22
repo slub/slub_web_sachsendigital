@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 import BookmarkModal from './BookmarkModal';
 import Chapters from './Chapters';
 import ControlPanelButton from './controls/ControlPanelButton';
@@ -40,6 +38,12 @@ class SxndPlayerApp {
       seekStep: 10,
       /** Trick play factor for continuous rewind/seek. */
       trickPlayFactor: 4,
+    };
+
+    this.handlers = {
+      onKeyDown: this.onKeyDown.bind(this),
+      onKeyUp: this.onKeyUp.bind(this),
+      onClickChapterLink: this.onClickChapterLink.bind(this),
     };
 
     this.env = new Environment();
@@ -137,17 +141,7 @@ class SxndPlayerApp {
 
     this.keybindings = keybindings;
 
-    document.addEventListener('shaka-ui-loaded', this.onShakaUiLoaded.bind(this));
-
-    // Stopping propagation is a hack against the keyup handler in
-    // `slub_digitalcollections`, which adds/removes a `fullscreen` CSS class
-    // when releasing `f`/`Esc`.
-    // TODO: Find better solutions for this.
-    window.addEventListener('keyup', e => {
-      e.stopImmediatePropagation();
-
-      this.sxndPlayer.cancelTrickPlay();
-    }, { capture: true });
+    this.load();
   }
 
   failWithError(langKey) {
@@ -159,7 +153,15 @@ class SxndPlayerApp {
     this.container.append(errorBox);
   }
 
-  onShakaUiLoaded() {
+  load() {
+    this.chapterLinks = Array.from(
+      document.querySelectorAll("a[data-timecode]")
+    );
+
+    for (const el of this.chapterLinks) {
+      el.sxndTimecode = Number(el.getAttribute("data-timecode"));
+    }
+
     const video = document.createElement("video");
     video.id = 'video';
     video.poster = this.videoInfo.url.poster;
@@ -173,13 +175,12 @@ class SxndPlayerApp {
     if (timecode === null && this.videoInfo.pageNo !== undefined) {
       timecode = chapters.at(this.videoInfo.pageNo - 1).timecode;
     }
+    const startTime = timecode ? parseFloat(timecode) : undefined;
 
     const sxndPlayer = new SachsenShakaPlayer({
       env: this.env,
       container: this.container,
       video: document.getElementById('video'),
-      manifestUri: this.manifestUri,
-      timecode: timecode ? parseFloat(timecode) : undefined,
       chapters,
       controlPanelButtons: [
         ControlPanelButton.register(this.env, {
@@ -202,14 +203,20 @@ class SxndPlayerApp {
     });
 
     sxndPlayer.initialize();
-
     sxndPlayer.setLocale(this.lang.twoLetterIsoCode);
 
-    $('a[data-timecode]').on('click', function () {
-      const timecode = $(this).data('timecode');
-      sxndPlayer.play();
-      sxndPlayer.seekTo(timecode);
-    });
+    sxndPlayer.loadManifest(this.manifestUri, startTime)
+      .then(() => {
+        document.addEventListener('keydown', this.handlers.onKeyDown, { capture: true });
+        document.addEventListener('keyup', this.handlers.onKeyUp, { capture: true });
+
+        for (const el of this.chapterLinks) {
+          el.addEventListener('click', this.handlers.onClickChapterLink);
+        }
+      })
+      .catch(() => {
+        this.failWithError('error.load-failed');
+      });
 
     this.modals = Modals({
       help: new HelpModal(this.container, this.env, {
@@ -223,10 +230,6 @@ class SxndPlayerApp {
     });
 
     this.sxndPlayer = sxndPlayer;
-
-    // Capturing is used, in particular, to suppress Shaka's default keybindings
-    // TODO: Find a better solution
-    document.addEventListener('keydown', this.onKeyDown.bind(this), { capture: true });
   }
 
   hideThumbnailPreview() {
@@ -273,11 +276,43 @@ class SxndPlayerApp {
     }
 
     if (stopPropagation) {
-      // For example, we may not want to stop propagation for Esc, because Shaka
-      // should take this for closing the overflow menu.
-      // TODO: Tweak this behavior
+      // Stop propagation to suppress Shaka's default keybindings.
+      //
+      // However, do this conditionally as we may not want to stop propagation
+      // for Esc, because Shaka should close the overflow menu on Esc.
+      //
+      // TODO: Find a better solution; tweak this behavior
       e.stopImmediatePropagation();
     }
+  }
+
+  /**
+   *
+   * @param {KeyboardEvent} e
+   */
+  onKeyUp(e) {
+    // Stopping propagation is a hack against the keyup handler in
+    // `slub_digitalcollections`, which adds/removes a `fullscreen` CSS class
+    // when releasing `f`/`Esc`.
+    // TODO: Find better solutions for this.
+
+    e.stopImmediatePropagation();
+
+    this.sxndPlayer.cancelTrickPlay();
+  }
+
+  /**
+   *
+   * @param {MouseEvent} e
+   */
+  onClickChapterLink(e) {
+    e.preventDefault();
+
+    // Use `currentTarget` to get the <a> element to which the handler has been
+    // attached.
+    const timecode = Number(e.currentTarget.getAttribute('data-timecode'));
+    this.sxndPlayer.play();
+    this.sxndPlayer.seekTo(timecode);
   }
 
   showBookmarkUrl() {
