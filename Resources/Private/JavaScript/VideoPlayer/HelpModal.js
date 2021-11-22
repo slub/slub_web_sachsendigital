@@ -95,7 +95,7 @@ export default class HelpModal extends SimpleModal {
       for (const [action, kbs] of keybindings) {
         const tr = trTemplate.cloneNode(true);
 
-        // There may be multiple keybinidngs to the same action. Concatenate
+        // There may be multiple keybindings to the same action. Concatenate
         // these using an "or" as separator.
         const tdKey = tr.querySelector('.key');
         for (let i = 0; i < kbs.length; i++) {
