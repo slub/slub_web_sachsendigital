@@ -68,6 +68,9 @@
 			<trans-unit id="control.help.tooltip">
 				<source><![CDATA[Show Help]]></source>
 			</trans-unit>
+			<trans-unit id="control.screenshot.tooltip">
+				<source><![CDATA[Take Screenshot]]></source>
+			</trans-unit>
 			<trans-unit id="control.time.current-time.tooltip">
 				<source><![CDATA[Current Time / Total]]></source>
 			</trans-unit>
@@ -151,6 +154,18 @@
 			</trans-unit>
 			<trans-unit id="modal.bookmark.title">
 				<source><![CDATA[Bookmark (Share Link)]]></source>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.download-image">
+				<source><![CDATA[Download Image]]></source>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.file-format">
+				<source><![CDATA[File Format]]></source>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.show-metadata">
+				<source><![CDATA[Show Metadata]]></source>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.title">
+				<source><![CDATA[Screenshot]]></source>
 			</trans-unit>
 			<trans-unit id="modal.help.action">
 				<source><![CDATA[Action]]></source>

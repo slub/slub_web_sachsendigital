@@ -89,6 +89,10 @@
 				<source><![CDATA[Show Help]]></source>
 				<target><![CDATA[Bedienhinweise]]></target>
 			</trans-unit>
+			<trans-unit id="control.screenshot.tooltip" approved="yes">
+				<source><![CDATA[Take Screenshot]]></source>
+				<target><![CDATA[Screenshot]]></target>
+			</trans-unit>
 			<trans-unit id="control.time.current-time.tooltip" approved="yes">
 				<source><![CDATA[Current Time / Total]]></source>
 				<target><![CDATA[Aktuelle Laufzeit / Gesamtlaufzeit]]></target>
@@ -200,6 +204,22 @@
 			<trans-unit id="modal.bookmark.title" approved="yes">
 				<source><![CDATA[Bookmark (Share Link)]]></source>
 				<target><![CDATA[Bookmark (Link teilen)]]></target>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.show-metadata" approved="yes">
+				<source><![CDATA[Show Metadata]]></source>
+				<target><![CDATA[Metadaten einblenden]]></target>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.download-image" approved="yes">
+				<source><![CDATA[Download Image]]></source>
+				<target><![CDATA[Bild herunterladen]]></target>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.file-format" approved="yes">
+				<source><![CDATA[File Format]]></source>
+				<target><![CDATA[Dateiformat]]></target>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.title" approved="yes">
+				<source><![CDATA[Screenshot]]></source>
+				<target><![CDATA[Screenshot]]></target>
 			</trans-unit>
 			<trans-unit id="modal.help.action" approved="yes">
 				<source><![CDATA[Action]]></source>

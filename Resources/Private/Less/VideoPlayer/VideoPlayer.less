@@ -5,6 +5,7 @@
 @base-color: #4e6666;
 @base-color: @brand-secondary;
 @light-color: lighten(@base-color, 50%);
+@label-padding: 2pt;
 
 .sxnd-player-fatal-error {
     position: absolute;
@@ -67,6 +68,10 @@
     .screenshot-config {
         text-align: left;
         margin-bottom: 0.6rem;
+
+        .show-metadata label {
+            padding-left: @label-padding;
+        }
     }
 
     canvas {
@@ -97,7 +102,7 @@
         margin-top: 1em;
 
         label {
-            padding-left: 2pt;
+            padding-left: @label-padding;
         }
 
         &.shown {

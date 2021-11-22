@@ -185,7 +185,7 @@ class SxndPlayerApp {
       controlPanelButtons: [
         ControlPanelButton.register(this.env, {
           material_icon: 'photo_camera',
-          title: "Screenshot",
+          title: this.env.t('control.screenshot.tooltip'),
           onClick: this.actions['modal.screenshot.open'],
         }),
         ControlPanelButton.register(this.env, {
