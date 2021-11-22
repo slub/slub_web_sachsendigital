@@ -62,6 +62,9 @@
 			<trans-unit id="action.playback.volume.mute.toggle">
 				<source><![CDATA[Mute / Unmute]]></source>
 			</trans-unit>
+			<trans-unit id="control.bookmark.tooltip">
+				<source><![CDATA[Bookmark]]></source>
+			</trans-unit>
 			<trans-unit id="control.help.tooltip">
 				<source><![CDATA[Show Help]]></source>
 			</trans-unit>
@@ -139,6 +142,15 @@
 			</trans-unit>
 			<trans-unit id="key.s">
 				<source><![CDATA[Key S]]></source>
+			</trans-unit>
+			<trans-unit id="modal.bookmark.copy-link">
+				<source><![CDATA[Copy Link]]></source>
+			</trans-unit>
+			<trans-unit id="modal.bookmark.start-at-current-time">
+				<source><![CDATA[Start at current time ({timecode}).]]></source>
+			</trans-unit>
+			<trans-unit id="modal.bookmark.title">
+				<source><![CDATA[Bookmark (Share Link)]]></source>
 			</trans-unit>
 			<trans-unit id="modal.help.action">
 				<source><![CDATA[Action]]></source>

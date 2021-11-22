@@ -190,7 +190,7 @@ class SxndPlayerApp {
         }),
         ControlPanelButton.register(this.env, {
           material_icon: 'bookmark_border',
-          title: "Bookmark",
+          title: this.env.t('control.bookmark.tooltip'),
           onClick: this.actions['modal.bookmark.open'],
         }),
         ControlPanelButton.register(this.env, {

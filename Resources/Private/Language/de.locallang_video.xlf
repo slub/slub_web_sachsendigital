@@ -81,6 +81,10 @@
 				<source><![CDATA[Mute / Unmute]]></source>
 				<target><![CDATA[Stummschaltung an / aus]]></target>
 			</trans-unit>
+			<trans-unit id="control.bookmark.tooltip" approved="yes">
+				<source><![CDATA[Bookmark]]></source>
+				<target><![CDATA[Bookmark]]></target>
+			</trans-unit>
 			<trans-unit id="control.help.tooltip" approved="yes">
 				<source><![CDATA[Show Help]]></source>
 				<target><![CDATA[Bedienhinweise]]></target>
@@ -184,6 +188,18 @@
 			<trans-unit id="key.s" approved="yes">
 				<source><![CDATA[Key S]]></source>
 				<target><![CDATA[Taste S]]></target>
+			</trans-unit>
+			<trans-unit id="modal.bookmark.copy-link" approved="yes">
+				<source><![CDATA[Copy Link]]></source>
+				<target><![CDATA[Link kopieren]]></target>
+			</trans-unit>
+			<trans-unit id="modal.bookmark.start-at-current-time" approved="yes">
+				<source><![CDATA[Start at current time ({timecode}).]]></source>
+				<target><![CDATA[Bei aktueller Zeit ({timecode}) starten.]]></target>
+			</trans-unit>
+			<trans-unit id="modal.bookmark.title" approved="yes">
+				<source><![CDATA[Bookmark (Share Link)]]></source>
+				<target><![CDATA[Bookmark (Link teilen)]]></target>
 			</trans-unit>
 			<trans-unit id="modal.help.action" approved="yes">
 				<source><![CDATA[Action]]></source>
