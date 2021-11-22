@@ -65,6 +65,21 @@
 			<trans-unit id="control.help.tooltip">
 				<source><![CDATA[Show Help]]></source>
 			</trans-unit>
+			<trans-unit id="control.time.current-time.tooltip">
+				<source><![CDATA[Current Time / Total]]></source>
+			</trans-unit>
+			<trans-unit id="control.time.remaining-time.text">
+				<source><![CDATA[{timecode} remaining]]></source>
+			</trans-unit>
+			<trans-unit id="control.time.remaining-time.tooltip">
+				<source><![CDATA[Remaining Time]]></source>
+			</trans-unit>
+			<trans-unit id="control.time.current-frame.unknown">
+				<source><![CDATA[(Frame Count Not Available)]]></source>
+			</trans-unit>
+			<trans-unit id="control.time.current-frame.tooltip">
+				<source><![CDATA[Frame Count]]></source>
+			</trans-unit>
 			<trans-unit id="error.load-failed">
 				<source><![CDATA[The video could not be loaded.]]></source>
 			</trans-unit>

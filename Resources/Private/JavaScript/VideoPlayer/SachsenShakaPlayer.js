@@ -104,7 +104,7 @@ export default class SachsenShakaPlayer {
       'controlPanelElements': [
         'play_pause',
         'chapters_menu',
-        PresentationTimeTracker.KEY,
+        PresentationTimeTracker.register(this.env),
         'spacer',
         'volume',
         'mute',

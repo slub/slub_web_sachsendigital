@@ -1,5 +1,6 @@
 import shaka from 'shaka-player/dist/shaka-player.ui';
 
+import Environment from '../Environment';
 import { buildTimeString } from '../util';
 
 const TimeMode = {
@@ -10,14 +11,15 @@ const TimeMode = {
 };
 
 export default class PresentationTimeTracker extends shaka.ui.Element {
-  static KEY = 'time_and_duration_frame';
-
   /**
    * @param {!HTMLElement} parent
    * @param {!shaka.ui.Controls} controls
+   * @param {Environment} env
    */
-  constructor(parent, controls) {
+  constructor(parent, controls, env) {
     super(parent, controls);
+
+    this.env = env;
 
     /** @type {!HTMLButtonElement} */
     this.currentTime_ = document.createElement('button');
@@ -32,10 +34,6 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
     });
 
     this.eventManager.listen(this.currentTime_, 'click', () => {
-      // We toggle the time display here --> change mode on click --> values get updated in timeandseekrangeupdated event
-      // current time: HH:MM:SS:FF
-      // remaining time
-      // current frame
       this.render({
         activeMode: (this.state.activeMode + 1) % TimeMode.COUNT,
       });
@@ -46,6 +44,22 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
         totalSeconds: this.controls.getDisplayTime(),
       });
     });
+  }
+
+  /**
+   *
+   * @param {Environment} env
+   */
+  static register(env) {
+    const key = env.mkid();
+
+    shaka.ui.Controls.registerElement(key, {
+      create(rootElement, controls) {
+        return new PresentationTimeTracker(rootElement, controls, env);
+      }
+    });
+
+    return key;
   }
 
   render(state) {
@@ -69,17 +83,17 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
           if (elSxndPlayer.video.duration) {
             text += ' / ' + buildTimeString(elSxndPlayer.video.duration, showHour);
           }
-          title = 'Aktuelle Laufzeit / Gesamtlaufzeit';
+          title = this.env.t('control.time.current-time.tooltip');
           break;
 
         case TimeMode.RemainingTime:
-          text = buildTimeString(elSxndPlayer.video.duration - totalSeconds, showHour);
-          title = 'Restlaufzeit';
+          text = this.env.t('control.time.remaining-time.text', { timecode: buildTimeString(elSxndPlayer.video.duration - totalSeconds, showHour) });
+          title = this.env.t('control.time.remaining-time.tooltip');
           break;
 
         case TimeMode.CurrentFrame:
-          text = `${elSxndPlayer.vifa?.get() ?? "(Frame-Nummer unbekannt)"}`;
-          title = 'Frame-Nummer';
+          text = `${elSxndPlayer.vifa?.get() ?? this.env.t('control.time.current-frame.unknown')}`;
+          title = this.env.t('control.time.current-frame.tooltip');
           break;
       }
 
@@ -95,18 +109,3 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
     this.state = newState;
   }
 };
-
-
-/**
- * @implements {shaka.extern.IUIElement.Factory}
- */
-PresentationTimeTracker.Factory = class {
-  create(rootElement, controls) {
-    return new PresentationTimeTracker(rootElement, controls);
-  }
-};
-
-shaka.ui.Controls.registerElement(
-  PresentationTimeTracker.KEY,
-  new PresentationTimeTracker.Factory()
-);
