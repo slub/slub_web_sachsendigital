@@ -108,9 +108,13 @@ export default class HelpModal extends SimpleModal {
             tdKey.append(sep);
           }
 
-          const text = kb.mod
+          let text = kb.mod
             ? env.t(`key.mod.${kb.mod}`) + " + " + env.t(`key.${kb.key}.mod`)
             : env.t(`key.${kb.key}`);
+
+          if (kb.repeat) {
+            text = env.t('key.repeat', { key: text });
+          }
 
           tdKey.append(
             document.createTextNode(text)

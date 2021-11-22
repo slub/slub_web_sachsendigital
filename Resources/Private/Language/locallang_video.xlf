@@ -44,6 +44,12 @@
 			<trans-unit id="action.navigate.seek">
 				<source><![CDATA[Seek {seekStep, plural, one {one second} other {# seconds}}]]></source>
 			</trans-unit>
+			<trans-unit id="action.navigate.continuous-rewind">
+				<source><![CDATA[Rewind ({trickPlayFactor}x)]]></source>
+			</trans-unit>
+			<trans-unit id="action.navigate.continuous-seek">
+				<source><![CDATA[Fast-forward ({trickPlayFactor}x)]]></source>
+			</trans-unit>
 			<trans-unit id="action.playback.toggle">
 				<source><![CDATA[Play / Pause]]></source>
 			</trans-unit>
@@ -109,6 +115,9 @@
 			</trans-unit>
 			<trans-unit id="key.mod.Shift">
 				<source><![CDATA[Shift]]></source>
+			</trans-unit>
+			<trans-unit id="key.repeat">
+				<source><![CDATA[{key} (repeat)]]></source>
 			</trans-unit>
 			<trans-unit id="key.s">
 				<source><![CDATA[Key S]]></source>

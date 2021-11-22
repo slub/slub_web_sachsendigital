@@ -288,6 +288,23 @@ export default class SachsenShakaPlayer {
       this.seekTo(this.chapters.advance(cur, +1));
     }
   }
+
+  ensureTrickPlay(rate) {
+    if (this.player.getPlaybackRate() !== rate) {
+      this.player.trickPlay(rate);
+    }
+  }
+
+  cancelTrickPlay() {
+    // This may throw, in particular, if Shaka's play rate controller is not yet
+    // initialized (because the video is not yet loaded).
+    try {
+      this.player.cancelTrickPlay();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }
 
 // Listen to the custom shaka-ui-load-failed event, in case Shaka Player fails

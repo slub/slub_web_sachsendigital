@@ -38,6 +38,8 @@ class SxndPlayerApp {
       volumeStep: 0.05,
       /** Number of seconds to seek or rewind in relevant keybinding. */
       seekStep: 10,
+      /** Trick play factor for continuous rewind/seek. */
+      trickPlayFactor: 4,
     };
 
     this.env = new Environment();
@@ -113,6 +115,12 @@ class SxndPlayerApp {
       'navigate.seek': () => {
         this.sxndPlayer.skipSeconds(+this.constants.seekStep);
       },
+      'navigate.continuous-rewind': () => {
+        this.sxndPlayer.ensureTrickPlay(-this.constants.trickPlayFactor);
+      },
+      'navigate.continuous-seek': () => {
+        this.sxndPlayer.ensureTrickPlay(this.constants.trickPlayFactor);
+      },
       'navigate.chapter.prev': () => {
         this.sxndPlayer.prevChapter();
       },
@@ -131,11 +139,14 @@ class SxndPlayerApp {
 
     document.addEventListener('shaka-ui-loaded', this.onShakaUiLoaded.bind(this));
 
-    // This is a hack against the keyup handler in `slub_digitalcollections`,
-    // which adds/removes a `fullscreen` CSS class when releasing `f`/`Esc`.
-    // TODO: Find a better solution for this.
+    // Stopping propagation is a hack against the keyup handler in
+    // `slub_digitalcollections`, which adds/removes a `fullscreen` CSS class
+    // when releasing `f`/`Esc`.
+    // TODO: Find better solutions for this.
     window.addEventListener('keyup', e => {
       e.stopImmediatePropagation();
+
+      this.sxndPlayer.cancelTrickPlay();
     }, { capture: true });
   }
 

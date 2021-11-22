@@ -57,6 +57,14 @@
 				<source><![CDATA[Seek {seekStep, plural, one {one second} other {# seconds}}]]></source>
 				<target><![CDATA[{seekStep, plural, one {Eine Sekunde} other {# Sekunden}} weiter]]></target>
 			</trans-unit>
+			<trans-unit id="action.navigate.continuous-rewind" approved="yes">
+				<source><![CDATA[Rewind ({trickPlayFactor}x)]]></source>
+				<target><![CDATA[Zurückspulen ({trickPlayFactor}x)]]></target>
+			</trans-unit>
+			<trans-unit id="action.navigate.continuous-seek" approved="yes">
+				<source><![CDATA[Fast-forward ({trickPlayFactor}x)]]></source>
+				<target><![CDATA[Vorspulen ({trickPlayFactor}x)]]></target>
+			</trans-unit>
 			<trans-unit id="action.playback.toggle" approved="yes">
 				<source><![CDATA[Play / Pause]]></source>
 				<target><![CDATA[Abspielen / Pausieren]]></target>
@@ -144,6 +152,10 @@
 			<trans-unit id="key.mod.Shift" approved="yes">
 				<source><![CDATA[Shift]]></source>
 				<target><![CDATA[Umschalt]]></target>
+			</trans-unit>
+			<trans-unit id="key.repeat" approved="yes">
+				<source><![CDATA[{key} (repeat)]]></source>
+				<target><![CDATA[{key} (halten)]]></target>
 			</trans-unit>
 			<trans-unit id="key.s" approved="yes">
 				<source><![CDATA[Key S]]></source>
