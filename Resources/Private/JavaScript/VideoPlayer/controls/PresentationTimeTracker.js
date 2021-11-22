@@ -26,12 +26,9 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
     this.currentTime_.classList.add('shaka-current-time');
     this.parent.appendChild(this.currentTime_);
 
-    this.state = {};
-
-    this.render({
-      totalSeconds: 0,
+    this.state = {
       activeMode: TimeMode.CurrentTime,
-    });
+    };
 
     this.eventManager.listen(this.currentTime_, 'click', () => {
       this.render({
@@ -41,6 +38,7 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
 
     this.eventManager.listen(this.controls, 'timeandseekrangeupdated', () => {
       this.render({
+        duration: this.controls.elSxndPlayer.video.duration,
         totalSeconds: this.controls.getDisplayTime(),
       });
     });
@@ -65,41 +63,42 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
   render(state) {
     const newState = Object.assign({}, this.state, state);
 
-    const { totalSeconds, activeMode } = newState;
-    if (totalSeconds !== this.state.totalSeconds || activeMode !== this.state.activeMode) {
-      const elSxndPlayer = this.controls.elSxndPlayer;
+    const { totalSeconds, duration, activeMode } = newState;
+    if (totalSeconds !== this.state.totalSeconds || duration !== this.state.duration || activeMode !== this.state.activeMode) {
+      let text = "";
+      let title = "";
 
-      const showHour = elSxndPlayer.video.duration >= 3600;
+      // Don't show incomplete info when duration is not yet available
+      if (Number.isFinite(duration)) {
+        const elSxndPlayer = this.controls.elSxndPlayer;
+        const showHour = duration >= 3600;
 
-      let text, title;
+        switch (activeMode) {
+          case TimeMode.CurrentTime:
+          default:
+            text = buildTimeString(totalSeconds, showHour);
+            if (elSxndPlayer.vifa) {
+              text += ':' + ("0" + (elSxndPlayer.vifa.get() % elSxndPlayer.fps)).slice(-2);
+            }
+            text += ' / ' + buildTimeString(duration, showHour);
+            title = this.env.t('control.time.current-time.tooltip');
+            break;
 
-      switch (activeMode) {
-        case TimeMode.CurrentTime:
-        default:
-          text = buildTimeString(totalSeconds, showHour);
-          if (elSxndPlayer.vifa) {
-            text += ':' + ("0" + (elSxndPlayer.vifa.get() % elSxndPlayer.fps)).slice(-2);
-          }
-          if (elSxndPlayer.video.duration) {
-            text += ' / ' + buildTimeString(elSxndPlayer.video.duration, showHour);
-          }
-          title = this.env.t('control.time.current-time.tooltip');
-          break;
+          case TimeMode.RemainingTime:
+            text = this.env.t('control.time.remaining-time.text', { timecode: buildTimeString(elSxndPlayer.video.duration - totalSeconds, showHour) });
+            title = this.env.t('control.time.remaining-time.tooltip');
+            break;
 
-        case TimeMode.RemainingTime:
-          text = this.env.t('control.time.remaining-time.text', { timecode: buildTimeString(elSxndPlayer.video.duration - totalSeconds, showHour) });
-          title = this.env.t('control.time.remaining-time.tooltip');
-          break;
+          case TimeMode.CurrentFrame:
+            text = `${elSxndPlayer.vifa?.get() ?? this.env.t('control.time.current-frame.unknown')}`;
+            title = this.env.t('control.time.current-frame.tooltip');
+            break;
+        }
 
-        case TimeMode.CurrentFrame:
-          text = `${elSxndPlayer.vifa?.get() ?? this.env.t('control.time.current-frame.unknown')}`;
-          title = this.env.t('control.time.current-frame.tooltip');
-          break;
-      }
-
-      let currentChapter = elSxndPlayer.chapters.timeToChapter(totalSeconds);
-      if (currentChapter) {
-        text += ` – ${currentChapter.title}`;
+        let currentChapter = elSxndPlayer.chapters.timeToChapter(totalSeconds);
+        if (currentChapter) {
+          text += ` – ${currentChapter.title}`;
+        }
       }
 
       this.currentTime_.textContent = text;
