@@ -149,8 +149,11 @@ export default class ThumbnailPreview {
       return;
     }
 
+    // Also allow to seek on the thumbnail container
     const bounding = this.seekBar.getBoundingClientRect();
-    if (!isPosInRect(bounding, { x: e.clientX, y: e.clientY })) {
+    const thumbsBounding = this.dom.container.getBoundingClientRect();
+    const mousePos = { x: e.clientX, y: e.clientY };
+    if (!isPosInRect(bounding, mousePos) && !isPosInRect(thumbsBounding, mousePos)) {
       return;
     }
 
