@@ -71,31 +71,29 @@ export default class ThumbnailPreview {
     /** @type {LastRendered | null} */
     this.lastRendered = null;
     this.isChanging = false;
+    this.showContainer = false;
 
     this.seekBar.append(this.dom.container);
 
     this.handlers = {
       onWindowBlur: this.onWindowBlur.bind(this),
       onPointerMove: this.onPointerMove.bind(this),
-      onPointerLeave: this.onPointerLeave.bind(this),
       onPointerDown: this.onPointerDown.bind(this),
       onPointerUp: this.onPointerUp.bind(this),
     };
 
     window.addEventListener('blur', this.handlers.onWindowBlur);
     // TODO: Find a better solution for this
-    this.seekBar.addEventListener('pointermove', this.handlers.onPointerMove);
-    this.seekBar.addEventListener('pointerleave', this.handlers.onPointerLeave);
-    this.seekBar.addEventListener('pointerdown', this.handlers.onPointerDown);
-    this.seekBar.addEventListener('pointerup', this.handlers.onPointerUp);
+    document.addEventListener('pointermove', this.handlers.onPointerMove);
+    document.addEventListener('pointerdown', this.handlers.onPointerDown);
+    document.addEventListener('pointerup', this.handlers.onPointerUp);
   }
 
   release() {
     window.removeEventListener('blur', this.handlers.onWindowBlur);
-    this.seekBar.removeEventListener('pointermove', this.handlers.onPointerMove);
-    this.seekBar.removeEventListener('pointerleave', this.handlers.onPointerLeave);
-    this.seekBar.removeEventListener('pointerdown', this.handlers.onPointerDown);
-    this.seekBar.removeEventListener('pointerup', this.handlers.onPointerUp);
+    document.removeEventListener('pointermove', this.handlers.onPointerMove);
+    document.removeEventListener('pointerdown', this.handlers.onPointerDown);
+    document.removeEventListener('pointerup', this.handlers.onPointerUp);
   }
 
   /**
@@ -149,18 +147,23 @@ export default class ThumbnailPreview {
       return;
     }
 
-    // Also allow to seek on the thumbnail container
     const bounding = this.seekBar.getBoundingClientRect();
-    const thumbsBounding = this.dom.container.getBoundingClientRect();
-    const mousePos = { x: e.clientX, y: e.clientY };
-    if (!isPosInRect(bounding, mousePos) && !isPosInRect(thumbsBounding, mousePos)) {
-      return;
+
+    // Don't check bounds when scrubbing
+    if (!this.isChanging) {
+      // Also allow to seek on the thumbnail container (if a seek has already
+      // been initiated by hovering the seek bar)
+      const thumbsBounding = this.dom.container.getBoundingClientRect();
+      const mousePos = { x: e.clientX, y: e.clientY };
+      if (!isPosInRect(bounding, mousePos) && !(this.showContainer && isPosInRect(thumbsBounding, mousePos))) {
+        return;
+      }
     }
 
     const secondsPerPixel = duration / bounding.width;
 
     let absolute = e.clientX - bounding.left;
-    let seconds = absolute * secondsPerPixel;
+    let seconds = numberIntoRange(absolute * secondsPerPixel, [0, duration]);
     const chapter = this.getChapter(seconds);
     let onChapterMarker = false;
 
@@ -219,10 +222,6 @@ export default class ThumbnailPreview {
     }
   }
 
-  onPointerLeave() {
-    this.setIsVisible(false);
-  }
-
   /**
    *
    * @param {PointerEvent} e
@@ -239,8 +238,16 @@ export default class ThumbnailPreview {
     }
   }
 
-  onPointerUp() {
+  /**
+   *
+   * @param {PointerEvent} e
+   */
+  onPointerUp(e) {
     this.changeEnd();
+
+    if (this.mouseEventToPosition(e) === undefined) {
+      this.setIsVisible(false);
+    }
   }
 
   changeEnd() {
@@ -310,7 +317,9 @@ export default class ThumbnailPreview {
   }
 
   setIsVisible(showContainer, showThumb = showContainer) {
+    this.showContainer = showContainer;
     this.setElementVisible(this.dom.container, showContainer);
+
     this.setElementVisible(this.dom.display, showThumb);
   }
 
