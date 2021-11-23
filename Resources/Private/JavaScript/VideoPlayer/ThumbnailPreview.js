@@ -95,7 +95,7 @@ export default class ThumbnailPreview {
     // Ctrl+Tab. If they then move the mouse and return to the player tab, it may
     // be surprising to have the thumbnail preview still open. Thus, close the
     // preview to avoid that.
-    this.hidePreview();
+    this.setIsVisible(false);
 
     this.changeEnd();
   }
@@ -152,7 +152,7 @@ export default class ThumbnailPreview {
   async onPointerMove(e) {
     const seekPosition = this.mouseEventToPosition(e);
     if (seekPosition === undefined) {
-      return this.hidePreview();
+      return this.setIsVisible(false);
     }
 
     // Check primary button
@@ -160,14 +160,17 @@ export default class ThumbnailPreview {
       this.interaction?.onChange?.(seekPosition);
     }
 
+    this.setIsVisible(true, false);
+    this.renderSeekPosition(seekPosition);
+
     const thumbsTrack = this.getThumbsTrack();
     if (thumbsTrack === undefined) {
-      return this.hidePreview();
+      return;
     }
 
     const thumb = await this.player.getThumbnails(thumbsTrack.id, seekPosition.seconds);
     if (thumb === null || thumb.uris.length === 0) {
-      return this.hidePreview();
+      return;
     }
 
     const uri = thumb.uris[0];
@@ -176,20 +179,15 @@ export default class ThumbnailPreview {
         .then(image => {
           this.renderImage(uri, thumb, image);
           this.setIsVisible(true);
-        })
-        .catch(() => {
-          this.hidePreview();
         });
     } else {
       this.renderImage(uri, thumb, this.lastRendered.tilesetImage);
       this.setIsVisible(true);
     }
-
-    this.renderSeekPosition(seekPosition);
   }
 
   onPointerLeave() {
-    this.hidePreview();
+    this.setIsVisible(false);
   }
 
   /**
@@ -217,10 +215,6 @@ export default class ThumbnailPreview {
       this.interaction?.onChangeEnd?.();
       this.isChanging = false;
     }
-  }
-
-  hidePreview() {
-    this.setIsVisible(false);
   }
 
   renderImage(uri, thumb, tilesetImage) {
@@ -259,7 +253,13 @@ export default class ThumbnailPreview {
     );
     this.dom.container.style.left = `${containerX}px`;
 
-    let timecodeText = buildTimeString(seekPosition.seconds, this.getVideoDuration() >= 3600, this.getFps());
+    const duration = this.getVideoDuration();
+    if (!Number.isFinite(duration)) {
+      this.setIsVisible(false);
+      return;
+    }
+
+    let timecodeText = buildTimeString(seekPosition.seconds, duration >= 3600, this.getFps());
     const chapter = this.getChapter(seekPosition.seconds);
     if (chapter) {
       timecodeText = `${chapter.title}\n${timecodeText}`;
@@ -267,11 +267,16 @@ export default class ThumbnailPreview {
     this.dom.timecode.innerText = timecodeText;
   }
 
-  setIsVisible(value) {
-    if (value) {
-      this.dom.container.classList.add('shown');
+  setIsVisible(showContainer, showThumb = showContainer) {
+    this.setElementVisible(this.dom.container, showContainer);
+    this.setElementVisible(this.dom.display, showThumb);
+  }
+
+  setElementVisible(element, visible) {
+    if (visible) {
+      element.classList.add('shown');
     } else {
-      this.dom.container.classList.remove('shown');
+      element.classList.remove('shown');
     }
   }
 }

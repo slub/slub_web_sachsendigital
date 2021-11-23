@@ -79,7 +79,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
     });
 
     this.eventManager.listen(this.controls, 'sxnd-thumbs-close', () => {
-      this._thumbnailPreview.hidePreview();
+      this._thumbnailPreview.setIsVisible(false);
     });
   }
 
