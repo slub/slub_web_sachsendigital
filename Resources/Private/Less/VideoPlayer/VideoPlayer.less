@@ -7,6 +7,17 @@
 @light-color: lighten(@base-color, 50%);
 @label-padding: 2pt;
 
+// Thanks https://stackoverflow.com/a/4407335
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                          supported by Chrome, Edge, Opera and Firefox */
+}
+
 .sxnd-player-fatal-error {
     position: absolute;
     text-align: left;
@@ -217,6 +228,40 @@
                 }
             }
         }
+    }
+}
+
+@seek-bar-height: 4px;
+
+// Taken from Shaka's general.less
+// TODO: Pull in from their LESS files?
+.show-when-controls-shown() {
+    /* Transparent unless explicitly made opaque through container attributes. */
+    opacity: 0;
+
+    /* When we show/hide this, do it gradually using cubic-bezier timing. */
+    transition: opacity cubic-bezier(0.4, 0, 0.6, 1) 600ms;
+
+    /* Show controls when the container's "shown" or "casting" attributes are
+     * set. */
+    .shaka-controls-container[shown="true"] &,
+    .shaka-controls-container[casting="true"] & {
+        opacity: 1;
+    }
+}
+
+.sxnd-seek-bar {
+    .show-when-controls-shown();
+
+    position: relative;
+    margin: 4px 6px;
+    height: @seek-bar-height;
+
+    .range {
+        position: absolute;
+        width: 100%;
+        height: @seek-bar-height;
+        border-radius: @seek-bar-height;
     }
 }
 

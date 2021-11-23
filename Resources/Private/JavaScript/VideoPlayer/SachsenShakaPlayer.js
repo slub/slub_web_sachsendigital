@@ -2,12 +2,11 @@ import shaka from 'shaka-player/dist/shaka-player.ui';
 import 'shaka-player/ui/controls.less';
 
 import Chapters from './Chapters';
-
+import FlatSeekBar from './controls/FlatSeekBar';
 import PresentationTimeTracker from './controls/PresentationTimeTracker';
-import SeekBar from './controls/SeekBar';
+import Environment from './Environment';
 
 import '../../Less/VideoPlayer/VideoPlayer.less';
-import Environment from './Environment';
 
 export default class SachsenShakaPlayer {
   /**
@@ -99,7 +98,7 @@ export default class SachsenShakaPlayer {
     this.controls.elSxndPlayer = this;
 
     // TODO: Somehow avoid overriding the SeekBar globally?
-    SeekBar.register();
+    FlatSeekBar.register();
 
     const config = {
       addSeekBar: true,

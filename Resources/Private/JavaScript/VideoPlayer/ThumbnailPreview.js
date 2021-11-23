@@ -26,6 +26,8 @@ export default class ThumbnailPreview {
    * @param {number} config.seekThumbSize
    * @param {shaka.Player} config.player
    * @param {ImageFetcher} config.network
+   * @param {object} config.interaction
+   * @param {(pos: SeekPosition) => void} config.interaction.onChange
    */
   constructor(config) {
     this.mainContainer = config.mainContainer;
@@ -33,9 +35,12 @@ export default class ThumbnailPreview {
     this.seekThumbSize = config.seekThumbSize;
     this.player = config.player;
     this.network = config.network;
+    this.interaction = config.interaction;
 
+    // Make preview unselectable so that, for example, the timecode text won't
+    // accidentally be selected when scrubbing on FlatSeekBar.
     const container = templateElement(`
-      <div class="thumbnail-preview">
+      <div class="thumbnail-preview noselect">
         <div class="display">
           <canvas>
         </div>
@@ -54,17 +59,29 @@ export default class ThumbnailPreview {
     this.ctx = this.dom.canvas.getContext('2d');
     /** @type {LastRendered | null} */
     this.lastRendered = null;
+    this.isChanging = false;
 
     this.seekBar.append(this.dom.container);
 
     this.handlers = {
       onWindowBlur: this.onWindowBlur.bind(this),
-      onMouseMove: this.onMouseMove.bind(this),
+      onPointerMove: this.onPointerMove.bind(this),
+      onPointerDown: this.onPointerDown.bind(this),
+      onPointerUp: this.onPointerUp.bind(this),
     };
 
     window.addEventListener('blur', this.handlers.onWindowBlur);
     // TODO: Find a better solution for this
-    this.mainContainer.addEventListener('mousemove', this.handlers.onMouseMove);
+    this.mainContainer.addEventListener('pointermove', this.handlers.onPointerMove);
+    this.mainContainer.addEventListener('pointerdown', this.handlers.onPointerDown);
+    this.mainContainer.addEventListener('pointerup', this.handlers.onPointerUp);
+  }
+
+  release() {
+    window.removeEventListener('blur', this.handlers.onWindowBlur);
+    this.mainContainer.removeEventListener('pointermove', this.handlers.onPointerMove);
+    this.mainContainer.removeEventListener('pointerdown', this.handlers.onPointerDown);
+    this.mainContainer.removeEventListener('pointerup', this.handlers.onPointerUp);
   }
 
   /**
@@ -75,7 +92,9 @@ export default class ThumbnailPreview {
     // Ctrl+Tab. If they then move the mouse and return to the player tab, it may
     // be surprising to have the thumbnail preview still open. Thus, close the
     // preview to avoid that.
-    this.hidePreview(false);
+    this.hidePreview();
+
+    this.changeEnd();
   }
 
   /**
@@ -125,16 +144,21 @@ export default class ThumbnailPreview {
 
   /**
    * @protected
-   * @param {MouseEvent} e
+   * @param {PointerEvent} e
    */
-  async onMouseMove(e) {
-    const thumbsTrack = this.getThumbsTrack();
-    if (thumbsTrack === undefined) {
+  async onPointerMove(e) {
+    const seekPosition = this.mouseEventToPosition(e);
+    if (seekPosition === undefined) {
       return this.hidePreview();
     }
 
-    const seekPosition = this.mouseEventToPosition(e);
-    if (seekPosition === undefined) {
+    // Check primary button
+    if (this.isChanging && e.buttons & 1 !== 0) {
+      this.interaction?.onChange?.(seekPosition);
+    }
+
+    const thumbsTrack = this.getThumbsTrack();
+    if (thumbsTrack === undefined) {
       return this.hidePreview();
     }
 
@@ -159,6 +183,33 @@ export default class ThumbnailPreview {
     }
 
     this.renderSeekPosition(seekPosition);
+  }
+
+  /**
+   *
+   * @param {PointerEvent} e
+   */
+  onPointerDown(e) {
+    const position = this.mouseEventToPosition(e);
+    if (position !== undefined) {
+      if (!this.isChanging) {
+        this.interaction?.onChangeStart?.();
+        this.isChanging = true;
+      }
+
+      this.interaction?.onChange?.(position);
+    }
+  }
+
+  onPointerUp() {
+    this.changeEnd();
+  }
+
+  changeEnd() {
+    if (this.isChanging) {
+      this.interaction?.onChangeEnd?.();
+      this.isChanging = false;
+    }
   }
 
   hidePreview() {
