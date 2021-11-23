@@ -24,6 +24,7 @@ export default class ThumbnailPreview {
    * @param {HTMLElement} config.seekBar
    * @param {shaka.Player} config.player
    * @param {() => number | null} config.getFps
+   * @param {(timecode: number) => import('./Chapters').Chapter} config.getChapter
    * @param {ImageFetcher} config.network
    * @param {object} config.interaction
    * @param {(pos: SeekPosition) => void} config.interaction.onChange
@@ -32,6 +33,7 @@ export default class ThumbnailPreview {
     this.seekBar = config.seekBar;
     this.player = config.player;
     this.getFps = config.getFps;
+    this.getChapter = config.getChapter;
     this.network = config.network;
     this.interaction = config.interaction;
 
@@ -257,7 +259,12 @@ export default class ThumbnailPreview {
     );
     this.dom.container.style.left = `${containerX}px`;
 
-    this.dom.timecode.innerText = buildTimeString(seekPosition.seconds, this.getVideoDuration() >= 3600, this.getFps());
+    let timecodeText = buildTimeString(seekPosition.seconds, this.getVideoDuration() >= 3600, this.getFps());
+    const chapter = this.getChapter(seekPosition.seconds);
+    if (chapter) {
+      timecodeText = `${chapter.title}\n${timecodeText}`;
+    }
+    this.dom.timecode.innerText = timecodeText;
   }
 
   setIsVisible(value) {

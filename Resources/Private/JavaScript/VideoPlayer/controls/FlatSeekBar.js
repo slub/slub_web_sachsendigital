@@ -51,6 +51,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
       seekBar: this._dom.container,
       player: this.player,
       getFps: () => this.controls.elSxndPlayer.fps,
+      getChapter: (timecode) => this.controls.elSxndPlayer.chapters.timeToChapter(timecode),
       network: new ImageFetcher(),
       interaction: {
         onChangeStart: () => {
