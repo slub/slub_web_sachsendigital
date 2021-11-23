@@ -23,6 +23,7 @@ export default class ThumbnailPreview {
    * @param {object} config
    * @param {HTMLElement} config.seekBar
    * @param {shaka.Player} config.player
+   * @param {() => number | null} config.getFps
    * @param {ImageFetcher} config.network
    * @param {object} config.interaction
    * @param {(pos: SeekPosition) => void} config.interaction.onChange
@@ -30,6 +31,7 @@ export default class ThumbnailPreview {
   constructor(config) {
     this.seekBar = config.seekBar;
     this.player = config.player;
+    this.getFps = config.getFps;
     this.network = config.network;
     this.interaction = config.interaction;
 
@@ -255,7 +257,7 @@ export default class ThumbnailPreview {
     );
     this.dom.container.style.left = `${containerX}px`;
 
-    this.dom.timecode.innerText = buildTimeString(seekPosition.seconds, this.getVideoDuration() >= 3600);
+    this.dom.timecode.innerText = buildTimeString(seekPosition.seconds, this.getVideoDuration() >= 3600, this.getFps());
   }
 
   setIsVisible(value) {
