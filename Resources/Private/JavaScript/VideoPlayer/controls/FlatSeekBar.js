@@ -34,7 +34,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
         <div class="range"></div>
       </div>
     `);
-    parent.append(container);
+    parent.prepend(container);
 
     this._dom = {
       container,
