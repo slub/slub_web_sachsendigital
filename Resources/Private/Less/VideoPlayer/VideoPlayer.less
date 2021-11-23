@@ -232,6 +232,7 @@
 }
 
 @seek-bar-height: 4px;
+@seek-bar-margin: 6px;
 
 // Taken from Shaka's general.less
 // TODO: Pull in from their LESS files?
@@ -254,8 +255,9 @@
     .show-when-controls-shown();
 
     position: relative;
-    margin: 4px 6px;
-    height: @seek-bar-height;
+    margin: 0px 6px;
+    padding-top: @seek-bar-margin;
+    height: @seek-bar-height + 2 * @seek-bar-margin;
 
     .range {
         position: absolute;

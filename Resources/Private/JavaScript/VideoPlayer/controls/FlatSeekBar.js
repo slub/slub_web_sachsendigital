@@ -48,9 +48,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
     this._wasPlaying = false;
 
     this._thumbnailPreview = new ThumbnailPreview({
-      mainContainer: this.controls.elSxndPlayer.container,
-      seekBar: this._dom.range,
-      seekThumbSize: 0,
+      seekBar: this._dom.container,
       player: this.player,
       network: new ImageFetcher(),
       interaction: {

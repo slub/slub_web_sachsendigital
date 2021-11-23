@@ -21,18 +21,14 @@ export default class ThumbnailPreview {
   /**
    *
    * @param {object} config
-   * @param {HTMLElement} config.mainContainer
    * @param {HTMLElement} config.seekBar
-   * @param {number} config.seekThumbSize
    * @param {shaka.Player} config.player
    * @param {ImageFetcher} config.network
    * @param {object} config.interaction
    * @param {(pos: SeekPosition) => void} config.interaction.onChange
    */
   constructor(config) {
-    this.mainContainer = config.mainContainer;
     this.seekBar = config.seekBar;
-    this.seekThumbSize = config.seekThumbSize;
     this.player = config.player;
     this.network = config.network;
     this.interaction = config.interaction;
@@ -66,22 +62,25 @@ export default class ThumbnailPreview {
     this.handlers = {
       onWindowBlur: this.onWindowBlur.bind(this),
       onPointerMove: this.onPointerMove.bind(this),
+      onPointerLeave: this.onPointerLeave.bind(this),
       onPointerDown: this.onPointerDown.bind(this),
       onPointerUp: this.onPointerUp.bind(this),
     };
 
     window.addEventListener('blur', this.handlers.onWindowBlur);
     // TODO: Find a better solution for this
-    this.mainContainer.addEventListener('pointermove', this.handlers.onPointerMove);
-    this.mainContainer.addEventListener('pointerdown', this.handlers.onPointerDown);
-    this.mainContainer.addEventListener('pointerup', this.handlers.onPointerUp);
+    this.seekBar.addEventListener('pointermove', this.handlers.onPointerMove);
+    this.seekBar.addEventListener('pointerleave', this.handlers.onPointerLeave);
+    this.seekBar.addEventListener('pointerdown', this.handlers.onPointerDown);
+    this.seekBar.addEventListener('pointerup', this.handlers.onPointerUp);
   }
 
   release() {
     window.removeEventListener('blur', this.handlers.onWindowBlur);
-    this.mainContainer.removeEventListener('pointermove', this.handlers.onPointerMove);
-    this.mainContainer.removeEventListener('pointerdown', this.handlers.onPointerDown);
-    this.mainContainer.removeEventListener('pointerup', this.handlers.onPointerUp);
+    this.seekBar.removeEventListener('pointermove', this.handlers.onPointerMove);
+    this.seekBar.removeEventListener('pointerleave', this.handlers.onPointerLeave);
+    this.seekBar.removeEventListener('pointerdown', this.handlers.onPointerDown);
+    this.seekBar.removeEventListener('pointerup', this.handlers.onPointerUp);
   }
 
   /**
@@ -131,12 +130,12 @@ export default class ThumbnailPreview {
     }
 
     const bounding = this.seekBar.getBoundingClientRect();
-    if (!isPosInRect(bounding, { x: e.clientX, y: e.clientY, toleranceY: 6 })) {
+    if (!isPosInRect(bounding, { x: e.clientX, y: e.clientY })) {
       return;
     }
 
     const absolute = e.clientX - bounding.left;
-    const relative = (absolute - this.seekThumbSize / 2) / (bounding.width - this.seekThumbSize);
+    const relative = absolute / bounding.width;
     const seconds = relative * this.getVideoDuration();
 
     return { absolute, relative, seconds };
@@ -183,6 +182,10 @@ export default class ThumbnailPreview {
     }
 
     this.renderSeekPosition(seekPosition);
+  }
+
+  onPointerLeave() {
+    this.hidePreview();
   }
 
   /**
