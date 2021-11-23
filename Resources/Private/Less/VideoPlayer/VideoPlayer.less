@@ -68,13 +68,21 @@
             }
         }
 
-        .timecode {
+        .info {
             display: inline-block;
             padding-top: 0.75em;
             // Same color and font-size as `.shaka-current-time`
             color: white;
             font-size: 14px;
             line-height: 125%;
+
+            .chapter-text, .timecode-text {
+                display: block;
+            }
+
+            &.on-chapter-marker .chapter-text {
+                font-weight: bold;
+            }
         }
     }
 }
@@ -274,19 +282,8 @@
 }
 
 .sxnd-chapter-marker {
-    width: 6px;
-    height: 8px;
-    cursor: pointer;
-    z-index: 100;
-    top: -2px;
-
-    span {
-        left: 1px;
-        top: 2px;
-        position: absolute;
-        background-color: @light-color;
-        width: 4px;
-        height: 4px;
-        border-radius: 2px;
-    }
+    width: @seek-bar-height;
+    height: @seek-bar-height;
+    background-color: @light-color;
+    border-radius: @seek-bar-height / 2;
 }

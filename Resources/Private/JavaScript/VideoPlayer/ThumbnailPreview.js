@@ -4,7 +4,13 @@ import ImageFetcher from './ImageFetcher';
 import { buildTimeString, isPosInRect, numberIntoRange, templateElement } from './util';
 
 /**
- * @typedef {{ absolute: number; relative: number; seconds: number }} SeekPosition
+ * @typedef {{
+ *  absolute: number;
+ *  seconds: number;
+ *  chapter: import('./Chapters').Chapter;
+ *  onChapterMarker: boolean;
+ *  }} SeekPosition
+ *
  * @typedef {{
  *  uri: string;
  *  thumb: any;
@@ -37,14 +43,17 @@ export default class ThumbnailPreview {
     this.network = config.network;
     this.interaction = config.interaction;
 
-    // Make preview unselectable so that, for example, the timecode text won't
+    // Make preview unselectable so that, for example, the info text won't
     // accidentally be selected when scrubbing on FlatSeekBar.
     const container = templateElement(`
       <div class="thumbnail-preview noselect">
         <div class="display">
           <canvas>
         </div>
-        <span class="timecode"></span>
+        <span class="info">
+          <span class="chapter-text"></span>
+          <span class="timecode-text"></span>
+        </span>
       </div>
     `);
 
@@ -53,7 +62,9 @@ export default class ThumbnailPreview {
       display: container.querySelector('.display'),
       /** @type {HTMLCanvasElement} */
       canvas: container.querySelector('canvas'),
-      timecode: container.querySelector('.timecode'),
+      info: container.querySelector('.info'),
+      chapterText: container.querySelector('.chapter-text'),
+      timecodeText: container.querySelector('.timecode-text'),
     };
 
     this.ctx = this.dom.canvas.getContext('2d');
@@ -128,6 +139,11 @@ export default class ThumbnailPreview {
    * @returns {SeekPosition | undefined}
    */
   mouseEventToPosition(e) {
+    const duration = this.getVideoDuration();
+    if (!(duration > 0)) {
+      return;
+    }
+
     const isHoveringButton = document.querySelector("input[type=button]:hover, button:hover") !== null;
     if (isHoveringButton) {
       return;
@@ -138,11 +154,25 @@ export default class ThumbnailPreview {
       return;
     }
 
-    const absolute = e.clientX - bounding.left;
-    const relative = absolute / bounding.width;
-    const seconds = relative * this.getVideoDuration();
+    const secondsPerPixel = duration / bounding.width;
 
-    return { absolute, relative, seconds };
+    let absolute = e.clientX - bounding.left;
+    let seconds = absolute * secondsPerPixel;
+    const chapter = this.getChapter(seconds);
+    let onChapterMarker = false;
+
+    // "Capture" mouse on chapter markers,
+    // but only if the user is not currently scrubbing.
+    if (chapter && !this.isChanging) {
+      const offsetPixels = (seconds - chapter.timecode) / secondsPerPixel;
+      if (-2 <= offsetPixels && offsetPixels < 6) {
+        seconds = chapter.timecode;
+        absolute = seconds / secondsPerPixel;
+        onChapterMarker = true;
+      }
+    }
+
+    return { absolute, seconds, chapter, onChapterMarker };
   }
 
   /**
@@ -244,6 +274,10 @@ export default class ThumbnailPreview {
     }
   }
 
+  /**
+   *
+   * @param {SeekPosition} seekPosition
+   */
   renderSeekPosition(seekPosition) {
     // Align the container so that the mouse underneath is centered,
     // but avoid overflowing at the left or right of the seek bar
@@ -259,12 +293,17 @@ export default class ThumbnailPreview {
       return;
     }
 
-    let timecodeText = buildTimeString(seekPosition.seconds, duration >= 3600, this.getFps());
-    const chapter = this.getChapter(seekPosition.seconds);
-    if (chapter) {
-      timecodeText = `${chapter.title}\n${timecodeText}`;
+    this.dom.chapterText.innerText = seekPosition.chapter?.title ?? "";
+
+    if (seekPosition.onChapterMarker) {
+      this.dom.info.classList.add("on-chapter-marker");
+      this.seekBar.style.cursor = "pointer";
+    } else {
+      this.dom.info.classList.remove("on-chapter-marker");
+      this.seekBar.style.cursor = "initial";
     }
-    this.dom.timecode.innerText = timecodeText;
+
+    this.dom.timecodeText.innerText = buildTimeString(seekPosition.seconds, duration >= 3600, this.getFps());
   }
 
   setIsVisible(showContainer, showThumb = showContainer) {

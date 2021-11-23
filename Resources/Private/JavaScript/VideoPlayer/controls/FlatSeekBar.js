@@ -190,6 +190,10 @@ export default class FlatSeekBar extends shaka.ui.Element {
   renderChapterMarkers() {
     const { video, chapters } = this.controls.elSxndPlayer;
 
+    if (!(video.duration > 0)) {
+      return;
+    }
+
     for (const chapter of chapters) {
       const relative = chapter.timecode / video.duration;
 
@@ -199,21 +203,10 @@ export default class FlatSeekBar extends shaka.ui.Element {
         continue;
       }
 
-      // The outer <span /> is to give some leeway, making the chapter marker
-      // easier to hit.
-
       const marker = document.createElement('span');
       marker.className = 'sxnd-chapter-marker';
       marker.style.position = 'absolute';
-      marker.style.left = `${chapter.timecode / video.duration * 100}%`;
-      marker.title = chapter.title;
-      marker.addEventListener('click', () => {
-        this.controls.elSxndPlayer.play();
-        this.controls.elSxndPlayer.seekTo(chapter);
-      });
-
-      const markerInner = document.createElement('span');
-      marker.append(markerInner);
+      marker.style.left = `${relative * 100}%`;
 
       this._dom.range.append(marker);
     }
