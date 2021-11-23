@@ -95,7 +95,7 @@ export default class HelpModal extends SimpleModal {
       for (const [action, kbs] of keybindings) {
         const tr = trTemplate.cloneNode(true);
 
-        // There may be multiple keybinidngs to the same action. Concatenate
+        // There may be multiple keybindings to the same action. Concatenate
         // these using an "or" as separator.
         const tdKey = tr.querySelector('.key');
         for (let i = 0; i < kbs.length; i++) {
@@ -108,9 +108,13 @@ export default class HelpModal extends SimpleModal {
             tdKey.append(sep);
           }
 
-          const text = kb.mod
+          let text = kb.mod
             ? env.t(`key.mod.${kb.mod}`) + " + " + env.t(`key.${kb.key}.mod`)
             : env.t(`key.${kb.key}`);
+
+          if (kb.repeat) {
+            text = env.t('key.repeat', { key: text });
+          }
 
           tdKey.append(
             document.createTextNode(text)

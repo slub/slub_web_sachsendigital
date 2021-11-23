@@ -5,6 +5,14 @@
 @base-color: #4e6666;
 @base-color: @brand-secondary;
 @light-color: lighten(@base-color, 50%);
+@label-padding: 2pt;
+
+.sxnd-player-fatal-error {
+    position: absolute;
+    text-align: left;
+    padding-left: 1em;
+    padding-top: 1em;
+}
 
 .chapter {
     cursor: pointer;
@@ -60,6 +68,10 @@
     .screenshot-config {
         text-align: left;
         margin-bottom: 0.6rem;
+
+        .show-metadata label {
+            padding-left: @label-padding;
+        }
     }
 
     canvas {
@@ -88,6 +100,10 @@
     .start-at {
         display: none;
         margin-top: 1em;
+
+        label {
+            padding-left: @label-padding;
+        }
 
         &.shown {
             display: block;

@@ -44,6 +44,12 @@
 			<trans-unit id="action.navigate.seek">
 				<source><![CDATA[Seek {seekStep, plural, one {one second} other {# seconds}}]]></source>
 			</trans-unit>
+			<trans-unit id="action.navigate.continuous-rewind">
+				<source><![CDATA[Rewind ({trickPlayFactor}x)]]></source>
+			</trans-unit>
+			<trans-unit id="action.navigate.continuous-seek">
+				<source><![CDATA[Fast-forward ({trickPlayFactor}x)]]></source>
+			</trans-unit>
 			<trans-unit id="action.playback.toggle">
 				<source><![CDATA[Play / Pause]]></source>
 			</trans-unit>
@@ -56,8 +62,35 @@
 			<trans-unit id="action.playback.volume.mute.toggle">
 				<source><![CDATA[Mute / Unmute]]></source>
 			</trans-unit>
+			<trans-unit id="control.bookmark.tooltip">
+				<source><![CDATA[Bookmark]]></source>
+			</trans-unit>
 			<trans-unit id="control.help.tooltip">
 				<source><![CDATA[Show Help]]></source>
+			</trans-unit>
+			<trans-unit id="control.screenshot.tooltip">
+				<source><![CDATA[Take Screenshot]]></source>
+			</trans-unit>
+			<trans-unit id="control.time.current-time.tooltip">
+				<source><![CDATA[Current Time / Total]]></source>
+			</trans-unit>
+			<trans-unit id="control.time.remaining-time.text">
+				<source><![CDATA[{timecode} remaining]]></source>
+			</trans-unit>
+			<trans-unit id="control.time.remaining-time.tooltip">
+				<source><![CDATA[Remaining Time]]></source>
+			</trans-unit>
+			<trans-unit id="control.time.current-frame.unknown">
+				<source><![CDATA[(Frame Count Not Available)]]></source>
+			</trans-unit>
+			<trans-unit id="control.time.current-frame.tooltip">
+				<source><![CDATA[Frame Count]]></source>
+			</trans-unit>
+			<trans-unit id="error.load-failed">
+				<source><![CDATA[The video could not be loaded.]]></source>
+			</trans-unit>
+			<trans-unit id="error.playback-not-supported">
+				<source><![CDATA[This video cannot be played back in your browser.]]></source>
 			</trans-unit>
 			<trans-unit id="key. ">
 				<source><![CDATA[Space Bar]]></source>
@@ -107,8 +140,32 @@
 			<trans-unit id="key.mod.Shift">
 				<source><![CDATA[Shift]]></source>
 			</trans-unit>
+			<trans-unit id="key.repeat">
+				<source><![CDATA[{key} (repeat)]]></source>
+			</trans-unit>
 			<trans-unit id="key.s">
 				<source><![CDATA[Key S]]></source>
+			</trans-unit>
+			<trans-unit id="modal.bookmark.copy-link">
+				<source><![CDATA[Copy Link]]></source>
+			</trans-unit>
+			<trans-unit id="modal.bookmark.start-at-current-time">
+				<source><![CDATA[Start at current time ({timecode}).]]></source>
+			</trans-unit>
+			<trans-unit id="modal.bookmark.title">
+				<source><![CDATA[Bookmark (Share Link)]]></source>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.download-image">
+				<source><![CDATA[Download Image]]></source>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.file-format">
+				<source><![CDATA[File Format]]></source>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.show-metadata">
+				<source><![CDATA[Show Metadata]]></source>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.title">
+				<source><![CDATA[Screenshot]]></source>
 			</trans-unit>
 			<trans-unit id="modal.help.action">
 				<source><![CDATA[Action]]></source>

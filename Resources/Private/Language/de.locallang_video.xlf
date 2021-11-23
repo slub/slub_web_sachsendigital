@@ -57,6 +57,14 @@
 				<source><![CDATA[Seek {seekStep, plural, one {one second} other {# seconds}}]]></source>
 				<target><![CDATA[{seekStep, plural, one {Eine Sekunde} other {# Sekunden}} weiter]]></target>
 			</trans-unit>
+			<trans-unit id="action.navigate.continuous-rewind" approved="yes">
+				<source><![CDATA[Rewind ({trickPlayFactor}x)]]></source>
+				<target><![CDATA[Zurückspulen ({trickPlayFactor}x)]]></target>
+			</trans-unit>
+			<trans-unit id="action.navigate.continuous-seek" approved="yes">
+				<source><![CDATA[Fast-forward ({trickPlayFactor}x)]]></source>
+				<target><![CDATA[Vorspulen ({trickPlayFactor}x)]]></target>
+			</trans-unit>
 			<trans-unit id="action.playback.toggle" approved="yes">
 				<source><![CDATA[Play / Pause]]></source>
 				<target><![CDATA[Abspielen / Pausieren]]></target>
@@ -73,9 +81,45 @@
 				<source><![CDATA[Mute / Unmute]]></source>
 				<target><![CDATA[Stummschaltung an / aus]]></target>
 			</trans-unit>
+			<trans-unit id="control.bookmark.tooltip" approved="yes">
+				<source><![CDATA[Bookmark]]></source>
+				<target><![CDATA[Bookmark]]></target>
+			</trans-unit>
 			<trans-unit id="control.help.tooltip" approved="yes">
 				<source><![CDATA[Show Help]]></source>
 				<target><![CDATA[Bedienhinweise]]></target>
+			</trans-unit>
+			<trans-unit id="control.screenshot.tooltip" approved="yes">
+				<source><![CDATA[Take Screenshot]]></source>
+				<target><![CDATA[Screenshot]]></target>
+			</trans-unit>
+			<trans-unit id="control.time.current-time.tooltip" approved="yes">
+				<source><![CDATA[Current Time / Total]]></source>
+				<target><![CDATA[Aktuelle Laufzeit / Gesamtlaufzeit]]></target>
+			</trans-unit>
+			<trans-unit id="control.time.remaining-time.text" approved="yes">
+				<source><![CDATA[{timecode} remaining]]></source>
+				<target><![CDATA[noch {timecode}]]></target>
+			</trans-unit>
+			<trans-unit id="control.time.remaining-time.tooltip" approved="yes">
+				<source><![CDATA[Remaining Time]]></source>
+				<target><![CDATA[Restlaufzeit]]></target>
+			</trans-unit>
+			<trans-unit id="control.time.current-frame.tooltip" approved="yes">
+				<source><![CDATA[Frame Count]]></source>
+				<target><![CDATA[Frame-Nummer]]></target>
+			</trans-unit>
+			<trans-unit id="control.time.current-frame.unknown" approved="yes">
+				<source><![CDATA[(Frame Count Not Available)]]></source>
+				<target><![CDATA[(Frame-Nummer unbekannt)]]></target>
+			</trans-unit>
+			<trans-unit id="error.load-failed" approved="yes">
+				<source><![CDATA[The video could not be loaded.]]></source>
+				<target><![CDATA[Das Video konnte nicht geladen werden.]]></target>
+			</trans-unit>
+			<trans-unit id="error.playback-not-supported" approved="yes">
+				<source><![CDATA[This video cannot be played back in your browser.]]></source>
+				<target><![CDATA[Dieses Video kann in Ihrem Browser nicht wiedergegeben werden.]]></target>
 			</trans-unit>
 			<trans-unit id="key. " approved="yes">
 				<source><![CDATA[Space Bar]]></source>
@@ -141,9 +185,41 @@
 				<source><![CDATA[Shift]]></source>
 				<target><![CDATA[Umschalt]]></target>
 			</trans-unit>
+			<trans-unit id="key.repeat" approved="yes">
+				<source><![CDATA[{key} (repeat)]]></source>
+				<target><![CDATA[{key} (halten)]]></target>
+			</trans-unit>
 			<trans-unit id="key.s" approved="yes">
 				<source><![CDATA[Key S]]></source>
 				<target><![CDATA[Taste S]]></target>
+			</trans-unit>
+			<trans-unit id="modal.bookmark.copy-link" approved="yes">
+				<source><![CDATA[Copy Link]]></source>
+				<target><![CDATA[Link kopieren]]></target>
+			</trans-unit>
+			<trans-unit id="modal.bookmark.start-at-current-time" approved="yes">
+				<source><![CDATA[Start at current time ({timecode}).]]></source>
+				<target><![CDATA[Bei aktueller Zeit ({timecode}) starten.]]></target>
+			</trans-unit>
+			<trans-unit id="modal.bookmark.title" approved="yes">
+				<source><![CDATA[Bookmark (Share Link)]]></source>
+				<target><![CDATA[Bookmark (Link teilen)]]></target>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.show-metadata" approved="yes">
+				<source><![CDATA[Show Metadata]]></source>
+				<target><![CDATA[Metadaten einblenden]]></target>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.download-image" approved="yes">
+				<source><![CDATA[Download Image]]></source>
+				<target><![CDATA[Bild herunterladen]]></target>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.file-format" approved="yes">
+				<source><![CDATA[File Format]]></source>
+				<target><![CDATA[Dateiformat]]></target>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.title" approved="yes">
+				<source><![CDATA[Screenshot]]></source>
+				<target><![CDATA[Screenshot]]></target>
 			</trans-unit>
 			<trans-unit id="modal.help.action" approved="yes">
 				<source><![CDATA[Action]]></source>

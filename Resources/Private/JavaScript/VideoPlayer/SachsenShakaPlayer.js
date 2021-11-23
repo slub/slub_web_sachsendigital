@@ -12,13 +12,12 @@ import ThumbnailPreview from './ThumbnailPreview';
 
 export default class SachsenShakaPlayer {
   /**
+   * Please call {@link initSupport} once before instantiating players.
    *
    * @param {object} config
    * @param {Environment} config.env
    * @param {HTMLElement} config.container
    * @param {HTMLVideoElement} config.video
-   * @param {string} config.manifestUri
-   * @param {number?} config.timecode
    * @param {Chapters} config.chapters
    * @param {string[]} config.controlPanelButtons
    * @param {string[]} config.overflowMenuButtons
@@ -29,8 +28,6 @@ export default class SachsenShakaPlayer {
     this.env = config.env;
     this.container = config.container;
     this.video = config.video;
-    this.manifestUri = config.manifestUri;
-    this.initialTimecode = config.timecode;
     this.chapters = config.chapters;
     this.controlPanelButtons = config.controlPanelButtons ?? [];
     this.overflowMenuButtons = config.overflowMenuButtons ?? [];
@@ -38,10 +35,63 @@ export default class SachsenShakaPlayer {
     this.constants = Object.assign({
       prevChapterTolerance: 5,
     }, config.constants);
+
+    this.handlers = {
+      onTrackChange: this.onTrackChange.bind(this),
+    };
   }
 
-  async initialize() {
-    this.fps = 25;
+  /**
+   * Installs polyfills and returns the supported manifest formats in order of
+   * preference.
+   *
+   * @param {boolean} modHlsParser Whether or not to install modified HLS parser. Needed for display of thumbnail preview in HLS.
+   * @returns {('mpd' | 'hls')[]}
+   */
+  static initSupport(modHlsParser = true) {
+    shaka.polyfill.installAll();
+
+    if (shaka.Player.isBrowserSupported()) {
+      if (modHlsParser) {
+        // The HLS parser apparently does not report dimensions of thumbnails,
+        // so `getThumbnails()` will not return correct size and position of a
+        // thumbnail within the tileset. By setting width = 1 and height = 1,
+        // we will at least receive the relative size and position, which in
+        // `ThumbnailPreview::renderImage()` we scale to the absolute values.
+        // (TODO: Dispense of this; at least, don't override parser globally)
+
+        class CustomHlsParser extends shaka.hls.HlsParser {
+          async start(uri, playerInterface) {
+            const manifest = await super.start(uri, playerInterface);
+            for (const imageStream of manifest.imageStreams) {
+              imageStream.width = 1;
+              imageStream.height = 1;
+            }
+            return manifest;
+          }
+        }
+
+        shaka.media.ManifestParser.registerParserByExtension(
+          'm3u8', () => new CustomHlsParser());
+        shaka.media.ManifestParser.registerParserByMime(
+          'application/x-mpegurl', () => new CustomHlsParser());
+        shaka.media.ManifestParser.registerParserByMime(
+          'application/vnd.apple.mpegurl', () => new CustomHlsParser());
+      }
+
+      // Conditions taken from shaka.util.Platform.supportsMediaSource()
+      return window.MediaSource && window.MediaSource.isTypeSupported
+        ? ['mpd', 'hls']
+        : ['hls'];
+    } else {
+      return [];
+    }
+  }
+
+  initialize() {
+    this.fps = null;
+    this.vifa = null;
+
     this.player = new shaka.Player(this.video);
     const ui = new shaka.ui.Overlay(this.player, this.container, this.video);
     this.controls = ui.getControls();
@@ -54,7 +104,7 @@ export default class SachsenShakaPlayer {
       'controlPanelElements': [
         'play_pause',
         'chapters_menu',
-        PresentationTimeTracker.KEY,
+        PresentationTimeTracker.register(this.env),
         'spacer',
         'volume',
         'mute',
@@ -77,24 +127,8 @@ export default class SachsenShakaPlayer {
     this.player.addEventListener('error', this.onPlayerErrorEvent.bind(this));
     this.controls.addEventListener('error', this.onUiErrorEvent.bind(this));
 
-    this.vifa = VideoFrame({
-      id: this.video.id,
-      frameRate: this.fps,
-      callback: function (response) {
-        console.log('callback response: ' + response);
-      }
-    });
-
-    // Try to load a manifest.
-    // This is an asynchronous process.
-    try {
-      // This runs if the asynchronous load is successful.
-      console.log('The video has now been loaded!');
-      await this.player.load(this.manifestUri, this.initialTimecode);
-    } catch (e) {
-      // onError is executed if the asynchronous load fails.
-      onError(e);
-    }
+    this.player.addEventListener('adaptation', this.handlers.onTrackChange);
+    this.player.addEventListener('variantchanged', this.handlers.onTrackChange);
 
     this.seekBar = this.container.querySelector('.shaka-seek-bar-container');
     this.thumbnailPreview = new ThumbnailPreview({
@@ -104,8 +138,31 @@ export default class SachsenShakaPlayer {
       player: this.player,
       network: new ImageFetcher(),
     });
+  }
 
+  async loadManifest(manifestUri, startTime) {
+    await this.player.load(manifestUri, startTime);
     this.renderChapterMarkers();
+  }
+
+  onTrackChange() {
+    this.updateFrameRate();
+  }
+
+  updateFrameRate() {
+    // There should always be at most one active variant
+    const fps = this.player.getVariantTracks().find(track => track.active)?.frameRate ?? null;
+
+    if (fps === null) {
+      this.fps = null;
+      this.vifa = null;
+    } else if (fps !== this.fps) {
+      this.fps = fps;
+      this.vifa = VideoFrame({
+        id: this.video.id,
+        frameRate: fps,
+      });
+    }
   }
 
   setLocale(locale) {
@@ -219,33 +276,21 @@ export default class SachsenShakaPlayer {
       this.seekTo(this.chapters.advance(cur, +1));
     }
   }
-}
 
-/**
- *
- * Initialize the Shaka-Player App
- *
- */
-
-function initApp() {
-  // Install built-in polyfills to patch browser incompatibilities.
-  shaka.polyfill.installAll();
-
-  // Check to see if the browser supports the basic APIs Shaka needs.
-  if (shaka.Player.isBrowserSupported()) {
-    // Everything looks good!
-    initPlayer();
-  } else {
-    // This browser does not have the minimum set of APIs we need.
-    console.error('Browser not supported!');
+  ensureTrickPlay(rate) {
+    if (this.player.getPlaybackRate() !== rate) {
+      this.player.trickPlay(rate);
+    }
   }
 
+  cancelTrickPlay() {
+    // This may throw, in particular, if Shaka's play rate controller is not yet
+    // initialized (because the video is not yet loaded).
+    try {
+      this.player.cancelTrickPlay();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }
-
-// Listen to the custom shaka-ui-load-failed event, in case Shaka Player fails
-// to load (e.g. due to lack of browser support).
-document.addEventListener('shaka-ui-load-failed', (errorEvent) => {
-  // Handle the failure to load; errorEvent.detail.reasonCode has a
-  // shaka.ui.FailReasonCode describing why.
-  console.error('Unable to load the UI library!');
-});

@@ -50,7 +50,9 @@ class VideoToJsonViewHelper extends AbstractViewHelper
             ],
 
             'url' => [
-                'manifest' => "https://media.sachsen.digital/$movieDir/$movieDir.mpd",
+                'mpd' => "https://media.sachsen.digital/$movieDir/$movieDir.mpd",
+                // TODO: This assumes the HLS playlist exists, which currently it may not...
+                'hls' => "https://media.sachsen.digital/$movieDir/$movieDir.m3u8",
                 'poster' => "https://media.sachsen.digital/$movieDir/$movieDir.jpg",
             ],
         ];

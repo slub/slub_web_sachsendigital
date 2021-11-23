@@ -21,6 +21,15 @@ describe('buildTimeString', () => {
     expect(buildTimeString(3600, true)).toBe("1:00:00");
     expect(buildTimeString(3600 * 123, true)).toBe("123:00:00");
   });
+
+  test('with fps', () => {
+    expect(buildTimeString(0.00, false, 5)).toBe("0:00:00");
+    expect(buildTimeString(0.25, false, 5)).toBe("0:00:01");
+    expect(buildTimeString(0.50, false, 5)).toBe("0:00:02");
+    expect(buildTimeString(0.75, false, 5)).toBe("0:00:03");
+    expect(buildTimeString(1.00, false, 5)).toBe("0:01:00");
+    expect(buildTimeString(1.25, false, 5)).toBe("0:01:01");
+  });
 });
 
 describe('dataUrlMime', () => {

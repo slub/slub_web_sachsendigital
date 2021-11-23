@@ -70,7 +70,7 @@ export default class ThumbnailPreview {
   /**
    * @protected
    */
-   onWindowBlur() {
+  onWindowBlur() {
     // The blur event is fired, for example, when the user switches the tab via
     // Ctrl+Tab. If they then move the mouse and return to the player tab, it may
     // be surprising to have the thumbnail preview still open. Thus, close the
@@ -168,10 +168,22 @@ export default class ThumbnailPreview {
   renderImage(uri, thumb, tilesetImage) {
     // Check if it's another thumbnail (`startTime` as a proxy)
     if (this.lastRendered === null || thumb.startTime !== this.lastRendered.thumb.startTime) {
+      let { positionX, positionY, width, height } = thumb;
+
+      // When width/height are in the interval [0,1], we treat them as relative
+      // to the tileset size. See `CustomHlsParser`.
+      if ((0 <= width && width <= 1) && (0 <= height && height <= 1)) {
+        positionX *= tilesetImage.width;
+        width *= tilesetImage.width;
+
+        positionY *= tilesetImage.height;
+        height *= tilesetImage.height;
+      }
+
       this.ctx.drawImage(
         tilesetImage,
         // position and size on source image
-        thumb.positionX, thumb.positionY, thumb.width, thumb.height,
+        positionX, positionY, width, height,
         // position and size on destination canvas
         0, 0, this.dom.canvas.width, this.dom.canvas.height
       );

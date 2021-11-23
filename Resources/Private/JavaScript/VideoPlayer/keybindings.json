@@ -66,6 +66,7 @@
 	},
 	{
 		"key": "ArrowLeft",
+		"repeat": false,
 		"scope": "player",
 		"action": "navigate.rewind",
 		"kind": "navigate",
@@ -73,10 +74,27 @@
 	},
 	{
 		"key": "ArrowRight",
+		"repeat": false,
 		"scope": "player",
 		"action": "navigate.seek",
 		"kind": "navigate",
 		"order": 1
+	},
+	{
+		"key": "ArrowLeft",
+		"repeat": true,
+		"scope": "player",
+		"action": "navigate.continuous-rewind",
+		"kind": "navigate",
+		"order": 2
+	},
+	{
+		"key": "ArrowRight",
+		"repeat": true,
+		"scope": "player",
+		"action": "navigate.continuous-seek",
+		"kind": "navigate",
+		"order": 3
 	},
 	{
 		"mod": "CtrlMeta",

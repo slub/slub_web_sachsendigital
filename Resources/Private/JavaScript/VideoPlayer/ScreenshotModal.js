@@ -54,29 +54,37 @@ export default class ScreenshotModal extends SimpleModal {
     const env = this._state.env;
     const dom = super._createDom("screenshot-modal");
 
-    dom.title.innerText = "Screenshot";
+    dom.title.innerText = env.t('modal.screenshot.title');
 
     const idShowMetadata = env.mkid();
 
     dom.config = templateElement(`
       <div class="screenshot-config">
-        <input type="checkbox" id="${idShowMetadata}" class="show-metadata"><!--
-        --><label for="${idShowMetadata}"> Metadaten einblenden</label>
+        <span class="show-metadata">
+          <input type="checkbox" id="${idShowMetadata}"><!--
+          --><label for="${idShowMetadata}"></label>
+        </span>
 
         ·
 
-        Dateiformat:
-        <span class="image-formats"></span>
+        <span class="image-format">
+          <label></label>:
+          <span class="format-list"></span>
+        </span>
 
         ·
 
-        <a href="#" class="download-image">Bild herunterladen</a>
+        <a href="#" class="download-image"></a>
       </div>
     `);
-    dom.showMetadata = dom.config.querySelector('.show-metadata');
+    dom.showMetadata = dom.config.querySelector('.show-metadata input[type=checkbox]');
     dom.showMetadata.checked = this._state.showMetadata;
     dom.showMetadata.addEventListener('change', this.handleChangeShowMetadata.bind(this));
-    dom.imageFormatSpan = dom.config.querySelector('.image-formats');
+    dom.showMetadataLabel = dom.config.querySelector('.show-metadata label');
+    dom.showMetadataLabel.innerText = env.t('modal.screenshot.show-metadata');
+    dom.formatListLabel = dom.config.querySelector('.image-format label');
+    dom.formatListLabel.innerText = env.t('modal.screenshot.file-format');
+    dom.formatListSpan = dom.config.querySelector('.image-format .format-list');
     const radioGroup = env.mkid();
     for (const format of this._state.supportedImageFormats) {
       const radioId = env.mkid();
@@ -96,9 +104,10 @@ export default class ScreenshotModal extends SimpleModal {
       label.htmlFor = radioId;
       label.innerText = ` ${format.label}`;
 
-      dom.imageFormatSpan.append(radio, label);
+      dom.formatListSpan.append(radio, label);
     }
     dom.downloadImage = dom.config.querySelector('.download-image');
+    dom.downloadImage.innerText = env.t('modal.screenshot.download-image');
     dom.downloadImage.addEventListener('click', this.handleDownloadImage.bind(this));
     dom.body.append(dom.config);
 
@@ -146,6 +155,7 @@ export default class ScreenshotModal extends SimpleModal {
 
       image.addMetadata({
         title: imageTitle,
+        // NOTE: Don't localize (not only relevant to current user)
         comment: `Screenshot taken on Sachsen.Digital.\n\n${url.toString()}`,
       });
       const buffer = binaryStringToArrayBuffer(image.toBinaryString());
@@ -155,6 +165,7 @@ export default class ScreenshotModal extends SimpleModal {
     withObjectUrl(outputBlob, (objectUrl) => {
       const a = document.createElement("a");
       a.href = objectUrl;
+      // NOTE: Don't localize (English file name prefix should be alright)
       a.download = sanitizeBasename(`Screenshot-${imageTitle}-T${buildTimeString(this._state.timecode, true)}`);
       a.click();
     });
