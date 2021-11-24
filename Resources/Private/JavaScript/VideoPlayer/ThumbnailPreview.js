@@ -158,11 +158,19 @@ export default class ThumbnailPreview {
 
     // Don't check bounds when scrubbing
     if (!this.isChanging) {
-      // Also allow to seek on the thumbnail container (if a seek has already
-      // been initiated by hovering the seek bar)
-      const thumbsBounding = this.dom.container.getBoundingClientRect();
-      const mousePos = { x: e.clientX, y: e.clientY };
-      if (!isPosInRect(bounding, mousePos) && !(this.showContainer && isPosInRect(thumbsBounding, mousePos))) {
+      const { left, right, bottom } = bounding;
+      if (!(left <= e.clientX && e.clientX <= right && e.clientY <= bottom)) {
+        return;
+      }
+
+      // Don't close the preview when the mouse is quickly moved left/right.
+      // (If the container is shown, then a seek has already been initiated by
+      // hovering the seekbar, and this allows seeking on and left/right from
+      // the container.)
+      const { top } = this.showContainer
+        ? this.dom.container.getBoundingClientRect()
+        : bounding;
+      if (!(top <= e.clientY)) {
         return;
       }
     }
