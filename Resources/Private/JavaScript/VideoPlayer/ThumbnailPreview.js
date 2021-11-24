@@ -18,6 +18,8 @@ import { buildTimeString, isPosInRect, numberIntoRange, templateElement } from '
  * }} LastRendered
  */
 
+const DISPLAY_WIDTH = 160;
+
 /**
  * Component for a thumbnail preview when sliding over the seekbar.
  *
@@ -76,7 +78,7 @@ export default class ThumbnailPreview {
 
     this.ctx = this.dom.canvas.getContext('2d');
 
-    this.setCanvasResolution(160, 90);
+    this.setCanvasResolution(DISPLAY_WIDTH, DISPLAY_WIDTH / (16 / 9));
 
     /** @type {LastRendered | null} */
     this.lastRendered = null;
@@ -120,6 +122,14 @@ export default class ThumbnailPreview {
 
     if (this.lastRendered) {
       this.renderImage(this.lastRendered.uri, this.lastRendered.thumb, this.lastRendered.tilesetImage, true);
+    }
+  }
+
+  ensureDisplaySize(thumbWidth, thumbHeight) {
+    const previewHeight = DISPLAY_WIDTH / thumbWidth * thumbHeight;
+    if (this.canvasResolution.height !== previewHeight) {
+      this.dom.display.style.height = `${previewHeight}px`;
+      this.setCanvasResolution(160, previewHeight);
     }
   }
 
@@ -243,6 +253,8 @@ export default class ThumbnailPreview {
     if (thumb === null || thumb.uris.length === 0) {
       return;
     }
+
+    this.ensureDisplaySize(thumb.width, thumb.height);
 
     const uri = thumb.uris[0];
     if (this.lastRendered === null || uri !== this.lastRendered.uri) {
