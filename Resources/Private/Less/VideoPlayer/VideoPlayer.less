@@ -47,8 +47,13 @@ body {
         // `offsetWidth`, which is zero for elements with `display: none`.
         visibility: hidden;
         position: absolute;
+        // Position 25px above seekbar, but overlap to the bottom (so that the
+        // mouse can switch between seekbar and thumbnail preview).
         bottom: 0px;
         padding-bottom: 25px;
+        // Allow to move mouse a little over the thumbnail preview without
+        // closing it.
+        padding-top: 50px;
         // Don't be shadowed by Shaka controlbar
         z-index: 1;
         cursor: pointer;
@@ -64,10 +69,10 @@ body {
             height: 90px;
             border: 1px solid white;
             box-sizing: content-box;
-            visibility: hidden;
+            display: none;
 
             &.shown {
-                visibility: visible;
+                display: block;
             }
 
             canvas {
@@ -82,9 +87,19 @@ body {
             // Same color and font-size as `.shaka-current-time`
             color: white;
             font-size: 14px;
-            line-height: 125%;
+            line-height: 110%;
+            max-width: 160px;
 
-            .chapter-text, .timecode-text {
+            .chapter-text {
+                line-height: 110%;
+                display: none;
+
+                &.shown {
+                    display: block;
+                }
+            }
+
+            .timecode-text {
                 display: block;
             }
 

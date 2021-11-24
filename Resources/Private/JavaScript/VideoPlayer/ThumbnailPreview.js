@@ -218,12 +218,10 @@ export default class ThumbnailPreview {
     if (this.lastRendered === null || uri !== this.lastRendered.uri) {
       this.network.get(uri)
         .then(image => {
-          this.renderImage(uri, thumb, image);
-          this.setIsVisible(true);
+          this.renderImageAndShow(uri, thumb, image, seekPosition);
         });
     } else {
-      this.renderImage(uri, thumb, this.lastRendered.tilesetImage);
-      this.setIsVisible(true);
+      this.renderImageAndShow(uri, thumb, this.lastRendered.tilesetImage, seekPosition);
     }
   }
 
@@ -291,11 +289,19 @@ export default class ThumbnailPreview {
     }
   }
 
+  renderImageAndShow(uri, thumb, tilesetImage, seekPosition) {
+    this.renderImage(uri, thumb, tilesetImage);
+    this.setIsVisible(true);
+
+    // If the image has just become visible, the container position may change
+    this.positionContainer(seekPosition);
+  }
+
   /**
    *
    * @param {SeekPosition} seekPosition
    */
-  renderSeekPosition(seekPosition) {
+  positionContainer(seekPosition) {
     // Align the container so that the mouse underneath is centered,
     // but avoid overflowing at the left or right of the seek bar
     const containerX = numberIntoRange(
@@ -303,16 +309,20 @@ export default class ThumbnailPreview {
       [0, this.seekBar.clientWidth - this.dom.container.offsetWidth]
     );
     this.dom.container.style.left = `${containerX}px`;
+  }
 
-    this.dom.seekMarker.style.left = `${seekPosition.absolute}px`;
-
+  /**
+   *
+   * @param {SeekPosition} seekPosition
+   */
+  renderSeekPosition(seekPosition) {
     const duration = this.getVideoDuration();
     if (!Number.isFinite(duration)) {
       this.setIsVisible(false);
       return;
     }
 
-    this.dom.chapterText.innerText = seekPosition.chapter?.title ?? "";
+    this.dom.seekMarker.style.left = `${seekPosition.absolute}px`;
 
     if (seekPosition.onChapterMarker) {
       this.dom.info.classList.add("on-chapter-marker");
@@ -320,7 +330,17 @@ export default class ThumbnailPreview {
       this.dom.info.classList.remove("on-chapter-marker");
     }
 
+    // Empty chapter titles are hidden to maintain correct distance of info text
+    // to thumbnail image
+    const title = seekPosition.chapter?.title ?? "";
+    this.dom.chapterText.innerText = title;
+    this.setElementVisible(this.dom.chapterText, title !== "");
+
     this.dom.timecodeText.innerText = buildTimeString(seekPosition.seconds, duration >= 3600, this.getFps());
+
+    // The info text length may influence the container position, so position
+    // after setting the text.
+    this.positionContainer(seekPosition);
   }
 
   setIsVisible(showContainer, showThumb = showContainer) {
