@@ -62,6 +62,12 @@ body {
             visibility: visible;
         }
 
+        .content-box {
+            background-color: rgba(darken(@base-color, 25%), 0.6);
+            border-radius: 4px;
+            padding: 1em;
+        }
+
         .display {
             // Ensure that only the current tile is shown (not the full tileset)
             overflow: hidden;
@@ -69,6 +75,7 @@ body {
             height: 90px;
             border: 1px solid white;
             box-sizing: content-box;
+            margin-bottom: 0.75em;
             display: none;
 
             &.shown {
@@ -83,7 +90,6 @@ body {
 
         .info {
             display: inline-block;
-            padding-top: 0.75em;
             // Same color and font-size as `.shaka-current-time`
             color: white;
             font-size: 14px;
@@ -92,6 +98,7 @@ body {
 
             .chapter-text {
                 line-height: 110%;
+                margin-bottom: 0.4em;
                 display: none;
 
                 &.shown {

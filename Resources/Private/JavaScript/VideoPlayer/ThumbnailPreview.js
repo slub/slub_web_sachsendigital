@@ -47,13 +47,15 @@ export default class ThumbnailPreview {
     // accidentally be selected when scrubbing on FlatSeekBar.
     const container = templateElement(`
       <div class="thumbnail-preview noselect">
-        <div class="display">
-          <canvas>
+        <div class="content-box">
+          <div class="display">
+            <canvas>
+          </div>
+          <span class="info">
+            <span class="chapter-text"></span>
+            <span class="timecode-text"></span>
+          </span>
         </div>
-        <span class="info">
-          <span class="chapter-text"></span>
-          <span class="timecode-text"></span>
-        </span>
       </div>
     `);
 
