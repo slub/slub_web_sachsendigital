@@ -57,7 +57,12 @@ export default class ThumbnailPreview {
       </div>
     `);
 
+    const seekMarker = templateElement(`
+      <div class="seek-marker"></div>
+    `);
+
     this.dom = {
+      seekMarker,
       container,
       display: container.querySelector('.display'),
       /** @type {HTMLCanvasElement} */
@@ -73,7 +78,7 @@ export default class ThumbnailPreview {
     this.isChanging = false;
     this.showContainer = false;
 
-    this.seekBar.append(this.dom.container);
+    this.seekBar.append(this.dom.seekMarker, this.dom.container);
 
     this.handlers = {
       onWindowBlur: this.onWindowBlur.bind(this),
@@ -299,6 +304,8 @@ export default class ThumbnailPreview {
     );
     this.dom.container.style.left = `${containerX}px`;
 
+    this.dom.seekMarker.style.left = `${seekPosition.absolute}px`;
+
     const duration = this.getVideoDuration();
     if (!Number.isFinite(duration)) {
       this.setIsVisible(false);
@@ -319,6 +326,7 @@ export default class ThumbnailPreview {
   setIsVisible(showContainer, showThumb = showContainer) {
     this.showContainer = showContainer;
     this.setElementVisible(this.dom.container, showContainer);
+    this.setElementVisible(this.dom.seekMarker, showContainer);
 
     this.setElementVisible(this.dom.display, showThumb);
   }

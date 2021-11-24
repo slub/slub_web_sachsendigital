@@ -288,6 +288,20 @@ body {
         height: @seek-bar-height;
         border-radius: @seek-bar-height;
     }
+
+    .seek-marker {
+        position: absolute;
+        left: 45%;
+        height: @seek-bar-height;
+        width: 1px;
+        background-color: @base-color;
+        z-index: 1000;
+        visibility: hidden;
+
+        &.shown {
+            visibility: visible;
+        }
+    }
 }
 
 .sxnd-chapter-marker {
