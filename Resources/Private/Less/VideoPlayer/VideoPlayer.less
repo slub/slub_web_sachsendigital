@@ -29,6 +29,12 @@
     cursor: pointer;
 }
 
+body {
+    &.seek-or-scrub * {
+        cursor: grabbing !important;
+    }
+}
+
 .document-view {
     overflow: auto;
 
@@ -45,6 +51,7 @@
         padding-bottom: 25px;
         // Don't be shadowed by Shaka controlbar
         z-index: 1;
+        cursor: pointer;
 
         &.shown {
             visibility: visible;
@@ -273,6 +280,7 @@
     margin: 0px 6px;
     padding-top: @seek-bar-margin;
     height: @seek-bar-height + 2 * @seek-bar-margin;
+    cursor: pointer;
 
     .range {
         position: absolute;

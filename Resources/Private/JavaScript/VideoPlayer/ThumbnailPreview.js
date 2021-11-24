@@ -231,6 +231,7 @@ export default class ThumbnailPreview {
     if (position !== undefined) {
       if (!this.isChanging) {
         this.interaction?.onChangeStart?.();
+        document.body.classList.add('seek-or-scrub');
         this.isChanging = true;
       }
 
@@ -253,6 +254,7 @@ export default class ThumbnailPreview {
   changeEnd() {
     if (this.isChanging) {
       this.interaction?.onChangeEnd?.();
+      document.body.classList.remove('seek-or-scrub');
       this.isChanging = false;
     }
   }
@@ -307,10 +309,8 @@ export default class ThumbnailPreview {
 
     if (seekPosition.onChapterMarker) {
       this.dom.info.classList.add("on-chapter-marker");
-      this.seekBar.style.cursor = "pointer";
     } else {
       this.dom.info.classList.remove("on-chapter-marker");
-      this.seekBar.style.cursor = "initial";
     }
 
     this.dom.timecodeText.innerText = buildTimeString(seekPosition.seconds, duration >= 3600, this.getFps());
