@@ -75,6 +75,9 @@ export default class ThumbnailPreview {
     };
 
     this.ctx = this.dom.canvas.getContext('2d');
+
+    this.setCanvasResolution(160, 90);
+
     /** @type {LastRendered | null} */
     this.lastRendered = null;
     this.isChanging = false;
@@ -101,6 +104,23 @@ export default class ThumbnailPreview {
     document.removeEventListener('pointermove', this.handlers.onPointerMove);
     document.removeEventListener('pointerdown', this.handlers.onPointerDown);
     document.removeEventListener('pointerup', this.handlers.onPointerUp);
+  }
+
+  setCanvasResolution(width, height) {
+    // Code adopted from https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio
+
+    const scale = window.devicePixelRatio;
+
+    this.dom.canvas.width = scale * width;
+    this.dom.canvas.height = scale * height;
+
+    this.canvasResolution = { scale, width, height };
+
+    this.ctx.scale(scale, scale);
+
+    if (this.lastRendered) {
+      this.renderImage(this.lastRendered.uri, this.lastRendered.thumb, this.lastRendered.tilesetImage, true);
+    }
   }
 
   /**
@@ -272,9 +292,9 @@ export default class ThumbnailPreview {
     }
   }
 
-  renderImage(uri, thumb, tilesetImage) {
+  renderImage(uri, thumb, tilesetImage, force = false) {
     // Check if it's another thumbnail (`startTime` as a proxy)
-    if (this.lastRendered === null || thumb.startTime !== this.lastRendered.thumb.startTime) {
+    if (force || this.lastRendered === null || thumb.startTime !== this.lastRendered.thumb.startTime) {
       let { positionX, positionY, width, height } = thumb;
 
       // When width/height are in the interval [0,1], we treat them as relative
@@ -292,7 +312,7 @@ export default class ThumbnailPreview {
         // position and size on source image
         positionX, positionY, width, height,
         // position and size on destination canvas
-        0, 0, this.dom.canvas.width, this.dom.canvas.height
+        0, 0, this.canvasResolution.width, this.canvasResolution.height
       );
 
       this.lastRendered = { uri, thumb, tilesetImage };
