@@ -292,6 +292,31 @@ export default class ThumbnailPreview {
     }
   }
 
+  renderThumbTimecode(thumb) {
+    // TODO: Make this more flexible than just accomodating ffmpeg's fps filter
+    const fps = this.getFps();
+    const targetTime = thumb.startTime + thumb.duration / 2;
+    const timecode = buildTimeString(targetTime - 0.00001, this.getVideoDuration() >= 3600, fps);
+
+    this.ctx.font = "8px sans-serif";
+    this.ctx.textBaseline = 'top';
+
+    const textMetrics = this.ctx.measureText(timecode);
+    const textWidth = textMetrics.width;
+    const textHeight = textMetrics.actualBoundingBoxDescent; // because baseline = top
+
+    const textPaddingX = 2;
+    const textPaddingY = 2;
+    const textLeft = this.canvasResolution.width - (textWidth + textPaddingX);
+
+    // Fill text box for solid background
+    this.ctx.fillStyle = "black";
+    this.ctx.fillRect(textLeft - textPaddingX, 0, textWidth + 2 * textPaddingX, textHeight + 2 * textPaddingY);
+
+    this.ctx.fillStyle = "white";
+    this.ctx.fillText(timecode, textLeft, textPaddingY);
+  }
+
   renderImage(uri, thumb, tilesetImage, force = false) {
     // Check if it's another thumbnail (`startTime` as a proxy)
     if (force || this.lastRendered === null || thumb.startTime !== this.lastRendered.thumb.startTime) {
@@ -314,6 +339,8 @@ export default class ThumbnailPreview {
         // position and size on destination canvas
         0, 0, this.canvasResolution.width, this.canvasResolution.height
       );
+
+      this.renderThumbTimecode(thumb);
 
       this.lastRendered = { uri, thumb, tilesetImage };
     }
