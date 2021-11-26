@@ -188,20 +188,28 @@ export default class ThumbnailPreview {
 
     // Don't check bounds when scrubbing
     if (!this.isChanging) {
-      const { left, right, bottom } = bounding;
-      if (!(left <= e.clientX && e.clientX <= right && e.clientY <= bottom)) {
-        return;
-      }
+      if (this.showContainer) {
+        // A seek has already been initiated by hovering the seekbar. Check
+        // bounds in such a way that quickly moving the mouse left/right won't
+        // accidentally close the container.
 
-      // Don't close the preview when the mouse is quickly moved left/right.
-      // (If the container is shown, then a seek has already been initiated by
-      // hovering the seekbar, and this allows seeking on and left/right from
-      // the container.)
-      const { top } = this.showContainer
-        ? this.dom.container.getBoundingClientRect()
-        : bounding;
-      if (!(top <= e.clientY)) {
-        return;
+        const { left, right, bottom } = bounding;
+        if (!(left <= e.clientX && e.clientX <= right && e.clientY <= bottom)) {
+          return;
+        }
+
+        const { top } = this.dom.container.getBoundingClientRect();
+        if (!(top <= e.clientY)) {
+          return;
+        }
+      } else {
+        // Before initiating a seek, check that the seek bar (or a descendant)
+        // is actually hovered (= not only an element that visually overlays the
+        // seek bar, such as a modal).
+
+        if (!this.seekBar.contains(e.target)) {
+          return;
+        }
       }
     }
 
