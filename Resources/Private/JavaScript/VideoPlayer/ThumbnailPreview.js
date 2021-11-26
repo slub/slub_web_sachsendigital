@@ -262,8 +262,6 @@ export default class ThumbnailPreview {
       return;
     }
 
-    this.ensureDisplaySize(thumb.width, thumb.height);
-
     const uri = thumb.uris[0];
     if (this.lastRendered === null || uri !== this.lastRendered.uri) {
       this.network.get(uri)
@@ -345,16 +343,6 @@ export default class ThumbnailPreview {
     if (force || this.lastRendered === null || thumb.startTime !== this.lastRendered.thumb.startTime) {
       let { positionX, positionY, width, height } = thumb;
 
-      // When width/height are in the interval [0,1], we treat them as relative
-      // to the tileset size. See `CustomHlsParser`.
-      if ((0 <= width && width <= 1) && (0 <= height && height <= 1)) {
-        positionX *= tilesetImage.width;
-        width *= tilesetImage.width;
-
-        positionY *= tilesetImage.height;
-        height *= tilesetImage.height;
-      }
-
       this.ctx.drawImage(
         tilesetImage,
         // position and size on source image
@@ -370,6 +358,18 @@ export default class ThumbnailPreview {
   }
 
   renderImageAndShow(uri, thumb, tilesetImage, seekPosition) {
+    // When width/height are in the interval [0,1], we treat them as relative
+    // to the tileset size. See `CustomHlsParser`.
+    if ((0 <= thumb.width && thumb.width <= 1) && (0 <= thumb.height && thumb.height <= 1)) {
+      thumb.positionX *= tilesetImage.width;
+      thumb.width *= tilesetImage.width;
+
+      thumb.positionY *= tilesetImage.height;
+      thumb.height *= tilesetImage.height;
+    }
+
+    this.ensureDisplaySize(thumb.width, thumb.height);
+
     this.renderImage(uri, thumb, tilesetImage);
     this.setIsVisible(true);
 
