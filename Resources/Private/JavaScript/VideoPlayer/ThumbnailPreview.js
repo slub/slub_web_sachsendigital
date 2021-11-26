@@ -272,15 +272,18 @@ export default class ThumbnailPreview {
    * @param {PointerEvent} e
    */
   onPointerDown(e) {
-    const position = this.mouseEventToPosition(e);
-    if (position !== undefined) {
-      if (!this.isChanging) {
-        this.interaction?.onChangeStart?.();
-        document.body.classList.add('seek-or-scrub');
-        this.isChanging = true;
-      }
+    // Check primary button
+    if (e.buttons & 1 !== 0) {
+      const position = this.mouseEventToPosition(e);
+      if (position !== undefined) {
+        if (!this.isChanging) {
+          this.interaction?.onChangeStart?.();
+          document.body.classList.add('seek-or-scrub');
+          this.isChanging = true;
+        }
 
-      this.interaction?.onChange?.(position);
+        this.interaction?.onChange?.(position);
+      }
     }
   }
 
