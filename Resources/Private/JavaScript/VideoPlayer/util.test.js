@@ -1,6 +1,6 @@
 // @ts-check
 
-import { describe, expect, test, jest } from '@jest/globals';
+import { beforeEach, describe, expect, test, jest } from '@jest/globals';
 import { Blob } from 'buffer';
 import { buildTimeString, dataUrlMime, clamp, sanitizeBasename, withObjectUrl } from './util';
 
@@ -45,14 +45,25 @@ describe('dataUrlMime', () => {
 });
 
 describe('withObjectUrl', () => {
+  const spyRevoke = jest.spyOn(URL, 'revokeObjectURL');
+
+  beforeEach(() => {
+    spyRevoke.mockReset();
+  });
+
   test('returns result of callback', () => {
     // @ts-expect-error: DOM Blob vs Node Blob (TODO)
     expect(withObjectUrl(new Blob(), () => 1)).toBe(1);
+    expect(spyRevoke).toHaveBeenCalledTimes(1);
+  });
+
+  test('returns async result', async () => {
+    // @ts-expect-error: DOM Blob vs Node Blob (TODO)
+    expect(await withObjectUrl(new Blob(), async () => 1)).toBe(1);
+    expect(spyRevoke).toHaveBeenCalledTimes(1);
   });
 
   test('revokes despite throw', () => {
-    const spyRevoke = jest.spyOn(URL, 'revokeObjectURL');
-
     let blobObjectUrl;
 
     expect(() => {
@@ -63,6 +74,22 @@ describe('withObjectUrl', () => {
       });
     }).toThrow();
 
+    expect(spyRevoke).toHaveBeenCalledTimes(1);
+    expect(spyRevoke).toHaveBeenCalledWith(blobObjectUrl);
+  });
+
+  test('revokes despite async throw', async () => {
+    let blobObjectUrl;
+
+    await expect(async () => {
+      // @ts-expect-error: DOM Blob vs Node Blob (TODO)
+      await withObjectUrl(new Blob(), async (objectUrl) => {
+        blobObjectUrl = objectUrl;
+        throw new Error();
+      });
+    }).rejects.toThrow();
+
+    expect(spyRevoke).toHaveBeenCalledTimes(1);
     expect(spyRevoke).toHaveBeenCalledWith(blobObjectUrl);
   });
 });

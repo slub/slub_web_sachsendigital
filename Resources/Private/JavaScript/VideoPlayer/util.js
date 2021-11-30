@@ -39,9 +39,10 @@ export function clamp(value, [min, max]) {
  *
  * Adopted from shaka.ui.Utils.buildTimeString.
  *
- * @param {number} totalSeconds (in seconds)
+ * @param {number} totalSeconds Total number of seconds to be formatted.
  * @param {boolean} showHour Whether or not to show hours.
- * @param {number | null} fps (Optional) Number of FPS used to calculate frame count.
+ * @param {number | null} fps (Optional) Number of FPS used to calculate frame
+ * count.
  * @returns {string}
  */
 export function buildTimeString(totalSeconds, showHour, fps = null) {
@@ -116,8 +117,37 @@ export function blobToBinaryString(blob) {
 }
 
 /**
- * Calls {@link callback} with a temporary object URL to {@link obj} (the object
- * URL is revoked automatically).
+ * Loads a `Blob` that contains an image into an `HTMLImageElement`.
+ *
+ * @param {Blob} blob
+ * @returns {Promise<HTMLImageElement>}
+ */
+export function blobToImage(blob) {
+  return withObjectUrl(blob, loadImage);
+}
+
+/**
+ * Loads an image from {@link src} into an `HTMLImageElement`.
+ *
+ * @param {string} src
+ * @returns {Promise<HTMLImageElement>}
+ */
+export function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = document.createElement('img');
+    image.onload = () => {
+      resolve(image);
+    };
+    image.onerror = reject;
+    image.src = src;
+  });
+}
+
+/**
+ * Calls {@link callback} with a temporary object URL to {@link obj}.
+ *
+ * The object URL is automatically resolved once the callback returns, or, if
+ * the callback returns a promise, once that promise resolves.
  *
  * @template T
  * @param {Blob | MediaSource} obj
@@ -128,12 +158,34 @@ export function withObjectUrl(obj, callback) {
   // Outside of try-catch because no cleanup needed if this throws
   const objectUrl = URL.createObjectURL(obj);
 
+  let result;
+
   try {
-    return callback(objectUrl);
+    result = callback(objectUrl);
   } catch (e) {
-    throw e;
-  } finally {
     URL.revokeObjectURL(objectUrl);
+    throw e;
+  }
+
+  if (result instanceof Promise) {
+    const resultPromise = result;
+
+    // @ts-expect-error: The typing is indeed not exact here because `T` could
+    // be a type extending `Promise` (TODO).
+    return new Promise((resolve, reject) => {
+      resultPromise
+        .then((value) => {
+          URL.revokeObjectURL(objectUrl);
+          resolve(value);
+        })
+        .catch((e) => {
+          URL.revokeObjectURL(objectUrl);
+          reject(e);
+        });
+    });
+  } else {
+    URL.revokeObjectURL(objectUrl);
+    return result;
   }
 }
 
@@ -174,21 +226,4 @@ export function templateElement(html) {
 export function sanitizeBasename(str) {
   const result = str.replace(/[^a-zA-Z0-9()]+/g, "_");
   return result.length > 0 ? result : "_";
-}
-
-export const HttpStatusGroup = {
-  Informational: 1,
-  Success: 2,
-  Redirection: 3,
-  ClientError: 4,
-  ServerError: 5,
-};
-
-/**
- * Groups HTTP status code into its {@link HttpStatusGroup}.
- *
- * @param {number} code
- */
-export function getHttpStatusGroup(code) {
-  return Math.floor(code / 100);
 }

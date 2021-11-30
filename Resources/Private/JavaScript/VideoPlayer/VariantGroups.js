@@ -8,50 +8,83 @@
  *  variants: shaka.extern.Variant[];
  *  roles: Set<string>;
  * }} Group
+ *
+ * @typedef {{
+ *  id: string | null;
+ *  group: string;
+ * }} GroupId
  */
 
+/**
+ * Switch among video tracks in Shaka Player by grouping the manifest variants.
+ * This allows to adapt bitrate and switch audio language within a group.
+ *
+ * The variants are grouped via their representation id (MPD) or name (HLS).
+ */
 export default class VariantGroups {
   /**
    *
-   * @param {shaka.Player} player
+   * @param {shaka.Player} player Player to which the variant groups are bound.
+   * Variants are read from this player's manifest.
    */
   constructor(player) {
-    /** @type {shaka.Player} */
-    this._player = player;
-    /** @type {shaka.extern.Manifest | null} */
-    this._manifest = player.getManifest();
+    /**
+     * @private
+     * @type {shaka.Player}
+     */
+    this.player = player;
 
-    if (!this._manifest) {
+    /**
+     * @private
+     * @type {shaka.extern.Manifest | null}
+     */
+    this.manifest = player.getManifest();
+
+    /**
+     * @private
+     * @type {GroupKey[]}
+     */
+    this.groupKeys = [];
+
+    /**
+     * @private
+     * @type {Group[]}
+     */
+    this.groups = [];
+
+    /**
+     * @private
+     * @type {Record<GroupKey, Group>}
+     */
+    this.keyToGroup = {};
+
+    if (this.manifest === null) {
       console.warn("Manifest not available");
       return;
     }
 
-    /** @type {GroupKey[]} */
-    this._groupKeys = [];
-    /** @type {Group[]} */
-    this._groups = [];
-    /** @type {Record<GroupKey, Group>} */
-    this._groupMap = {};
-
-    for (const variant of this._manifest.variants) {
+    for (const variant of this.manifest.variants) {
       this.addVariant(variant);
     }
   }
 
   /**
+   * Parses the representation ID / name {@link id}.
    *
    * @param {string | null} id
+   * @returns {GroupId}
    */
   static splitRepresentationId(id) {
     const parts = (id ?? "").split('#');
 
     return {
-      id: parts[0],
+      id: parts[0] ?? null,
       group: parts[1] ?? "Standard",
     };
   }
 
   /**
+   * Sorts {@link variant} into its group if it references a video.
    *
    * @param {shaka.extern.Variant} variant
    */
@@ -59,8 +92,8 @@ export default class VariantGroups {
     const video = variant.video;
 
     if (video) {
-      const grpKey = VariantGroups.splitRepresentationId(video.originalId).group;
-      const group = this.getGroupOrCreate(grpKey);
+      const key = VariantGroups.splitRepresentationId(video.originalId).group;
+      const group = this.getGroupOrCreate(key);
 
       group.variants.push(variant);
 
@@ -70,72 +103,98 @@ export default class VariantGroups {
     }
   }
 
+  /**
+   * The number of variant groups.
+   *
+   * @returns {number}
+   */
   get numGroups() {
-    return this._groupKeys.length;
+    return this.groupKeys.length;
   }
 
   /**
+   * Returns a group with the specified key. If the group does not yet exist,
+   * an empty group with this key is created.
    *
-   * @param {GroupKey} grpKey
+   * @param {GroupKey} key
+   * @returns {Group}
    */
-  getGroupOrCreate(grpKey) {
-    let group = this._groupMap[grpKey];
+  getGroupOrCreate(key) {
+    let group = this.keyToGroup[key];
 
     if (!group) {
-      group = this._groupMap[grpKey] = {
-        key: grpKey,
+      group = this.keyToGroup[key] = {
+        key: key,
         variants: [],
         roles: new Set(),
       };
 
-      this._groupKeys.push(grpKey);
-      this._groups.push(group);
+      this.groupKeys.push(key);
+      this.groups.push(group);
     }
 
     return group;
   }
 
+  /**
+   * Returns the track that is currently active (in the bound player), or
+   * `undefined` if no track is active.
+   *
+   * @returns {shaka.extern.Track | undefined}
+   */
   findActiveTrack() {
     // There should be at most one active variant at a time
-    return this._player.getVariantTracks().find(track => track.active);
+    return this.player.getVariantTracks().find(track => track.active);
   }
 
+  /**
+   * Returns the group of the currently active track, or `undefined` if there is
+   * no such group.
+   *
+   * @returns {Group | undefined}
+   */
   findActiveGroup() {
     const track = this.findActiveTrack();
 
     if (track) {
-      const key = VariantGroups.splitRepresentationId(track.originalVideoId).group;
-      return this._groupMap[key];
+      const key =
+        VariantGroups.splitRepresentationId(track.originalVideoId).group;
+
+      return this.keyToGroup[key];
     }
   }
 
   /**
+   * Selects a track within {@link group}. Tracks that have the same audio
+   * language as the currently active track are preferred.
    *
    * @param {Group} group
    */
   selectGroup(group) {
-    if (!this._manifest) {
+    if (!this.manifest) {
       console.warn("Cannot select group: Manifest not available");
       return;
     }
 
     // NOTE: The object-based comparison is intentional and suffices to prevent
     //       re-selecting the currently active group.
-    if (this._manifest.variants !== group.variants) {
+    if (this.manifest.variants !== group.variants) {
       // Get active track before selecting group variants
       const activeTrack = this.findActiveTrack();
 
-      this._manifest.variants = group.variants;
+      this.manifest.variants = group.variants;
 
       // Basically, trigger Shaka to select a variant
       // TODO: Also consider role?
-      this._player.selectAudioLanguage(activeTrack?.language ?? 'und');
+      this.player.selectAudioLanguage(activeTrack?.language ?? 'und');
     }
   }
 
   /**
    *
+   * @protected
    * @param {Group | undefined} group
+   * @returns {boolean}
    */
   trySelectGroup(group) {
     if (group) {
@@ -147,32 +206,43 @@ export default class VariantGroups {
   }
 
   /**
+   * Selects the group specified by {@link key} (cf. {@link selectGroup}).
    *
    * @param {GroupKey} key
+   * @returns {boolean} Whether or not a relevant group has been found.
    */
   selectGroupByKey(key) {
-    return this.trySelectGroup(this._groupMap[key]);
+    return this.trySelectGroup(this.keyToGroup[key]);
   }
 
   /**
+   * Selects the group of index {@link index} (cf. {@link selectGroup}).
    *
    * @param {number} idx
+   * @returns {boolean} Whether or not a relevant group has been found.
    */
   selectGroupByIndex(idx) {
-    return this.trySelectGroup(this._groups[idx]);
+    return this.trySelectGroup(this.groups[idx]);
   }
 
   /**
+   * Selects a group of the specified {@link role} (cf. {@link selectGroup}).
    *
    * @param {string} role
+   * @returns {boolean} Whether or not a relevant group has been found.
    */
   selectGroupByRole(role) {
-    return this.trySelectGroup(this._groups.find(g => g.roles.has(role)));
+    return this.trySelectGroup(this.groups.find(g => g.roles.has(role)));
   }
 
+  /**
+   * Iterates through the groups.
+   *
+   * @returns {IterableIterator<Group>}
+   */
   *[Symbol.iterator]() {
-    for (const grpKey in this._groupMap) {
-      yield /** @type {Group} */(this._groupMap[grpKey]);
+    for (const key in this.keyToGroup) {
+      yield /** @type {Group} */(this.keyToGroup[key]);
     }
   }
 }
