@@ -81,6 +81,10 @@
 				<source><![CDATA[Mute / Unmute]]></source>
 				<target><![CDATA[Stummschaltung an / aus]]></target>
 			</trans-unit>
+			<trans-unit id="control.back" approved="yes">
+				<source><![CDATA[Back]]></source>
+				<target><![CDATA[Zurück]]></target>
+			</trans-unit>
 			<trans-unit id="control.bookmark.tooltip" approved="yes">
 				<source><![CDATA[Bookmark]]></source>
 				<target><![CDATA[Bookmark]]></target>
@@ -112,6 +116,10 @@
 			<trans-unit id="control.time.current-frame.unknown" approved="yes">
 				<source><![CDATA[(Frame Count Not Available)]]></source>
 				<target><![CDATA[(Frame-Nummer unbekannt)]]></target>
+			</trans-unit>
+			<trans-unit id="control.video-track.title" approved="yes">
+				<source><![CDATA[Video Track]]></source>
+				<target><![CDATA[Videospur]]></target>
 			</trans-unit>
 			<trans-unit id="error.load-failed" approved="yes">
 				<source><![CDATA[The video could not be loaded.]]></source>

@@ -45,6 +45,8 @@ export default class ThumbnailPreview {
     this.network = config.network;
     this.interaction = config.interaction;
 
+    this.imageTracks = [];
+
     // Make preview unselectable so that, for example, the info text won't
     // accidentally be selected when scrubbing on FlatSeekBar.
     const container = templateElement(`
@@ -108,6 +110,11 @@ export default class ThumbnailPreview {
     document.removeEventListener('pointerup', this.handlers.onPointerUp);
   }
 
+  setImageTracks(imageTracks) {
+    this.imageTracks = imageTracks;
+    this.refreshLastRendered();
+  }
+
   setCanvasResolution(width, height) {
     // Code adopted from https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio
 
@@ -120,9 +127,7 @@ export default class ThumbnailPreview {
 
     this.ctx.scale(scale, scale);
 
-    if (this.lastRendered) {
-      this.renderImage(this.lastRendered.uri, this.lastRendered.thumb, this.lastRendered.tilesetImage, true);
-    }
+    this.refreshLastRendered();
   }
 
   ensureDisplaySize(thumbWidth, thumbHeight) {
@@ -160,12 +165,14 @@ export default class ThumbnailPreview {
   getThumbsTrack() {
     const estimatedBandwidth = this.player.getStats().estimatedBandwidth;
 
-    const imageTracks = this.player.getImageTracks().filter(
-      track => track.bandwidth < estimatedBandwidth * 0.01
-    );
-    imageTracks.sort((a, b) => b.bandwidth - a.bandwidth);
+    let result;
+    for (const track of this.imageTracks) {
+      if (track.bandwidth < estimatedBandwidth * 0.01 && (!result || track.bandwidth < result.bandwidth)) {
+        result = track;
+      }
+    }
 
-    return imageTracks[0];
+    return result;
   }
 
   /**
@@ -375,6 +382,12 @@ export default class ThumbnailPreview {
 
     // If the image has just become visible, the container position may change
     this.positionContainer(seekPosition);
+  }
+
+  refreshLastRendered() {
+    if (this.lastRendered) {
+      this.renderImage(this.lastRendered.uri, this.lastRendered.thumb, this.lastRendered.tilesetImage, true);
+    }
   }
 
   /**

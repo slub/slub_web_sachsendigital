@@ -4,7 +4,9 @@ import 'shaka-player/ui/controls.less';
 import Chapters from './Chapters';
 import FlatSeekBar from './controls/FlatSeekBar';
 import PresentationTimeTracker from './controls/PresentationTimeTracker';
+import VideoTrackSelection from './controls/VideoTrackSelection';
 import Environment from './Environment';
+import VariantGroups from './VariantGroups';
 
 import '../../Less/VideoPlayer/VideoPlayer.less';
 
@@ -37,6 +39,8 @@ export default class SachsenShakaPlayer {
     this.handlers = {
       onTrackChange: this.onTrackChange.bind(this),
     };
+
+    this.variantGroups = null;
   }
 
   /**
@@ -85,14 +89,23 @@ export default class SachsenShakaPlayer {
         'fullscreen',
         'overflow_menu'
       ],
-      'overflowMenuButtons': ['language', 'playback_rate', 'loop', 'quality', 'picture_in_picture', 'captions', ...this.overflowMenuButtons],
+      'overflowMenuButtons': [
+        'language',
+        VideoTrackSelection.register(this.env),
+        'playback_rate',
+        'loop',
+        'quality',
+        'picture_in_picture',
+        'captions',
+        ...this.overflowMenuButtons,
+      ],
       'addBigPlayButton': true,
       'seekBarColors': {
         base: 'rgba(255, 255, 255, 0.3)',
         buffered: 'rgba(255, 255, 255, 0.54)',
         played: 'rgb(255, 255, 255)',
         adBreaks: 'rgb(255, 204, 0)',
-      }
+      },
     };
     ui.configure(config);
 
@@ -120,6 +133,19 @@ export default class SachsenShakaPlayer {
       imageStream.width = 1;
       imageStream.height = 1;
     }
+
+    this.variantGroups = new VariantGroups(this.player);
+
+    this.variantGroups.selectGroupByRole("main")
+      || this.variantGroups.selectGroupByIndex(0);
+
+    this.updateFrameRate();
+
+    const vgEvent = new CustomEvent(
+      'sxnd-variant-groups',
+      { detail: { variantGroups: this.variantGroups } }
+    );
+    this.controls.dispatchEvent(vgEvent);
   }
 
   onTrackChange() {
@@ -127,8 +153,7 @@ export default class SachsenShakaPlayer {
   }
 
   updateFrameRate() {
-    // There should always be at most one active variant
-    const fps = this.player.getVariantTracks().find(track => track.active)?.frameRate ?? null;
+    const fps = this.variantGroups.findActiveTrack()?.frameRate ?? null;
 
     if (fps === null) {
       this.fps = null;
