@@ -1,3 +1,10 @@
+// @ts-check
+
+/**
+ *
+ * @param {MetadataArray} metadataArray
+ * @returns {string}
+ */
 export function metadataArrayToString(metadataArray) {
   return metadataArray.screenshotFields
     .map(field => metadataArray.metadata[field])
@@ -6,57 +13,38 @@ export function metadataArrayToString(metadataArray) {
 }
 
 /**
+ * Clamps {@link value} into the closed interval [{@link min}, {@link max}].
  *
  * @param {number} value
- * @param {[number; number]} range
+ * @param {[number, number]} range
  * @returns {number}
  */
-export function numberIntoRange(value, range) {
-  if (value < range[0]) {
-    return range[0];
+export function clamp(value, [min, max]) {
+  if (value < min) {
+    return min;
   }
 
-  if (value > range[1]) {
-    return range[1];
+  if (value > max) {
+    return max;
   }
 
   return value;
 }
 
 /**
+ * Formats {@link totalSeconds} to a time string.
  *
- * @param {number} value
- * @param {[number; number]} range
- * @param {number?} tolerance
- */
-export function isValueInRange(value, range, tolerance = 0) {
-  const min = range[0] - tolerance;
-  const max = range[1] + tolerance;
-  return min <= value && value <= max;
-}
-
-/**
+ * The base format is `hh:mm:ss:ff`. Hours and frames are included depending on
+ * {@link showHour} and {@link fps}. The first part is not zero-padded.
  *
- * @param {DOMRect} rect
- * @param {{ x: number; y: number; toleranceX?: number; toleranceY?: number }} pos
+ * Adopted from shaka.ui.Utils.buildTimeString.
+ *
+ * @param {number} totalSeconds (in seconds)
+ * @param {boolean} showHour Whether or not to show hours.
+ * @param {number | null} fps (Optional) Number of FPS used to calculate frame count.
+ * @returns {string}
  */
-export function isPosInRect(rect, pos) {
-  // TODO: inclusive/exclusive?
-  return (
-    isValueInRange(pos.x, [rect.left, rect.right], pos.toleranceX)
-    && isValueInRange(pos.y, [rect.top, rect.bottom], pos.toleranceY)
-  );
-}
-
-/**
-  * Builds a time string, e.g., 1:04:23, from |totalSeconds|.
-  *
-  * @param {number} totalSeconds (in seconds)
-  * @param {boolean} showHour
-  * @param {number?} fps
-  * @return {string}
-  */
-export function buildTimeString(totalSeconds, showHour, fps) {
+export function buildTimeString(totalSeconds, showHour, fps = null) {
   const segments = showHour
     ? [totalSeconds / 3600, (totalSeconds / 60) % 60, totalSeconds % 60]
     : [totalSeconds / 60, totalSeconds % 60];
@@ -77,21 +65,31 @@ export function buildTimeString(totalSeconds, showHour, fps) {
  * Extracts the mime type from a data URL.
  *
  * @param {string} dataUrl
+ * @returns {string | undefined}
  */
 export function dataUrlMime(dataUrl) {
-  return dataUrl.match(/data:(.*);/)[1];
+  return dataUrl.match(/data:(.*);/)?.[1];
 }
 
 /**
+ * Creates a `Blob` representing the image contained in the canvas.
+ *
+ * This is a promisification of `canvas.toBlob(type, quality)`.
  *
  * @param {HTMLCanvasElement} canvas
- * @param {string?} type
- * @param {quality} quality
+ * @param {string} type
+ * @param {number} quality
  * @returns {Promise<Blob>}
  */
 export function canvasToBlob(canvas, type, quality) {
-  return new Promise(resolve => {
-    canvas.toBlob(resolve, type, quality)
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) {
+        resolve(blob);
+      } else {
+        reject();
+      }
+    }, type, quality);
   });
 }
 
@@ -103,17 +101,24 @@ export function canvasToBlob(canvas, type, quality) {
 export function blobToBinaryString(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = (e) => {
-      resolve(e.target.result);
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        resolve(reader.result);
+      } else {
+        reject(null);
+      }
     };
-    reader.onerror = (e) => {
-      reject(e.target.error);
+    reader.onerror = () => {
+      reject(reader.error);
     };
     reader.readAsBinaryString(blob);
   });
 }
 
 /**
+ * Calls {@link callback} with a temporary object URL to {@link obj} (the object
+ * URL is revoked automatically).
+ *
  * @template T
  * @param {Blob | MediaSource} obj
  * @param {(objectUrl: string) => T} callback
@@ -146,18 +151,25 @@ export function binaryStringToArrayBuffer(s) {
 }
 
 /**
+ * Parses {@link html} into an `HTMLElement`.
  *
  * @param {string} html
+ * @returns {HTMLElement | null}
  */
 export function templateElement(html) {
   const template = document.createElement("template");
   template.innerHTML = html;
-  return template.content.firstElementChild;
+  const element = template.content.firstElementChild;
+  return element instanceof HTMLElement
+    ? element
+    : null;
 }
 
 /**
+ * Sanitizes {@link str} for use in a file name.
  *
  * @param {string} str
+ * @returns {string}
  */
 export function sanitizeBasename(str) {
   const result = str.replace(/[^a-zA-Z0-9()]+/g, "_");
@@ -172,6 +184,11 @@ export const HttpStatusGroup = {
   ServerError: 5,
 };
 
+/**
+ * Groups HTTP status code into its {@link HttpStatusGroup}.
+ *
+ * @param {number} code
+ */
 export function getHttpStatusGroup(code) {
   return Math.floor(code / 100);
 }

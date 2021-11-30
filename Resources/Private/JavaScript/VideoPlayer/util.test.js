@@ -1,11 +1,14 @@
-import { Blob } from 'buffer';
-import { buildTimeString, dataUrlMime, numberIntoRange, sanitizeBasename, withObjectUrl } from './util';
+// @ts-check
 
-describe('numberIntoRange', () => {
+import { describe, expect, test, jest } from '@jest/globals';
+import { Blob } from 'buffer';
+import { buildTimeString, dataUrlMime, clamp, sanitizeBasename, withObjectUrl } from './util';
+
+describe('clamp', () => {
   test('basic', () => {
-    expect(numberIntoRange(1, [2, 3])).toBe(2);
-    expect(numberIntoRange(2.5, [2, 3])).toBe(2.5);
-    expect(numberIntoRange(4, [2, 3])).toBe(3);
+    expect(clamp(1, [2, 3])).toBe(2);
+    expect(clamp(2.5, [2, 3])).toBe(2.5);
+    expect(clamp(4, [2, 3])).toBe(3);
   });
 });
 
@@ -35,13 +38,17 @@ describe('buildTimeString', () => {
 describe('dataUrlMime', () => {
   test('basic', () => {
     expect(dataUrlMime('data:image/png;abc')).toBe("image/png");
+    expect(dataUrlMime('data:;')).toBe("");
+    expect(dataUrlMime('data;')).toBe(undefined);
+    expect(dataUrlMime('something')).toBe(undefined);
   });
 });
 
 describe('withObjectUrl', () => {
   test('returns result of callback', () => {
+    // @ts-expect-error: DOM Blob vs Node Blob (TODO)
     expect(withObjectUrl(new Blob(), () => 1)).toBe(1);
-  })
+  });
 
   test('revokes despite throw', () => {
     const spyRevoke = jest.spyOn(URL, 'revokeObjectURL');
@@ -49,6 +56,7 @@ describe('withObjectUrl', () => {
     let blobObjectUrl;
 
     expect(() => {
+      // @ts-expect-error: DOM Blob vs Node Blob (TODO)
       withObjectUrl(new Blob(), (objectUrl) => {
         blobObjectUrl = objectUrl;
         throw new Error();
@@ -65,5 +73,5 @@ describe('sanitizeBasename', () => {
     expect(sanitizeBasename("Just for Fun")).toBe("Just_for_Fun");
     expect(sanitizeBasename("..")).toBe("_");
     expect(sanitizeBasename("1:2:3")).toBe("1_2_3");
-  })
+  });
 });

@@ -5,7 +5,10 @@
   "scripts": {
     "watch": "webpack watch --mode=development",
     "build": "webpack --mode=production",
-    "test": "jest"
+    "test": "jest",
+    "tsc": "tsc --project ../jsconfig.json",
+    "tsc-watch": "npm run tsc -- --watch",
+    "typecheck": "npm run tsc && echo 'Alright.'"
   },
   "repository": {
     "type": "git",
@@ -18,7 +21,7 @@
     "@babel/core": "^7.15.5",
     "@babel/plugin-transform-runtime": "^7.15.8",
     "@babel/preset-env": "^7.15.6",
-    "@types/jest": "^27.0.1",
+    "@types/jest": "^27.0.3",
     "@types/jquery": "^3.5.6",
     "babel-jest": "^27.2.1",
     "canvas": "^2.8.0",
@@ -29,6 +32,7 @@
     "less": "^3.13.1",
     "less-loader": "^10.0.1",
     "mini-css-extract-plugin": "^2.3.0",
+    "typescript": "^4.5.2",
     "webpack": "^5.52.1",
     "webpack-cli": "^4.8.0",
     "webpack-remove-empty-scripts": "^0.7.1"

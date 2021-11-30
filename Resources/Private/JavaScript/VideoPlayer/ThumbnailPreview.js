@@ -1,7 +1,7 @@
 import shaka from 'shaka-player/dist/shaka-player.ui';
 
 import ImageFetcher from './ImageFetcher';
-import { buildTimeString, isPosInRect, numberIntoRange, templateElement } from './util';
+import { buildTimeString, clamp, templateElement } from './util';
 
 /**
  * @typedef {{
@@ -223,7 +223,7 @@ export default class ThumbnailPreview {
     const secondsPerPixel = duration / bounding.width;
 
     let absolute = e.clientX - bounding.left;
-    let seconds = numberIntoRange(absolute * secondsPerPixel, [0, duration]);
+    let seconds = clamp(absolute * secondsPerPixel, [0, duration]);
     const chapter = this.getChapter(seconds);
     let onChapterMarker = false;
 
@@ -397,7 +397,7 @@ export default class ThumbnailPreview {
   positionContainer(seekPosition) {
     // Align the container so that the mouse underneath is centered,
     // but avoid overflowing at the left or right of the seek bar
-    const containerX = numberIntoRange(
+    const containerX = clamp(
       seekPosition.absolute - this.dom.container.offsetWidth / 2,
       [0, this.seekBar.clientWidth - this.dom.container.offsetWidth]
     );
