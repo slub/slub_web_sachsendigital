@@ -434,49 +434,65 @@ exports[`can open screenshot overlay 1`] = `
   </div>
   <div
     class="body-container"
+    style="max-height: calc(0px - 11rem);"
   >
     <div
       class="screenshot-config"
     >
       
         
-      <input
+      <span
         class="show-metadata"
-        id="__autoid_1"
-        type="checkbox"
-      />
-      <!--
-        -->
-      <label
-        for="__autoid_1"
       >
-         Metadaten einblenden
-      </label>
+        
+          
+        <input
+          id="__autoid_1"
+          type="checkbox"
+        />
+        <!--
+          -->
+        <label
+          for="__autoid_1"
+        />
+        
+        
+      </span>
       
 
         ·
 
-        Dateiformat:
         
       <span
-        class="image-formats"
+        class="image-format"
       >
-        <input
-          id="__autoid_3"
-          name="__autoid_2"
-          type="radio"
-        />
-        <label
-          for="__autoid_3"
-        />
-        <input
-          id="__autoid_4"
-          name="__autoid_2"
-          type="radio"
-        />
-        <label
-          for="__autoid_4"
-        />
+        
+          
+        <label />
+        :
+          
+        <span
+          class="format-list"
+        >
+          <input
+            id="__autoid_3"
+            name="__autoid_2"
+            type="radio"
+          />
+          <label
+            for="__autoid_3"
+          />
+          <input
+            id="__autoid_4"
+            name="__autoid_2"
+            type="radio"
+          />
+          <label
+            for="__autoid_4"
+          />
+        </span>
+        
+        
       </span>
       
 
@@ -486,9 +502,7 @@ exports[`can open screenshot overlay 1`] = `
       <a
         class="download-image"
         href="#"
-      >
-        Bild herunterladen
-      </a>
+      />
       
       
     </div>

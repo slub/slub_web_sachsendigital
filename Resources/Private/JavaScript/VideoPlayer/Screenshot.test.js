@@ -12,6 +12,21 @@ beforeEach(() => {
   document.body.innerHTML = '';
 });
 
+function getEnvironment() {
+  const env = new Environment();
+  env.setLang({
+    locale: 'en_US',
+    twoLetterIsoCode: 'en',
+    phrases: {
+      'modal.screenshot.title': "Screenshot",
+      'modal.screenshot.download-image': "Download Image",
+      'modal.screenshot.show-metadata': "Show Metadata",
+      'modal.screenshot.file-format': "File Format",
+    },
+  });
+  return env;
+}
+
 function getTestMetadataArray() {
   return {
     metadata: {
@@ -34,7 +49,7 @@ test('can open screenshot overlay', async () => {
   expect(overlay()).toBeNull();
 
   // opened; exact tags are in snapshot
-  const modal = new ScreenshotModal(document.body, new Environment(), {
+  const modal = new ScreenshotModal(document.body, getEnvironment(), {
     video: new VideoMock(1920, 1080),
   });
   modal.setMetadata(getTestMetadataArray());

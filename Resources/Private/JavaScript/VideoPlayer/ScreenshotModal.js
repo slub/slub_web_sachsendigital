@@ -50,9 +50,9 @@ export default class ScreenshotModal extends SimpleModal {
     this._videoDomElement = config.video;
   }
 
-  _createDom() {
-    const env = this._state.env;
-    const dom = super._createDom("screenshot-modal");
+  createDom() {
+    const env = this.state.env;
+    const dom = super.createDom("screenshot-modal");
 
     dom.title.innerText = env.t('modal.screenshot.title');
 
@@ -78,7 +78,7 @@ export default class ScreenshotModal extends SimpleModal {
       </div>
     `);
     dom.showMetadata = dom.config.querySelector('.show-metadata input[type=checkbox]');
-    dom.showMetadata.checked = this._state.showMetadata;
+    dom.showMetadata.checked = this.state.showMetadata;
     dom.showMetadata.addEventListener('change', this.handleChangeShowMetadata.bind(this));
     dom.showMetadataLabel = dom.config.querySelector('.show-metadata label');
     dom.showMetadataLabel.innerText = env.t('modal.screenshot.show-metadata');
@@ -86,14 +86,14 @@ export default class ScreenshotModal extends SimpleModal {
     dom.formatListLabel.innerText = env.t('modal.screenshot.file-format');
     dom.formatListSpan = dom.config.querySelector('.image-format .format-list');
     const radioGroup = env.mkid();
-    for (const format of this._state.supportedImageFormats) {
+    for (const format of this.state.supportedImageFormats) {
       const radioId = env.mkid();
 
       const radio = document.createElement('input');
       radio.id = radioId;
       radio.name = radioGroup;
       radio.type = 'radio';
-      radio.checked = format.mimeType === this._state.selectedImageFormat.mimeType;
+      radio.checked = format.mimeType === this.state.selectedImageFormat.mimeType;
       radio.addEventListener('change', () => {
         this.setState({
           selectedImageFormat: format,
@@ -139,10 +139,10 @@ export default class ScreenshotModal extends SimpleModal {
     // We could've set `downloadImage.href` in `render()` or in the radio box
     // change listener, but avoid this for performance reasons
 
-    const imageFormat = this._state.selectedImageFormat;
-    const imageTitle = this._state.metadata.metadata.title;
+    const imageFormat = this.state.selectedImageFormat;
+    const imageTitle = this.state.metadata.metadata.title;
 
-    const imageBlob = await canvasToBlob(this._dom.canvas, imageFormat.mimeType);
+    const imageBlob = await canvasToBlob(this.dom.canvas, imageFormat.mimeType);
     const imageDataStr = await blobToBinaryString(imageBlob);
     const image = imageFormat.parseBinaryString(imageDataStr);
 
@@ -151,7 +151,7 @@ export default class ScreenshotModal extends SimpleModal {
     if (image) {
       // TODO: Extract this to avoid redundancy with BookmarkModal?
       const url = new URL(window.location);
-      url.searchParams.set('timecode', this._state.timecode);
+      url.searchParams.set('timecode', this.state.timecode);
 
       image.addMetadata({
         title: imageTitle,
@@ -166,7 +166,7 @@ export default class ScreenshotModal extends SimpleModal {
       const a = document.createElement("a");
       a.href = objectUrl;
       // NOTE: Don't localize (English file name prefix should be alright)
-      a.download = sanitizeBasename(`Screenshot-${imageTitle}-T${buildTimeString(this._state.timecode, true)}`);
+      a.download = sanitizeBasename(`Screenshot-${imageTitle}-T${buildTimeString(this.state.timecode, true)}`);
       a.click();
     });
   }
@@ -176,8 +176,8 @@ export default class ScreenshotModal extends SimpleModal {
 
     const { show, metadata, showMetadata } = state;
 
-    if (show && (!this._state.show || showMetadata !== this._state.showMetadata)) {
-      drawCanvas(this._dom.canvas, this._videoDomElement, {
+    if (show && (!this.state.show || showMetadata !== this.state.showMetadata)) {
+      drawCanvas(this.dom.canvas, this._videoDomElement, {
         captions: showMetadata
           ? [
             { v: 'bottom', h: 'left', text: "https://sachsen.digital" },

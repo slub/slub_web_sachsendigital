@@ -47,10 +47,10 @@ export default class HelpModal extends SimpleModal {
     });
   }
 
-  _createDom() {
-    const { env, config: { constants, keybindings } } = this._state;
+  createDom() {
+    const { env, config: { constants, keybindings } } = this.state;
 
-    const dom = super._createDom("help-modal");
+    const dom = super.createDom("help-modal");
 
     dom.title.innerText = env.t('modal.help.title');
 

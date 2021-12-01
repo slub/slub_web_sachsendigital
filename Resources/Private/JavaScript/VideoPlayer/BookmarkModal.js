@@ -17,10 +17,10 @@ export default class BookmarkModal extends SimpleModal {
     });
   }
 
-  _createDom() {
-    const env = this._state.env;
+  createDom() {
+    const env = this.state.env;
 
-    const dom = super._createDom("bookmark-modal");
+    const dom = super.createDom("bookmark-modal");
 
     dom.title.innerText = env.t('modal.bookmark.title');
 
@@ -53,12 +53,12 @@ export default class BookmarkModal extends SimpleModal {
   }
 
   async handleCopyToClipboard() {
-    const url = this.generateUrl(this._state).toString();
+    const url = this.generateUrl(this.state).toString();
 
     // Besides being necessary for `execCommand`, the focus is also meant to
     // provide visual feedback to the user.
     // TODO: Improve user feedback, also when an exception occurs
-    this._dom.url.focus();
+    this.dom.url.focus();
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
     } else {
@@ -97,19 +97,19 @@ export default class BookmarkModal extends SimpleModal {
 
     const { env, show, timecode, fps, startAtTimecode } = state;
 
-    this._dom.url.value = this.generateUrl(state).toString();
+    this.dom.url.value = this.generateUrl(state).toString();
 
     if (timecode === null || timecode === 0) {
-      this._dom.startAt.classList.remove('shown');
+      this.dom.startAt.classList.remove('shown');
     } else {
-      this._dom.startAtTimecodeCheck.checked = startAtTimecode;
-      this._dom.startAtTimecodeLabel.innerText = env.t('modal.bookmark.start-at-current-time', { timecode: buildTimeString(timecode, true, fps) });
+      this.dom.startAtTimecodeCheck.checked = startAtTimecode;
+      this.dom.startAtTimecodeLabel.innerText = env.t('modal.bookmark.start-at-current-time', { timecode: buildTimeString(timecode, true, fps) });
 
-      this._dom.startAt.classList.add('shown');
+      this.dom.startAt.classList.add('shown');
     }
 
-    if (show && show !== this._state.show) {
-      this._dom.url.select();
+    if (show && show !== this.state.show) {
+      this.dom.url.select();
     }
   }
 }

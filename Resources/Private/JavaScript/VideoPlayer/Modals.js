@@ -1,16 +1,56 @@
+// @ts-check
+
+import SimpleModal from './SimpleModal';
+
 /**
- * @template T
+ * @typedef Modals
+ * @property {() => boolean} hasOpen
+ * @property {() => void} closeNext
+ * @property {() => void} closeAll
+ * @property {() => Promise<void>} update
+ */
+
+/**
+ * Mixin to add modal-related utility functions to set of modals.
+ *
+ * @template {Record<string, SimpleModal<any>>} T
  * @param {T} modals
+ * @returns {T & Modals}
  */
 export default function Modals(modals) {
-  const result = Object.assign({}, modals);
-
   const modalsArray = Object.values(modals);
+
+  /** @type {T & Modals} */
+  const result = {
+    ...modals,
+    hasOpen: () => {
+      return modalsArray.some(modal => modal.isOpen);
+    },
+    closeNext: () => {
+      for (const modal of modalsArray) {
+        // TODO: Close topmost? Close most recently opened?
+        if (modal.isOpen) {
+          modal.close();
+          break;
+        }
+      }
+    },
+    closeAll: () => {
+      for (const modal of modalsArray) {
+        modal.close();
+      }
+    },
+    update: async () => {
+      await Promise.all(
+        modalsArray.map(modal => modal.update())
+      );
+    },
+  };
 
   // Set DOM element that is used to cover the background of the modals. It is
   // used to make sure that when a modal is open, the background won't respond
-  // to mouse actions. It also makes it simpler to detect clicking outside of an
-  // open modal.
+  // to mouse actions. It also makes it simpler to detect clicking outside of
+  // an open modal.
   const modalCover = document.createElement('div');
   modalCover.className = "sxnd-modal-cover";
   modalCover.addEventListener('click', () => {
@@ -33,26 +73,6 @@ export default function Modals(modals) {
         modalCover.classList.remove('shown');
       }
     });
-  }
-
-  result.hasOpen = () => {
-    return modalsArray.some(modal => modal.isOpen);
-  }
-
-  result.closeNext = () => {
-    for (const modal of modalsArray) {
-      // TODO: Close topmost? Close most recently opened?
-      if (modal.isOpen) {
-        modal.close();
-        break;
-      }
-    }
-  }
-
-  result.closeAll = () => {
-    for (const modal of modalsArray) {
-      modal.close();
-    }
   }
 
   return result;

@@ -1,50 +1,65 @@
+// @ts-check
+
 import $ from 'jquery';
 
 import Component from './Component';
 
+/**
+ * @typedef {{
+ *  show: boolean;
+ * }} BaseState
+ */
+
+/**
+ * @template {object} ModalState
+ * @extends {Component<BaseState & ModalState>}
+ */
 export default class SimpleModal extends Component {
   /**
    *
    * @param {HTMLElement} parent
+   * @param {ModalState & Partial<BaseState>} state
    */
-  constructor(parent, state = {}) {
+  constructor(parent, state) {
     super({
       show: false,
       ...state,
     });
 
-    this._parent = parent;
+    /**
+     * @private
+     */
+    this.parent = parent;
 
     /**
-     * Whether a show or hide animation is currently running. This is to avoid
-     * a "backlog" of animations when the user keeps pressing a key that toggles
+     * Whether a show/hide animation is currently running. This is to avoid
+     * "backlogs" of animations when the user keeps pressing a key that toggles
      * modal visibility.
+     *
+     * @private
      */
-    this._isAnimating = false;
+    this.isAnimating = false;
 
-    this._dom = this._createDom();
-    this._dom.close.addEventListener('click', this.close.bind(this));
+    /**
+     * @protected
+     */
+    this.dom = this.createDom();
+    this.dom.close.addEventListener('click', this.close.bind(this));
 
-    this._parent.append(this._dom.main);
+    this.parent.append(this.dom.main);
 
-    this._$main = $(this._dom.main);
+    /**
+     * @private
+     */
+    this.$main = $(this.dom.main);
 
     this.resize();
-  }
-
-  resize() {
-    // TODO: Find a CSS-only approach. It should
-    //  - resize dynamically relative to the parent's height (not to viewport)
-    //  - allow to scroll on body when overflowing
-    //  - allow transparent background of modal
-    //  - allow to center the modal vertically
-    this._dom.body.style.maxHeight = `calc(${this._parent.clientHeight}px - 11rem)`;
   }
 
   /**
    * @protected
    */
-  _createDom(className = "") {
+  createDom(className = "") {
     const dom = {
       main: document.createElement("div"),
       headline: document.createElement("div"),
@@ -64,38 +79,68 @@ export default class SimpleModal extends Component {
     return dom;
   }
 
-  get isOpen() {
-    return this._state.show;
+  resize() {
+    // TODO: Find a CSS-only approach. It should
+    //  - resize dynamically relative to the parent's height (not to viewport)
+    //  - allow to scroll on body when overflowing
+    //  - allow transparent background of modal
+    //  - allow to center the modal vertically
+    this.dom.body.style.maxHeight =
+      `calc(${this.parent.clientHeight}px - 11rem)`;
   }
 
+  /**
+   * Whether or not the modal is currently open.
+   *
+   * @returns {boolean}
+   */
+  get isOpen() {
+    return this.state.show;
+  }
+
+  /**
+   * Opens or closes the modal depending on {@link value}.
+   *
+   * @param {boolean} value
+   */
   open(value = true) {
-    if (this._isAnimating) {
+    if (this.isAnimating) {
       return;
     }
 
+    // @ts-expect-error TODO: Why wouldn't this work?
     this.setState({
       show: value,
     });
   }
 
+  /**
+   * Closes the modal.
+   */
   close() {
     this.open(false);
   }
 
+  /**
+   * Toggles whether the modal is opened.
+   */
   toggle() {
-    this.open(!this._state.show);
+    this.open(!this.state.show);
   }
 
+  /**
+   * @param {BaseState & ModalState} state
+   */
   render(state) {
     const { show } = state;
 
-    if (show != this._state.show) {
-      this._isAnimating = true;
+    if (show != this.state.show) {
+      this.isAnimating = true;
       const fn = show ? 'show' : 'hide';
-      this._$main[fn]({
+      this.$main[fn]({
         duration: 'fast',
         complete: () => {
-          this._isAnimating = false;
+          this.isAnimating = false;
         },
       });
     }

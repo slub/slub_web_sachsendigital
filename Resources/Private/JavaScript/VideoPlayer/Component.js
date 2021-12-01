@@ -1,50 +1,100 @@
-export default class Component {
-  constructor(state = {}) {
-    this._state = state;
+// @ts-check
 
-    this._pendingStateUpdates = [];
-    this._renderTimeout = null;
-    this._renderPromise = Promise.resolve();
+import EventEmitter from 'events';
 
-    this._eventCallbacks = {
-      'updated': [],
-    };
+/**
+ * @template {object} State
+ */
+export default class Component extends EventEmitter {
+  /**
+   *
+   * @param {State} state
+   */
+  constructor(state) {
+    super();
+
+    /**
+     * @protected
+     * @type {State}
+     */
+    this.state = state;
+
+    /**
+     * @private
+     * @type {Partial<State>[]}
+     */
+    this.pendingStateUpdates = [];
+
+    /**
+     * @private
+     * @type {ReturnType<setTimeout> | null}
+     */
+    this.renderTimeout = null;
+
+    /**
+     * @private
+     * @type {Promise<void>}
+     */
+    this.renderPromise = Promise.resolve();
   }
 
-  on(event, callback) {
-    this._eventCallbacks[event].push(callback);
-  }
-
-  update() {
-    return this._renderPromise;
-  }
-
+  /**
+   *
+   * @param {Partial<State>} state
+   */
   setState(state = {}) {
-    this._pendingStateUpdates.push(state);
+    this.pendingStateUpdates.push(state);
 
     // Postpone updates so that multiple synchronous calls to `setState` don't
     // lead to multiple renderings.
-    if (!this._renderTimeout) {
-      this._renderPromise = new Promise(resolve => {
-        this._renderTimeout = setTimeout(() => {
-          const state = this._pendingStateUpdates.reduce(Object.assign, {});
-          const newState = Object.assign({}, this._state, state);
+    if (!this.renderTimeout) {
+      this.renderPromise = new Promise((resolve) => {
+        this.renderTimeout = setTimeout(() => {
+          const stateUpdate = this.squashStateUpdates();
+          const newState = Object.assign({}, this.state, stateUpdate);
           this.render(newState);
-          this._state = newState;
-          this._pendingStateUpdates = [];
-          this._renderTimeout = null;
-          this._renderPromise = Promise.resolve();
-          for (const handler of this._eventCallbacks.updated) {
-            handler(newState);
-          }
+          this.state = newState;
+          this.renderTimeout = null;
+          this.renderPromise = Promise.resolve();
+          this.emit('updated', newState);
           resolve();
         });
-      })
+      });
     }
   }
 
   /**
+   * Returns a promise of any pending rerender being completed. (If no rerender
+   * is pending, the returned promise is already resolved.)
+   *
+   * @returns {Promise<void>}
+   */
+  update() {
+    return this.renderPromise;
+  }
+
+  /**
+   * @private
+   * @returns {Partial<State>}
+   */
+  squashStateUpdates() {
+    const stateUpdate = this.pendingStateUpdates.reduce(
+      (prev, cur, _currentIndex, _array) => Object.assign(prev, cur),
+      {}
+    );
+    this.pendingStateUpdates = [];
+    return stateUpdate;
+  }
+
+  /**
+   * Rerenders the component based on new state.
+   *
+   * `this.state` still refers to the old state during execution of this method,
+   * which you may use to detect state changes.
+   *
    * @abstract
+   * @protected
+   * @param {State} state The updated state
    */
   render(state) {
     //
