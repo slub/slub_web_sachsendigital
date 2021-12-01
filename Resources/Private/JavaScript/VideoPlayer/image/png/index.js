@@ -139,7 +139,7 @@ export default class PNG {
 
   /**
    *
-   * @param {Partial<import("../metadata").ImageMetadata>} metadata
+   * @param {Partial<ImageMetadata>} metadata
    */
   addMetadata(metadata) {
     // Predefined keywords in PNG textual chunks:

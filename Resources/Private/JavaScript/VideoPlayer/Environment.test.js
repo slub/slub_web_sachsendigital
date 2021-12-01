@@ -2,6 +2,9 @@
  * @jest-environment jsdom
  */
 
+// @ts-check
+
+import { describe, expect, test } from '@jest/globals';
 import Environment from './Environment';
 
 describe('mkid', () => {
@@ -28,7 +31,7 @@ describe('setLang / t', () => {
   test('basic', () => {
     const env = new Environment();
     env.setLang({
-      locale: 'en',
+      twoLetterIsoCode: 'en',
       phrases: {
         'apple': "{count, plural, =0 {no apple} one {one apple} other {# apples}}",
       },

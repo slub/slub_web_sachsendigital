@@ -169,7 +169,11 @@ class SxndPlayerApp {
     video.style.height = "100%";
     this.container.append(video);
 
-    const chapters = new Chapters(this.videoInfo.chapters);
+    const chapterInfos = this.videoInfo.chapters.map(chapter => ({
+      ...chapter,
+      timecode: parseInt(chapter.timecode, 10),
+    }));
+    const chapters = new Chapters(chapterInfos, this.env);
 
     let timecode = new URL(window.location).searchParams.get('timecode');
     if (timecode === null && this.videoInfo.pageNo !== undefined) {

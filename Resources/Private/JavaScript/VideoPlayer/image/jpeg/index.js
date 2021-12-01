@@ -20,7 +20,7 @@ export default class JPEG {
 
   /**
    *
-   * @param {Partial<import("../metadata").ImageMetadata>} metadata
+   * @param {Partial<ImageMetadata>} metadata
    */
   addMetadata(metadata) {
     if (metadata.title) {

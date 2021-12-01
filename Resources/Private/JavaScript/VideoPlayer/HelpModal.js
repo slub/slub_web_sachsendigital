@@ -4,7 +4,7 @@ import { templateElement } from './util';
 /**
  * @typedef {string} KeybindingKind See `Keybinding::kind`.
  * @typedef {string} KeybindingAction See `Keybinding::action`.
- * @typedef {import('./Keyboard').Keybinding<string, KeybindingAction>} ShownKeybinding
+ * @typedef {Keybinding<string, KeybindingAction>} ShownKeybinding
  * @typedef {Record<KeybindingKind, Record<KeybindingAction, ShownKeybinding[]>>} KeybindingGroups
  */
 
