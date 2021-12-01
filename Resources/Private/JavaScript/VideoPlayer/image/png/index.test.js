@@ -1,6 +1,9 @@
-// simple test
-import PNG, { stoi, itos } from '.';
+// @ts-check
+
+import { describe, expect, it, test } from '@jest/globals';
 import fs from 'fs';
+
+import PNG, { stoi, itos } from '.';
 
 describe('test', function () {
   it('stoi', function () {
@@ -16,7 +19,7 @@ describe('test', function () {
 
   it('splitChunk', function () {
     const png = PNG.fromBinaryString(data);
-    const dataReencoded = png.toBinaryString();
+    const dataReencoded = png?.toBinaryString();
 
     expect(data).toBe(dataReencoded);
   });
@@ -33,7 +36,13 @@ describe('test', function () {
 });
 
 describe('PNG.createChunk', () => {
-  test('sanitizes iTXt keyboard with null byte', () => {
-    expect(PNG.createChunk({ type: 'iTXt', keyword: "A\0B", text: "Data" }).data).toBe("AB\0\0\0\0\0Data");
-  })
-})
+  test('sanitizes iTXt keyword with null byte', () => {
+    const chunk = PNG.createChunk({
+      type: 'iTXt',
+      keyword: "A\0B",
+      text: "Data",
+    });
+
+    expect(chunk.data).toBe("AB\0\0\0\0\0Data");
+  });
+});

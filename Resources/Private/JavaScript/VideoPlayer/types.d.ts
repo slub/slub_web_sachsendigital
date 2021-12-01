@@ -1,3 +1,5 @@
+type ValueOf<T> = T[keyof T];
+
 type Chapter = {
   title: string;
   timecode: number;

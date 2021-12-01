@@ -78,11 +78,11 @@ export function dataUrlMime(dataUrl) {
  * This is a promisification of `canvas.toBlob(type, quality)`.
  *
  * @param {HTMLCanvasElement} canvas
- * @param {string} type
- * @param {number} quality
+ * @param {string} mimeType
+ * @param {number} quality JPEG or WebP image quality in range [0, 1].
  * @returns {Promise<Blob>}
  */
-export function canvasToBlob(canvas, type, quality) {
+export function canvasToBlob(canvas, mimeType, quality) {
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (blob) {
@@ -90,7 +90,7 @@ export function canvasToBlob(canvas, type, quality) {
       } else {
         reject();
       }
-    }, type, quality);
+    }, mimeType, quality);
   });
 }
 
