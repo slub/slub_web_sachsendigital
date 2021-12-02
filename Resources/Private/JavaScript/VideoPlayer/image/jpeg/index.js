@@ -9,6 +9,9 @@ import piexifjs from 'piexifjs';
  * }} ExifData
  */
 
+/**
+ * @implements {ImageFormat}
+ */
 export default class JPEG {
   /**
    *

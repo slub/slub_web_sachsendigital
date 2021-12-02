@@ -114,6 +114,15 @@ export default class Environment {
   }
 
   /**
+   * Returns the current window location URL.
+   *
+   * @returns {URL}
+   */
+  getLocation() {
+    return new URL(window.location.href);
+  }
+
+  /**
    *
    * @private
    * @returns {HTMLCanvasElement}

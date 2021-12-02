@@ -62,18 +62,6 @@ class SxndPlayerApp {
       return;
     }
 
-    // TODO: Use arrays inside the app, avoid this transformation?
-    const videoMetadata = this.videoInfo.metadata.metadata;
-    for (const key of Object.keys(videoMetadata)) {
-      if (Array.isArray(videoMetadata[key])) {
-        if (videoMetadata[key].length > 0) {
-          videoMetadata[key] = videoMetadata[key][0];
-        } else {
-          delete videoMetadata[key];
-        }
-      }
-    }
-
     this.actions = {
       'cancel': () => {
         this.hideThumbnailPreview();

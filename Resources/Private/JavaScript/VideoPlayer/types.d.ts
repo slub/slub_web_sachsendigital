@@ -5,6 +5,17 @@ type Chapter = {
   timecode: number;
 };
 
+interface ImageFormat {
+  addMetadata(metadata: Partial<ImageMetadata>);
+  toBinaryString(): string;
+}
+
+type ImageFormatDesc = {
+  mimeType: string;
+  label: string;
+  parseBinaryString: (s: string) => ImageFormat | undefined;
+};
+
 type ImageMetadata = {
   title: string;
   comment: string;
@@ -63,7 +74,7 @@ type LangDef = {
 };
 
 type MetadataArray = {
-  metadata: Record<string, string | string[]>;
+  metadata: Record<string, string[]>;
   screenshotFields: string[];
 };
 

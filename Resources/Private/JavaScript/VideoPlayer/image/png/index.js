@@ -22,6 +22,9 @@ export function isPNG(s) {
  * @typedef {{ size: number; type: string; data: string; crc: number; }} Chunk
  */
 
+/**
+ * @implements {ImageFormat}
+ */
 export default class PNG {
   /**
    * @param {Chunk} headerChunk

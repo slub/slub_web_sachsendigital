@@ -3,7 +3,7 @@
  */
 
 import Environment from './Environment';
-import { drawCanvas } from './Screenshot';
+import { drawScreenshot } from './Screenshot';
 import ScreenshotModal from './ScreenshotModal';
 import { metadataArrayToString } from './util';
 
@@ -30,14 +30,12 @@ function getEnvironment() {
 function getTestMetadataArray() {
   return {
     metadata: {
-      title: "Test Video",
-      year: "1912",
-      not_a_string: 123,
+      title: ["Test Video"],
+      year: ["1912"],
     },
     screenshotFields: [
       "title",
       "year",
-      "not_a_string",
     ],
   };
 }
@@ -86,7 +84,7 @@ test('can draw to canvas', () => {
     const canvas = document.createElement("canvas");
     const context = canvas.getContext('2d');
 
-    drawCanvas(context, video, {
+    drawScreenshot(context, video, {
       captions: [
         { v: 'top', h: 'left', text: "top left" },
         { v: 'top', h: 'right', text: "top right" },

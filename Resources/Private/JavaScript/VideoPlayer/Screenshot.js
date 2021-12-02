@@ -1,5 +1,12 @@
+// @ts-check
+
 /**
- * @typedef {{ h: 'left' | 'right'; v: 'top' | 'bottom'; text: string; }} ScreenshotCaption
+ * @typedef {{
+ *  h: 'left' | 'right';
+ *  v: 'top' | 'bottom';
+ *  text: string;
+ * }} ScreenshotCaption
+ *
  * @typedef {{
  *  captions: ScreenshotCaption[];
  * }} ScreenshotConfig
@@ -7,20 +14,30 @@
 
 /**
  *
- * @param {HTMLCanvasElement | CanvasRenderingContext2D} target Canvas on which the screenshot is drawn
- * @param {HTMLVideoElement} videoDomElement Source video element from which the screenshot is taken
+ * @param {HTMLCanvasElement | CanvasRenderingContext2D} target Canvas to which
+ * the screenshot is drawn
+ * @param {HTMLVideoElement} videoDomElement Source video element from which
+ * the screenshot is taken
  * @param {ScreenshotConfig} config
+ * @returns {boolean}
  */
-export function drawCanvas(target, videoDomElement, config) {
+export function drawScreenshot(target, videoDomElement, config) {
   const [targetCanvas, context] =
     target instanceof HTMLCanvasElement
       ? [target, target.getContext('2d')]
       : [target.canvas, target];
 
+  if (context === null) {
+    return false;
+  }
+
   targetCanvas.width = videoDomElement.videoWidth;
   targetCanvas.height = videoDomElement.videoHeight;
 
-  context.drawImage(videoDomElement, 0, 0, targetCanvas.width, targetCanvas.height);
+  context.drawImage(
+    videoDomElement,
+    0, 0, targetCanvas.width, targetCanvas.height
+  );
 
   const unitHeight = targetCanvas.height / 1080;
   const textPad = 10 * unitHeight;
@@ -37,4 +54,6 @@ export function drawCanvas(target, videoDomElement, config) {
     context.textAlign = caption.h;
     context.fillText(caption.text, x, y);
   }
+
+  return true;
 }

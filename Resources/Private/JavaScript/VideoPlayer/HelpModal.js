@@ -1,5 +1,8 @@
+// @ts-check
+
+import Environment from './Environment';
 import SimpleModal from './SimpleModal';
-import { templateElement } from './util';
+import { e } from './util';
 
 /**
  * @typedef {string} KeybindingKind See `Keybinding::kind`.
@@ -9,6 +12,8 @@ import { templateElement } from './util';
  */
 
 /**
+ * Groups list of keybindings by overall group (used to split by tables)
+ * and action.
  *
  * @param {ShownKeybinding[]} keybindings
  * @returns {KeybindingGroups}
@@ -25,115 +30,135 @@ function groupKeybindings(keybindings) {
   keybindingsSorted.sort((a, b) => a.order - b.order);
 
   for (const kb of keybindingsSorted) {
-    if (!result[kb.kind]) {
-      result[kb.kind] = {};
+    let kind = result[kb.kind];
+    if (!kind) {
+      kind = result[kb.kind] = {};
     }
 
-    if (!result[kb.kind][kb.action]) {
-      result[kb.kind][kb.action] = [];
+    let action = kind[kb.action];
+    if (!action) {
+      action = kind[kb.action] = [];
     }
 
-    result[kb.kind][kb.action].push(kb);
+    action.push(kb);
   }
 
   return result;
 }
 
+/**
+ * @extends {SimpleModal<{}>}
+ */
 export default class HelpModal extends SimpleModal {
+  /**
+   *
+   * @param {HTMLElement} parent
+   * @param {Environment} env
+   * @param {object} config
+   * @param {Record<string, string|number>} config.constants
+   * @param {ShownKeybinding[]} config.keybindings
+   */
   constructor(parent, env, config) {
-    super(parent, {
-      env,
-      config,
+    super(parent, {});
+
+    /** @private */
+    this.env = env;
+    /** @private */
+    this.config = config;
+
+    this.createBodyDom();
+  }
+
+  createBodyDom() {
+    const env = this.env;
+
+    this.dom.body.classList.add('help-modal');
+    this.dom.title.innerText = env.t('modal.help.title');
+
+    const allKbGrouped = groupKeybindings(this.config.keybindings);
+
+    const els = Object.entries(allKbGrouped)
+      .flatMap(([kind, kbGrouped]) => {
+        const keybindings = [...Object.entries(kbGrouped)];
+        if (keybindings.length === 0) {
+          return [];
+        }
+
+        return [
+          e("h3", {
+            className: "subheader",
+            innerText: env.t(`action.kind.${kind}`),
+          }),
+
+          e("table", { className: "keybindings-table" }, [
+            e("tbody", {}, [
+              e("tr", {}, [
+                e("td", { className: "legend key" }, [env.t('modal.help.key')]),
+                e("td", { className: "legend action" }, [env.t('modal.help.action')]),
+              ]),
+
+              ...keybindings.map(([action, kbs]) => (
+                e("tr", {}, [
+                  e("td", { className: "key" }, this.listKeybindingsDisj(kbs)),
+                  e("td", { className: "action" }, [this.describeAction(action)]),
+                ])
+              )),
+            ]),
+          ]),
+        ];
+      })
+
+    this.dom.body.append(...els);
+  }
+
+  /**
+   * Generates and concatenates texts of multiple keybindings using an "or"
+   * as separator.
+   *
+   * @param {ShownKeybinding[]} kbs
+   */
+  listKeybindingsDisj(kbs) {
+    const env = this.env;
+
+    return kbs.flatMap((kb, i) => {
+      const text = this.getKeybindingText(kb);
+
+      return [
+        // Use spaces (instead of padding) to allow word-wrap around the "or"
+        i > 0 && e("span", { className: "or-sep" }, [` ${env.t('or')} `]),
+
+        e("span", { className: "kb-text" }, [text]),
+      ];
     });
   }
 
-  createDom() {
-    const { env, config: { constants, keybindings } } = this.state;
+  /**
+   * Returns a translated string describing keybinding {@link kb}.
+   *
+   * @param {ShownKeybinding} kb
+   * @returns {string}
+   */
+  getKeybindingText(kb) {
+    const env = this.env;
 
-    const dom = super.createDom("help-modal");
+    let text = kb.mod
+      ? env.t(`key.mod.${kb.mod}`) + " + " + env.t(`key.${kb.key}.mod`)
+      : env.t(`key.${kb.key}`);
 
-    dom.title.innerText = env.t('modal.help.title');
-
-    const allKbGrouped = groupKeybindings(keybindings);
-
-    for (const [kind, kbGrouped] of Object.entries(allKbGrouped)) {
-      const keybindings = [...Object.entries(kbGrouped)];
-      if (keybindings.length === 0) {
-        continue;
-      }
-
-      const h3 = templateElement(`<h3 class="subheader"></h3>`);
-      h3.innerText = env.t(`action.kind.${kind}`);
-      dom.body.append(h3);
-
-      const table = templateElement(`
-        <table class="keybindings-table">
-          <tbody>
-            <tr>
-              <td class="legend key"></td>
-              <td class="legend action"></td>
-            </tr>
-          </tbody>
-        </table>
-      `);
-
-      const legendKey = table.querySelector('.legend.key');
-      legendKey.innerText = env.t('modal.help.key');
-
-      const legendAction = table.querySelector('.legend.action');
-      legendAction.innerText = env.t('modal.help.action');
-
-      const trTemplate = templateElement(`
-        <tr>
-          <td class="key"></td>
-          <td class="action"></td>
-        </tr>
-      `);
-
-      const tbody = table.querySelector('tbody');
-
-      for (const [action, kbs] of keybindings) {
-        const tr = trTemplate.cloneNode(true);
-
-        // There may be multiple keybindings to the same action. Concatenate
-        // these using an "or" as separator.
-        const tdKey = tr.querySelector('.key');
-        for (let i = 0; i < kbs.length; i++) {
-          const kb = kbs[i];
-
-          if (i > 0) {
-            const sep = templateElement(`<span class="or-sep"></span>`)
-            // Use spaces (instead of padding) to allow word-wrap around the "or"
-            sep.innerText = ` ${env.t('or')} `;
-
-            tdKey.append(sep);
-          }
-
-          let text = kb.mod
-            ? env.t(`key.mod.${kb.mod}`) + " + " + env.t(`key.${kb.key}.mod`)
-            : env.t(`key.${kb.key}`);
-
-          if (kb.repeat) {
-            text = env.t('key.repeat', { key: text });
-          }
-
-          const kbSpan = document.createElement('span');
-          kbSpan.className = "kb-text";
-          kbSpan.innerText = text;
-
-          tdKey.append(kbSpan);
-        }
-
-        const tdAction = tr.querySelector('.action');
-        tdAction.innerText = env.t(`action.${action}`, constants);
-
-        tbody.append(tr);
-      }
-
-      table.append(tbody);
-      dom.body.append(table);
+    if (kb.repeat) {
+      text = env.t('key.repeat', { key: text });
     }
 
-    return dom;
+    return text;
+  }
+
+  /**
+   * Returns a translated string describing {@link action}.
+   *
+   * @param {KeybindingAction} action
+   * @returns {string}
+   */
+  describeAction(action) {
+    return this.env.t(`action.${action}`, this.config.constants)
   }
 }

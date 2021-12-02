@@ -7,8 +7,8 @@
  */
 export function metadataArrayToString(metadataArray) {
   return metadataArray.screenshotFields
-    .map(field => metadataArray.metadata[field])
-    .filter(value => typeof value === 'string')
+    // TODO: Find a better way
+    .map(field => metadataArray.metadata[field]?.[0] ?? "")
     .join(' / ');
 }
 
@@ -79,10 +79,11 @@ export function dataUrlMime(dataUrl) {
  *
  * @param {HTMLCanvasElement} canvas
  * @param {string} mimeType
- * @param {number} quality JPEG or WebP image quality in range [0, 1].
+ * @param {number | undefined} quality JPEG or WebP image quality in range
+ * `[0, 1]`.
  * @returns {Promise<Blob>}
  */
-export function canvasToBlob(canvas, mimeType, quality) {
+export function canvasToBlob(canvas, mimeType, quality = undefined) {
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (blob) {
@@ -141,6 +142,22 @@ export function loadImage(src) {
     image.onerror = reject;
     image.src = src;
   });
+}
+
+/**
+ * Downloads a file from a `Blob` or from a URL.
+ *
+ * @param {Blob | string} obj
+ * @param {string} filename Name of the target file.
+ */
+export function download(obj, filename) {
+  if (typeof obj === 'string') {
+    e("a", { href: obj, download: filename }).click();
+  } else {
+    withObjectUrl(obj, (objectUrl) => {
+      download(objectUrl, filename);
+    });
+  }
 }
 
 /**
@@ -215,6 +232,53 @@ export function templateElement(html) {
   return element instanceof HTMLElement
     ? element
     : null;
+}
+
+/**
+ * Creates a nested HTML element.
+ *
+ * @param {keyof HTMLElementTagNameMap} tag
+ * @param {Record<string, any>} attrs
+ * @param {(HTMLElement | string | null | undefined | boolean)[]} children
+ * @returns {HTMLElement}
+ */
+export function e(tag, attrs = {}, children = []) {
+  const element = document.createElement(tag);
+
+  for (const [key, value] of Object.entries(attrs)) {
+    if (key === '@') {
+      value.element = element;
+    } else if (key[0] === '$') {
+      element.addEventListener(key.substring(1), value);
+    } else {
+      // @ts-expect-error: `Object.entries()` is too coarse-grained
+      element[key] = value;
+    }
+  }
+
+  for (const child of children) {
+    if (typeof child === 'string') {
+      element.append(
+        document.createTextNode(child)
+      );
+    } else if (child instanceof HTMLElement) {
+      element.append(child);
+    }
+  }
+
+  return element;
+}
+
+/**
+ * Returns ref object that may be used to capture HTML element via `@` field
+ * in {@link e}.
+ *
+ * @template T
+ * @returns {{ element: T | null }}
+ */
+e.ref = function () {
+  // TODO: Strict typing where this is called
+  return { element: null };
 }
 
 /**

@@ -1,7 +1,21 @@
-import Environment from './Environment';
-import SimpleModal from './SimpleModal';
-import { buildTimeString, templateElement } from './util';
+// @ts-check
 
+import Environment from './Environment';
+import generateTimecodeUrl from './generateTimecodeUrl';
+import SimpleModal from './SimpleModal';
+import { buildTimeString, e } from './util';
+
+/**
+ * @typedef {{
+ *  timecode: number | null;
+ *  fps: number;
+ *  startAtTimecode: boolean;
+ * }} State
+ */
+
+/**
+ * @extends {SimpleModal<State>}
+ */
 export default class BookmarkModal extends SimpleModal {
   /**
    *
@@ -10,55 +24,70 @@ export default class BookmarkModal extends SimpleModal {
    */
   constructor(element, env) {
     super(element, {
-      env,
       timecode: null,
       fps: 0,
       startAtTimecode: true,
     });
+
+    /** @private */
+    this.env = env;
+
+    this.urlInput = e.ref();
+    this.startAt = {
+      container: e.ref(),
+      check: e.ref(),
+      label: e.ref(),
+    }
+    this.createBodyDom();
   }
 
-  createDom() {
-    const env = this.state.env;
+  createBodyDom() {
+    this.dom.main.classList.add('bookmark-modal');
+    this.dom.title.innerText = this.env.t('modal.bookmark.title');
 
-    const dom = super.createDom("bookmark-modal");
+    const startAtCheckId = this.env.mkid();
 
-    dom.title.innerText = env.t('modal.bookmark.title');
-
-    const startAtCheckId = env.mkid();
-    dom.container = templateElement(`
-      <div>
-        <div class="url-line">
-          <input type="url" readonly value="https://sachsen.digital">
-          <a href="javascript:void(0)" class="copy-to-clipboard">
-            <i class="material-icons-round">content_copy</i>
-          </a>
-        </div>
-        <div class="start-at">
-          <input type="checkbox" id="${startAtCheckId}"><!--
-          --><label for="${startAtCheckId}"></label>
-        </div>
-      </div>
-    `);
-    dom.url = dom.container.querySelector('input');
-    dom.copyToClipboard = dom.container.querySelector('.copy-to-clipboard');
-    dom.copyToClipboard.title = env.t('modal.bookmark.copy-link');
-    dom.copyToClipboard.addEventListener('click', this.handleCopyToClipboard.bind(this));
-    dom.startAt = dom.container.querySelector('.start-at');
-    dom.startAtTimecodeCheck = dom.startAt.querySelector('input[type=checkbox]');
-    dom.startAtTimecodeCheck.addEventListener('change', this.handleChangeStartAtTimecode.bind(this));
-    dom.startAtTimecodeLabel = dom.startAt.querySelector('label');
-    dom.body.append(dom.container);
-
-    return dom;
+    this.dom.body.append(
+      e("div", {}, [
+        e("div", { className: "url-line" }, [
+          e("input", {
+            "@": this.urlInput,
+            type: "url",
+            readOnly: true,
+            value: "https://sachsen.digital",
+          }),
+          e("a", {
+            href: "javascript:void(0)",
+            className: "copy-to-clipboard",
+            title: this.env.t('modal.bookmark.copy-link'),
+            $click: this.handleCopyToClipboard.bind(this),
+          }, [
+            e("i", { className: "material-icons-round" }, ["content_copy"]),
+          ]),
+        ]),
+        e("div", { "@": this.startAt.container, className: "start-at" }, [
+          e("input", {
+            "@": this.startAt.check,
+            type: "checkbox",
+            id: startAtCheckId,
+            $change: this.handleChangeStartAtTimecode.bind(this),
+          }),
+          e("label", {
+            "@": this.startAt.label,
+            htmlFor: startAtCheckId,
+          }),
+        ]),
+      ])
+    );
   }
 
   async handleCopyToClipboard() {
-    const url = this.generateUrl(this.state).toString();
+    const url = this.generateUrl(this.state);
 
     // Besides being necessary for `execCommand`, the focus is also meant to
     // provide visual feedback to the user.
     // TODO: Improve user feedback, also when an exception occurs
-    this.dom.url.focus();
+    this.urlInput.element.focus();
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
     } else {
@@ -66,50 +95,75 @@ export default class BookmarkModal extends SimpleModal {
     }
   }
 
+  /**
+   *
+   * @param {Event} e
+   */
   handleChangeStartAtTimecode(e) {
+    if (!(e.target instanceof HTMLInputElement)) {
+      return;
+    }
+
     this.setState({
       startAtTimecode: e.target.checked,
     });
   }
 
-  generateUrl(state) {
-    const url = new URL(window.location);
-    if (state.startAtTimecode && state.timecode != null && state.timecode !== 0) {
-      url.searchParams.set('timecode', state.timecode);
-    } else {
-      url.searchParams.delete('timecode');
-    }
-    return url;
-  }
-
+  /**
+   *
+   * @param {number} timecode
+   * @returns {this}
+   */
   setTimecode(timecode) {
     this.setState({ timecode });
     return this;
   }
 
+  /**
+   *
+   * @param {number} fps
+   * @returns {this}
+   */
   setFps(fps) {
     this.setState({ fps });
     return this;
   }
 
+  /**
+   * @private
+   * @param {State} state
+   */
+  generateUrl(state) {
+    const timecode = state.startAtTimecode ? state.timecode : null;
+    return generateTimecodeUrl(timecode, this.env).toString();
+  }
+
+  /**
+   *
+   * @param {import('./SimpleModal').BaseState & State} state
+   */
   render(state) {
     super.render(state);
 
-    const { env, show, timecode, fps, startAtTimecode } = state;
+    const { show, timecode, fps, startAtTimecode } = state;
 
-    this.dom.url.value = this.generateUrl(state).toString();
+    this.urlInput.element.value = this.generateUrl(state);
 
+    // TODO: Just disable when timecode is 0?
     if (timecode === null || timecode === 0) {
-      this.dom.startAt.classList.remove('shown');
+      this.startAt.container.element.classList.remove('shown');
     } else {
-      this.dom.startAtTimecodeCheck.checked = startAtTimecode;
-      this.dom.startAtTimecodeLabel.innerText = env.t('modal.bookmark.start-at-current-time', { timecode: buildTimeString(timecode, true, fps) });
+      this.startAt.check.element.checked = startAtTimecode;
+      this.startAt.label.element.innerText =
+        this.env.t('modal.bookmark.start-at-current-time', {
+          timecode: buildTimeString(timecode, true, fps),
+        });
 
-      this.dom.startAt.classList.add('shown');
+      this.startAt.container.element.classList.add('shown');
     }
 
     if (show && show !== this.state.show) {
-      this.dom.url.select();
+      this.urlInput.element.select();
     }
   }
 }
