@@ -32,10 +32,12 @@ export default class ThumbnailPreview {
    * @param {HTMLElement} config.seekBar
    * @param {shaka.Player} config.player
    * @param {() => number | null} config.getFps
-   * @param {(timecode: number) => Chapter} config.getChapter
+   * @param {(timecode: number) => Chapter | undefined} config.getChapter
    * @param {ImageFetcher} config.network
    * @param {object} config.interaction
+   * @param {() => void} config.interaction.onChangeStart
    * @param {(pos: SeekPosition) => void} config.interaction.onChange
+   * @param {() => void} config.interaction.onChangeEnd
    */
   constructor(config) {
     this.seekBar = config.seekBar;

@@ -1,8 +1,11 @@
+// @ts-check
+
 import shaka from 'shaka-player/dist/shaka-player.ui';
 
+import Chapters from '../Chapters';
 import ImageFetcher from '../ImageFetcher';
 import ThumbnailPreview from '../ThumbnailPreview';
-import { templateElement } from '../util';
+import { e } from '../util';
 import VariantGroups from '../VariantGroups';
 
 /**
@@ -13,97 +16,132 @@ import VariantGroups from '../VariantGroups';
  * Very much oriented at Shaka's SeekBar and RangeElement. The update method is
  * mostly taken from Shaka.
  *
+ * Listens to the following custom events:
+ * - {@link SxndThumbsCloseEvent}
+ * - {@link SxndVariantGroupsEvent}
+ * - {@link SxndChaptersEvent}
+ * - {@link SxndFpsEvent}
+ *
  * @implements {shaka.extern.IUISeekBar}
  */
+// @ts-expect-error: IUISeekBar extends IUIRangeElement, which we don't
+//                   implement (TODO: check back on Shaka?)
 export default class FlatSeekBar extends shaka.ui.Element {
   static register() {
     shaka.ui.Controls.registerSeekBar({
+      // @ts-expect-error: see above (IUISeekBar / IUIRangeElement)
       create(rootElement, controls) {
         return new FlatSeekBar(rootElement, controls);
-      }
+      },
     });
   }
 
+  /**
+   * @param {HTMLElement} parent
+   * @param {shaka.ui.Controls} controls
+   */
   constructor(parent, controls) {
     super(parent, controls);
 
-    this._value = 0;
-    this._config = controls.getConfig();
+    const range = e.ref();
+    const container = e("div", { className: "sxnd-seek-bar" }, [
+      e("div", { "@": range, className: "range" }),
+    ]);
 
-    const container = templateElement(`
-      <div class="sxnd-seek-bar">
-        <div class="range"></div>
-      </div>
-    `);
     parent.prepend(container);
 
-    this._dom = {
-      container,
-      range: container.querySelector('.range'),
+    /** @private */
+    this.sxnd = {
+      dom: {
+        range: range.element,
+        container,
+      },
+      /** @type {number | null} */
+      fps: null,
+      /** @type {Chapters | null} */
+      chapters: null,
+      /** @type {VariantGroups | null} */
+      variantGroups: null,
+      /** @type {number} */
+      value: 0,
+      /** @type {shaka.extern.UIConfiguration} */
+      uiConfig: controls.getConfig(),
+      /** @type {boolean} */
+      wasPlaying: false,
+      /** @type {shaka.util.Timer | null} */
+      seekTimer: null,
+      /** @type {ThumbnailPreview | null} */
+      thumbnailPreview: null,
     };
 
-    this._seekTimer = new shaka.util.Timer(() => {
-      this.video.currentTime = this.getValue();
+    this.sxnd.seekTimer = new shaka.util.Timer(() => {
+      if (this.video !== null) {
+        this.video.currentTime = this.getValue();
+      }
     });
 
-    this._wasPlaying = false;
+    if (this.player !== null) {
+      this.sxnd.thumbnailPreview = new ThumbnailPreview({
+        seekBar: this.sxnd.dom.container,
+        player: this.player,
+        getFps: () => this.sxnd.fps,
+        getChapter: (timecode) => this.sxnd.chapters?.timeToChapter(timecode),
+        network: new ImageFetcher(),
+        interaction: {
+          onChangeStart: () => {
+            this.controls?.setSeeking(true);
 
-    this._thumbnailPreview = new ThumbnailPreview({
-      seekBar: this._dom.container,
-      player: this.player,
-      getFps: () => this.controls.elSxndPlayer.fps,
-      getChapter: (timecode) => this.controls.elSxndPlayer.chapters.timeToChapter(timecode),
-      network: new ImageFetcher(),
-      interaction: {
-        onChangeStart: () => {
-          this._wasPlaying = !this.video.paused;
-          this.controls.setSeeking(true);
-          this.video.pause();
+            if (this.video !== null) {
+              this.sxnd.wasPlaying = !this.video.paused;
+              this.video.pause();
+            }
+          },
+          onChange: (pos) => {
+            this.sxnd.value = pos.seconds;
+            this.update();
+            this.sxnd.seekTimer?.tickAfter(0.125);
+          },
+          onChangeEnd: () => {
+            this.sxnd.seekTimer?.tickNow();
+            this.controls?.setSeeking(false);
+            if (this.sxnd.wasPlaying) {
+              this.video?.play();
+            }
+          },
         },
-        onChange: (pos) => {
-          this._value = pos.seconds;
-          this.update();
-          this._seekTimer.tickAfter(0.125);
-        },
-        onChangeEnd: () => {
-          this._seekTimer.tickNow();
-          this.controls.setSeeking(false);
-          if (this._wasPlaying) {
-            this.video.play();
-          }
-        },
-      },
-    });
+      });
+    }
 
-    /** @type {VariantGroups | null} */
-    this._variantGroups = null;
+    if (this.eventManager) {
+      this.eventManager.listen(this.player, 'loaded', () => {
+        this.renderChapterMarkers();
+      });
 
-    this.eventManager.listen(this.player, 'loaded', () => {
-      this.renderChapterMarkers();
-    });
+      this.eventManager.listen(this.player, 'variantchanged', () => {
+        this.updatePreviewImageTracks();
+      });
 
-    this.eventManager.listen(this.player, 'variantchanged', () => {
-      this.setPreviewImageTracks();
-    });
+      this.eventManager.listen(this.controls, 'sxnd-thumbs-close', () => {
+        this.sxnd.thumbnailPreview?.setIsVisible(false);
+      });
 
-    this.eventManager.listen(this.controls, 'sxnd-variant-groups', (e) => {
-      this._variantGroups = e.detail.variantGroups;
-      this.setPreviewImageTracks();
-    });
+      this.eventManager.listen(this.controls, 'sxnd-variant-groups', (e) => {
+        const detail = /** @type {SxndVariantGroupsEvent} */(e).detail;
+        this.sxnd.variantGroups = detail.variantGroups;
+        this.updatePreviewImageTracks();
+      });
 
-    this.eventManager.listen(this.controls, 'sxnd-thumbs-close', () => {
-      this._thumbnailPreview.setIsVisible(false);
-    });
-  }
+      this.eventManager.listen(this.controls, 'sxnd-chapters', (e) => {
+        const detail = /** @type {SxndChaptersEvent} */(e).detail;
+        this.sxnd.chapters = detail.chapters;
+        this.sxnd.thumbnailPreview?.refreshLastRendered();
+      });
 
-  setPreviewImageTracks() {
-    const activeGroup = this._variantGroups?.findActiveGroup();
-    if (activeGroup) {
-      const imageTracks = this.player.getImageTracks().filter(
-        track => VariantGroups.splitRepresentationId(track.originalImageId).group === activeGroup.key
-      );
-
-      this._thumbnailPreview.setImageTracks(imageTracks);
+      this.eventManager.listen(this.controls, 'sxnd-fps', (e) => {
+        const detail = /** @type {SxndFpsEvent} */(e).detail;
+        this.sxnd.fps = detail.fps;
+        this.sxnd.thumbnailPreview?.refreshLastRendered();
+      });
     }
   }
 
@@ -111,50 +149,121 @@ export default class FlatSeekBar extends shaka.ui.Element {
    * @override
    */
   release() {
-    this._seekTimer.stop();
-    this._seekTimer = null;
+    if (this.sxnd.seekTimer !== null) {
+      this.sxnd.seekTimer.stop();
+      this.sxnd.seekTimer = null;
+    }
 
-    this._thumbnailPreview.release();
-    this._thumbnailPreview = null;
+    if (this.sxnd.thumbnailPreview !== null) {
+      this.sxnd.thumbnailPreview.release();
+      this.sxnd.thumbnailPreview = null;
+    }
 
     super.release();
   }
 
   /**
-   * @override
+   * Adds chapter marker elements to the seekbar.
    */
-  getValue() {
-    return this._value;
-  }
-
-  /**
-   * @override
-   */
-  setValue(value) {
-    if (this.controls.isSeeking()) {
+  renderChapterMarkers() {
+    if (this.video === null || this.sxnd.chapters === null) {
+      console.log("FlatSeekBar: Missing video or chapters");
       return;
     }
 
-    this._value = value;
+    if (!(this.video.duration > 0)) { // !(NaN > 0)
+      return;
+    }
+
+    for (const chapter of this.sxnd.chapters) {
+      const relative = chapter.timecode / this.video.duration;
+
+      // In particular, make sure that we don't put markers outside of the
+      // seekbar for wrong timestamps.
+      if (!(0 <= relative && relative < 1)) {
+        continue;
+      }
+
+      const marker = document.createElement('span');
+      marker.className = 'sxnd-chapter-marker';
+      marker.style.position = 'absolute';
+      marker.style.left = `${relative * 100}%`;
+
+      this.sxnd.dom.range.append(marker);
+    }
   }
 
-  makeColor_(color, fract) {
-    return color + ' ' + (fract * 100) + '%';
+  /**
+   * Determines which image tracks apply to the current variant group and
+   * passes those to the thumbnail preview.
+   */
+  updatePreviewImageTracks() {
+    if (this.player === null || this.sxnd.thumbnailPreview === null) {
+      console.warn("FlatSeekBar: Missing player or thumbnail preview");
+      return;
+    }
+
+    const activeGroup = this.sxnd.variantGroups?.findActiveGroup();
+    if (activeGroup) {
+      const imageTracks = this.player.getImageTracks().filter(
+        track => VariantGroups.splitRepresentationId(track.originalImageId).group === activeGroup.key
+      );
+
+      this.sxnd.thumbnailPreview.setImageTracks(imageTracks);
+    }
+  }
+
+  /**
+   * @returns {number}
+   */
+  getValue() {
+    return this.sxnd.value;
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  isShowing() {
+    return true;
+  }
+
+  /**
+   * @param {number} value
+   */
+  setValue(value) {
+    if (this.controls?.isSeeking()) {
+      return;
+    }
+
+    this.sxnd.value = value;
+  }
+
+  /**
+   *
+   * @param {string} color
+   * @param {number} fract
+   * @returns {string}
+   */
+  makeColor(color, fract) {
+    return `${color} ${fract * 100}%`;
   }
 
   /**
    * Called by Controls on a timer to update the state of the seek bar.
    * Also called internally when the user interacts with the input element.
-   *
-   * @override
    */
   update() {
-    const duration = this.video.duration;
-    if (!duration) {
+    if (this.video === null) {
+      console.warn("FlatSeekBar: Missing video");
       return;
     }
 
-    const colors = this._config.seekBarColors;
+    const duration = this.video.duration;
+    if (!(duration > 0)) {
+      return;
+    }
+
+    const colors = this.sxnd.uiConfig.seekBarColors;
     const currentTime = this.getValue();
     const bufferedLength = this.video.buffered.length;
     const bufferedStart = bufferedLength ? this.video.buffered.start(0) : 0;
@@ -170,7 +279,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
     const seekRangeSize = seekRange.end - seekRange.start;
 
     if (bufferedLength == 0) {
-      this._dom.range.style.background = colors.base;
+      this.sxnd.dom.range.style.background = colors.base;
     } else {
       const clampedBufferStart = Math.max(bufferedStart, seekRange.start);
       const clampedBufferEnd = Math.min(bufferedEnd, seekRange.end);
@@ -188,51 +297,19 @@ export default class FlatSeekBar extends shaka.ui.Element {
       const playheadFraction = (playheadDistance / seekRangeSize) || 0;
 
       const unbufferedColor =
-        this._config.showUnbufferedStart ? colors.base : colors.played;
+        this.sxnd.uiConfig.showUnbufferedStart ? colors.base : colors.played;
 
       const gradient = [
         'to right',
-        this.makeColor_(unbufferedColor, bufferStartFraction),
-        this.makeColor_(colors.played, bufferStartFraction),
-        this.makeColor_(colors.played, playheadFraction),
-        this.makeColor_(colors.buffered, playheadFraction),
-        this.makeColor_(colors.buffered, bufferEndFraction),
-        this.makeColor_(colors.base, bufferEndFraction),
+        this.makeColor(unbufferedColor, bufferStartFraction),
+        this.makeColor(colors.played, bufferStartFraction),
+        this.makeColor(colors.played, playheadFraction),
+        this.makeColor(colors.buffered, playheadFraction),
+        this.makeColor(colors.buffered, bufferEndFraction),
+        this.makeColor(colors.base, bufferEndFraction),
       ];
-      this._dom.range.style.background =
+      this.sxnd.dom.range.style.background =
         'linear-gradient(' + gradient.join(',') + ')';
-    }
-  }
-
-  /**
-   * @override
-   */
-  isShowing() {
-    return true;
-  }
-
-  renderChapterMarkers() {
-    const { video, chapters } = this.controls.elSxndPlayer;
-
-    if (!(video.duration > 0)) {
-      return;
-    }
-
-    for (const chapter of chapters) {
-      const relative = chapter.timecode / video.duration;
-
-      // In particular, make sure that we don't put markers outside of the
-      // seekbar for wrong timestamps.
-      if (!(0 <= relative && relative < 1)) {
-        continue;
-      }
-
-      const marker = document.createElement('span');
-      marker.className = 'sxnd-chapter-marker';
-      marker.style.position = 'absolute';
-      marker.style.left = `${relative * 100}%`;
-
-      this._dom.range.append(marker);
     }
   }
 }

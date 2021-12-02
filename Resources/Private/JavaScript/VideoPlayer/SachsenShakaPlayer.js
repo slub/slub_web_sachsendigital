@@ -70,9 +70,6 @@ export default class SachsenShakaPlayer {
     const ui = new shaka.ui.Overlay(this.player, this.container, this.video);
     this.controls = ui.getControls();
 
-    // Store player instance so that our custom controls may access it
-    this.controls.elSxndPlayer = this;
-
     // TODO: Somehow avoid overriding the SeekBar globally?
     FlatSeekBar.register();
 
@@ -109,6 +106,13 @@ export default class SachsenShakaPlayer {
     };
     ui.configure(config);
 
+    /** @type {SxndChaptersEvent} */
+    const chEvent = new CustomEvent(
+      'sxnd-chapters',
+      { detail: { chapters: this.chapters } }
+    );
+    this.controls.dispatchEvent(chEvent);
+
     // Listen for error events.
     this.player.addEventListener('error', this.onPlayerErrorEvent.bind(this));
     this.controls.addEventListener('error', this.onUiErrorEvent.bind(this));
@@ -141,6 +145,7 @@ export default class SachsenShakaPlayer {
 
     this.updateFrameRate();
 
+    /** @type {SxndVariantGroupsEvent} */
     const vgEvent = new CustomEvent(
       'sxnd-variant-groups',
       { detail: { variantGroups: this.variantGroups } }
@@ -165,6 +170,13 @@ export default class SachsenShakaPlayer {
         frameRate: fps,
       });
     }
+
+    /** @type {SxndFpsEvent} */
+    const fpsEvent = new CustomEvent(
+      'sxnd-fps',
+      { detail: { vifa: this.vifa, fps: this.fps } }
+    );
+    this.controls.dispatchEvent(fpsEvent);
   }
 
   setLocale(locale) {

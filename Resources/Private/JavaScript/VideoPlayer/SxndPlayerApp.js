@@ -225,7 +225,9 @@ class SxndPlayerApp {
   }
 
   hideThumbnailPreview() {
-    this.sxndPlayer.controls.dispatchEvent(new Event('sxnd-thumbs-close'));
+    /** @type {SxndThumbsCloseEvent} */
+    const thEvent = new Event('sxnd-thumbs-close');
+    this.sxndPlayer.controls.dispatchEvent(thEvent);
   }
 
   /**

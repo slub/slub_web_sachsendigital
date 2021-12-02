@@ -237,10 +237,11 @@ export function templateElement(html) {
 /**
  * Creates a nested HTML element.
  *
- * @param {keyof HTMLElementTagNameMap} tag
+ * @template {keyof HTMLElementTagNameMap} K
+ * @param {K} tag
  * @param {Record<string, any>} attrs
  * @param {(HTMLElement | string | null | undefined | boolean)[]} children
- * @returns {HTMLElement}
+ * @returns {HTMLElementTagNameMap[K]}
  */
 export function e(tag, attrs = {}, children = []) {
   const element = document.createElement(tag);

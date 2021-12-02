@@ -1,3 +1,7 @@
+declare module "shaka-player/dist/shaka-player.ui" {
+  export = shaka;
+}
+
 type ValueOf<T> = T[keyof T];
 
 type Chapter = {
@@ -81,4 +85,46 @@ type MetadataArray = {
 interface Network<T> {
   get(url: string): Promise<T>;
   abortPending(): void;
+}
+
+/**
+ * Signals chapters available in current video.
+ *
+ * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
+ */
+interface SxndChaptersEvent
+  extends CustomEvent<{
+    chapters: import("./Chapters").default;
+  }> {}
+
+/**
+ * Signals information about FPS of current video.
+ *
+ * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
+ */
+interface SxndFpsEvent
+  extends CustomEvent<{
+    vifa: VideoFrame | null;
+    fps: number | null;
+  }> {}
+
+/**
+ * Signals that thumbnail previews should be closed.
+ *
+ * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
+ */
+interface SxndThumbsCloseEvent extends Event {}
+
+/**
+ * Signals variant groups of current video.
+ *
+ * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
+ */
+interface SxndVariantGroupsEvent
+  extends CustomEvent<{
+    variantGroups: import("./VariantGroups").default;
+  }> {}
+
+interface VideoFrame {
+  get(): number;
 }
