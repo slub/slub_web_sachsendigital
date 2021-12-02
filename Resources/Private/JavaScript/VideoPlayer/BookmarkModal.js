@@ -32,26 +32,15 @@ export default class BookmarkModal extends SimpleModal {
     /** @private */
     this.env = env;
 
-    this.urlInput = e.ref();
-    this.startAt = {
-      container: e.ref(),
-      check: e.ref(),
-      label: e.ref(),
-    }
-    this.createBodyDom();
-  }
-
-  createBodyDom() {
-    this.dom.main.classList.add('bookmark-modal');
-    this.dom.title.innerText = this.env.t('modal.bookmark.title');
+    this.$main.classList.add('bookmark-modal');
+    this.$title.innerText = this.env.t('modal.bookmark.title');
 
     const startAtCheckId = this.env.mkid();
 
-    this.dom.body.append(
+    this.$body.append(
       e("div", {}, [
         e("div", { className: "url-line" }, [
-          e("input", {
-            "@": this.urlInput,
+          this.$urlInput = e("input", {
             type: "url",
             readOnly: true,
             value: "https://sachsen.digital",
@@ -65,17 +54,13 @@ export default class BookmarkModal extends SimpleModal {
             e("i", { className: "material-icons-round" }, ["content_copy"]),
           ]),
         ]),
-        e("div", { "@": this.startAt.container, className: "start-at" }, [
-          e("input", {
-            "@": this.startAt.check,
+        this.$startAt = e("div", { className: "start-at" }, [
+          this.$startAtCheck = e("input", {
             type: "checkbox",
             id: startAtCheckId,
             $change: this.handleChangeStartAtTimecode.bind(this),
           }),
-          e("label", {
-            "@": this.startAt.label,
-            htmlFor: startAtCheckId,
-          }),
+          this.$startAtLabel = e("label", { htmlFor: startAtCheckId }),
         ]),
       ])
     );
@@ -87,7 +72,7 @@ export default class BookmarkModal extends SimpleModal {
     // Besides being necessary for `execCommand`, the focus is also meant to
     // provide visual feedback to the user.
     // TODO: Improve user feedback, also when an exception occurs
-    this.urlInput.element.focus();
+    this.$urlInput.focus();
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
     } else {
@@ -147,23 +132,23 @@ export default class BookmarkModal extends SimpleModal {
 
     const { show, timecode, fps, startAtTimecode } = state;
 
-    this.urlInput.element.value = this.generateUrl(state);
+    this.$urlInput.value = this.generateUrl(state);
 
     // TODO: Just disable when timecode is 0?
     if (timecode === null || timecode === 0) {
-      this.startAt.container.element.classList.remove('shown');
+      this.$startAt.classList.remove('shown');
     } else {
-      this.startAt.check.element.checked = startAtTimecode;
-      this.startAt.label.element.innerText =
+      this.$startAtCheck.checked = startAtTimecode;
+      this.$startAtLabel.innerText =
         this.env.t('modal.bookmark.start-at-current-time', {
           timecode: buildTimeString(timecode, true, fps),
         });
 
-      this.startAt.container.element.classList.add('shown');
+      this.$startAt.classList.add('shown');
     }
 
     if (show && show !== this.state.show) {
-      this.urlInput.element.select();
+      this.$urlInput.select();
     }
   }
 }

@@ -2,7 +2,6 @@
 	{
 		"key": "Escape",
 		"action": "cancel",
-		"propagate": true,
 		"kind": "other",
 		"order": 100
 	},

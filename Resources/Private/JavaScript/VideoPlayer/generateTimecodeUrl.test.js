@@ -18,7 +18,7 @@ describe('generateTimecodeUrl', () => {
 
   test('basic', () => {
     env.getLocation = () => {
-      return new URL("http://localhost/video")
+      return new URL("http://localhost/video");
     };
 
     expect(url(null)).toBe("http://localhost/video");

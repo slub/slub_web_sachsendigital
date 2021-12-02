@@ -66,6 +66,18 @@ export default class VariantGroups {
     for (const variant of this.manifest.variants) {
       this.addVariant(variant);
     }
+
+    for (const imageStream of this.manifest.imageStreams) {
+      // The HLS parser apparently does not report dimensions of thumbnails,
+      // so `getThumbnails()` will not return correct size and position of a
+      // thumbnail within the tileset. By setting width = 1 and height = 1,
+      // we will at least receive the relative size and position, which in
+      // `ThumbnailPreview::renderImageAndShow()` we scale to the absolute
+      // values.
+      // TODO: Dispense of this
+      imageStream.width = 1;
+      imageStream.height = 1;
+    }
   }
 
   /**
@@ -145,6 +157,17 @@ export default class VariantGroups {
   findActiveTrack() {
     // There should be at most one active variant at a time
     return this.player.getVariantTracks().find(track => track.active);
+  }
+
+  /**
+   * Returns the image tracks that match the currently active group.
+   */
+  findImageTracks() {
+    const activeGroupKey = this.findActiveGroup()?.key;
+
+    return this.player.getImageTracks().filter(
+      track => VariantGroups.splitRepresentationId(track.originalImageId).group === activeGroupKey
+    );
   }
 
   /**

@@ -3,6 +3,7 @@
 import $ from 'jquery';
 
 import Component from './Component';
+import { e } from './util';
 
 /**
  * @typedef {{
@@ -43,40 +44,25 @@ export default class SimpleModal extends Component {
     /**
      * @protected
      */
-    this.dom = this.createDom();
-    this.dom.close.addEventListener('click', this.close.bind(this));
+    this.$main = e('div', { className: "sxnd-modal" }, [
+      this.$headline = e('div', { className: "headline-container" }, [
+        this.$title = e('h3'),
+        this.$close = e('span', {
+          className: "modal-close icon-close",
+          $click: this.close.bind(this),
+        }),
+      ]),
+      this.$body = e('div', { className: "body-container" }),
+    ]);
 
-    this.parent.append(this.dom.main);
+    this.parent.append(this.$main);
 
     /**
      * @private
      */
-    this.$main = $(this.dom.main);
+    this.jqMain = $(this.$main);
 
     this.resize();
-  }
-
-  /**
-   * @protected
-   */
-  createDom(className = "") {
-    const dom = {
-      main: document.createElement("div"),
-      headline: document.createElement("div"),
-      title: document.createElement("h3"),
-      close: document.createElement("span"),
-      body: document.createElement("div"),
-    };
-
-    dom.main.className = `sxnd-modal ${className}`;
-    dom.headline.className = "headline-container";
-    dom.close.className = "modal-close icon-close";
-    dom.body.className = "body-container";
-
-    dom.main.append(dom.headline, dom.body);
-    dom.headline.append(dom.title, dom.close);
-
-    return dom;
   }
 
   resize() {
@@ -85,8 +71,7 @@ export default class SimpleModal extends Component {
     //  - allow to scroll on body when overflowing
     //  - allow transparent background of modal
     //  - allow to center the modal vertically
-    this.dom.body.style.maxHeight =
-      `calc(${this.parent.clientHeight}px - 11rem)`;
+    this.$body.style.maxHeight = `calc(${this.parent.clientHeight}px - 11rem)`;
   }
 
   /**
@@ -137,7 +122,7 @@ export default class SimpleModal extends Component {
     if (show != this.state.show) {
       this.isAnimating = true;
       const fn = show ? 'show' : 'hide';
-      this.$main[fn]({
+      this.jqMain[fn]({
         duration: 'fast',
         complete: () => {
           this.isAnimating = false;

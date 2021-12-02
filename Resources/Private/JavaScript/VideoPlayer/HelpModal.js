@@ -72,8 +72,8 @@ export default class HelpModal extends SimpleModal {
   createBodyDom() {
     const env = this.env;
 
-    this.dom.body.classList.add('help-modal');
-    this.dom.title.innerText = env.t('modal.help.title');
+    this.$body.classList.add('help-modal');
+    this.$title.innerText = env.t('modal.help.title');
 
     const allKbGrouped = groupKeybindings(this.config.keybindings);
 
@@ -106,9 +106,9 @@ export default class HelpModal extends SimpleModal {
             ]),
           ]),
         ];
-      })
+      });
 
-    this.dom.body.append(...els);
+    this.$body.append(...els);
   }
 
   /**
@@ -159,6 +159,6 @@ export default class HelpModal extends SimpleModal {
    * @returns {string}
    */
   describeAction(action) {
-    return this.env.t(`action.${action}`, this.config.constants)
+    return this.env.t(`action.${action}`, this.config.constants);
   }
 }

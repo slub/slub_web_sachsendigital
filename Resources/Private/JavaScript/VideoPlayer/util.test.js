@@ -2,7 +2,13 @@
 
 import { beforeEach, describe, expect, test, jest } from '@jest/globals';
 import { Blob } from 'buffer';
-import { buildTimeString, dataUrlMime, clamp, sanitizeBasename, withObjectUrl } from './util';
+import {
+  buildTimeString,
+  dataUrlMime,
+  clamp,
+  sanitizeBasename,
+  withObjectUrl,
+} from './util';
 
 describe('clamp', () => {
   test('basic', () => {

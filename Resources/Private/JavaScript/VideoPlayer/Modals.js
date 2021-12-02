@@ -8,6 +8,7 @@ import SimpleModal from './SimpleModal';
  * @property {() => void} closeNext
  * @property {() => void} closeAll
  * @property {() => Promise<void>} update
+ * @property {() => void} resize
  */
 
 /**
@@ -45,6 +46,11 @@ export default function Modals(modals) {
         modalsArray.map(modal => modal.update())
       );
     },
+    resize: () => {
+      for (const modal of modalsArray) {
+        modal.resize();
+      }
+    },
   };
 
   // Set DOM element that is used to cover the background of the modals. It is
@@ -60,9 +66,7 @@ export default function Modals(modals) {
 
   // TODO: Performance
   window.addEventListener('resize', () => {
-    for (const modal of modalsArray) {
-      modal.resize();
-    }
+    result.resize();
   });
 
   for (const modal of modalsArray) {

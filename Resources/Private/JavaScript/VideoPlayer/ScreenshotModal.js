@@ -34,10 +34,8 @@ export default class ScreenshotModal extends SimpleModal {
    *
    * @param {HTMLElement} parent
    * @param {Environment} env
-   * @param {object} config
-   * @param {HTMLVideoElement} config.video
    */
-  constructor(parent, env, config) {
+  constructor(parent, env) {
     const supportedImageFormats = imageFormats.filter(
       format => env.supportsCanvasExport(format.mimeType)
     );
@@ -51,24 +49,17 @@ export default class ScreenshotModal extends SimpleModal {
     });
 
     /** @private */
-    this.videoDomElement = config.video;
-    /** @private */
     this.env = env;
+    /** @private @type {HTMLVideoElement | null} */
+    this.videoDomElement = null;
 
-    this.canvas = e.ref();
-    this.createBodyDom();
-  }
-
-  createBodyDom() {
-    const env = this.env;
-
-    this.dom.main.classList.add('screenshot-modal');
-    this.dom.title.innerText = env.t('modal.screenshot.title');
+    this.$main.classList.add('screenshot-modal');
+    this.$title.innerText = env.t('modal.screenshot.title');
 
     const idShowMetadata = env.mkid();
     const radioGroup = env.mkid();
 
-    this.dom.body.append(
+    this.$body.append(
       e("div", { className: "screenshot-config" }, [
         e("span", { className: "show-metadata" }, [
           e("input", {
@@ -78,7 +69,7 @@ export default class ScreenshotModal extends SimpleModal {
             $change: this.handleChangeShowMetadata.bind(this),
           }),
           e("label", { htmlFor: idShowMetadata }, [
-            env.t('modal.screenshot.show-metadata')
+            env.t('modal.screenshot.show-metadata'),
           ]),
         ]),
         " · ",
@@ -113,8 +104,19 @@ export default class ScreenshotModal extends SimpleModal {
         }, [env.t('modal.screenshot.download-image')]),
       ]),
 
-      e("canvas", { "@": this.canvas }),
+      this.$canvas = e("canvas")
     );
+  }
+
+  /**
+   * Sets video DOM element for upcoming screenshots.
+   *
+   * @param {HTMLVideoElement} video
+   * @returns {this}
+   */
+  setVideo(video) {
+    this.videoDomElement = video;
+    return this;
   }
 
   /**
@@ -170,7 +172,7 @@ export default class ScreenshotModal extends SimpleModal {
     }
 
     const image = await this.makeImageBlob(
-      this.canvas.element, selectedImageFormat, metadata, timecode);
+      this.$canvas, selectedImageFormat, metadata, timecode);
     const filename = this.getFilename(metadata, timecode);
 
     download(image, filename);
@@ -236,12 +238,17 @@ export default class ScreenshotModal extends SimpleModal {
 
     const { show, metadata, showMetadata } = state;
 
+    if (this.videoDomElement === null) {
+      // TODO: Error handling
+      return;
+    }
+
     if (show && (!this.state.show || showMetadata !== this.state.showMetadata)) {
       const config = {
         captions: showMetadata ? this.getCaptions(metadata) : [],
       };
 
-      drawScreenshot(this.canvas.element, this.videoDomElement, config);
+      drawScreenshot(this.$canvas, this.videoDomElement, config);
     }
   }
 }

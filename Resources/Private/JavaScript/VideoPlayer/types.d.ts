@@ -4,6 +4,26 @@ declare module "shaka-player/dist/shaka-player.ui" {
 
 type ValueOf<T> = T[keyof T];
 
+type ElementAttributes<Tag extends keyof HTMLElementTagNameMap> = {
+  [A in keyof HTMLElementTagNameMap[Tag]]: HTMLElementTagNameMap[Tag][A];
+};
+
+// With inspiration from https://stackoverflow.com/a/56416192 (inverting Record)
+type EventListenersDesc = {
+  [X in keyof GlobalEventHandlersEventMap]: {
+    key: X;
+    prefixed: `$${X}`;
+    handler: (event: GlobalEventHandlersEventMap[X]) => any;
+  };
+};
+
+type EventListeners = {
+  [X in ValueOf<EventListenersDesc>["prefixed"]]: Extract<
+    ValueOf<EventListenersDesc>,
+    { prefixed: X }
+  >["handler"];
+};
+
 type Chapter = {
   title: string;
   timecode: number;
@@ -31,7 +51,7 @@ type Keybinding<ScopeT extends string, ActionT extends string> = {
    *
    * See definition of `const Modifier`.
    */
-  mod: "None" | "CtrlMeta" | "Shift" | "Alt";
+  mod?: "None" | "CtrlMeta" | "Shift" | "Alt";
 
   /**
    * Name of the key to be bound.
@@ -42,13 +62,13 @@ type Keybinding<ScopeT extends string, ActionT extends string> = {
    * Boolean to indicate that the keypress must / must not be repeated;
    * undefined or null to allow both.
    */
-  repeat: boolean | null | undefined;
+  repeat?: boolean | null;
 
   /**
    * Active keyboard scope for which the keybinding is relevant; undefined or
    * null to allow any scope.
    */
-  scope: ScopeT | null | undefined;
+  scope?: ScopeT | null;
 
   /**
    * Key of the action to be executed for that keybinding.
@@ -58,7 +78,7 @@ type Keybinding<ScopeT extends string, ActionT extends string> = {
   /**
    * Whether or not to propagate the event for further handling.
    */
-  propagate: ?boolean;
+  propagate?: boolean;
 
   /**
    * Kind of keybinding as used for grouping in help modal.
@@ -73,6 +93,7 @@ type Keybinding<ScopeT extends string, ActionT extends string> = {
 
 type PhrasesDict = Record<string, string>;
 type LangDef = {
+  locale: string;
   twoLetterIsoCode: string;
   phrases: PhrasesDict;
 };
@@ -93,27 +114,22 @@ interface Network<T> {
  * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
  */
 interface SxndChaptersEvent
-  extends CustomEvent<{
-    chapters: import("./Chapters").default;
-  }> {}
+  extends CustomEvent<SxndEventDetail["sxnd-chapters"]> {}
 
 /**
  * Signals information about FPS of current video.
  *
  * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
  */
-interface SxndFpsEvent
-  extends CustomEvent<{
-    vifa: VideoFrame | null;
-    fps: number | null;
-  }> {}
+interface SxndFpsEvent extends CustomEvent<SxndEventDetail["sxnd-fps"]> {}
 
 /**
- * Signals that thumbnail previews should be closed.
+ * Registers seekbar to parent SachsenShakaPlayer.
  *
  * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
  */
-interface SxndThumbsCloseEvent extends Event {}
+interface SxndSeekBarEvent
+  extends CustomEvent<SxndEventDetail["sxnd-seek-bar"]> {}
 
 /**
  * Signals variant groups of current video.
@@ -121,10 +137,51 @@ interface SxndThumbsCloseEvent extends Event {}
  * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
  */
 interface SxndVariantGroupsEvent
-  extends CustomEvent<{
-    variantGroups: import("./VariantGroups").default;
-  }> {}
+  extends CustomEvent<SxndEventDetail["sxnd-variant-groups"]> {}
 
+type SxndEventDetail = {
+  "sxnd-chapters": {
+    chapters: import("./Chapters").default;
+  };
+  "sxnd-fps": {
+    vifa: VideoFrame | null;
+    fps: number | null;
+  };
+  "sxnd-seek-bar": {
+    seekBar: import("./controls/FlatSeekBar").default;
+  };
+  "sxnd-variant-groups": {
+    variantGroups: import("./VariantGroups").default;
+  };
+};
+
+function VideoFrame({ id: string, frameRate: number }): VideoFrame;
 interface VideoFrame {
   get(): number;
+
+  seekForward(frames: number = 1): true;
+  seekForward<T>(frames: number | undefined, callback: () => T): T;
+
+  seekBackward(frames: number = 1): true;
+  seekBackward<T>(frames: number | undefined, callback: () => T): T;
+}
+
+type VideoInfo = {
+  pageNo: number | undefined;
+  chapters: {
+    title: string;
+    timecode: string;
+  }[];
+  metadata: MetadataArray;
+  url: {
+    mpd: string;
+    hls: string;
+    poster: string;
+  };
+};
+
+interface Window {
+  SxndPlayerApp: {
+    new (container: HTMLElement, videoInfo: VideoInfo, lang: LangDef);
+  };
 }

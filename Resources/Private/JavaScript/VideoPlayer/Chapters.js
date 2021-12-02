@@ -1,40 +1,31 @@
 // @ts-check
 
-import Environment from './Environment';
-
 /**
  * @typedef {string} ChapterId
- * @typedef {Chapter & { readonly id: ChapterId }} ChapterWithId
  */
 
 export default class Chapters {
   /**
    *
    * @param {readonly Chapter[]} chapters
-   * @param {Environment} env
    */
-  constructor(chapters, env) {
+  constructor(chapters) {
     /**
      * List of chapters sorted by timecode.
      *
      * @private
-     * @type {ChapterWithId[]}
      */
-    this.chapters = chapters.map(chapter => ({
-      id: env.mkid(),
-      ...chapter,
-    }));
-
+    this.chapters = chapters.slice();
     this.chapters.sort((a, b) => a.timecode - b.timecode);
 
     /**
      * @private
-     * @type {Map<ChapterId, number>}
+     * @type {Map<Chapter, number>}
      */
-    this.idToIndex = new Map();
+    this.chapterToIndex = new Map();
 
     for (const [i, chapter] of this.chapters.entries()) {
-      this.idToIndex.set(chapter.id, i);
+      this.chapterToIndex.set(chapter, i);
     }
   }
 
@@ -43,7 +34,7 @@ export default class Chapters {
    * order, or `undefined` if the index is out of bounds.
    *
    * @param {number} index
-   * @returns {ChapterWithId | undefined}
+   * @returns {Chapter | undefined}
    */
   at(index) {
     return this.chapters[index];
@@ -53,20 +44,20 @@ export default class Chapters {
    * Returns the index of the specified {@link chapter} relative to timecode
    * order, or `undefined` if the chapter is not found.
    *
-   * @param {ChapterWithId} chapter
+   * @param {Chapter} chapter
    * @returns {number | undefined}
    */
   indexOf(chapter) {
-    return this.idToIndex.get(chapter.id);
+    return this.chapterToIndex.get(chapter);
   }
 
   /**
    * Returns the chapter that is found when advancing {@link offset} steps from
    * {@link chapter}. The {@link offset} may be negative.
    *
-   * @param {ChapterWithId} chapter
+   * @param {Chapter} chapter
    * @param {number} offset
-   * @returns {ChapterWithId | undefined}
+   * @returns {Chapter | undefined}
    */
   advance(chapter, offset = 1) {
     const idx = this.indexOf(chapter);
@@ -93,7 +84,7 @@ export default class Chapters {
   /**
    * Iterates through the chapters (ordered by timecode).
    *
-   * @returns {IterableIterator<ChapterWithId>}
+   * @returns {IterableIterator<Chapter>}
    */
   [Symbol.iterator]() {
     return this.chapters.values();
@@ -102,11 +93,11 @@ export default class Chapters {
   /**
    * Iterates through the chapters (reversely ordered by timecode).
    *
-   * @returns {IterableIterator<ChapterWithId>}
+   * @returns {IterableIterator<Chapter>}
    */
   *reversed() {
     for (let i = this.chapters.length - 1; i >= 0; i--) {
-      yield /** @type {ChapterWithId} */(this.chapters[i]);
+      yield /** @type {Chapter} */(this.chapters[i]);
     }
   }
 }

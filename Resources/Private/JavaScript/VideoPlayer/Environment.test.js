@@ -31,6 +31,7 @@ describe('setLang / t', () => {
   test('basic', () => {
     const env = new Environment();
     env.setLang({
+      locale: 'en_US',
       twoLetterIsoCode: 'en',
       phrases: {
         'apple': "{count, plural, =0 {no apple} one {one apple} other {# apples}}",

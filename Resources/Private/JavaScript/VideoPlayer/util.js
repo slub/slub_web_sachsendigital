@@ -220,26 +220,11 @@ export function binaryStringToArrayBuffer(s) {
 }
 
 /**
- * Parses {@link html} into an `HTMLElement`.
- *
- * @param {string} html
- * @returns {HTMLElement | null}
- */
-export function templateElement(html) {
-  const template = document.createElement("template");
-  template.innerHTML = html;
-  const element = template.content.firstElementChild;
-  return element instanceof HTMLElement
-    ? element
-    : null;
-}
-
-/**
  * Creates a nested HTML element.
  *
  * @template {keyof HTMLElementTagNameMap} K
  * @param {K} tag
- * @param {Record<string, any>} attrs
+ * @param {Partial<ElementAttributes<K>> & Partial<EventListeners>} attrs
  * @param {(HTMLElement | string | null | undefined | boolean)[]} children
  * @returns {HTMLElementTagNameMap[K]}
  */
@@ -247,9 +232,8 @@ export function e(tag, attrs = {}, children = []) {
   const element = document.createElement(tag);
 
   for (const [key, value] of Object.entries(attrs)) {
-    if (key === '@') {
-      value.element = element;
-    } else if (key[0] === '$') {
+    if (key[0] === '$') {
+      // @ts-expect-error: `Object.entries()` is too coarse-grained
       element.addEventListener(key.substring(1), value);
     } else {
       // @ts-expect-error: `Object.entries()` is too coarse-grained
@@ -268,18 +252,6 @@ export function e(tag, attrs = {}, children = []) {
   }
 
   return element;
-}
-
-/**
- * Returns ref object that may be used to capture HTML element via `@` field
- * in {@link e}.
- *
- * @template T
- * @returns {{ element: T | null }}
- */
-e.ref = function () {
-  // TODO: Strict typing where this is called
-  return { element: null };
 }
 
 /**

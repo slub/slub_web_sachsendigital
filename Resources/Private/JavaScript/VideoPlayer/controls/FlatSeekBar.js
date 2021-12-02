@@ -17,10 +17,12 @@ import VariantGroups from '../VariantGroups';
  * mostly taken from Shaka.
  *
  * Listens to the following custom events:
- * - {@link SxndThumbsCloseEvent}
  * - {@link SxndVariantGroupsEvent}
  * - {@link SxndChaptersEvent}
  * - {@link SxndFpsEvent}
+ *
+ * Emits the following custom events:
+ * - {@link SxndSeekBarEvent}
  *
  * @implements {shaka.extern.IUISeekBar}
  */
@@ -43,21 +45,14 @@ export default class FlatSeekBar extends shaka.ui.Element {
   constructor(parent, controls) {
     super(parent, controls);
 
-    const range = e.ref();
-    const container = e("div", { className: "sxnd-seek-bar" }, [
-      e("div", { "@": range, className: "range" }),
+    this.$container = e("div", { className: "sxnd-seek-bar" }, [
+      this.$range = e("div", { className: "range" }),
     ]);
 
-    parent.prepend(container);
+    parent.prepend(this.$container);
 
     /** @private */
     this.sxnd = {
-      dom: {
-        range: range.element,
-        container,
-      },
-      /** @type {number | null} */
-      fps: null,
       /** @type {Chapters | null} */
       chapters: null,
       /** @type {VariantGroups | null} */
@@ -82,10 +77,8 @@ export default class FlatSeekBar extends shaka.ui.Element {
 
     if (this.player !== null) {
       this.sxnd.thumbnailPreview = new ThumbnailPreview({
-        seekBar: this.sxnd.dom.container,
+        seekBar: this.$container,
         player: this.player,
-        getFps: () => this.sxnd.fps,
-        getChapter: (timecode) => this.sxnd.chapters?.timeToChapter(timecode),
         network: new ImageFetcher(),
         interaction: {
           onChangeStart: () => {
@@ -121,10 +114,6 @@ export default class FlatSeekBar extends shaka.ui.Element {
         this.updatePreviewImageTracks();
       });
 
-      this.eventManager.listen(this.controls, 'sxnd-thumbs-close', () => {
-        this.sxnd.thumbnailPreview?.setIsVisible(false);
-      });
-
       this.eventManager.listen(this.controls, 'sxnd-variant-groups', (e) => {
         const detail = /** @type {SxndVariantGroupsEvent} */(e).detail;
         this.sxnd.variantGroups = detail.variantGroups;
@@ -134,14 +123,19 @@ export default class FlatSeekBar extends shaka.ui.Element {
       this.eventManager.listen(this.controls, 'sxnd-chapters', (e) => {
         const detail = /** @type {SxndChaptersEvent} */(e).detail;
         this.sxnd.chapters = detail.chapters;
-        this.sxnd.thumbnailPreview?.refreshLastRendered();
+        this.sxnd.thumbnailPreview?.setChapters(detail.chapters);
       });
 
       this.eventManager.listen(this.controls, 'sxnd-fps', (e) => {
         const detail = /** @type {SxndFpsEvent} */(e).detail;
-        this.sxnd.fps = detail.fps;
-        this.sxnd.thumbnailPreview?.refreshLastRendered();
+        this.sxnd.thumbnailPreview?.setFps(detail.fps);
       });
+
+      this.controls?.dispatchEvent(/** @type {SxndSeekBarEvent} */(
+        new CustomEvent('sxnd-seek-bar', {
+          detail: { seekBar: this },
+        })
+      ));
     }
   }
 
@@ -163,6 +157,19 @@ export default class FlatSeekBar extends shaka.ui.Element {
   }
 
   /**
+   *
+   * @returns {boolean}
+   */
+  isThumbnailPreviewOpen() {
+    return this.sxnd.thumbnailPreview?.isVisible ?? false;
+  }
+
+  hideThumbnailPreview() {
+    this.sxnd.thumbnailPreview?.setIsVisible(false);
+  }
+
+  /**
+   * @private
    * Adds chapter marker elements to the seekbar.
    */
   renderChapterMarkers() {
@@ -189,28 +196,27 @@ export default class FlatSeekBar extends shaka.ui.Element {
       marker.style.position = 'absolute';
       marker.style.left = `${relative * 100}%`;
 
-      this.sxnd.dom.range.append(marker);
+      this.$range.append(marker);
     }
   }
 
   /**
+   * @private
    * Determines which image tracks apply to the current variant group and
    * passes those to the thumbnail preview.
    */
   updatePreviewImageTracks() {
-    if (this.player === null || this.sxnd.thumbnailPreview === null) {
+    if (this.sxnd.thumbnailPreview === null) {
       console.warn("FlatSeekBar: Missing player or thumbnail preview");
       return;
     }
 
-    const activeGroup = this.sxnd.variantGroups?.findActiveGroup();
-    if (activeGroup) {
-      const imageTracks = this.player.getImageTracks().filter(
-        track => VariantGroups.splitRepresentationId(track.originalImageId).group === activeGroup.key
-      );
-
-      this.sxnd.thumbnailPreview.setImageTracks(imageTracks);
+    if (this.sxnd.variantGroups === null) {
+      return;
     }
+
+    const imageTracks = this.sxnd.variantGroups.findImageTracks();
+    this.sxnd.thumbnailPreview.setImageTracks(imageTracks);
   }
 
   /**
@@ -279,7 +285,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
     const seekRangeSize = seekRange.end - seekRange.start;
 
     if (bufferedLength == 0) {
-      this.sxnd.dom.range.style.background = colors.base;
+      this.$range.style.background = colors.base;
     } else {
       const clampedBufferStart = Math.max(bufferedStart, seekRange.start);
       const clampedBufferEnd = Math.min(bufferedEnd, seekRange.end);
@@ -308,7 +314,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
         this.makeColor(colors.buffered, bufferEndFraction),
         this.makeColor(colors.base, bufferEndFraction),
       ];
-      this.sxnd.dom.range.style.background =
+      this.$range.style.background =
         'linear-gradient(' + gradient.join(',') + ')';
     }
   }

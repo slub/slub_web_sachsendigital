@@ -97,25 +97,29 @@
 				<source><![CDATA[Take Screenshot]]></source>
 				<target><![CDATA[Screenshot]]></target>
 			</trans-unit>
+			<trans-unit id="control.time.current-time.text" approved="yes">
+				<source><![CDATA[{currentTime} / {totalTime} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></source>
+				<target><![CDATA[{currentTime} / {totalTime} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></target>
+			</trans-unit>
 			<trans-unit id="control.time.current-time.tooltip" approved="yes">
 				<source><![CDATA[Current Time / Total]]></source>
 				<target><![CDATA[Aktuelle Laufzeit / Gesamtlaufzeit]]></target>
 			</trans-unit>
 			<trans-unit id="control.time.remaining-time.text" approved="yes">
-				<source><![CDATA[{timecode} remaining]]></source>
-				<target><![CDATA[noch {timecode}]]></target>
+				<source><![CDATA[{remainingTime} remaining {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></source>
+				<target><![CDATA[noch {remainingTime} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></target>
 			</trans-unit>
 			<trans-unit id="control.time.remaining-time.tooltip" approved="yes">
 				<source><![CDATA[Remaining Time]]></source>
 				<target><![CDATA[Restlaufzeit]]></target>
 			</trans-unit>
+			<trans-unit id="control.time.current-frame.text" approved="yes">
+				<source><![CDATA[{currentFrame, plural, =-1 {Frame Count Not Available} other {#}} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></source>
+				<target><![CDATA[{currentFrame, plural, =-1 {Frame-Nummer unbekannt} other {#}} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></target>
+			</trans-unit>
 			<trans-unit id="control.time.current-frame.tooltip" approved="yes">
 				<source><![CDATA[Frame Count]]></source>
 				<target><![CDATA[Frame-Nummer]]></target>
-			</trans-unit>
-			<trans-unit id="control.time.current-frame.unknown" approved="yes">
-				<source><![CDATA[(Frame Count Not Available)]]></source>
-				<target><![CDATA[(Frame-Nummer unbekannt)]]></target>
 			</trans-unit>
 			<trans-unit id="control.video-track.title" approved="yes">
 				<source><![CDATA[Video Track]]></source>

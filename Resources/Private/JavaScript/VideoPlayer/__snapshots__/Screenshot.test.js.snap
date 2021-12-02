@@ -4,16 +4,16 @@ exports[`can draw to canvas 1`] = `
 Array [
   Object {
     "props": Object {
-      "dHeight": 0,
-      "dWidth": 0,
+      "dHeight": 1080,
+      "dWidth": 1920,
       "dx": 0,
       "dy": 0,
       "img": VideoMock {
         "_mockHeight": 1080,
         "_mockWidth": 1920,
       },
-      "sHeight": 0,
-      "sWidth": 0,
+      "sHeight": 1080,
+      "sWidth": 1920,
       "sx": 0,
       "sy": 0,
     },
@@ -214,16 +214,16 @@ exports[`can draw to canvas 2`] = `
 Array [
   Object {
     "props": Object {
-      "dHeight": 0,
-      "dWidth": 0,
+      "dHeight": 540,
+      "dWidth": 960,
       "dx": 0,
       "dy": 0,
       "img": VideoMock {
         "_mockHeight": 540,
         "_mockWidth": 960,
       },
-      "sHeight": 0,
-      "sWidth": 0,
+      "sHeight": 540,
+      "sWidth": 960,
       "sx": 0,
       "sy": 0,
     },

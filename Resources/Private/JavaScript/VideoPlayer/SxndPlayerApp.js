@@ -1,3 +1,5 @@
+// @ts-check
+
 import BookmarkModal from './BookmarkModal';
 import Chapters from './Chapters';
 import ControlPanelButton from './controls/ControlPanelButton';
@@ -7,28 +9,38 @@ import { Modifier, modifiersFromEvent } from './Keyboard';
 import Modals from './Modals';
 import SachsenShakaPlayer from './SachsenShakaPlayer';
 import ScreenshotModal from './ScreenshotModal';
+import { e } from './util';
 
 import keybindings from './keybindings.json';
 
 /**
- * @typedef {'player' | 'modal'} KeyboardScope Currently active target/scope for mapping keybindings.
+ * @typedef {'player' | 'modal'} KeyboardScope Currently active target/scope
+ * for mapping keybindings.
+ *
+ * @typedef {HTMLElement & { sxndTimecode: number }} ChapterLink
  */
 
 class SxndPlayerApp {
   /**
    *
    * @param {HTMLElement} container
-   * @param {any} videoInfo
-   * @param {object} lang
-   * @param {string} lang.locale
-   * @param {string} lang.twoLetterIsoCode
-   * @param {Record<string, string>} lang.phrases
+   * @param {VideoInfo} videoInfo
+   * @param {LangDef} lang
    */
   constructor(container, videoInfo, lang) {
+    /** @private */
     this.container = container;
+    /** @private */
+    this.playerMount = e('div');
+    this.container.append(this.playerMount);
+    /** @private */
     this.videoInfo = videoInfo;
+    /** @private */
     this.lang = lang;
+    /** @private @type {Keybinding<KeyboardScope, keyof SxndPlayerApp['actions']>[]} */
+    this.keybindings = /** @type {any} */(keybindings);
 
+    /** @private */
     this.constants = {
       /** Number of seconds in which to still rewind to previous chapter. */
       prevChapterTolerance: 5,
@@ -40,16 +52,22 @@ class SxndPlayerApp {
       trickPlayFactor: 4,
     };
 
+    /** @private */
     this.handlers = {
       onKeyDown: this.onKeyDown.bind(this),
       onKeyUp: this.onKeyUp.bind(this),
       onClickChapterLink: this.onClickChapterLink.bind(this),
     };
 
+    /** @private */
     this.env = new Environment();
     this.env.setLang(lang);
 
+    /** @private */
+    this.sxndPlayer = new SachsenShakaPlayer(this.env);
+
     // Check if we've got a URL for a supported manifest format
+    /** @private */
     this.manifestUri = null;
     for (const format of SachsenShakaPlayer.initSupport()) {
       if (videoInfo.url[format]) {
@@ -57,22 +75,37 @@ class SxndPlayerApp {
         break;
       }
     }
-    if (this.manifestUri === null) {
-      this.failWithError('error.playback-not-supported');
-      return;
-    }
 
+    /** @private @type {ChapterLink[]} */
+    this.chapterLinks = [];
+
+    /** @private */
+    this.modals = Modals({
+      help: new HelpModal(this.container, this.env, {
+        constants: this.constants,
+        keybindings: this.keybindings,
+      }),
+      bookmark: new BookmarkModal(this.container, this.env),
+      screenshot: new ScreenshotModal(this.container, this.env),
+    });
+
+    /** @private */
     this.actions = {
       'cancel': () => {
-        this.hideThumbnailPreview();
-        this.modals.closeNext();
+        if (this.modals.hasOpen()) {
+          this.modals.closeNext();
+        } else if (this.sxndPlayer.isThumbnailPreviewOpen()) {
+          this.sxndPlayer.hideThumbnailPreview();
+        } else if (this.sxndPlayer.anySettingsMenusAreOpen()) {
+          this.sxndPlayer.hideSettingsMenus();
+        }
       },
       'modal.help.open': () => {
-        this.hideThumbnailPreview();
+        this.sxndPlayer.hideThumbnailPreview();
         this.modals.help.open();
       },
       'modal.help.toggle': () => {
-        this.hideThumbnailPreview();
+        this.sxndPlayer.hideThumbnailPreview();
         this.modals.help.toggle();
       },
       'modal.bookmark.open': () => {
@@ -82,24 +115,24 @@ class SxndPlayerApp {
         this.showScreenshot();
       },
       'fullscreen.toggle': () => {
-        this.hideThumbnailPreview();
-        this.sxndPlayer.controls.toggleFullScreen();
+        this.sxndPlayer.hideThumbnailPreview();
+        this.sxndPlayer.toggleFullScreen();
       },
       'playback.toggle': () => {
-        if (this.sxndPlayer.video.paused) {
-          this.sxndPlayer.video.play();
+        if (this.sxndPlayer.paused) {
+          this.sxndPlayer.play();
         } else {
-          this.sxndPlayer.video.pause();
+          this.sxndPlayer.pause();
         }
       },
       'playback.volume.mute.toggle': () => {
-        this.sxndPlayer.video.muted = !this.sxndPlayer.video.muted;
+        this.sxndPlayer.muted = !this.sxndPlayer.muted;
       },
       'playback.volume.inc': () => {
-        this.sxndPlayer.video.volume = Math.min(1, this.sxndPlayer.video.volume + this.constants.volumeStep);
+        this.sxndPlayer.volume = this.sxndPlayer.volume + this.constants.volumeStep;
       },
       'playback.volume.dec': () => {
-        this.sxndPlayer.video.volume = Math.max(0, this.sxndPlayer.video.volume - this.constants.volumeStep);
+        this.sxndPlayer.volume = this.sxndPlayer.volume - this.constants.volumeStep;
       },
       'navigate.rewind': () => {
         this.sxndPlayer.skipSeconds(-this.constants.seekStep);
@@ -120,118 +153,110 @@ class SxndPlayerApp {
         this.sxndPlayer.nextChapter();
       },
       'navigate.frame.prev': () => {
-        this.sxndPlayer.vifa?.seekBackward(1);
+        this.sxndPlayer.getVifa()?.seekBackward(1);
       },
       'navigate.frame.next': () => {
-        this.sxndPlayer.vifa?.seekForward(1);
+        this.sxndPlayer.getVifa()?.seekForward(1);
       },
     };
-
-    this.keybindings = keybindings;
 
     this.load();
   }
 
+  /**
+   * Prints global error message into {@link container} and quits.
+   *
+   * @private
+   * @param {string} langKey
+   */
   failWithError(langKey) {
-    const errorBox = document.createElement('div');
-    errorBox.className = "sxnd-player-fatal-error";
-    errorBox.innerText = this.env.t(langKey);
+    this.sxndPlayer.unmount();
+
+    const errorBox = e('div', {
+      className: "sxnd-player-fatal-error",
+    }, [this.env.t(langKey)]);
 
     this.container.innerHTML = "";
     this.container.append(errorBox);
   }
 
-  load() {
-    this.chapterLinks = Array.from(
-      document.querySelectorAll("a[data-timecode]")
-    );
+  /**
+   * @private
+   * @param {Chapters} chapters
+   * @returns {number | undefined}
+   */
+  getStartTime(chapters) {
+    const timecode = this.env.getLocation().searchParams.get('timecode');
 
-    for (const el of this.chapterLinks) {
-      el.sxndTimecode = Number(el.getAttribute("data-timecode"));
+    if (timecode !== null) {
+      return timecode ? parseFloat(timecode) : undefined;
+    } else if (this.videoInfo.pageNo !== undefined) {
+      return chapters.at(this.videoInfo.pageNo - 1)?.timecode;
+    }
+  }
+
+  /**
+   * @private
+   */
+  async load() {
+    if (this.manifestUri === null) {
+      this.failWithError('error.playback-not-supported');
+      return;
     }
 
-    const video = document.createElement("video");
-    video.id = 'video';
-    video.poster = this.videoInfo.url.poster;
-    video.style.width = "100%";
-    video.style.height = "100%";
-    this.container.append(video);
+    document.querySelectorAll("a[data-timecode]").forEach(el => {
+      const timecode = Number(el.getAttribute("data-timecode"));
+      if (Number.isFinite(timecode)) {
+        const sxndEl = /** @type {ChapterLink} */(el);
+        sxndEl.sxndTimecode = timecode;
+        sxndEl.addEventListener('click', this.handlers.onClickChapterLink);
+        this.chapterLinks.push(sxndEl);
+      }
+    });
 
     const chapterInfos = this.videoInfo.chapters.map(chapter => ({
       ...chapter,
       timecode: parseInt(chapter.timecode, 10),
     }));
-    const chapters = new Chapters(chapterInfos, this.env);
+    const chapters = new Chapters(chapterInfos);
 
-    let timecode = new URL(window.location).searchParams.get('timecode');
-    if (timecode === null && this.videoInfo.pageNo !== undefined) {
-      timecode = chapters.at(this.videoInfo.pageNo - 1).timecode;
-    }
-    const startTime = timecode ? parseFloat(timecode) : undefined;
+    const startTime = this.getStartTime(chapters);
 
-    const sxndPlayer = new SachsenShakaPlayer({
-      env: this.env,
-      container: this.container,
-      video: document.getElementById('video'),
-      chapters,
-      controlPanelButtons: [
-        ControlPanelButton.register(this.env, {
-          material_icon: 'photo_camera',
-          title: this.env.t('control.screenshot.tooltip'),
-          onClick: this.actions['modal.screenshot.open'],
-        }),
-        ControlPanelButton.register(this.env, {
-          material_icon: 'bookmark_border',
-          title: this.env.t('control.bookmark.tooltip'),
-          onClick: this.actions['modal.bookmark.open'],
-        }),
-        ControlPanelButton.register(this.env, {
-          material_icon: 'help_outline',
-          title: this.env.t('control.help.tooltip'),
-          onClick: this.actions['modal.help.open'],
-        }),
-      ],
-      constants: this.constants,
-    });
-
-    sxndPlayer.initialize();
-    sxndPlayer.setLocale(this.lang.twoLetterIsoCode);
-
-    sxndPlayer.loadManifest(this.manifestUri, startTime)
-      .then(() => {
-        document.addEventListener('keydown', this.handlers.onKeyDown, { capture: true });
-        document.addEventListener('keyup', this.handlers.onKeyUp, { capture: true });
-
-        for (const el of this.chapterLinks) {
-          el.addEventListener('click', this.handlers.onClickChapterLink);
-        }
+    this.sxndPlayer.addControlElement(
+      ControlPanelButton.register(this.env, {
+        material_icon: 'photo_camera',
+        title: this.env.t('control.screenshot.tooltip'),
+        onClick: this.actions['modal.screenshot.open'],
+      }),
+      ControlPanelButton.register(this.env, {
+        material_icon: 'bookmark_border',
+        title: this.env.t('control.bookmark.tooltip'),
+        onClick: this.actions['modal.bookmark.open'],
+      }),
+      ControlPanelButton.register(this.env, {
+        material_icon: 'help_outline',
+        title: this.env.t('control.help.tooltip'),
+        onClick: this.actions['modal.help.open'],
       })
-      .catch(() => {
-        this.failWithError('error.load-failed');
-      });
+    );
+    this.sxndPlayer.setConstants(this.constants);
+    this.sxndPlayer.setLocale(this.lang.twoLetterIsoCode);
+    this.sxndPlayer.setPoster(this.videoInfo.url.poster);
+    this.sxndPlayer.setChapters(chapters);
+    this.sxndPlayer.mount(this.playerMount);
 
-    this.modals = Modals({
-      help: new HelpModal(this.container, this.env, {
-        constants: this.constants,
-        keybindings: this.keybindings,
-      }),
-      bookmark: new BookmarkModal(this.container, this.env),
-      screenshot: new ScreenshotModal(this.container, this.env, {
-        video: sxndPlayer.video,
-      }),
-    });
+    try {
+      await this.sxndPlayer.loadManifest(this.manifestUri, startTime);
+    } catch (e) {
+      this.failWithError('error.load-failed');
+    }
 
-    this.sxndPlayer = sxndPlayer;
-  }
-
-  hideThumbnailPreview() {
-    /** @type {SxndThumbsCloseEvent} */
-    const thEvent = new Event('sxnd-thumbs-close');
-    this.sxndPlayer.controls.dispatchEvent(thEvent);
+    document.addEventListener('keydown', this.handlers.onKeyDown, { capture: true });
+    document.addEventListener('keyup', this.handlers.onKeyUp, { capture: true });
   }
 
   /**
-   *
+   * @private
    * @returns {KeyboardScope}
    */
   getKeyboardScope() {
@@ -243,7 +268,7 @@ class SxndPlayerApp {
   }
 
   /**
-   *
+   * @private
    * @param {KeyboardEvent} e
    */
   onKeyDown(e) {
@@ -272,22 +297,19 @@ class SxndPlayerApp {
     if (stopPropagation) {
       // Stop propagation to suppress Shaka's default keybindings.
       //
-      // However, do this conditionally as we may not want to stop propagation
-      // for Esc, because Shaka should close the overflow menu on Esc.
-      //
       // TODO: Find a better solution; tweak this behavior
       e.stopImmediatePropagation();
     }
   }
 
   /**
-   *
+   * @private
    * @param {KeyboardEvent} e
    */
   onKeyUp(e) {
     // Stopping propagation is a hack against the keyup handler in
-    // `slub_digitalcollections`, which adds/removes a `fullscreen` CSS class
-    // when releasing `f`/`Esc`.
+    // `slub_digitalcollections`, which adds/removes a `fullscreen` CSS
+    // class when releasing `f`/`Esc`.
     // TODO: Find better solutions for this.
 
     e.stopImmediatePropagation();
@@ -296,32 +318,34 @@ class SxndPlayerApp {
   }
 
   /**
-   *
+   * @private
    * @param {MouseEvent} e
    */
   onClickChapterLink(e) {
     e.preventDefault();
 
-    // Use `currentTarget` to get the <a> element to which the handler has been
-    // attached.
-    const timecode = Number(e.currentTarget.getAttribute('data-timecode'));
+    // Use `currentTarget` to get the <a> element to which the handler has
+    // been attached.
+    const target = /** @type {ChapterLink} */(e.currentTarget);
+
     this.sxndPlayer.play();
-    this.sxndPlayer.seekTo(timecode);
+    this.sxndPlayer.seekTo(target.sxndTimecode);
   }
 
   showBookmarkUrl() {
     this.sxndPlayer.pause();
-    this.hideThumbnailPreview();
+    this.sxndPlayer.hideThumbnailPreview();
     this.modals.bookmark
       .setTimecode(this.sxndPlayer.displayTime)
-      .setFps(this.sxndPlayer.fps ?? 0)
+      .setFps(this.sxndPlayer.getFps() ?? 0)
       .open();
   }
 
   showScreenshot() {
     this.sxndPlayer.pause();
-    this.hideThumbnailPreview();
+    this.sxndPlayer.hideThumbnailPreview();
     this.modals.screenshot
+      .setVideo(this.sxndPlayer.getVideo())
       .setMetadata(this.videoInfo.metadata)
       .setTimecode(this.sxndPlayer.displayTime)
       .open();

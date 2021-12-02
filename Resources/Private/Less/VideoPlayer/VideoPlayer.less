@@ -36,10 +36,14 @@ body {
 }
 
 .document-view {
-    overflow: auto;
+    .tx-dlf-view {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+    }
 
     .media-viewport {
-        overflow: auto;
+        height: 100%;
     }
 
     .thumbnail-preview {
@@ -113,6 +117,11 @@ body {
             }
         }
     }
+}
+
+.sxnd-video {
+    width: 100%;
+    height: 100%;
 }
 
 .screenshot-modal {
@@ -196,10 +205,7 @@ body {
 }
 
 .shaka-video-container {
-    /* Set to 95% of the viewPort height
-     --> allow 4:3 and 19:6
-      */
-    height: 95vh;
+    height: 100%;
 }
 
 .sxnd-modal-cover {
