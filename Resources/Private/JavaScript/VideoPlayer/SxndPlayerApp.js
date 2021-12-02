@@ -318,7 +318,10 @@ class SxndPlayerApp {
   showBookmarkUrl() {
     this.sxndPlayer.pause();
     this.hideThumbnailPreview();
-    this.modals.bookmark.setTimecode(this.sxndPlayer.displayTime).open();
+    this.modals.bookmark
+      .setTimecode(this.sxndPlayer.displayTime)
+      .setFps(this.sxndPlayer.fps ?? 0)
+      .open();
   }
 
   showScreenshot() {
