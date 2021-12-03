@@ -36,12 +36,15 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
       });
     });
 
-    this.eventManager.listen(this.controls, 'timeandseekrangeupdated', () => {
+    const updateTime = () => {
       this.render({
         duration: this.controls.elSxndPlayer.video.duration,
         totalSeconds: this.controls.getDisplayTime(),
       });
-    });
+    };
+
+    this.eventManager.listen(this.player, 'loaded', updateTime);
+    this.eventManager.listen(this.controls, 'timeandseekrangeupdated', updateTime);
   }
 
   /**

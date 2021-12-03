@@ -2,13 +2,11 @@ import shaka from 'shaka-player/dist/shaka-player.ui';
 import 'shaka-player/ui/controls.less';
 
 import Chapters from './Chapters';
-
+import FlatSeekBar from './controls/FlatSeekBar';
 import PresentationTimeTracker from './controls/PresentationTimeTracker';
+import Environment from './Environment';
 
 import '../../Less/VideoPlayer/VideoPlayer.less';
-import Environment from './Environment';
-import ImageFetcher from './ImageFetcher';
-import ThumbnailPreview from './ThumbnailPreview';
 
 export default class SachsenShakaPlayer {
   /**
@@ -99,6 +97,9 @@ export default class SachsenShakaPlayer {
     // Store player instance so that our custom controls may access it
     this.controls.elSxndPlayer = this;
 
+    // TODO: Somehow avoid overriding the SeekBar globally?
+    FlatSeekBar.register();
+
     const config = {
       addSeekBar: true,
       'controlPanelElements': [
@@ -129,20 +130,10 @@ export default class SachsenShakaPlayer {
 
     this.player.addEventListener('adaptation', this.handlers.onTrackChange);
     this.player.addEventListener('variantchanged', this.handlers.onTrackChange);
-
-    this.seekBar = this.container.querySelector('.shaka-seek-bar-container');
-    this.thumbnailPreview = new ThumbnailPreview({
-      mainContainer: this.container,
-      seekBar: this.seekBar,
-      seekThumbSize: 12,
-      player: this.player,
-      network: new ImageFetcher(),
-    });
   }
 
   async loadManifest(manifestUri, startTime) {
     await this.player.load(manifestUri, startTime);
-    this.renderChapterMarkers();
   }
 
   onTrackChange() {
@@ -167,36 +158,6 @@ export default class SachsenShakaPlayer {
 
   setLocale(locale) {
     this.controls.getLocalization().changeLocale([locale]);
-  }
-
-  renderChapterMarkers() {
-    for (const chapter of this.chapters) {
-      const relative = chapter.timecode / this.video.duration;
-
-      // In particular, make sure that we don't put markers outside of the
-      // seekbar for wrong timestamps.
-      if (!(0 <= relative && relative < 1)) {
-        continue;
-      }
-
-      // The outer <span /> is to give some leeway, making the chapter marker
-      // easier to hit.
-
-      const marker = document.createElement('span');
-      marker.className = 'sxnd-chapter-marker';
-      marker.style.position = 'absolute';
-      marker.style.left = `${chapter.timecode / this.video.duration * 100}%`;
-      marker.title = chapter.title;
-      marker.addEventListener('click', () => {
-        this.play();
-        this.seekTo(chapter);
-      });
-
-      const markerInner = document.createElement('span');
-      marker.append(markerInner);
-
-      this.seekBar.append(marker);
-    }
   }
 
   onPlayerErrorEvent(event) {

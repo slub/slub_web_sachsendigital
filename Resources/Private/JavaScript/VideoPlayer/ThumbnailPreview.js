@@ -4,13 +4,21 @@ import ImageFetcher from './ImageFetcher';
 import { buildTimeString, isPosInRect, numberIntoRange, templateElement } from './util';
 
 /**
- * @typedef {{ absolute: number; relative: number; seconds: number }} SeekPosition
+ * @typedef {{
+ *  absolute: number;
+ *  seconds: number;
+ *  chapter: import('./Chapters').Chapter;
+ *  onChapterMarker: boolean;
+ *  }} SeekPosition
+ *
  * @typedef {{
  *  uri: string;
  *  thumb: any;
  *  tilesetImage: HTMLImageElement;
  * }} LastRendered
  */
+
+const DISPLAY_WIDTH = 160;
 
 /**
  * Component for a thumbnail preview when sliding over the seekbar.
@@ -21,50 +29,108 @@ export default class ThumbnailPreview {
   /**
    *
    * @param {object} config
-   * @param {HTMLElement} config.mainContainer
    * @param {HTMLElement} config.seekBar
-   * @param {number} config.seekThumbSize
    * @param {shaka.Player} config.player
+   * @param {() => number | null} config.getFps
+   * @param {(timecode: number) => import('./Chapters').Chapter} config.getChapter
    * @param {ImageFetcher} config.network
+   * @param {object} config.interaction
+   * @param {(pos: SeekPosition) => void} config.interaction.onChange
    */
   constructor(config) {
-    this.mainContainer = config.mainContainer;
     this.seekBar = config.seekBar;
-    this.seekThumbSize = config.seekThumbSize;
     this.player = config.player;
+    this.getFps = config.getFps;
+    this.getChapter = config.getChapter;
     this.network = config.network;
+    this.interaction = config.interaction;
 
+    // Make preview unselectable so that, for example, the info text won't
+    // accidentally be selected when scrubbing on FlatSeekBar.
     const container = templateElement(`
-      <div class="thumbnail-preview">
-        <div class="display">
-          <canvas>
+      <div class="thumbnail-preview noselect">
+        <div class="content-box">
+          <div class="display">
+            <canvas>
+          </div>
+          <span class="info">
+            <span class="chapter-text"></span>
+            <span class="timecode-text"></span>
+          </span>
         </div>
-        <span class="timecode"></span>
       </div>
     `);
 
+    const seekMarker = templateElement(`
+      <div class="seek-marker"></div>
+    `);
+
     this.dom = {
+      seekMarker,
       container,
       display: container.querySelector('.display'),
       /** @type {HTMLCanvasElement} */
       canvas: container.querySelector('canvas'),
-      timecode: container.querySelector('.timecode'),
+      info: container.querySelector('.info'),
+      chapterText: container.querySelector('.chapter-text'),
+      timecodeText: container.querySelector('.timecode-text'),
     };
 
     this.ctx = this.dom.canvas.getContext('2d');
+
+    this.setCanvasResolution(DISPLAY_WIDTH, DISPLAY_WIDTH / (16 / 9));
+
     /** @type {LastRendered | null} */
     this.lastRendered = null;
+    this.isChanging = false;
+    this.showContainer = false;
 
-    this.seekBar.append(this.dom.container);
+    this.seekBar.append(this.dom.seekMarker, this.dom.container);
 
     this.handlers = {
       onWindowBlur: this.onWindowBlur.bind(this),
-      onMouseMove: this.onMouseMove.bind(this),
+      onPointerMove: this.onPointerMove.bind(this),
+      onPointerDown: this.onPointerDown.bind(this),
+      onPointerUp: this.onPointerUp.bind(this),
     };
 
     window.addEventListener('blur', this.handlers.onWindowBlur);
     // TODO: Find a better solution for this
-    this.mainContainer.addEventListener('mousemove', this.handlers.onMouseMove);
+    document.addEventListener('pointermove', this.handlers.onPointerMove);
+    document.addEventListener('pointerdown', this.handlers.onPointerDown);
+    document.addEventListener('pointerup', this.handlers.onPointerUp);
+  }
+
+  release() {
+    window.removeEventListener('blur', this.handlers.onWindowBlur);
+    document.removeEventListener('pointermove', this.handlers.onPointerMove);
+    document.removeEventListener('pointerdown', this.handlers.onPointerDown);
+    document.removeEventListener('pointerup', this.handlers.onPointerUp);
+  }
+
+  setCanvasResolution(width, height) {
+    // Code adopted from https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio
+
+    const scale = window.devicePixelRatio;
+
+    this.dom.canvas.width = scale * width;
+    this.dom.canvas.height = scale * height;
+
+    this.canvasResolution = { scale, width, height };
+
+    this.ctx.scale(scale, scale);
+
+    if (this.lastRendered) {
+      this.renderImage(this.lastRendered.uri, this.lastRendered.thumb, this.lastRendered.tilesetImage, true);
+    }
+  }
+
+  ensureDisplaySize(thumbWidth, thumbHeight) {
+    const previewHeight = DISPLAY_WIDTH / thumbWidth * thumbHeight;
+    if (this.canvasResolution.height !== previewHeight) {
+      this.dom.display.style.height = `${previewHeight}px`;
+      this.setCanvasResolution(160, previewHeight);
+    }
   }
 
   /**
@@ -75,7 +141,9 @@ export default class ThumbnailPreview {
     // Ctrl+Tab. If they then move the mouse and return to the player tab, it may
     // be surprising to have the thumbnail preview still open. Thus, close the
     // preview to avoid that.
-    this.hidePreview(false);
+    this.setIsVisible(false);
+
+    this.changeEnd();
   }
 
   /**
@@ -106,68 +174,175 @@ export default class ThumbnailPreview {
    * @returns {SeekPosition | undefined}
    */
   mouseEventToPosition(e) {
+    const duration = this.getVideoDuration();
+    if (!(duration > 0)) {
+      return;
+    }
+
     const isHoveringButton = document.querySelector("input[type=button]:hover, button:hover") !== null;
     if (isHoveringButton) {
       return;
     }
 
     const bounding = this.seekBar.getBoundingClientRect();
-    if (!isPosInRect(bounding, { x: e.clientX, y: e.clientY, toleranceY: 6 })) {
-      return;
+
+    // Don't check bounds when scrubbing
+    if (!this.isChanging) {
+      if (this.showContainer) {
+        // A seek has already been initiated by hovering the seekbar. Check
+        // bounds in such a way that quickly moving the mouse left/right won't
+        // accidentally close the container.
+
+        const { left, right, bottom } = bounding;
+        if (!(left <= e.clientX && e.clientX <= right && e.clientY <= bottom)) {
+          return;
+        }
+
+        const { top } = this.dom.container.getBoundingClientRect();
+        if (!(top <= e.clientY)) {
+          return;
+        }
+      } else {
+        // Before initiating a seek, check that the seek bar (or a descendant)
+        // is actually hovered (= not only an element that visually overlays the
+        // seek bar, such as a modal).
+
+        if (!this.seekBar.contains(e.target)) {
+          return;
+        }
+      }
     }
 
-    const absolute = e.clientX - bounding.left;
-    const relative = (absolute - this.seekThumbSize / 2) / (bounding.width - this.seekThumbSize);
-    const seconds = relative * this.getVideoDuration();
+    const secondsPerPixel = duration / bounding.width;
 
-    return { absolute, relative, seconds };
+    let absolute = e.clientX - bounding.left;
+    let seconds = numberIntoRange(absolute * secondsPerPixel, [0, duration]);
+    const chapter = this.getChapter(seconds);
+    let onChapterMarker = false;
+
+    // "Capture" mouse on chapter markers,
+    // but only if the user is not currently scrubbing.
+    if (chapter && !this.isChanging) {
+      const offsetPixels = (seconds - chapter.timecode) / secondsPerPixel;
+      if (-2 <= offsetPixels && offsetPixels < 6) {
+        seconds = chapter.timecode;
+        absolute = seconds / secondsPerPixel;
+        onChapterMarker = true;
+      }
+    }
+
+    return { absolute, seconds, chapter, onChapterMarker };
   }
 
   /**
    * @protected
-   * @param {MouseEvent} e
+   * @param {PointerEvent} e
    */
-  async onMouseMove(e) {
-    const thumbsTrack = this.getThumbsTrack();
-    if (thumbsTrack === undefined) {
-      return this.hidePreview();
-    }
-
+  async onPointerMove(e) {
     const seekPosition = this.mouseEventToPosition(e);
     if (seekPosition === undefined) {
-      return this.hidePreview();
+      return this.setIsVisible(false);
+    }
+
+    // Check primary button
+    if (this.isChanging && e.buttons & 1 !== 0) {
+      this.interaction?.onChange?.(seekPosition);
+    }
+
+    this.setIsVisible(true, false);
+    this.renderSeekPosition(seekPosition);
+
+    const thumbsTrack = this.getThumbsTrack();
+    if (thumbsTrack === undefined) {
+      return;
     }
 
     const thumb = await this.player.getThumbnails(thumbsTrack.id, seekPosition.seconds);
     if (thumb === null || thumb.uris.length === 0) {
-      return this.hidePreview();
+      return;
     }
+
+    this.ensureDisplaySize(thumb.width, thumb.height);
 
     const uri = thumb.uris[0];
     if (this.lastRendered === null || uri !== this.lastRendered.uri) {
       this.network.get(uri)
         .then(image => {
-          this.renderImage(uri, thumb, image);
-          this.setIsVisible(true);
-        })
-        .catch(() => {
-          this.hidePreview();
+          this.renderImageAndShow(uri, thumb, image, seekPosition);
         });
     } else {
-      this.renderImage(uri, thumb, this.lastRendered.tilesetImage);
-      this.setIsVisible(true);
+      this.renderImageAndShow(uri, thumb, this.lastRendered.tilesetImage, seekPosition);
     }
-
-    this.renderSeekPosition(seekPosition);
   }
 
-  hidePreview() {
-    this.setIsVisible(false);
+  /**
+   *
+   * @param {PointerEvent} e
+   */
+  onPointerDown(e) {
+    // Check primary button
+    if (e.buttons & 1 !== 0) {
+      const position = this.mouseEventToPosition(e);
+      if (position !== undefined) {
+        if (!this.isChanging) {
+          this.interaction?.onChangeStart?.();
+          document.body.classList.add('seek-or-scrub');
+          this.isChanging = true;
+        }
+
+        this.interaction?.onChange?.(position);
+      }
+    }
   }
 
-  renderImage(uri, thumb, tilesetImage) {
+  /**
+   *
+   * @param {PointerEvent} e
+   */
+  onPointerUp(e) {
+    this.changeEnd();
+
+    if (this.mouseEventToPosition(e) === undefined) {
+      this.setIsVisible(false);
+    }
+  }
+
+  changeEnd() {
+    if (this.isChanging) {
+      this.interaction?.onChangeEnd?.();
+      document.body.classList.remove('seek-or-scrub');
+      this.isChanging = false;
+    }
+  }
+
+  renderThumbTimecode(thumb) {
+    // TODO: Make this more flexible than just accomodating ffmpeg's fps filter
+    const fps = this.getFps();
+    const targetTime = thumb.startTime + thumb.duration / 2;
+    const timecode = buildTimeString(targetTime - 0.00001, this.getVideoDuration() >= 3600, fps);
+
+    this.ctx.font = "8px sans-serif";
+    this.ctx.textBaseline = 'top';
+
+    const textMetrics = this.ctx.measureText(timecode);
+    const textWidth = textMetrics.width;
+    const textHeight = textMetrics.actualBoundingBoxDescent; // because baseline = top
+
+    const textPaddingX = 2;
+    const textPaddingY = 2;
+    const textLeft = this.canvasResolution.width - (textWidth + textPaddingX);
+
+    // Fill text box for solid background
+    this.ctx.fillStyle = "black";
+    this.ctx.fillRect(textLeft - textPaddingX, 0, textWidth + 2 * textPaddingX, textHeight + 2 * textPaddingY);
+
+    this.ctx.fillStyle = "white";
+    this.ctx.fillText(timecode, textLeft, textPaddingY);
+  }
+
+  renderImage(uri, thumb, tilesetImage, force = false) {
     // Check if it's another thumbnail (`startTime` as a proxy)
-    if (this.lastRendered === null || thumb.startTime !== this.lastRendered.thumb.startTime) {
+    if (force || this.lastRendered === null || thumb.startTime !== this.lastRendered.thumb.startTime) {
       let { positionX, positionY, width, height } = thumb;
 
       // When width/height are in the interval [0,1], we treat them as relative
@@ -185,14 +360,28 @@ export default class ThumbnailPreview {
         // position and size on source image
         positionX, positionY, width, height,
         // position and size on destination canvas
-        0, 0, this.dom.canvas.width, this.dom.canvas.height
+        0, 0, this.canvasResolution.width, this.canvasResolution.height
       );
+
+      this.renderThumbTimecode(thumb);
 
       this.lastRendered = { uri, thumb, tilesetImage };
     }
   }
 
-  renderSeekPosition(seekPosition) {
+  renderImageAndShow(uri, thumb, tilesetImage, seekPosition) {
+    this.renderImage(uri, thumb, tilesetImage);
+    this.setIsVisible(true);
+
+    // If the image has just become visible, the container position may change
+    this.positionContainer(seekPosition);
+  }
+
+  /**
+   *
+   * @param {SeekPosition} seekPosition
+   */
+  positionContainer(seekPosition) {
     // Align the container so that the mouse underneath is centered,
     // but avoid overflowing at the left or right of the seek bar
     const containerX = numberIntoRange(
@@ -200,15 +389,53 @@ export default class ThumbnailPreview {
       [0, this.seekBar.clientWidth - this.dom.container.offsetWidth]
     );
     this.dom.container.style.left = `${containerX}px`;
-
-    this.dom.timecode.innerText = buildTimeString(seekPosition.seconds, this.getVideoDuration() >= 3600);
   }
 
-  setIsVisible(value) {
-    if (value) {
-      this.dom.container.classList.add('shown');
+  /**
+   *
+   * @param {SeekPosition} seekPosition
+   */
+  renderSeekPosition(seekPosition) {
+    const duration = this.getVideoDuration();
+    if (!Number.isFinite(duration)) {
+      this.setIsVisible(false);
+      return;
+    }
+
+    this.dom.seekMarker.style.left = `${seekPosition.absolute}px`;
+
+    if (seekPosition.onChapterMarker) {
+      this.dom.info.classList.add("on-chapter-marker");
     } else {
-      this.dom.container.classList.remove('shown');
+      this.dom.info.classList.remove("on-chapter-marker");
+    }
+
+    // Empty chapter titles are hidden to maintain correct distance of info text
+    // to thumbnail image
+    const title = seekPosition.chapter?.title ?? "";
+    this.dom.chapterText.innerText = title;
+    this.setElementVisible(this.dom.chapterText, title !== "");
+
+    this.dom.timecodeText.innerText = buildTimeString(seekPosition.seconds, duration >= 3600, this.getFps());
+
+    // The info text length may influence the container position, so position
+    // after setting the text.
+    this.positionContainer(seekPosition);
+  }
+
+  setIsVisible(showContainer, showThumb = showContainer) {
+    this.showContainer = showContainer;
+    this.setElementVisible(this.dom.container, showContainer);
+    this.setElementVisible(this.dom.seekMarker, showContainer);
+
+    this.setElementVisible(this.dom.display, showThumb);
+  }
+
+  setElementVisible(element, visible) {
+    if (visible) {
+      element.classList.add('shown');
+    } else {
+      element.classList.remove('shown');
     }
   }
 }

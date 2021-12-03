@@ -233,7 +233,7 @@ class SxndPlayerApp {
   }
 
   hideThumbnailPreview() {
-    this.sxndPlayer.thumbnailPreview.hidePreview();
+    this.sxndPlayer.controls.dispatchEvent(new Event('sxnd-thumbs-close'));
   }
 
   /**

@@ -7,6 +7,17 @@
 @light-color: lighten(@base-color, 50%);
 @label-padding: 2pt;
 
+// Thanks https://stackoverflow.com/a/4407335
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                          supported by Chrome, Edge, Opera and Firefox */
+}
+
 .sxnd-player-fatal-error {
     position: absolute;
     text-align: left;
@@ -16,6 +27,12 @@
 
 .chapter {
     cursor: pointer;
+}
+
+body {
+    &.seek-or-scrub * {
+        cursor: grabbing !important;
+    }
 }
 
 .document-view {
@@ -30,21 +47,38 @@
         // `offsetWidth`, which is zero for elements with `display: none`.
         visibility: hidden;
         position: absolute;
-        bottom: 50px;
+        // Position 25px above seekbar, but overlap to the bottom (so that the
+        // mouse can switch between seekbar and thumbnail preview).
+        bottom: 0px;
+        padding-bottom: 25px;
+        // Allow to move mouse a little over the thumbnail preview without
+        // closing it.
+        padding-top: 50px;
         // Don't be shadowed by Shaka controlbar
         z-index: 1;
+        cursor: pointer;
 
         &.shown {
             visibility: visible;
         }
 
+        .content-box {
+            background-color: rgba(darken(@base-color, 25%), 0.6);
+            border-radius: 4px;
+            padding: 1em;
+        }
+
         .display {
-            // Ensure that only the current tile is shown (not the full tileset)
-            overflow: hidden;
             width: 160px;
             height: 90px;
             border: 1px solid white;
             box-sizing: content-box;
+            margin-bottom: 0.75em;
+            display: none;
+
+            &.shown {
+                display: block;
+            }
 
             canvas {
                 width: 100%;
@@ -52,12 +86,31 @@
             }
         }
 
-        .timecode {
+        .info {
             display: inline-block;
-            padding-top: 1em;
             // Same color and font-size as `.shaka-current-time`
             color: white;
             font-size: 14px;
+            line-height: 110%;
+            max-width: 160px;
+
+            .chapter-text {
+                line-height: 110%;
+                margin-bottom: 0.4em;
+                display: none;
+
+                &.shown {
+                    display: block;
+                }
+            }
+
+            .timecode-text {
+                display: block;
+            }
+
+            &.on-chapter-marker .chapter-text {
+                font-weight: bold;
+            }
         }
     }
 }
@@ -220,20 +273,60 @@
     }
 }
 
-.sxnd-chapter-marker {
-    width: 6px;
-    height: 8px;
-    cursor: pointer;
-    z-index: 100;
-    top: -2px;
+@seek-bar-height: 4px;
+@seek-bar-margin: 6px;
 
-    span {
-        left: 1px;
-        top: 2px;
-        position: absolute;
-        background-color: @light-color;
-        width: 4px;
-        height: 4px;
-        border-radius: 2px;
+// Taken from Shaka's general.less
+// TODO: Pull in from their LESS files?
+.show-when-controls-shown() {
+    /* Transparent unless explicitly made opaque through container attributes. */
+    opacity: 0;
+
+    /* When we show/hide this, do it gradually using cubic-bezier timing. */
+    transition: opacity cubic-bezier(0.4, 0, 0.6, 1) 600ms;
+
+    /* Show controls when the container's "shown" or "casting" attributes are
+     * set. */
+    .shaka-controls-container[shown="true"] &,
+    .shaka-controls-container[casting="true"] & {
+        opacity: 1;
     }
+}
+
+.sxnd-seek-bar {
+    .show-when-controls-shown();
+
+    position: relative;
+    margin: 0px 6px;
+    padding-top: @seek-bar-margin;
+    height: @seek-bar-height + 2 * @seek-bar-margin;
+    cursor: pointer;
+
+    .range {
+        position: absolute;
+        width: 100%;
+        height: @seek-bar-height;
+        border-radius: @seek-bar-height;
+    }
+
+    .seek-marker {
+        position: absolute;
+        left: 45%;
+        height: @seek-bar-height;
+        width: 1px;
+        background-color: @base-color;
+        z-index: 1000;
+        visibility: hidden;
+
+        &.shown {
+            visibility: visible;
+        }
+    }
+}
+
+.sxnd-chapter-marker {
+    width: @seek-bar-height;
+    height: @seek-bar-height;
+    background-color: @light-color;
+    border-radius: @seek-bar-height / 2;
 }
