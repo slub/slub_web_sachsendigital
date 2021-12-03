@@ -33,11 +33,12 @@ class VideoToJsonViewHelper extends AbstractViewHelper
     ) {
         $settings = $arguments['settings'];
         $movieDir = $settings['movieDir'];
+        $chapters = $settings['chapters'] ?? [];
 
         $result = [
             'chapters' => array_map(function ($item) {
                 return $item['chapter'];
-            }, array_values($settings['chapters'])),
+            }, array_values($chapters)),
 
             'metadata' => [
                 'metadata' => [
