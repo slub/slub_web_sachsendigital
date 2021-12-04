@@ -5,10 +5,10 @@
 // @ts-check
 
 import { beforeEach, expect, test } from '@jest/globals';
+import { metadataArrayToString } from './lib/util';
+import ScreenshotModal from './modals/ScreenshotModal';
 import Environment from './Environment';
 import { drawScreenshot } from './Screenshot';
-import ScreenshotModal from './ScreenshotModal';
-import { metadataArrayToString } from './util';
 
 beforeEach(() => {
   // TODO: Reset JSDOM in a more robust way

@@ -2,42 +2,13 @@
 
 import { beforeEach, describe, expect, test, jest } from '@jest/globals';
 import { Blob } from 'buffer';
-import {
-  buildTimeString,
-  dataUrlMime,
-  clamp,
-  sanitizeBasename,
-  withObjectUrl,
-} from './util';
+import { dataUrlMime, clamp, sanitizeBasename, withObjectUrl } from './util';
 
 describe('clamp', () => {
   test('basic', () => {
     expect(clamp(1, [2, 3])).toBe(2);
     expect(clamp(2.5, [2, 3])).toBe(2.5);
     expect(clamp(4, [2, 3])).toBe(3);
-  });
-});
-
-describe('buildTimeString', () => {
-  test('basic', () => {
-    expect(buildTimeString(45, false)).toBe("0:45");
-    expect(buildTimeString(45, true)).toBe("0:00:45");
-    expect(buildTimeString(60, false)).toBe("1:00");
-    expect(buildTimeString(60, true)).toBe("0:01:00");
-    expect(buildTimeString(3599, false)).toBe("59:59");
-    expect(buildTimeString(3599, true)).toBe("0:59:59");
-    expect(buildTimeString(3600, false)).toBe("60:00");
-    expect(buildTimeString(3600, true)).toBe("1:00:00");
-    expect(buildTimeString(3600 * 123, true)).toBe("123:00:00");
-  });
-
-  test('with fps', () => {
-    expect(buildTimeString(0.00, false, 5)).toBe("0:00:00");
-    expect(buildTimeString(0.25, false, 5)).toBe("0:00:01");
-    expect(buildTimeString(0.50, false, 5)).toBe("0:00:02");
-    expect(buildTimeString(0.75, false, 5)).toBe("0:00:03");
-    expect(buildTimeString(1.00, false, 5)).toBe("0:01:00");
-    expect(buildTimeString(1.25, false, 5)).toBe("0:01:01");
   });
 });
 

@@ -1,11 +1,9 @@
 // @ts-check
 
-import Environment from './Environment';
-
 /**
  *
  * @param {number | null} timecode
- * @param {Environment} env
+ * @param {Browser} env
  * @returns
  */
 export default function generateTimecodeUrl(timecode, env) {

@@ -3,9 +3,9 @@
 import shaka from 'shaka-player/dist/shaka-player.ui';
 import VideoFrame from '../vendor/VideoFrame';
 
+import { clamp, e } from '../../lib/util';
+import buildTimeString from '../lib/buildTimeString';
 import Chapters from '../Chapters';
-import Environment from '../Environment';
-import { buildTimeString, clamp, e } from '../util';
 
 /**
  * @typedef {'current-time' | 'remaining-time' | 'current-frame'} TimeModeKey
@@ -45,7 +45,7 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
    * Registers a factory with specified configuration. The returned key may
    * be added to `controlPanelElements` in shaka-player config.
    *
-   * @param {Environment} env
+   * @param {Translator & Identifier} env
    */
   static register(env) {
     const key = env.mkid();
@@ -62,7 +62,7 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
   /**
    * @param {HTMLElement} parent
    * @param {shaka.ui.Controls} controls
-   * @param {Environment} env
+   * @param {Translator} env
    */
   constructor(parent, controls, env) {
     super(parent, controls);

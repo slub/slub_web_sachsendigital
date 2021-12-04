@@ -1,8 +1,7 @@
 // @ts-check
 
-import Environment from './Environment';
-import SimpleModal from './SimpleModal';
-import { e } from './util';
+import { e } from '../../lib/util';
+import SimpleModal from '../lib/SimpleModal';
 
 /**
  * @typedef {string} KeybindingKind See `Keybinding::kind`.
@@ -53,7 +52,7 @@ export default class HelpModal extends SimpleModal {
   /**
    *
    * @param {HTMLElement} parent
-   * @param {Environment} env
+   * @param {Translator} env
    * @param {object} config
    * @param {Record<string, string|number>} config.constants
    * @param {ShownKeybinding[]} config.keybindings

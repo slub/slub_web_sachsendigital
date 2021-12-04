@@ -4,7 +4,8 @@ import shaka from 'shaka-player/dist/shaka-player.ui';
 
 import Chapters from './Chapters';
 import ImageFetcher from './ImageFetcher';
-import { buildTimeString, clamp, e } from './util';
+import { clamp, e } from '../lib/util';
+import buildTimeString from './lib/buildTimeString';
 
 /**
  * @typedef {{

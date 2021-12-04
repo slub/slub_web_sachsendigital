@@ -40,7 +40,7 @@ class VideoToJsonViewHelper extends AbstractViewHelper
                 return $item['chapter'];
             }, array_values($chapters)),
 
-            // @see `MetadataArray` in types.d.ts
+            // @see `MetadataArray` in VideoPlayerApp.d.ts
             'metadata' => [
                 'metadata' => [
                     'title' => [$settings['media']],

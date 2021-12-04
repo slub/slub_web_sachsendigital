@@ -1,15 +1,16 @@
 // @ts-check
 
-import BookmarkModal from './BookmarkModal';
-import Chapters from './Chapters';
-import ControlPanelButton from './controls/ControlPanelButton';
+import { e } from '../lib/util';
+import { Modifier, modifiersFromEvent } from '../lib/Keyboard';
+import {
+  Chapters,
+  ControlPanelButton,
+  SachsenShakaPlayer,
+} from '../VideoPlayer';
+
+import Modals from './lib/Modals';
+import { BookmarkModal, HelpModal, ScreenshotModal } from './modals';
 import Environment from './Environment';
-import HelpModal from './HelpModal';
-import { Modifier, modifiersFromEvent } from './Keyboard';
-import Modals from './Modals';
-import SachsenShakaPlayer from './SachsenShakaPlayer';
-import ScreenshotModal from './ScreenshotModal';
-import { e } from './util';
 
 import keybindings from './keybindings.json';
 
@@ -20,7 +21,7 @@ import keybindings from './keybindings.json';
  * @typedef {HTMLElement & { sxndTimecode: number }} ChapterLink
  */
 
-class SxndPlayerApp {
+export default class SxndPlayerApp {
   /**
    *
    * @param {HTMLElement} container
@@ -351,5 +352,3 @@ class SxndPlayerApp {
       .open();
   }
 }
-
-window.SxndPlayerApp = SxndPlayerApp;

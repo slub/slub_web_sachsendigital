@@ -57,6 +57,11 @@
     "setupFiles": [
       "<rootDir>/Build/node_modules/jest-canvas-mock"
     ],
+    "transform": {
+      "^.+\\.js$": "babel-jest",
+      "^.+\\.(css|less)$": "<rootDir>/Resources/Private/JavaScript/style-mock.js"
+    },
+    "transformIgnorePatterns": ["/node_modules/(?!shaka-player/ui/controls.less)"],
     "collectCoverageFrom": [
       "Resources/Private/JavaScript/**/*.js"
     ],

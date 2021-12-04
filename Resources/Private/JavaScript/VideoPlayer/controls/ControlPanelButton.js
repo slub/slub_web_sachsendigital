@@ -2,8 +2,7 @@
 
 import shaka from 'shaka-player/dist/shaka-player.ui';
 
-import Environment from '../Environment';
-import { e } from '../util';
+import { e } from '../../lib/util';
 
 /**
  * @typedef Config
@@ -20,7 +19,7 @@ export default class ControlPanelButton extends shaka.ui.Element {
    * Registers a factory with specified configuration. The returned key may
    * be added to `controlPanelElements` in shaka-player config.
    *
-   * @param {Environment} env
+   * @param {Identifier} env
    * @param {Partial<Config>} config
    * @returns {string} Key of the registered element factory
    */

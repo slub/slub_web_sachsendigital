@@ -2,8 +2,7 @@
 
 import shaka from 'shaka-player/dist/shaka-player.ui';
 
-import Environment from '../Environment';
-import { e } from '../util';
+import { e } from '../../lib/util';
 import VariantGroups from '../VariantGroups';
 
 /**
@@ -15,7 +14,7 @@ import VariantGroups from '../VariantGroups';
 export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
   /**
    *
-   * @param {Environment} env
+   * @param {Translator & Identifier} env
    */
   static register(env) {
     const key = env.mkid();
@@ -32,7 +31,7 @@ export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
   /**
    * @param {HTMLElement} parent
    * @param {shaka.ui.Controls} controls
-   * @param {Environment} env
+   * @param {Translator} env
    */
   constructor(parent, controls, env) {
     super(parent, controls, 'switch_video');
@@ -55,13 +54,14 @@ export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
     if (this.eventManager) {
       this.eventManager.listen(this.controls, 'sxnd-variant-groups', (ev) => {
         const detail = /** @type {SxndVariantGroupsEvent} */(ev).detail;
-        this.sxnd.variantGroups = detail.variantGroups;
+        const variantGroups =
+          this.sxnd.variantGroups = detail.variantGroups;
 
         this.clearMenu();
         this.updateVisibility();
 
         try {
-          for (const group of this.sxnd.variantGroups) {
+          for (const group of variantGroups) {
             const button = e("button", {
               $click: () => {
                 this.sxnd.variantGroups?.selectGroupByKey(group.key);

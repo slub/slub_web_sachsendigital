@@ -5,12 +5,13 @@ import 'shaka-player/ui/controls.less';
 
 import VideoFrame from './vendor/VideoFrame';
 
+import { clamp, e } from '../lib/util';
 import Chapters from './Chapters';
-import FlatSeekBar from './controls/FlatSeekBar';
-import PresentationTimeTracker from './controls/PresentationTimeTracker';
-import VideoTrackSelection from './controls/VideoTrackSelection';
-import Environment from './Environment';
-import { clamp, e } from './util';
+import {
+  FlatSeekBar,
+  PresentationTimeTracker,
+  VideoTrackSelection,
+} from './controls';
 import VariantGroups from './VariantGroups';
 
 import '../../Less/VideoPlayer/VideoPlayer.less';
@@ -45,10 +46,10 @@ export default class SachsenShakaPlayer {
 
   /**
    *
-   * @param {Environment} env
+   * @param {Translator & Identifier & Browser} env
    */
   constructor(env) {
-    /** @private @type {Environment} */
+    /** @private */
     this.env = env;
 
     /** @private @type {Constants} */

@@ -1,9 +1,9 @@
 // @ts-check
 
-import Environment from './Environment';
-import generateTimecodeUrl from './generateTimecodeUrl';
-import SimpleModal from './SimpleModal';
-import { buildTimeString, e } from './util';
+import { e } from '../../lib/util';
+import { buildTimeString } from '../../VideoPlayer';
+import generateTimecodeUrl from '../lib/generateTimecodeUrl';
+import SimpleModal from '../lib/SimpleModal';
 
 /**
  * @typedef {{
@@ -20,7 +20,7 @@ export default class BookmarkModal extends SimpleModal {
   /**
    *
    * @param {HTMLElement} element
-   * @param {Environment} env
+   * @param {Translator & Identifier & Browser} env
    */
   constructor(element, env) {
     super(element, {
@@ -125,7 +125,7 @@ export default class BookmarkModal extends SimpleModal {
 
   /**
    * @override
-   * @param {import('./SimpleModal').BaseState & State} state
+   * @param {import('../lib/SimpleModal').BaseState & State} state
    */
   render(state) {
     super.render(state);

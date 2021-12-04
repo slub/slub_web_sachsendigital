@@ -1,20 +1,19 @@
 // @ts-check
 
-import Environment from './Environment';
-import generateTimecodeUrl from './generateTimecodeUrl';
-import imageFormats from './image/imageFormats';
-import { drawScreenshot } from './Screenshot';
-import SimpleModal from './SimpleModal';
+import imageFormats from '../../lib/image/imageFormats';
+import { buildTimeString } from '../../VideoPlayer';
 import {
   binaryStringToArrayBuffer,
   blobToBinaryString,
-  buildTimeString,
   canvasToBlob,
   download,
   e,
-  metadataArrayToString,
   sanitizeBasename,
-} from './util';
+} from '../../lib/util';
+import generateTimecodeUrl from '../lib/generateTimecodeUrl';
+import { metadataArrayToString } from '../lib/util';
+import SimpleModal from '../lib/SimpleModal';
+import { drawScreenshot } from '../Screenshot';
 
 /**
  * @typedef {{
@@ -33,7 +32,7 @@ export default class ScreenshotModal extends SimpleModal {
   /**
    *
    * @param {HTMLElement} parent
-   * @param {Environment} env
+   * @param {Translator & Identifier & Browser} env
    */
   constructor(parent, env) {
     const supportedImageFormats = imageFormats.filter(
@@ -220,7 +219,7 @@ export default class ScreenshotModal extends SimpleModal {
   /**
    *
    * @param {MetadataArray | null} metadata
-   * @returns {import('./Screenshot').ScreenshotCaption[]}
+   * @returns {import('../Screenshot').ScreenshotCaption[]}
    */
   getCaptions(metadata) {
     return [
@@ -231,7 +230,7 @@ export default class ScreenshotModal extends SimpleModal {
 
   /**
    * @override
-   * @param {import('./SimpleModal').BaseState & State} state
+   * @param {import('../lib/SimpleModal').BaseState & State} state
    */
   render(state) {
     super.render(state);

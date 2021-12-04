@@ -1,7 +1,6 @@
 // @ts-check
 
 import shaka from 'shaka-player/dist/shaka-player.ui';
-import Environment from '../Environment';
 
 /**
  * @typedef Config
@@ -18,7 +17,7 @@ export default class OverflowMenuButton extends shaka.ui.SettingsMenu {
    * Registers a factory with specified configuration. The returned key may
    * be added to `overflowMenuButtons` in shaka-player config.
    *
-   * @param {Environment} env
+   * @param {Identifier} env
    * @param {Partial<Config>} config
    */
   static register(env, config = {}) {

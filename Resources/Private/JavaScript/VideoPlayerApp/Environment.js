@@ -2,7 +2,7 @@
 
 import IntlMessageFormat from 'intl-messageformat';
 
-import { dataUrlMime } from './util';
+import { dataUrlMime } from '../lib/util';
 
 /**
  * @typedef {{
@@ -19,6 +19,10 @@ import { dataUrlMime } from './util';
  *
  * This allows us, for example, to use fresh `mkid` counters in test cases
  * and to mock browser capabilities if necessary.
+ *
+ * @implements {Browser}
+ * @implements {Identifier}
+ * @implements {Translator}
  */
 export default class Environment {
   constructor() {
@@ -46,21 +50,15 @@ export default class Environment {
   }
 
   /**
-   * Generates an identifier that is unique with respect to this Environment.
-   *
-   * It may be used, for example, to link an <input /> element to a <label />,
-   * or to group radio boxes.
-   *
-   * @returns {string}
+   * @inheritdoc
+   * @returns {URL}
    */
-  mkid() {
-    return `__autoid_${++this.idCnt}`;
+  getLocation() {
+    return new URL(window.location.href);
   }
 
   /**
-   * Checks whether canvas can be dumped to an image of the specified
-   * {@link mimeType}.
-   *
+   * @inheritdoc
    * @param {string} mimeType
    * @returns {boolean}
    */
@@ -68,6 +66,14 @@ export default class Environment {
     const dataUrl = this.getTestCanvas().toDataURL(mimeType);
     const actualMime = dataUrlMime(dataUrl);
     return actualMime === mimeType;
+  }
+
+  /**
+   * @inheritdoc
+   * @returns {string}
+   */
+  mkid() {
+    return `__autoid_${++this.idCnt}`;
   }
 
   /**
@@ -111,15 +117,6 @@ export default class Environment {
     }
 
     return /** @type {string} */(phrase.format(values));
-  }
-
-  /**
-   * Returns the current window location URL.
-   *
-   * @returns {URL}
-   */
-  getLocation() {
-    return new URL(window.location.href);
   }
 
   /**

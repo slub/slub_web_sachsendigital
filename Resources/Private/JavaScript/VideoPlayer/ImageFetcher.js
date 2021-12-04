@@ -1,6 +1,6 @@
 // @ts-check
 
-import { blobToImage } from './util';
+import { blobToImage } from '../lib/util';
 
 /**
  * @template T
