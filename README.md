@@ -53,6 +53,15 @@ npm test -- --coverage
 xdg-open coverage/lcov-report/index.html
 ```
 
+### Typings
+
+```bash
+npm run typecheck
+
+# (Alternative) Watch mode
+npm run tsc-watch
+```
+
 ### Remarks
 
 - jQuery is marked as external in Webpack config
