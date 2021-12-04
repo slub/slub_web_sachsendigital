@@ -1,6 +1,7 @@
 /** @preserve
 This is based upon VideoFrame (see below). Changes:
 - export default
+- Slightly refine JSDoc/typings
 
 Source: https://raw.githubusercontent.com/allensarkisyan/VideoFrame/master/VideoFrame.js
 
@@ -36,7 +37,11 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 /**
  * @class
  * @classdesc Main VideoFrame Implementation.
- * @param {Object} options - Configuration object for initialization.
+ * @param {Object} [options] - Configuration object for initialization.
+ * @param {string} [options.id] (Optional) ID of video element to use. By
+ * default, the first video on the page is used.
+ * @param {number} [options.frameRate] (Optional) Frame rate of the video. By
+ * default, 24 fps is assumed.
  */
 var VideoFrame = function(options) {
 	if (this === window) { return new VideoFrame(options); }
@@ -203,8 +208,8 @@ VideoFrame.prototype.__seek = function(direction, frames) {
 /**
  * Seeks forward [X] amount of frames in the video.
  *
- * @param  {Number} frames - Number of frames to seek by.
- * @param  {Function} callback - Callback function to execute once seeking is complete.
+ * @param  {Number} [frames] - Number of frames to seek by.
+ * @param  {Function} [callback] - Callback function to execute once seeking is complete.
  */
 VideoFrame.prototype.seekForward = function(frames, callback) {
 	if (!frames) { frames = 1; }
@@ -215,8 +220,8 @@ VideoFrame.prototype.seekForward = function(frames, callback) {
 /**
  * Seeks backward [X] amount of frames in the video.
  *
- * @param  {Number} frames - Number of frames to seek by.
- * @param  {Function} callback - Callback function to execute once seeking is complete.
+ * @param  {Number} [frames] - Number of frames to seek by.
+ * @param  {Function} [callback] - Callback function to execute once seeking is complete.
  */
 VideoFrame.prototype.seekBackward = function(frames, callback) {
 	if (!frames) { frames = 1; }
