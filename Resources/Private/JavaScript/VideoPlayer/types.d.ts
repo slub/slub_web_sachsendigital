@@ -144,7 +144,7 @@ type SxndEventDetail = {
     chapters: import("./Chapters").default;
   };
   "sxnd-fps": {
-    vifa: VideoFrame | null;
+    vifa: import('./vendor/VideoFrame').default | null;
     fps: number | null;
   };
   "sxnd-seek-bar": {
@@ -154,17 +154,6 @@ type SxndEventDetail = {
     variantGroups: import("./VariantGroups").default;
   };
 };
-
-function VideoFrame({ id: string, frameRate: number }): VideoFrame;
-interface VideoFrame {
-  get(): number;
-
-  seekForward(frames: number = 1): true;
-  seekForward<T>(frames: number | undefined, callback: () => T): T;
-
-  seekBackward(frames: number = 1): true;
-  seekBackward<T>(frames: number | undefined, callback: () => T): T;
-}
 
 type VideoInfo = {
   pageNo: number | undefined;

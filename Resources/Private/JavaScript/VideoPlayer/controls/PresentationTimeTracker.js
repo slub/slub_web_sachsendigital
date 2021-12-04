@@ -1,6 +1,7 @@
 // @ts-check
 
 import shaka from 'shaka-player/dist/shaka-player.ui';
+import VideoFrame from '../vendor/VideoFrame';
 
 import Chapters from '../Chapters';
 import Environment from '../Environment';

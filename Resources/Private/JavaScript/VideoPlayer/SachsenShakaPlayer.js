@@ -3,6 +3,8 @@
 import shaka from 'shaka-player/dist/shaka-player.ui';
 import 'shaka-player/ui/controls.less';
 
+import VideoFrame from './vendor/VideoFrame';
+
 import Chapters from './Chapters';
 import FlatSeekBar from './controls/FlatSeekBar';
 import PresentationTimeTracker from './controls/PresentationTimeTracker';
@@ -250,7 +252,7 @@ export default class SachsenShakaPlayer {
       this.vifa = null;
     } else if (fps !== this.fps) {
       this.fps = fps;
-      this.vifa = VideoFrame({
+      this.vifa = new VideoFrame({
         id: this.video.id,
         frameRate: fps,
       });
