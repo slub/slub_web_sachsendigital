@@ -70,18 +70,22 @@ class VideoMock extends HTMLVideoElement {
     this._mockHeight = height;
   }
 
+  /** @override */
   get width() {
     return this._mockWidth;
   }
 
+  /** @override */
   get videoWidth() {
     return this._mockWidth;
   }
 
+  /** @override */
   get height() {
     return this._mockHeight;
   }
 
+  /** @override */
   get videoHeight() {
     return this._mockHeight;
   }

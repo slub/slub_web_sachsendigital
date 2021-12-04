@@ -230,7 +230,7 @@ export default class ScreenshotModal extends SimpleModal {
   }
 
   /**
-   *
+   * @override
    * @param {import('./SimpleModal').BaseState & State} state
    */
   render(state) {

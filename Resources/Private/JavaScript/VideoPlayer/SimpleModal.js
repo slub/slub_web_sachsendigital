@@ -114,6 +114,7 @@ export default class SimpleModal extends Component {
   }
 
   /**
+   * @override
    * @param {BaseState & ModalState} state
    */
   render(state) {

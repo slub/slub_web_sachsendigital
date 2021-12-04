@@ -19,7 +19,7 @@ describe('Component', () => {
      */
     class C extends Component {
       /**
-       *
+       * @override
        * @param {State} state
        */
       render(state) {

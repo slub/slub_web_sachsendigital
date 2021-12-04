@@ -124,7 +124,7 @@ export default class BookmarkModal extends SimpleModal {
   }
 
   /**
-   *
+   * @override
    * @param {import('./SimpleModal').BaseState & State} state
    */
   render(state) {
