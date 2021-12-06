@@ -12,6 +12,8 @@ import Modals from './lib/Modals';
 import { BookmarkModal, HelpModal, ScreenshotModal } from './modals';
 import Environment from './Environment';
 
+import '../../Less/VideoPlayer/VideoPlayerApp.less';
+
 import keybindings from './keybindings.json';
 
 /**

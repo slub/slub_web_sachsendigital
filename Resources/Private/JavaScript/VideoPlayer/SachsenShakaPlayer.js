@@ -14,7 +14,7 @@ import {
 } from './controls';
 import VariantGroups from './VariantGroups';
 
-import '../../Less/VideoPlayer/VideoPlayer.less';
+import '../../Less/VideoPlayer/SachsenShakaPlayer.less';
 
 /**
  * @typedef {{
