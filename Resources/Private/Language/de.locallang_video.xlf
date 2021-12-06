@@ -257,6 +257,10 @@
 				<source><![CDATA[or]]></source>
 				<target><![CDATA[oder]]></target>
 			</trans-unit>
+			<trans-unit id="player.loading" approved="yes">
+				<source><![CDATA[Loading...]]></source>
+				<target><![CDATA[Laden...]]></target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

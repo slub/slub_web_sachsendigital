@@ -109,6 +109,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
 
     if (this.eventManager) {
       this.eventManager.listen(this.player, 'loaded', () => {
+        this.update();
         this.renderChapterMarkers();
       });
 

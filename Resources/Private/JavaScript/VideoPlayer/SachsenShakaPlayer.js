@@ -19,6 +19,7 @@ import '../../Less/VideoPlayer/SachsenShakaPlayer.less';
 /**
  * @typedef {{
  *  prevChapterTolerance: number;
+ *  minBottomControlsReadyState: number;
  * }} Constants
  */
 
@@ -55,6 +56,7 @@ export default class SachsenShakaPlayer {
     /** @private @type {Constants} */
     this.constants = {
       prevChapterTolerance: 5,
+      minBottomControlsReadyState: 2, // Enough data for current position
     };
 
     /** @private @type {HTMLElement | null} */
@@ -85,6 +87,12 @@ export default class SachsenShakaPlayer {
     /** @private @type {shaka.ui.Controls} */
     this.controls = /** @type {shaka.ui.Controls} */(this.ui.getControls());
 
+    /** @private */
+    this.lastReadyState = 0;
+
+    /** @private @type {HTMLElement | null} */
+    this.shakaBottomControls = null;
+
     /** @private @type {Event[]} */
     this.controlEventQueue = [];
 
@@ -106,6 +114,7 @@ export default class SachsenShakaPlayer {
     this.handlers = {
       onErrorEvent: this.onErrorEvent.bind(this),
       onTrackChange: this.onTrackChange.bind(this),
+      onTimeUpdate: this.onTimeUpdate.bind(this),
     };
 
     this.player.addEventListener('error', this.handlers.onErrorEvent);
@@ -119,6 +128,8 @@ export default class SachsenShakaPlayer {
       const detail = /** @type {SxndSeekBarEvent} */(e).detail;
       this.seekBar = detail.seekBar;
     });
+
+    this.controls.addEventListener('timeandseekrangeupdated', this.handlers.onTimeUpdate);
   }
 
   /**
@@ -200,6 +211,10 @@ export default class SachsenShakaPlayer {
       },
     });
 
+    // Set again after `ui.configure()`
+    this.shakaBottomControls =
+      this.container.querySelector('.shaka-bottom-controls');
+
     mount.replaceWith(this.container);
 
     this.mountPoint = mount;
@@ -260,6 +275,30 @@ export default class SachsenShakaPlayer {
     }
 
     this.emitControlEvent('sxnd-fps', { vifa: this.vifa, fps: this.fps });
+  }
+
+  onTimeUpdate() {
+    const readyState = this.video.readyState;
+
+    if (readyState !== this.lastReadyState) {
+      this.updateBottomControlsVisibility(readyState);
+    }
+  }
+
+  /**
+   * @private
+   * @param {number} readyState
+   */
+  updateBottomControlsVisibility(readyState) {
+    // When readyState is strictly between 0 and minBottomControlsReadyState,
+    // don't change whether controls are shown. Thus, on first load the controls
+    // may remain hidden, and on seeking the controls remain visible.
+
+    if (readyState === 0) {
+      this.shakaBottomControls?.classList.remove('sxnd-shown');
+    } else if (readyState >= this.constants.minBottomControlsReadyState) {
+      this.shakaBottomControls?.classList.add('sxnd-shown');
+    }
   }
 
   /**

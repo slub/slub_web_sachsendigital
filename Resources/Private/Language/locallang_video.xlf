@@ -194,6 +194,9 @@
 			<trans-unit id="or">
 				<source><![CDATA[or]]></source>
 			</trans-unit>
+			<trans-unit id="player.loading">
+				<source><![CDATA[Loading...]]></source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
