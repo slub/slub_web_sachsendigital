@@ -199,6 +199,36 @@ export default class SxndPlayerApp {
   }
 
   /**
+   * Extracts timecode to jump to when clicking on {@link link}, or `null` if
+   * none could be determined.
+   *
+   * @private
+   * @param {HTMLAnchorElement} link
+   * @returns {number | null}
+   */
+  getLinkTimecode(link) {
+    // Attempt: Parse data-timecode attribute
+    const timecodeAttr = link.getAttribute("data-timecode");
+    if (timecodeAttr !== null) {
+      const timecode = Number(timecodeAttr);
+      if (Number.isFinite(timecode)) {
+        return timecode;
+      }
+    }
+
+    // Attempt: Parse timecode hash in URL ("#timecode=120")
+    const timecodeMatch = link.hash.match(/timecode=(\d+(\.\d?)?)/);
+    if (timecodeMatch !== null) {
+      const timecode = Number(timecodeMatch[1]);
+      if (Number.isFinite(timecode)) {
+        return timecode;
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * @private
    */
   async load() {
@@ -207,9 +237,10 @@ export default class SxndPlayerApp {
       return;
     }
 
-    document.querySelectorAll("a[data-timecode]").forEach(el => {
-      const timecode = Number(el.getAttribute("data-timecode"));
-      if (Number.isFinite(timecode)) {
+    document.querySelectorAll("a[data-timecode], .tx-dlf-tableofcontents a").forEach(el => {
+      const link = /** @type {HTMLAnchorElement} */(el);
+      const timecode = this.getLinkTimecode(link);
+      if (timecode !== null) {
         const sxndEl = /** @type {ChapterLink} */(el);
         sxndEl.sxndTimecode = timecode;
         sxndEl.addEventListener('click', this.handlers.onClickChapterLink);
