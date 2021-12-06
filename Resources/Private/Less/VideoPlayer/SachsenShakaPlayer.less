@@ -25,6 +25,7 @@
     height: @seek-bar-height;
     background-color: @light-color;
     border-radius: @seek-bar-height / 2;
+    z-index: 2; // More than .seek-marker
 }
 
 // Taken from Shaka's general.less
@@ -72,7 +73,7 @@ body {
         height: @seek-bar-height;
         width: 1px;
         background-color: @base-color;
-        z-index: 1000;
+        z-index: 1; // Less than .sxnd-chapter-marker
         visibility: hidden;
 
         &.shown {
