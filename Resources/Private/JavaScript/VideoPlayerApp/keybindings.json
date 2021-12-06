@@ -34,6 +34,14 @@
 		"order": 20
 	},
 	{
+		"key": "t",
+		"repeat": false,
+		"scope": "player",
+		"action": "theater.toggle",
+		"kind": "other",
+		"order": 21
+	},
+	{
 		"key": " ",
 		"repeat": false,
 		"scope": "player",

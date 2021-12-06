@@ -121,6 +121,20 @@ export default class SxndPlayerApp {
         this.sxndPlayer.hideThumbnailPreview();
         this.sxndPlayer.toggleFullScreen();
       },
+      'theater.toggle': () => {
+        this.sxndPlayer.hideThumbnailPreview();
+
+        // @see DigitalcollectionsScripts.js
+        // TODO: Make sure the theater mode isn't activated on startup; then stop persisting
+        /** @type {DlfTheaterMode} */
+        const ev = new CustomEvent('dlf-theater-mode', {
+          detail: {
+            action: 'toggle',
+            persist: true,
+          },
+        });
+        window.dispatchEvent(ev);
+      },
       'playback.toggle': () => {
         if (this.sxndPlayer.paused) {
           this.sxndPlayer.play();

@@ -81,6 +81,10 @@
 				<source><![CDATA[Mute / Unmute]]></source>
 				<target><![CDATA[Stummschaltung an / aus]]></target>
 			</trans-unit>
+			<trans-unit id="action.theater.toggle" approved="yes">
+				<source><![CDATA[Toggle theater mode]]></source>
+				<target><![CDATA[Theater-Modus an / aus]]></target>
+			</trans-unit>
 			<trans-unit id="control.back" approved="yes">
 				<source><![CDATA[Back]]></source>
 				<target><![CDATA[Zurück]]></target>
@@ -188,6 +192,10 @@
 			<trans-unit id="key.m" approved="yes">
 				<source><![CDATA[Key M]]></source>
 				<target><![CDATA[Taste M]]></target>
+			</trans-unit>
+			<trans-unit id="key.t" approved="yes">
+				<source><![CDATA[Key T]]></source>
+				<target><![CDATA[Taste T]]></target>
 			</trans-unit>
 			<trans-unit id="key.mod.CtrlMeta" approved="yes">
 				<source><![CDATA[Ctrl]]></source>
