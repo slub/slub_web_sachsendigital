@@ -17,8 +17,8 @@ import '../../Less/VideoPlayer/VideoPlayerApp.less';
 import keybindings from './keybindings.json';
 
 /**
- * @typedef {'player' | 'modal'} KeyboardScope Currently active target/scope
- * for mapping keybindings.
+ * @typedef {'player' | 'modal' | 'input'} KeyboardScope Currently active
+ * target/scope for mapping keybindings.
  *
  * @typedef {HTMLElement & { sxndTimecode: number }} ChapterLink
  */
@@ -299,6 +299,13 @@ export default class SxndPlayerApp {
   getKeyboardScope() {
     if (this.modals.hasOpen()) {
       return 'modal';
+    }
+
+    for (const input of Array.from(document.querySelectorAll('input:focus'))) {
+      // Check that the input element is visible (would receive the event)
+      if (input instanceof HTMLElement && input.offsetParent !== null) {
+        return 'input';
+      }
     }
 
     return 'player';
