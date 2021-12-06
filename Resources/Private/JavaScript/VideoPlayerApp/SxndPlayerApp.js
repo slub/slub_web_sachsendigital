@@ -251,6 +251,7 @@ export default class SxndPlayerApp {
     try {
       await this.sxndPlayer.loadManifest(this.manifestUri, startTime);
     } catch (e) {
+      console.error(e);
       this.failWithError('error.load-failed');
     }
 
