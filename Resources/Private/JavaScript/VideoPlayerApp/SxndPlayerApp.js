@@ -286,6 +286,8 @@ export default class SxndPlayerApp {
       this.failWithError('error.load-failed');
     }
 
+    this.modals.resize();
+
     document.addEventListener('keydown', this.handlers.onKeyDown, { capture: true });
     document.addEventListener('keyup', this.handlers.onKeyUp, { capture: true });
   }
