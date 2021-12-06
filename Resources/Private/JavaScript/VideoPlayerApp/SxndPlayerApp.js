@@ -391,6 +391,12 @@ export default class SxndPlayerApp {
   }
 
   showBookmarkUrl() {
+    // Don't show modal if we can't expect the current time to be properly
+    // initialized
+    if (!this.sxndPlayer.hasCurrentData) {
+      return;
+    }
+
     this.sxndPlayer.pause();
     this.sxndPlayer.hideThumbnailPreview();
     this.modals.bookmark
@@ -400,6 +406,11 @@ export default class SxndPlayerApp {
   }
 
   showScreenshot() {
+    // Don't show modal if there isn't yet an image to be displayed
+    if (!this.sxndPlayer.hasCurrentData) {
+      return;
+    }
+
     this.sxndPlayer.pause();
     this.sxndPlayer.hideThumbnailPreview();
     this.modals.screenshot

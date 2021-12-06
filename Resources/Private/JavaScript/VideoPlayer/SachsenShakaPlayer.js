@@ -332,6 +332,16 @@ export default class SachsenShakaPlayer {
   }
 
   /**
+   * Whether or not enough data is available for the current playback position
+   * (checks `readyState`).
+   *
+   * @returns {boolean}
+   */
+  get hasCurrentData() {
+    return this.video.readyState >= 2;
+  }
+
+  /**
    * Volume in range [0, 1]. Out-of-bounds values are clamped when set.
    *
    * @type {number}
