@@ -3,7 +3,10 @@
 import SimpleModal from './SimpleModal';
 
 /**
+ * @template T
  * @typedef Modals
+ * @property {(modal: ValueOf<T>) => void} toggleExclusive Try to toggle the
+ * modal while not inducing a state of two open modals.
  * @property {() => boolean} hasOpen
  * @property {() => void} closeNext
  * @property {() => void} closeAll
@@ -16,14 +19,21 @@ import SimpleModal from './SimpleModal';
  *
  * @template {Record<string, SimpleModal<any>>} T
  * @param {T} modals
- * @returns {T & Modals}
+ * @returns {T & Modals<T>}
  */
 export default function Modals(modals) {
   const modalsArray = Object.values(modals);
 
-  /** @type {T & Modals} */
+  /** @type {T & Modals<T>} */
   const result = {
     ...modals,
+    toggleExclusive: (modal) => {
+      if (modal.isOpen) {
+        modal.close();
+      } else if (!result.hasOpen()) {
+        modal.open();
+      }
+    },
     hasOpen: () => {
       return modalsArray.some(modal => modal.isOpen);
     },

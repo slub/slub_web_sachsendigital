@@ -109,7 +109,7 @@ export default class SxndPlayerApp {
       },
       'modal.help.toggle': () => {
         this.sxndPlayer.hideThumbnailPreview();
-        this.modals.help.toggle();
+        this.modals.toggleExclusive(this.modals.help);
       },
       'modal.bookmark.open': () => {
         this.showBookmarkUrl();
