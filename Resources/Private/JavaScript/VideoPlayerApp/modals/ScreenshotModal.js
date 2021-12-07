@@ -245,6 +245,7 @@ export default class ScreenshotModal extends SimpleModal {
     if (show && (!this.state.show || showMetadata !== this.state.showMetadata)) {
       const config = {
         captions: showMetadata ? this.getCaptions(metadata) : [],
+        minWidth: 1000,
       };
 
       drawScreenshot(this.$canvas, this.videoDomElement, config);

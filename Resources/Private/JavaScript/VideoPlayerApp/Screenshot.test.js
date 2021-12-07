@@ -99,8 +99,9 @@ test('can draw to canvas', () => {
   /**
    * @param {number} videoWidth
    * @param {number} videoHeight
+   * @param {number} minWidth
    */
-  const snapshotWithSize = (videoWidth, videoHeight) => {
+  const snapshotWithSize = (videoWidth, videoHeight, minWidth = 0) => {
     const video = new VideoMock(videoWidth, videoHeight);
 
     const canvas = document.createElement("canvas");
@@ -117,13 +118,18 @@ test('can draw to canvas', () => {
         { v: 'bottom', h: 'left', text: "bottom left" },
         { v: 'bottom', h: 'right', text: metadataArrayToString(metadata) },
       ],
+      minWidth,
     });
 
     // @ts-ignore TODO: Why wouldn't it recognize "__getEvents"?
     const events = context.__getEvents();
     expect(events).toMatchSnapshot();
+
+    expect(canvas.width).toBeGreaterThanOrEqual(minWidth);
+    expect(canvas.width / canvas.height).toBeCloseTo(videoWidth / videoHeight);
   };
 
   snapshotWithSize(1920, 1080);
   snapshotWithSize(960, 540);
+  snapshotWithSize(320, 180, /* minWidth= */ 480);
 });
