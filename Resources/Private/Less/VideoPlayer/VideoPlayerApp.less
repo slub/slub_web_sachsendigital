@@ -111,16 +111,20 @@
 }
 
 .sxnd-modal-cover {
-    display: none;
+    visibility: hidden;
     position: absolute;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
     z-index: 100000;
+    background-color: black;
+    opacity: 0;
 
     &.shown {
-        display: block;
+        visibility: visible;
+        opacity: 0.33;
+        transition: opacity 200ms linear;
     }
 }
 
