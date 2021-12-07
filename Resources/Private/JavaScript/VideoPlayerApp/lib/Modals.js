@@ -1,10 +1,11 @@
 // @ts-check
 
+import EventEmitter from 'events';
 import SimpleModal from './SimpleModal';
 
 /**
  * @template T
- * @typedef Modals
+ * @typedef ModalFuncs
  * @property {(modal: ValueOf<T>) => void} toggleExclusive Try to toggle the
  * modal while not inducing a state of two open modals.
  * @property {(coverContainer: HTMLElement | null) => void} setFullscreen
@@ -16,11 +17,16 @@ import SimpleModal from './SimpleModal';
  */
 
 /**
+ * @template T
+ * @typedef {T & ModalFuncs<T> & EventEmitter} ModalsType
+ */
+
+/**
  * Mixin to add modal-related utility functions to set of modals.
  *
  * @template {Record<string, SimpleModal<any>>} T
  * @param {T} modals
- * @returns {T & Modals<T>}
+ * @returns {ModalsType<T>}
  */
 export default function Modals(modals) {
   const modalsArray = Object.values(modals);
@@ -36,9 +42,8 @@ export default function Modals(modals) {
   });
   document.body.append(modalCover);
 
-  /** @type {T & Modals<T>} */
-  const result = {
-    ...modals,
+  /** @type {ModalFuncs<T>} */
+  const resultFuncs = {
     toggleExclusive: (modal) => {
       if (modal.isOpen) {
         modal.close();
@@ -78,6 +83,9 @@ export default function Modals(modals) {
     },
   };
 
+  /** @type {ModalsType<T>} */
+  const result = Object.assign(new EventEmitter(), modals, resultFuncs);
+
   // TODO: Performance
   window.addEventListener('resize', () => {
     result.resize();
@@ -85,6 +93,10 @@ export default function Modals(modals) {
 
   for (const modal of modalsArray) {
     modal.on('updated', () => {
+      if (!modal.isOpen) {
+        result.emit('closed', modal);
+      }
+
       if (result.hasOpen()) {
         modalCover.classList.add('shown');
       } else {

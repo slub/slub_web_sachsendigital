@@ -21,6 +21,12 @@ import keybindings from './keybindings.json';
  * target/scope for mapping keybindings.
  *
  * @typedef {HTMLElement & { sxndTimecode: number }} ChapterLink
+ *
+ * @typedef {{
+ *  help: HelpModal;
+ *  bookmark: BookmarkModal;
+ *  screenshot: ScreenshotModal;
+ * }} AppModals
  */
 
 export default class SxndPlayerApp {
@@ -62,6 +68,8 @@ export default class SxndPlayerApp {
       onKeyDown: this.onKeyDown.bind(this),
       onKeyUp: this.onKeyUp.bind(this),
       onClickChapterLink: this.onClickChapterLink.bind(this),
+      onPlay: this.onPlay.bind(this),
+      onCloseModal: this.onCloseModal.bind(this),
     };
 
     /** @private */
@@ -99,6 +107,16 @@ export default class SxndPlayerApp {
     });
 
     /** @private */
+    this.sxnd = {
+      /**
+       * The object that has caused current pause state, if any.
+       *
+       * @type {ValueOf<AppModals> | null}
+       */
+      pausedOn: null,
+    };
+
+    /** @private */
     this.actions = {
       'cancel': () => {
         if (this.modals.hasOpen()) {
@@ -110,8 +128,7 @@ export default class SxndPlayerApp {
         }
       },
       'modal.help.open': () => {
-        this.sxndPlayer.hideThumbnailPreview();
-        this.modals.help.open();
+        this.openModal(this.modals.help, /* pause= */ false);
       },
       'modal.help.toggle': () => {
         this.sxndPlayer.hideThumbnailPreview();
@@ -185,6 +202,9 @@ export default class SxndPlayerApp {
         this.sxndPlayer.getVifa()?.seekForward(1);
       },
     };
+
+    this.modals.on('closed', this.handlers.onCloseModal);
+    this.sxndPlayer.getVideo().addEventListener('play', this.handlers.onPlay);
 
     this.load();
   }
@@ -401,6 +421,43 @@ export default class SxndPlayerApp {
   }
 
   /**
+   * @private
+   */
+  onPlay() {
+    this.sxnd.pausedOn = null;
+  }
+
+  /**
+   * @private
+   * @param {any} obj
+   */
+  pauseOn(obj) {
+    if (this.sxnd.pausedOn === null && !this.sxndPlayer.paused) {
+      this.sxnd.pausedOn = obj;
+      this.sxndPlayer.pause();
+    }
+  }
+
+  /**
+   * @private
+   * @param {any} obj
+   */
+  resumeOn(obj) {
+    if (this.sxnd.pausedOn === obj) {
+      this.sxndPlayer.play();
+      this.sxnd.pausedOn = null;
+    }
+  }
+
+  /**
+   * @private
+   * @param {ValueOf<AppModals>} modal
+   */
+  onCloseModal(modal) {
+    this.resumeOn(modal);
+  }
+
+  /**
    * Mostly taken from Shaka player (shaka.ui.Controls).
    *
    * We put this here so that we don't need to append the app elements (modals)
@@ -445,12 +502,11 @@ export default class SxndPlayerApp {
       return;
     }
 
-    this.sxndPlayer.pause();
-    this.sxndPlayer.hideThumbnailPreview();
-    this.modals.bookmark
+    const modal = this.modals.bookmark
       .setTimecode(this.sxndPlayer.displayTime)
-      .setFps(this.sxndPlayer.getFps() ?? 0)
-      .open();
+      .setFps(this.sxndPlayer.getFps() ?? 0);
+
+    this.openModal(modal, /* pause= */ true);
   }
 
   /**
@@ -474,9 +530,7 @@ export default class SxndPlayerApp {
     const modal = this.prepareScreenshot();
 
     if (modal !== null) {
-      this.sxndPlayer.pause();
-      this.sxndPlayer.hideThumbnailPreview();
-      modal.open();
+      this.openModal(modal, /* pause= */ true);
     }
   }
 
@@ -486,5 +540,19 @@ export default class SxndPlayerApp {
     if (modal !== null) {
       modal.snap();
     }
+  }
+
+  /**
+   * @private
+   * @param {ValueOf<AppModals>} modal
+   * @param {boolean} pause
+   */
+  openModal(modal, pause) {
+    if (pause) {
+      this.pauseOn(modal);
+    }
+
+    this.sxndPlayer.hideThumbnailPreview();
+    modal.open();
   }
 }
