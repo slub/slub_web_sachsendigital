@@ -60,26 +60,28 @@ export default class ScreenshotModal extends SimpleModal {
 
     this.$body.append(
       e("div", { className: "screenshot-config" }, [
-        e("span", { className: "show-metadata" }, [
-          e("input", {
-            type: "checkbox",
-            id: idShowMetadata,
-            checked: this.state.showMetadata,
-            $change: this.handleChangeShowMetadata.bind(this),
-          }),
-          e("label", { htmlFor: idShowMetadata }, [
-            env.t('modal.screenshot.show-metadata'),
+        e("h4", {}, [env.t('modal.screenshot.configuration')]),
+        e("section", { className: "metadata-config" }, [
+          e("h1", {}, [env.t('modal.screenshot.metadata')]),
+          e("div", { className: "metadata-overlay" }, [
+            e("input", {
+              type: "checkbox",
+              id: idShowMetadata,
+              checked: this.state.showMetadata,
+              $change: this.handleChangeShowMetadata.bind(this),
+            }),
+            e("label", { htmlFor: idShowMetadata }, [
+              env.t('modal.screenshot.metadata-overlay'),
+            ]),
           ]),
         ]),
-        " · ",
-        e("span", {}, [
-          e("label", {}, [env.t('modal.screenshot.file-format')]),
-          ":",
-          e("span", {}, (
-            this.state.supportedImageFormats.flatMap(format => {
+        e("section", {}, [
+          e("h1", {}, [env.t('modal.screenshot.file-format')]),
+          e("div", {}, (
+            this.state.supportedImageFormats.map(format => {
               const radioId = env.mkid();
 
-              return [
+              return e("span", { className: "file-format-option" }, [
                 e("input", {
                   id: radioId,
                   name: radioGroup,
@@ -92,15 +94,18 @@ export default class ScreenshotModal extends SimpleModal {
                   },
                 }),
                 e("label", { htmlFor: radioId }, [` ${format.label}`]),
-              ];
+              ]);
             })
           )),
         ]),
-        " · ",
         e("a", {
           href: "#",
+          className: "download-link",
           $click: this.handleDownloadImage.bind(this),
-        }, [env.t('modal.screenshot.download-image')]),
+        }, [
+          e("i", { className: "material-icons-round" }, ["download"]),
+          env.t('modal.screenshot.download-image'),
+        ]),
       ]),
 
       this.$canvas = e("canvas")

@@ -22,8 +22,10 @@ function getEnvironment() {
     twoLetterIsoCode: 'en',
     phrases: {
       'modal.screenshot.title': "Screenshot",
+      'modal.screenshot.configuration': "Show Metadata",
       'modal.screenshot.download-image': "Download Image",
-      'modal.screenshot.show-metadata': "Show Metadata",
+      'modal.screenshot.metadata': "Metadata",
+      'modal.screenshot.metadata-overlay': "Overlay on image",
       'modal.screenshot.file-format': "File Format",
     },
   });

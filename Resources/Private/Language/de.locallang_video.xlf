@@ -225,13 +225,25 @@
 				<source><![CDATA[Bookmark (Share Link)]]></source>
 				<target><![CDATA[Bookmark (Link teilen)]]></target>
 			</trans-unit>
-			<trans-unit id="modal.screenshot.show-metadata" approved="yes">
-				<source><![CDATA[Show Metadata]]></source>
-				<target><![CDATA[Metadaten einblenden]]></target>
+			<trans-unit id="modal.screenshot.configuration" approved="yes">
+				<source><![CDATA[Configure]]></source>
+				<target><![CDATA[Konfiguration]]></target>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.metadata-overlay" approved="yes">
+				<source><![CDATA[Show on Screenshot]]></source>
+				<target><![CDATA[Im Bild einblenden]]></target>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.download-image" approved="yes">
 				<source><![CDATA[Download Image]]></source>
 				<target><![CDATA[Bild herunterladen]]></target>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.metadata" approved="yes">
+				<source><![CDATA[Metadata]]></source>
+				<target><![CDATA[Metadaten]]></target>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.metadata-overlay" approved="yes">
+				<source><![CDATA[Show on Screenshot]]></source>
+				<target><![CDATA[Im Bild einblenden]]></target>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.file-format" approved="yes">
 				<source><![CDATA[File Format]]></source>

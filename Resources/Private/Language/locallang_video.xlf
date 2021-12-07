@@ -170,14 +170,20 @@
 			<trans-unit id="modal.bookmark.title">
 				<source><![CDATA[Bookmark (Share Link)]]></source>
 			</trans-unit>
+			<trans-unit id="modal.screenshot.configuration">
+				<source><![CDATA[Configure]]></source>
+			</trans-unit>
 			<trans-unit id="modal.screenshot.download-image">
 				<source><![CDATA[Download Image]]></source>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.file-format">
 				<source><![CDATA[File Format]]></source>
 			</trans-unit>
-			<trans-unit id="modal.screenshot.show-metadata">
-				<source><![CDATA[Show Metadata]]></source>
+			<trans-unit id="modal.screenshot.metadata">
+				<source><![CDATA[Metadata]]></source>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.metadata-overlay">
+				<source><![CDATA[Overlay on image]]></source>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.title">
 				<source><![CDATA[Screenshot]]></source>
