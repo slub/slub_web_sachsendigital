@@ -24,7 +24,10 @@
 				<source><![CDATA[Toggle help (this window)]]></source>
 			</trans-unit>
 			<trans-unit id="action.modal.screenshot.open">
-				<source><![CDATA[Screenshot]]></source>
+				<source><![CDATA[Screenshot (show dialog)]]></source>
+			</trans-unit>
+			<trans-unit id="action.modal.screenshot.snap">
+				<source><![CDATA[Screenshot (direct download)]]></source>
 			</trans-unit>
 			<trans-unit id="action.navigate.chapter.next">
 				<source><![CDATA[Next chapter]]></source>
@@ -161,6 +164,9 @@
 			<trans-unit id="key.s">
 				<source><![CDATA[Key S]]></source>
 			</trans-unit>
+			<trans-unit id="key.s.mod">
+				<source><![CDATA[S]]></source>
+			</trans-unit>
 			<trans-unit id="modal.bookmark.copy-link">
 				<source><![CDATA[Copy Link]]></source>
 			</trans-unit>
@@ -176,6 +182,9 @@
 			<trans-unit id="modal.screenshot.download-image">
 				<source><![CDATA[Download Image]]></source>
 			</trans-unit>
+			<trans-unit id="modal.screenshot.error">
+				<source><![CDATA[Sorry, the screenshot could not be taken.]]></source>
+			</trans-unit>
 			<trans-unit id="modal.screenshot.file-format">
 				<source><![CDATA[File Format]]></source>
 			</trans-unit>
@@ -184,6 +193,9 @@
 			</trans-unit>
 			<trans-unit id="modal.screenshot.metadata-overlay">
 				<source><![CDATA[Overlay on image]]></source>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.snap-tip">
+				<source><![CDATA[Use {keybinding} to save a screenshot without opening this dialog.]]></source>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.title">
 				<source><![CDATA[Screenshot]]></source>

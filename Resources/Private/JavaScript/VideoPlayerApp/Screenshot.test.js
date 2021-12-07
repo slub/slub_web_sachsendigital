@@ -27,6 +27,7 @@ function getEnvironment() {
       'modal.screenshot.metadata': "Metadata",
       'modal.screenshot.metadata-overlay': "Overlay on image",
       'modal.screenshot.file-format': "File Format",
+      'modal.screenshot.snap-tip': "Tip: ...",
     },
   });
   return env;
@@ -52,7 +53,7 @@ test('can open screenshot overlay', async () => {
   expect(overlay()).toBeNull();
 
   // opened; exact tags are in snapshot
-  const modal = new ScreenshotModal(document.body, getEnvironment());
+  const modal = new ScreenshotModal(document.body, getEnvironment(), []);
   modal.setVideo(new VideoMock(1920, 1080));
   modal.setMetadata(getTestMetadataArray());
   modal.open();

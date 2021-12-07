@@ -9,10 +9,12 @@ import {
   download,
   e,
   sanitizeBasename,
+  textToHtml,
 } from '../../lib/util';
 import generateTimecodeUrl from '../lib/generateTimecodeUrl';
 import { metadataArrayToString } from '../lib/util';
 import SimpleModal from '../lib/SimpleModal';
+import { listKeybindingsDisj } from '../lib/trans';
 import { drawScreenshot } from '../Screenshot';
 
 /**
@@ -33,8 +35,9 @@ export default class ScreenshotModal extends SimpleModal {
    *
    * @param {HTMLElement} parent
    * @param {Translator & Identifier & Browser} env
+   * @param {Keybinding<any, any>[]} keybindings
    */
-  constructor(parent, env) {
+  constructor(parent, env, keybindings) {
     const supportedImageFormats = imageFormats.filter(
       format => env.supportsCanvasExport(format.mimeType)
     );
@@ -51,6 +54,10 @@ export default class ScreenshotModal extends SimpleModal {
     this.env = env;
     /** @private @type {HTMLVideoElement | null} */
     this.videoDomElement = null;
+
+    const snapKeybindings = keybindings.filter(
+      kb => kb.action === 'modal.screenshot.snap'
+    );
 
     this.$main.classList.add('screenshot-modal');
     this.$title.innerText = env.t('modal.screenshot.title');
@@ -103,8 +110,21 @@ export default class ScreenshotModal extends SimpleModal {
           className: "download-link",
           $click: this.handleDownloadImage.bind(this),
         }, [
-          e("i", { className: "material-icons-round" }, ["download"]),
+          e("i", {
+            className: "material-icons-round inline-icon",
+          }, ["download"]),
           env.t('modal.screenshot.download-image'),
+        ]),
+        e("aside", { className: "snap-tip" }, [
+          e("i", {
+            className: "material-icons-round inline-icon",
+          }, ["info_outline"]),
+          e("span", {
+            // Escape translation string, but allow listKeybindingsDisj (only)
+            // to use HTML (TODO: Refactor?)
+            innerHTML: textToHtml(env.t('modal.screenshot.snap-tip', { keybinding: "{kb}" }))
+              .replace('{kb}', e("span", {}, listKeybindingsDisj(env, snapKeybindings)).outerHTML)
+          }),
         ]),
       ]),
 
@@ -169,10 +189,37 @@ export default class ScreenshotModal extends SimpleModal {
     // We could've set `.download-image[href]` in `render()` or in the radio
     // box change listener, but avoid this for performance reasons.
 
-    const { metadata, timecode, selectedImageFormat } = this.state;
+    await this.downloadCurrentImage(this.state);
+  }
+
+  /**
+   * @param {Pick<State, 'showMetadata' | 'metadata'>} state
+   */
+  renderCurrentScreenshot({ showMetadata, metadata }) {
+    if (this.videoDomElement === null) {
+      // TODO: Error handling
+      return false;
+    }
+
+    const config = {
+      captions: showMetadata ? this.getCaptions(metadata) : [],
+      minWidth: 1000,
+    };
+
+    drawScreenshot(this.$canvas, this.videoDomElement, config);
+
+    return true;
+  }
+
+  /**
+   *
+   * @param {Pick<State, 'metadata' | 'timecode' | 'selectedImageFormat'>} state
+   */
+  async downloadCurrentImage(state) {
+    const { metadata, timecode, selectedImageFormat } = state;
     if (metadata === null || timecode === null || selectedImageFormat === null) {
       console.error("one of [metadata, timecode, selectedImageFormat] is null");
-      return;
+      return false;
     }
 
     const image = await this.makeImageBlob(
@@ -180,6 +227,8 @@ export default class ScreenshotModal extends SimpleModal {
     const filename = this.getFilename(metadata, timecode);
 
     download(image, filename);
+
+    return true;
   }
 
   /**
@@ -234,26 +283,37 @@ export default class ScreenshotModal extends SimpleModal {
   }
 
   /**
+   * Downloads image without opening the modal.
+   */
+  async snap() {
+    // Parameters may be on the way via setState (TODO: Refactor)
+    await this.update();
+
+    const state = this.state;
+    const success = (
+      this.renderCurrentScreenshot(state)
+      && await this.downloadCurrentImage(state)
+    );
+
+    if (!success) {
+      alert(this.env.t('modal.screenshot.error'));
+    }
+  }
+
+  /**
    * @override
    * @param {import('../lib/SimpleModal').BaseState & State} state
    */
   render(state) {
     super.render(state);
 
-    const { show, metadata, showMetadata } = state;
+    const shouldRender = (
+      state.show
+      && (!this.state.show || state.showMetadata !== this.state.showMetadata)
+    );
 
-    if (this.videoDomElement === null) {
-      // TODO: Error handling
-      return;
-    }
-
-    if (show && (!this.state.show || showMetadata !== this.state.showMetadata)) {
-      const config = {
-        captions: showMetadata ? this.getCaptions(metadata) : [],
-        minWidth: 1000,
-      };
-
-      drawScreenshot(this.$canvas, this.videoDomElement, config);
+    if (shouldRender) {
+      this.renderCurrentScreenshot(state);
     }
   }
 }

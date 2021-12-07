@@ -89,7 +89,7 @@ export default class SxndPlayerApp {
         keybindings: this.keybindings,
       }),
       bookmark: new BookmarkModal(this.container, this.env),
-      screenshot: new ScreenshotModal(this.container, this.env),
+      screenshot: new ScreenshotModal(this.container, this.env, this.keybindings),
     });
 
     /** @private */
@@ -116,6 +116,9 @@ export default class SxndPlayerApp {
       },
       'modal.screenshot.open': () => {
         this.showScreenshot();
+      },
+      'modal.screenshot.snap': () => {
+        this.snapScreenshot();
       },
       'fullscreen.toggle': () => {
         this.sxndPlayer.hideThumbnailPreview();
@@ -337,7 +340,8 @@ export default class SxndPlayerApp {
 
     const keybinding = this.keybindings.find(kb => (
       typeof this.actions[kb.action] === 'function'
-      && kb.key === e.key
+      // Ignore casing, e.g. for `S` vs. `Shift + S`.
+      && kb.key.toLowerCase() === e.key.toLowerCase()
       && (kb.repeat == null || kb.repeat === e.repeat)
       && (kb.scope == null || kb.scope === curKbScope)
       && Modifier[kb.mod ?? 'None'] === mod
@@ -405,18 +409,38 @@ export default class SxndPlayerApp {
       .open();
   }
 
-  showScreenshot() {
-    // Don't show modal if there isn't yet an image to be displayed
+  /**
+   * @returns {ScreenshotModal | null}
+   */
+  prepareScreenshot() {
+    // Don't do screenshot if there isn't yet an image to be displayed
     if (!this.sxndPlayer.hasCurrentData) {
-      return;
+      return null;
     }
 
-    this.sxndPlayer.pause();
-    this.sxndPlayer.hideThumbnailPreview();
-    this.modals.screenshot
-      .setVideo(this.sxndPlayer.getVideo())
-      .setMetadata(this.videoInfo.metadata)
-      .setTimecode(this.sxndPlayer.displayTime)
-      .open();
+    return (
+      this.modals.screenshot
+        .setVideo(this.sxndPlayer.getVideo())
+        .setMetadata(this.videoInfo.metadata)
+        .setTimecode(this.sxndPlayer.displayTime)
+    );
+  }
+
+  showScreenshot() {
+    const modal = this.prepareScreenshot();
+
+    if (modal !== null) {
+      this.sxndPlayer.pause();
+      this.sxndPlayer.hideThumbnailPreview();
+      modal.open();
+    }
+  }
+
+  snapScreenshot() {
+    const modal = this.prepareScreenshot();
+
+    if (modal !== null) {
+      modal.snap();
+    }
   }
 }

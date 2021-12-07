@@ -30,6 +30,10 @@
     cursor: pointer;
 }
 
+.inline-icon {
+    vertical-align: middle;
+}
+
 .screenshot-modal {
     .body-container {
         display: grid;
@@ -67,11 +71,16 @@
 
             .download-link {
                 margin-top: 0.2em;
-
-                i {
-                    vertical-align: middle;
-                }
             }
+        }
+
+        .snap-tip {
+            display: flex;
+            gap: 0.4em;
+
+            margin-top: 2em;
+            line-height: 1.25;
+            color: @light-color;
         }
 
         canvas {
@@ -148,14 +157,6 @@
     }
 
     .keybindings-table {
-        .kb-text {
-            white-space: nowrap;
-        }
-
-        .or-sep {
-            font-weight: bolder;
-        }
-
         td:nth-child(1) {
             width: 40%;
             text-align: right;
@@ -204,6 +205,14 @@
     @media screen and (min-width: @desktopViewportWidth) {
         left: 5rem;
         right: 5rem;
+    }
+
+    .kb-text {
+        white-space: nowrap;
+    }
+
+    .or-sep {
+        font-weight: bolder;
     }
 
     button {

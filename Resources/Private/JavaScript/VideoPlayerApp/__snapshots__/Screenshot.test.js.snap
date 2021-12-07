@@ -712,12 +712,22 @@ exports[`can open screenshot overlay 1`] = `
         href="#"
       >
         <i
-          class="material-icons-round"
+          class="material-icons-round inline-icon"
         >
           download
         </i>
         Download Image
       </a>
+      <aside
+        class="snap-tip"
+      >
+        <i
+          class="material-icons-round inline-icon"
+        >
+          info_outline
+        </i>
+        <span />
+      </aside>
     </div>
     <canvas
       height="1080"

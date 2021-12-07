@@ -26,6 +26,14 @@
 		"order": 31
 	},
 	{
+		"key": "s",
+		"mod": "Shift",
+		"scope": "player",
+		"action": "modal.screenshot.snap",
+		"kind": "other",
+		"order": 32
+	},
+	{
 		"key": "f",
 		"repeat": false,
 		"scope": "player",

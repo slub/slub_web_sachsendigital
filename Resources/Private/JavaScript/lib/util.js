@@ -221,3 +221,13 @@ export function sanitizeBasename(str) {
   const result = str.replace(/[^a-zA-Z0-9()]+/g, "_");
   return result.length > 0 ? result : "_";
 }
+
+/**
+ * Returns HTML-encoded string that represents {@link text}.
+ *
+ * @param {string} text
+ * @returns {string}
+ */
+export function textToHtml(text) {
+  return e('span', { innerText: text }).innerHTML;
+}

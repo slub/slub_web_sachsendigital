@@ -30,8 +30,12 @@
 				<target><![CDATA[Bedienhinweise (dieses Fenster)]]></target>
 			</trans-unit>
 			<trans-unit id="action.modal.screenshot.open" approved="yes">
-				<source><![CDATA[Screenshot]]></source>
-				<target><![CDATA[Screenshot anzeigen]]></target>
+				<source><![CDATA[Screenshot (show dialog)]]></source>
+				<target><![CDATA[Screenshot: Dialog anzeigen]]></target>
+			</trans-unit>
+			<trans-unit id="action.modal.screenshot.snap" approved="yes">
+				<source><![CDATA[Screenshot (direct download)]]></source>
+				<target><![CDATA[Screenshot: Sofort herunterladen]]></target>
 			</trans-unit>
 			<trans-unit id="action.navigate.chapter.next" approved="yes">
 				<source><![CDATA[Next chapter]]></source>
@@ -213,6 +217,10 @@
 				<source><![CDATA[Key S]]></source>
 				<target><![CDATA[Taste S]]></target>
 			</trans-unit>
+			<trans-unit id="key.s.mod" approved="yes">
+				<source><![CDATA[S]]></source>
+				<target><![CDATA[S]]></target>
+			</trans-unit>
 			<trans-unit id="modal.bookmark.copy-link" approved="yes">
 				<source><![CDATA[Copy Link]]></source>
 				<target><![CDATA[Link kopieren]]></target>
@@ -237,6 +245,10 @@
 				<source><![CDATA[Download Image]]></source>
 				<target><![CDATA[Bild herunterladen]]></target>
 			</trans-unit>
+			<trans-unit id="modal.screenshot.error" approved="yes">
+				<source><![CDATA[Sorry, the screenshot could not be taken.]]></source>
+				<target><![CDATA[Entschuldigung, der Screenshot konnte nicht erstellt werden.]]></target>
+			</trans-unit>
 			<trans-unit id="modal.screenshot.metadata" approved="yes">
 				<source><![CDATA[Metadata]]></source>
 				<target><![CDATA[Metadaten]]></target>
@@ -248,6 +260,10 @@
 			<trans-unit id="modal.screenshot.file-format" approved="yes">
 				<source><![CDATA[File Format]]></source>
 				<target><![CDATA[Dateiformat]]></target>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.snap-tip" approved="yes">
+				<source><![CDATA[Use {keybinding} to save a screenshot without opening this dialog.]]></source>
+				<target><![CDATA[Mit {keybinding} kann ein Screenshot direkt heruntergeladen werden.]]></target>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.title" approved="yes">
 				<source><![CDATA[Screenshot]]></source>

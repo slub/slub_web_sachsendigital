@@ -2,6 +2,7 @@
 
 import { e } from '../../lib/util';
 import SimpleModal from '../lib/SimpleModal';
+import { listKeybindingsDisj } from '../lib/trans';
 
 /**
  * @typedef {string} KeybindingKind See `Keybinding::kind`.
@@ -98,7 +99,7 @@ export default class HelpModal extends SimpleModal {
 
               ...keybindings.map(([action, kbs]) => (
                 e("tr", {}, [
-                  e("td", { className: "key" }, this.listKeybindingsDisj(kbs)),
+                  e("td", { className: "key" }, listKeybindingsDisj(env, kbs)),
                   e("td", { className: "action" }, [this.describeAction(action)]),
                 ])
               )),
@@ -108,47 +109,6 @@ export default class HelpModal extends SimpleModal {
       });
 
     this.$body.append(...els);
-  }
-
-  /**
-   * Generates and concatenates texts of multiple keybindings using an "or"
-   * as separator.
-   *
-   * @param {ShownKeybinding[]} kbs
-   */
-  listKeybindingsDisj(kbs) {
-    const env = this.env;
-
-    return kbs.flatMap((kb, i) => {
-      const text = this.getKeybindingText(kb);
-
-      return [
-        // Use spaces (instead of padding) to allow word-wrap around the "or"
-        i > 0 && e("span", { className: "or-sep" }, [` ${env.t('or')} `]),
-
-        e("span", { className: "kb-text" }, [text]),
-      ];
-    });
-  }
-
-  /**
-   * Returns a translated string describing keybinding {@link kb}.
-   *
-   * @param {ShownKeybinding} kb
-   * @returns {string}
-   */
-  getKeybindingText(kb) {
-    const env = this.env;
-
-    let text = kb.mod
-      ? env.t(`key.mod.${kb.mod}`) + " + " + env.t(`key.${kb.key}.mod`)
-      : env.t(`key.${kb.key}`);
-
-    if (kb.repeat) {
-      text = env.t('key.repeat', { key: text });
-    }
-
-    return text;
   }
 
   /**
