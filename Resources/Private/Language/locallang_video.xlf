@@ -17,6 +17,9 @@
 			<trans-unit id="action.kind.other">
 				<source><![CDATA[Other Shortcuts]]></source>
 			</trans-unit>
+			<trans-unit id="action.kind.player">
+				<source><![CDATA[Player]]></source>
+			</trans-unit>
 			<trans-unit id="action.modal.bookmark.open">
 				<source><![CDATA[Bookmark (share link)]]></source>
 			</trans-unit>

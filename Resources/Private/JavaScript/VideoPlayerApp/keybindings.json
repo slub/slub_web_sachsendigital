@@ -38,7 +38,7 @@
 		"repeat": false,
 		"scope": "player",
 		"action": "fullscreen.toggle",
-		"kind": "other",
+		"kind": "player",
 		"order": 20
 	},
 	{
@@ -46,7 +46,7 @@
 		"repeat": false,
 		"scope": "player",
 		"action": "theater.toggle",
-		"kind": "other",
+		"kind": "player",
 		"order": 21
 	},
 	{
@@ -54,7 +54,7 @@
 		"repeat": false,
 		"scope": "player",
 		"action": "playback.toggle",
-		"kind": "other",
+		"kind": "player",
 		"order": 0
 	},
 	{
@@ -62,21 +62,21 @@
 		"repeat": false,
 		"scope": "player",
 		"action": "playback.volume.mute.toggle",
-		"kind": "other",
+		"kind": "player",
 		"order": 12
 	},
 	{
 		"key": "ArrowUp",
 		"scope": "player",
 		"action": "playback.volume.inc",
-		"kind": "other",
+		"kind": "player",
 		"order": 10
 	},
 	{
 		"key": "ArrowDown",
 		"scope": "player",
 		"action": "playback.volume.dec",
-		"kind": "other",
+		"kind": "player",
 		"order": 11
 	},
 	{

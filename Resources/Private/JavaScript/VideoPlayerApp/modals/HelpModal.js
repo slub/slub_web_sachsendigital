@@ -23,6 +23,7 @@ function groupKeybindings(keybindings) {
   /** @type {KeybindingGroups} */
   const result = {
     'navigate': {},
+    'player': {},
     'other': {},
   };
 

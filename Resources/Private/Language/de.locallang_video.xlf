@@ -21,6 +21,10 @@
 				<source><![CDATA[Other Shortcuts]]></source>
 				<target><![CDATA[Weitere Tastenkürzel]]></target>
 			</trans-unit>
+			<trans-unit id="action.kind.player" approved="yes">
+				<source><![CDATA[Player]]></source>
+				<target><![CDATA[Wiedergabe]]></target>
+			</trans-unit>
 			<trans-unit id="action.modal.bookmark.open" approved="yes">
 				<source><![CDATA[Bookmark (share link)]]></source>
 				<target><![CDATA[Bookmark (Link teilen)]]></target>
