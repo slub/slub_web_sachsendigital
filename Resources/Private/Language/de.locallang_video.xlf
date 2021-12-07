@@ -7,7 +7,7 @@
 		<body>
 			<trans-unit id="action.cancel" approved="yes">
 				<source><![CDATA[Cancel current action (window, full screen, ...)]]></source>
-				<target><![CDATA[Aktuelle Aktion beenden (Fenster, Vollbild, ...)]]></target>
+				<target><![CDATA[Aktuelle Aktion beenden (Vollbild, Fenster, ...)]]></target>
 			</trans-unit>
 			<trans-unit id="action.fullscreen.toggle" approved="yes">
 				<source><![CDATA[Toggle full screen]]></source>

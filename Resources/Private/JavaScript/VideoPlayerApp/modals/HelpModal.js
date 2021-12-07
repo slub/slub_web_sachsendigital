@@ -55,7 +55,7 @@ export default class HelpModal extends SimpleModal {
    * @param {HTMLElement} parent
    * @param {Translator} env
    * @param {object} config
-   * @param {Record<string, string|number>} config.constants
+   * @param {Record<string, string | number>} config.constants
    * @param {ShownKeybinding[]} config.keybindings
    */
   constructor(parent, env, config) {

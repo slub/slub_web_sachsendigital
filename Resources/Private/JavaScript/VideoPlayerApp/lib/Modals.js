@@ -7,6 +7,7 @@ import SimpleModal from './SimpleModal';
  * @typedef Modals
  * @property {(modal: ValueOf<T>) => void} toggleExclusive Try to toggle the
  * modal while not inducing a state of two open modals.
+ * @property {(coverContainer: HTMLElement | null) => void} setFullscreen
  * @property {() => boolean} hasOpen
  * @property {() => void} closeNext
  * @property {() => void} closeAll
@@ -24,6 +25,17 @@ import SimpleModal from './SimpleModal';
 export default function Modals(modals) {
   const modalsArray = Object.values(modals);
 
+  // Set DOM element that is used to cover the background of the modals. It is
+  // used to make sure that when a modal is open, the background won't respond
+  // to mouse actions. It also makes it simpler to detect clicking outside of
+  // an open modal.
+  const modalCover = document.createElement('div');
+  modalCover.className = "sxnd-modal-cover";
+  modalCover.addEventListener('click', () => {
+    result.closeAll();
+  });
+  document.body.append(modalCover);
+
   /** @type {T & Modals<T>} */
   const result = {
     ...modals,
@@ -33,6 +45,9 @@ export default function Modals(modals) {
       } else if (!result.hasOpen()) {
         modal.open();
       }
+    },
+    setFullscreen: (coverContainer) => {
+      (coverContainer ?? document.body).append(modalCover);
     },
     hasOpen: () => {
       return modalsArray.some(modal => modal.isOpen);
@@ -62,17 +77,6 @@ export default function Modals(modals) {
       }
     },
   };
-
-  // Set DOM element that is used to cover the background of the modals. It is
-  // used to make sure that when a modal is open, the background won't respond
-  // to mouse actions. It also makes it simpler to detect clicking outside of
-  // an open modal.
-  const modalCover = document.createElement('div');
-  modalCover.className = "sxnd-modal-cover";
-  modalCover.addEventListener('click', () => {
-    result.closeAll();
-  });
-  document.body.append(modalCover);
 
   // TODO: Performance
   window.addEventListener('resize', () => {

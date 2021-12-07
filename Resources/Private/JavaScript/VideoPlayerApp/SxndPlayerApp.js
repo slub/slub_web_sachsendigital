@@ -53,6 +53,8 @@ export default class SxndPlayerApp {
       seekStep: 10,
       /** Trick play factor for continuous rewind/seek. */
       trickPlayFactor: 4,
+      /** Whether or not to switch to landscape in fullscreen mode. */
+      forceLandscapeOnFullscreen: true,
     };
 
     /** @private */
@@ -85,7 +87,11 @@ export default class SxndPlayerApp {
     /** @private */
     this.modals = Modals({
       help: new HelpModal(this.container, this.env, {
-        constants: this.constants,
+        constants: {
+          ...this.constants,
+          // TODO: Refactor
+          forceLandscapeOnFullscreen: Number(this.constants.forceLandscapeOnFullscreen),
+        },
         keybindings: this.keybindings,
       }),
       bookmark: new BookmarkModal(this.container, this.env),
@@ -122,7 +128,7 @@ export default class SxndPlayerApp {
       },
       'fullscreen.toggle': () => {
         this.sxndPlayer.hideThumbnailPreview();
-        this.sxndPlayer.toggleFullScreen();
+        this.toggleFullScreen();
       },
       'theater.toggle': () => {
         this.sxndPlayer.hideThumbnailPreview();
@@ -392,6 +398,44 @@ export default class SxndPlayerApp {
 
     this.sxndPlayer.play();
     this.sxndPlayer.seekTo(target.sxndTimecode);
+  }
+
+  /**
+   * Mostly taken from Shaka player (shaka.ui.Controls).
+   *
+   * We put this here so that we don't need to append the app elements (modals)
+   * to the player container.
+   */
+  async toggleFullScreen() {
+    if (document.fullscreenElement) {
+      if (screen.orientation) {
+        screen.orientation.unlock();
+      }
+      await document.exitFullscreen();
+      this.modals.setFullscreen(null);
+    } else {
+      // If we are in PiP mode, leave PiP mode first.
+      try {
+        if (document.pictureInPictureElement) {
+          await document.exitPictureInPicture();
+        }
+        await this.container.requestFullscreen({ navigationUI: 'hide' });
+        if (this.constants.forceLandscapeOnFullscreen && screen.orientation) {
+          try {
+            // Locking to 'landscape' should let it be either
+            // 'landscape-primary' or 'landscape-secondary' as appropriate.
+            await screen.orientation.lock('landscape');
+          } catch (error) {
+            // If screen.orientation.lock does not work on a device, it will
+            // be rejected with an error. Suppress that error.
+          }
+        }
+      } catch (e) {
+        // TODO: Error handling
+        console.log(e);
+      }
+      this.modals.setFullscreen(this.container);
+    }
   }
 
   showBookmarkUrl() {

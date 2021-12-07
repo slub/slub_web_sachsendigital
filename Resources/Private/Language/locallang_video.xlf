@@ -6,7 +6,7 @@
 		</header>
 		<body>
 			<trans-unit id="action.cancel">
-				<source><![CDATA[Cancel current action (window, full screen, ...)]]></source>
+				<source><![CDATA[Cancel current action (full screen, window, ...)]]></source>
 			</trans-unit>
 			<trans-unit id="action.fullscreen.toggle">
 				<source><![CDATA[Toggle full screen]]></source>
