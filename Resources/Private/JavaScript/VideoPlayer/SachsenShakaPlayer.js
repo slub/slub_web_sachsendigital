@@ -295,9 +295,9 @@ export default class SachsenShakaPlayer {
     // may remain hidden, and on seeking the controls remain visible.
 
     if (readyState === 0) {
-      this.shakaBottomControls?.classList.remove('sxnd-shown');
+      this.shakaBottomControls?.classList.remove('sxnd-visible');
     } else if (readyState >= this.constants.minBottomControlsReadyState) {
-      this.shakaBottomControls?.classList.add('sxnd-shown');
+      this.shakaBottomControls?.classList.add('sxnd-visible');
     }
   }
 

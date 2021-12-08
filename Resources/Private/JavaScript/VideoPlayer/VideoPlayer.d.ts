@@ -9,6 +9,7 @@ type Chapter = {
 
 interface Network<T> {
   get(url: string): Promise<T>;
+  getCached(url: string): T | null;
   abortPending(): void;
 }
 

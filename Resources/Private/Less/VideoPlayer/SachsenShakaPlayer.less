@@ -8,16 +8,16 @@
     height: 100%;
 }
 
+.sxnd-visible {
+    visibility: visible !important;
+}
+
 .shaka-video-container {
     height: 100%;
 }
 
 .shaka-bottom-controls {
     visibility: hidden;
-
-    &.sxnd-shown {
-        visibility: visible;
-    }
 }
 
 .sxnd-chapter-marker {
@@ -75,10 +75,6 @@ body {
         background-color: @base-color;
         z-index: 1; // Less than .sxnd-chapter-marker
         visibility: hidden;
-
-        &.shown {
-            visibility: visible;
-        }
     }
 }
 
@@ -98,8 +94,8 @@ body {
     z-index: 1;
     cursor: pointer;
 
-    &.shown {
-        visibility: visible;
+    .displayed {
+        display: block !important;
     }
 
     .content-box {
@@ -109,20 +105,36 @@ body {
     }
 
     .display {
+        display: none;
+        position: relative;
         width: 160px;
         height: 90px;
         border: 1px solid white;
         box-sizing: content-box;
         margin-bottom: 0.75em;
-        display: none;
+        overflow: hidden;
 
-        &.shown {
+        &.is-open {
             display: block;
         }
 
-        canvas {
-            width: 100%;
-            height: 100%;
+        img {
+            visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .thumb-timecode {
+            visibility: hidden;
+            position: absolute;
+            top: 0;
+            right: 0;
+            text-align: right;
+            background-color: black;
+            color: white;
+            font-size: 70%;
+            padding: 1pt 2pt;
         }
     }
 
@@ -138,10 +150,6 @@ body {
             line-height: 110%;
             margin-bottom: 0.4em;
             display: none;
-
-            &.shown {
-                display: block;
-            }
         }
 
         .timecode-text {
