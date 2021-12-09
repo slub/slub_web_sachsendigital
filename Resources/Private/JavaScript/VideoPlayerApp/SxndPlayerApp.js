@@ -469,7 +469,6 @@ export default class SxndPlayerApp {
         screen.orientation.unlock();
       }
       await document.exitFullscreen();
-      this.modals.setFullscreen(null);
     } else {
       // If we are in PiP mode, leave PiP mode first.
       try {
@@ -491,7 +490,6 @@ export default class SxndPlayerApp {
         // TODO: Error handling
         console.log(e);
       }
-      this.modals.setFullscreen(this.container);
     }
   }
 
