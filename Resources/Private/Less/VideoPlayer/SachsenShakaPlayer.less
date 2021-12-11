@@ -17,6 +17,25 @@
     visibility: hidden;
 }
 
+.shaka-controls-button-panel {
+    // Prefer showing play button rather than fullscreen/overflow menu buttons
+    // on tiny screens
+    justify-content: flex-start !important;
+}
+
+.shaka-current-time {
+    // On small screens, let the time tracker adapt
+
+    flex-shrink: 1 !important;
+    white-space: nowrap;
+    overflow-x: scroll;
+    position: relative;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
 // Taken from Shaka's general.less
 // TODO: Pull in from their LESS files?
 .show-when-controls-shown() {
