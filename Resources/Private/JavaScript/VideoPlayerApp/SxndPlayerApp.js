@@ -301,16 +301,19 @@ export default class SxndPlayerApp {
 
     this.sxndPlayer.addControlElement(
       ControlPanelButton.register(this.env, {
+        className: "sxnd-screenshot-button",
         material_icon: 'photo_camera',
         title: this.env.t('control.screenshot.tooltip'),
         onClick: this.actions['modal.screenshot.open'],
       }),
       ControlPanelButton.register(this.env, {
+        className: "sxnd-bookmark-button",
         material_icon: 'bookmark_border',
         title: this.env.t('control.bookmark.tooltip'),
         onClick: this.actions['modal.bookmark.open'],
       }),
       ControlPanelButton.register(this.env, {
+        className: "sxnd-help-button",
         material_icon: 'help_outline',
         title: this.env.t('control.help.tooltip'),
         onClick: this.actions['modal.help.open'],

@@ -46,6 +46,19 @@
     vertical-align: middle;
 }
 
+@media all and (max-width: @tabletViewportWidth) {
+    .sxnd-screenshot-button,
+    .sxnd-bookmark-button,
+    .sxnd-help-button {
+        display: none !important;
+    }
+
+    .shaka-volume-bar-container,
+    .shaka-mute-button {
+        display: none !important;
+    }
+}
+
 .screenshot-modal {
     .body-container {
         display: grid;
