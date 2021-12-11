@@ -2,6 +2,14 @@
 
 .control-bar {
     border-right: none !important;
+
+    // These buttons are used to toggle TOC and metadata on mobile (see
+    // @slub_digitalcollections). Put them to the top so they won't overlap
+    // with video controls.
+    .offcanvas-toggle {
+        bottom: unset;
+        top: 5px;
+    }
 }
 
 .document-view {
