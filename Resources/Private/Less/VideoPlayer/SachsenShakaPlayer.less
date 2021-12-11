@@ -1,8 +1,5 @@
 @import "./VideoPlayer.less";
 
-@seek-bar-height: 4px;
-@seek-bar-margin: 6px;
-
 .sxnd-video {
     width: 100%;
     height: 100%;
@@ -18,14 +15,6 @@
 
 .shaka-bottom-controls {
     visibility: hidden;
-}
-
-.sxnd-chapter-marker {
-    width: @seek-bar-height;
-    height: @seek-bar-height;
-    background-color: @light-color;
-    border-radius: @seek-bar-height / 2;
-    z-index: 2; // More than .seek-marker
 }
 
 // Taken from Shaka's general.less
@@ -48,35 +37,6 @@
 body {
     &.seek-or-scrub * {
         cursor: grabbing !important;
-    }
-}
-
-.sxnd-seek-bar {
-    .show-when-controls-shown();
-
-    // This lets us use pointer events for touch
-    touch-action: none;
-    position: relative;
-    margin: 0px 6px;
-    padding-top: @seek-bar-margin;
-    height: @seek-bar-height + 2 * @seek-bar-margin;
-    cursor: pointer;
-
-    .range {
-        position: absolute;
-        width: 100%;
-        height: @seek-bar-height;
-        border-radius: @seek-bar-height;
-    }
-
-    .seek-marker {
-        position: absolute;
-        left: 45%;
-        height: @seek-bar-height;
-        width: 1px;
-        background-color: @base-color;
-        z-index: 1; // Less than .sxnd-chapter-marker
-        visibility: hidden;
     }
 }
 
@@ -162,4 +122,21 @@ body {
             font-weight: bold;
         }
     }
+}
+
+@seek-bar-height: 4px;
+@seek-bar-margin: 6px;
+
+@media all and (pointer: fine) {
+    @seek-bar-height: 4px;
+    @seek-bar-margin: 6px;
+    @import (multiple) "./FlatSeekBar.less";
+}
+
+// Thanks https://stackoverflow.com/a/41585180 (Less variables in media query)
+// TODO: Use CSS variables?
+@media all and (pointer: coarse) {
+    @seek-bar-height: 7px;
+    @seek-bar-margin: 8px;
+    @import (multiple) "./FlatSeekBar.less";
 }
