@@ -124,19 +124,36 @@ body {
     }
 }
 
+.sxnd-chapter-marker {
+    z-index: 2; // More than .seek-marker
+}
+
 @seek-bar-height: 4px;
 @seek-bar-margin: 6px;
 
+// Thanks https://stackoverflow.com/a/41585180 (Less variables in media query)
+// TODO: Use CSS variables?
 @media all and (pointer: fine) {
-    @seek-bar-height: 4px;
-    @seek-bar-margin: 6px;
+    .sxnd-chapter-marker {
+        width: @seek-bar-height;
+        height: @seek-bar-height;
+        background-color: @light-color;
+        border-radius: @seek-bar-height / 2;
+    }
+
     @import (multiple) "./FlatSeekBar.less";
 }
 
-// Thanks https://stackoverflow.com/a/41585180 (Less variables in media query)
-// TODO: Use CSS variables?
 @media all and (pointer: coarse) {
+    .sxnd-chapter-marker {
+        width: 1px;
+        height: @seek-bar-height - 2px;
+        margin-top: 1px;
+        background-color: rgba(@light-color, 0.3);
+    }
+
     @seek-bar-height: 7px;
     @seek-bar-margin: 8px;
+
     @import (multiple) "./FlatSeekBar.less";
 }
