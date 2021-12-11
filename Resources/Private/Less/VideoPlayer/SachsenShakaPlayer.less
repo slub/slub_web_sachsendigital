@@ -54,6 +54,8 @@ body {
 .sxnd-seek-bar {
     .show-when-controls-shown();
 
+    // This lets us use pointer events for touch
+    touch-action: none;
     position: relative;
     margin: 0px 6px;
     padding-top: @seek-bar-margin;
