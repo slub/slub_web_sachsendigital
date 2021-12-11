@@ -113,6 +113,7 @@ export default class ThumbnailPreview {
     document.addEventListener('pointermove', this.handlers.onPointerMove);
     document.addEventListener('pointerdown', this.handlers.onPointerDown);
     document.addEventListener('pointerup', this.handlers.onPointerUp);
+    document.addEventListener('pointercancel', this.handlers.onPointerUp);
   }
 
   release() {
@@ -121,6 +122,7 @@ export default class ThumbnailPreview {
     document.removeEventListener('pointermove', this.handlers.onPointerMove);
     document.removeEventListener('pointerdown', this.handlers.onPointerDown);
     document.removeEventListener('pointerup', this.handlers.onPointerUp);
+    document.removeEventListener('pointercancel', this.handlers.onPointerUp);
   }
 
   /**
@@ -221,7 +223,9 @@ export default class ThumbnailPreview {
   onPointerUp(e) {
     this.endChange();
 
-    if (this.mouseEventToPosition(e) === undefined) {
+    // Pen & touch: Always close when released
+    // Mouse: Only close when also out of screen area
+    if (e.pointerType !== 'mouse' || this.mouseEventToPosition(e) === undefined) {
       this.setIsVisible(false);
     }
   }
