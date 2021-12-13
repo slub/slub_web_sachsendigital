@@ -94,3 +94,15 @@ type Keybinding<ScopeT extends string, ActionT extends string> = {
    */
   order: number;
 };
+
+type ModalEventHandlers = {
+  updated: () => void;
+};
+
+interface Modal extends TypedEvents<ModalEventHandlers> {
+  readonly isOpen: boolean;
+  open(): void;
+  close(): void;
+  update(): Promise<void>;
+  resize(): void;
+}

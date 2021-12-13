@@ -1,7 +1,6 @@
 // @ts-check
 
 import EventEmitter from 'events';
-import SimpleModal from './SimpleModal';
 
 /**
  * @template T
@@ -24,7 +23,7 @@ import SimpleModal from './SimpleModal';
 /**
  * Mixin to add modal-related utility functions to set of modals.
  *
- * @template {Record<string, SimpleModal<any>>} T
+ * @template {Record<string, Modal>} T
  * @param {T} modals
  * @returns {ModalsType<T>}
  */

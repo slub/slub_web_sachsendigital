@@ -14,6 +14,7 @@ import Component from './Component';
 /**
  * @template {object} ModalState
  * @extends {Component<BaseState & ModalState>}
+ * @implements {Modal}
  */
 export default class SimpleModal extends Component {
   /**

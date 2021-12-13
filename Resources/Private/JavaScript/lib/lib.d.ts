@@ -86,3 +86,7 @@ interface Translator {
    */
   t(key: string, values?: Record<string, string | number>, fallback?: () => string): string;
 }
+
+interface TypedEvents<Handlers> {
+  on<T extends keyof Handlers>(event: T, callback: Handlers[T]): void;
+}
