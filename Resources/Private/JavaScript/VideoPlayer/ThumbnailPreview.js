@@ -34,6 +34,12 @@ const DISPLAY_WIDTH = 160;
 const INITIAL_ASPECT_RATIO = 16 / 9;
 
 /**
+ * Amount of the available video height allotted to thumbnail preview. If the
+ * container would exceed that height, the thumbnail image should be hidden.
+ */
+const MAXIMUM_THUMBNAIL_QUOTA = 0.4;
+
+/**
  * Component for a thumbnail preview when sliding over the seekbar.
  *
  * Oriented at https://github.com/google/shaka-player/issues/3371#issuecomment-830001465.
@@ -561,6 +567,11 @@ export default class ThumbnailPreview {
    * @private
    */
   getThumbTracks() {
+    // We do this check here to avoid superfluous downloads of thumbnails
+    if (!this.showThumbnailImage()) {
+      return [];
+    }
+
     // Image tracks are sorted by quality. Select the best and worst track
     // of acceptable bandwidth.
 
@@ -585,6 +596,20 @@ export default class ThumbnailPreview {
     }
 
     return [];
+  }
+
+  /**
+   * Whether or not to show a thumbnail image (if available).
+   *
+   * @private
+   * @returns {boolean}
+   */
+  showThumbnailImage() {
+    const video = this.player.getMediaElement();
+    const maximumContainerHeight =
+      (video?.clientHeight ?? 0) * MAXIMUM_THUMBNAIL_QUOTA;
+    const estimatedContainerHeight = 300;
+    return estimatedContainerHeight <= maximumContainerHeight;
   }
 
   /**
