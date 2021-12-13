@@ -83,7 +83,7 @@ export default class ThumbnailPreview {
       onWindowResize: this.onWindowResize.bind(this),
       onPointerMove: this.onPointerMove.bind(this),
       onPointerDown: this.onPointerDown.bind(this),
-      onPointerUp: this.onPointerUp.bind(this),
+      onPointerUpOrCancel: this.onPointerUpOrCancel.bind(this),
     };
 
     // Make preview unselectable so that, for example, the info text won't
@@ -112,8 +112,8 @@ export default class ThumbnailPreview {
     // TODO: Find a better solution for this
     document.addEventListener('pointermove', this.handlers.onPointerMove);
     document.addEventListener('pointerdown', this.handlers.onPointerDown);
-    document.addEventListener('pointerup', this.handlers.onPointerUp);
-    document.addEventListener('pointercancel', this.handlers.onPointerUp);
+    document.addEventListener('pointerup', this.handlers.onPointerUpOrCancel);
+    document.addEventListener('pointercancel', this.handlers.onPointerUpOrCancel);
   }
 
   release() {
@@ -121,8 +121,8 @@ export default class ThumbnailPreview {
     window.removeEventListener('resize', this.handlers.onWindowResize);
     document.removeEventListener('pointermove', this.handlers.onPointerMove);
     document.removeEventListener('pointerdown', this.handlers.onPointerDown);
-    document.removeEventListener('pointerup', this.handlers.onPointerUp);
-    document.removeEventListener('pointercancel', this.handlers.onPointerUp);
+    document.removeEventListener('pointerup', this.handlers.onPointerUpOrCancel);
+    document.removeEventListener('pointercancel', this.handlers.onPointerUpOrCancel);
   }
 
   /**
@@ -207,7 +207,7 @@ export default class ThumbnailPreview {
   onPointerDown(e) {
     // Check primary button
     if ((e.buttons & 1) !== 0) {
-      const position = this.mouseEventToPosition(e);
+      const position = this.mouseEventToPosition(e, e.pointerType === 'mouse');
       if (position !== undefined) {
         this.beginChange();
 
@@ -220,7 +220,7 @@ export default class ThumbnailPreview {
    * @private
    * @param {PointerEvent} e
    */
-  onPointerUp(e) {
+  onPointerUpOrCancel(e) {
     this.endChange();
 
     // Pen & touch: Always close when released
@@ -233,9 +233,10 @@ export default class ThumbnailPreview {
   /**
    * @private
    * @param {MouseEvent} e
+   * @param {boolean} allowWideSeekArea
    * @returns {SeekPosition | undefined}
    */
-  mouseEventToPosition(e) {
+  mouseEventToPosition(e, allowWideSeekArea = true) {
     const duration = this.saneVideoDuration();
     if (duration === undefined) {
       return;
@@ -250,7 +251,7 @@ export default class ThumbnailPreview {
 
     // Don't check bounds when scrubbing
     if (!this.isChanging) {
-      if (this.showContainer) {
+      if (this.showContainer && allowWideSeekArea) {
         // A seek has already been initiated by hovering the seekbar. Check
         // bounds in such a way that quickly moving the mouse left/right won't
         // accidentally close the container.
