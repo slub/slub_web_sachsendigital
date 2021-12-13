@@ -59,9 +59,9 @@ describe('withObjectUrl', () => {
       // @ts-expect-error: DOM Blob vs Node Blob (TODO)
       withObjectUrl(new Blob(), (objectUrl) => {
         blobObjectUrl = objectUrl;
-        throw new Error();
+        throw new Error("e1");
       });
-    }).toThrow();
+    }).toThrow("e1");
 
     expect(spyRevoke).toHaveBeenCalledTimes(1);
     expect(spyRevoke).toHaveBeenCalledWith(blobObjectUrl);
@@ -74,9 +74,9 @@ describe('withObjectUrl', () => {
       // @ts-expect-error: DOM Blob vs Node Blob (TODO)
       await withObjectUrl(new Blob(), async (objectUrl) => {
         blobObjectUrl = objectUrl;
-        throw new Error();
+        throw new Error("e2");
       });
-    }).rejects.toThrow();
+    }).rejects.toThrow("e2");
 
     expect(spyRevoke).toHaveBeenCalledTimes(1);
     expect(spyRevoke).toHaveBeenCalledWith(blobObjectUrl);

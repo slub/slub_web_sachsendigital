@@ -152,8 +152,11 @@ export function withObjectUrl(obj, callback) {
   if (result instanceof Promise) {
     const resultPromise = result;
 
-    // @ts-expect-error: The typing is indeed not exact here because `T` could
-    // be a type extending `Promise` (TODO).
+    // @ts-expect-error
+    // - The typing isn't exact because `T` could be extending `Promise` (TODO).
+    // - Simply doing `result.then().catch()` or `result.finally()` without
+    //   creating a new Promise wouldn't suffice, as that would alter behavior
+    //   w.r.t. unhandled rejections (TODO: demnstrate in test case?).
     return new Promise((resolve, reject) => {
       resultPromise
         .then((value) => {
@@ -273,20 +276,6 @@ export function sanitizeBasename(str) {
  */
 export function textToHtml(text) {
   return e('span', { innerText: text }).innerHTML;
-}
-
-/**
- * Promisification of `setTimeout`.
- *
- * @param {number} delay Delay in seconds
- * @returns {Promise<void>}
- */
-export function sleep(delay) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, delay * 1000);
-  })
 }
 
 /**

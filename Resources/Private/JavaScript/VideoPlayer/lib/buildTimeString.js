@@ -24,7 +24,7 @@ export default function buildTimeString(totalSeconds, showHour, fps = null) {
   let result = (
     segments
       // Don't pad the first segment
-      .map((n, i) => zeroPad(Math.floor(n), i == 0 ? 0 : 2))
+      .map((n, i) => zeroPad(Math.floor(n), i === 0 ? 0 : 2))
       .join(':')
   );
 

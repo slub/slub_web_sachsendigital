@@ -63,7 +63,9 @@
       "^.+\\.js$": "babel-jest",
       "^.+\\.(css|less)$": "<rootDir>/Resources/Private/JavaScript/style-mock.js"
     },
-    "transformIgnorePatterns": ["/node_modules/(?!shaka-player/ui/controls.less)"],
+    "transformIgnorePatterns": [
+      "/node_modules/(?!shaka-player/ui/controls.less)"
+    ],
     "collectCoverageFrom": [
       "Resources/Private/JavaScript/**/*.js"
     ],

@@ -83,6 +83,16 @@ export default class SxndPlayerApp {
     this.chapterLinks = [];
 
     /** @private */
+    this.sxnd = {
+      /**
+       * The object that has caused current pause state, if any.
+       *
+       * @type {ValueOf<AppModals> | null}
+       */
+      pausedOn: null,
+    };
+
+    /** @private */
     this.modals = Modals({
       help: new HelpModal(this.container, this.env, {
         constants: {
@@ -99,16 +109,6 @@ export default class SxndPlayerApp {
     });
 
     /** @private */
-    this.sxnd = {
-      /**
-       * The object that has caused current pause state, if any.
-       *
-       * @type {ValueOf<AppModals> | null}
-       */
-      pausedOn: null,
-    };
-
-    /** @private */
     this.actions = {
       'cancel': () => {
         if (this.modals.hasOpen()) {
@@ -120,7 +120,7 @@ export default class SxndPlayerApp {
         }
       },
       'modal.help.open': () => {
-        this.openModal(this.modals.help, /* pause= */ false);
+        this.openModal(this.modals.help);
       },
       'modal.help.toggle': () => {
         this.sxndPlayer.hideThumbnailPreview();
@@ -552,7 +552,7 @@ export default class SxndPlayerApp {
    * @param {ValueOf<AppModals>} modal
    * @param {boolean} pause
    */
-  openModal(modal, pause) {
+  openModal(modal, pause = false) {
     if (pause) {
       this.pauseOn(modal);
     }

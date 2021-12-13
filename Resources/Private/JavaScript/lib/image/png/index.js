@@ -10,7 +10,7 @@ const PNG_SIG = String.fromCharCode(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x
  */
 export function isPNG(s) {
   var sig = s.substr(0, 8);
-  return (sig == PNG_SIG);
+  return (sig === PNG_SIG);
 }
 
 /**
@@ -109,7 +109,7 @@ export default class PNG {
     let headerChunk;
     var chunklist = [];
     // read chunk list
-    while (s != '') {
+    while (s !== '') {
       var chunk = {};
       // read chunk size
       var size = stoi(s.substr(0, 4));

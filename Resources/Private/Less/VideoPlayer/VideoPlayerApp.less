@@ -1,6 +1,10 @@
 @import "./VideoPlayer.less";
 
+@zIndexModalCover: 100000;
+@zIndexModal: 999999;
+
 .control-bar {
+    // Avoid white border/separator between TOC and video
     border-right: none !important;
 
     // These buttons are used to toggle TOC and metadata on mobile (see
@@ -252,7 +256,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 100000;
+    z-index: @zIndexModalCover;
     background-color: black;
     opacity: 0;
 
@@ -272,7 +276,7 @@
     background-color: rgba(@base-color, 0.9);
     color: white;
     border-radius: 5px;
-    z-index: 999999;
+    z-index: @zIndexModal;
 
     padding: 2rem 1.5rem 2rem 0.6rem;
     left: 1rem;
