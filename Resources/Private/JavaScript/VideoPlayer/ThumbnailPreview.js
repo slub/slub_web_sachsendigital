@@ -71,7 +71,7 @@ export default class ThumbnailPreview {
     /** @private @type {boolean} */
     this.isChanging = false;
     /** @private @type {boolean} */
-    this.showContainer = false;
+    this.showContainer = false; // TODO: Dissolve this field by just using `this.current`
     /** @private @type {Current | null} */
     this.current = null;
     /** @private @type {number | null} */
@@ -175,7 +175,6 @@ export default class ThumbnailPreview {
   async onPointerMove(e) {
     const seekPosition = this.mouseEventToPosition(e);
     if (seekPosition === undefined) {
-      this.current = null;
       return this.setIsVisible(false);
     }
 
@@ -545,6 +544,10 @@ export default class ThumbnailPreview {
    * @param {boolean} showThumb Whether or not to show the thumbnail image.
    */
   setIsVisible(showContainer, openThumb = showContainer, showThumb = openThumb) {
+    if (!showContainer) {
+      this.current = null;
+    }
+
     this.showContainer = showContainer;
     setElementClass(this.$container, 'sxnd-visible', showContainer);
     setElementClass(this.$seekMarker, 'sxnd-visible', showContainer);
