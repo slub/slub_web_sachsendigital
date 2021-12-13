@@ -179,6 +179,10 @@ export default class ThumbnailPreview {
       return this.setIsVisible(false);
     }
 
+    if (e.pointerType === 'touch') {
+      this.beginChange();
+    }
+
     const thumbPromises = this.getThumbTracks().map(async (track) => {
       const thumb =
         await this.player.getThumbnails(track.id, seekPosition.seconds);
