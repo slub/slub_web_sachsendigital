@@ -1,12 +1,20 @@
+// @ts-check
+
 import shaka from 'shaka-player/dist/shaka-player.ui';
-import Environment from '../Environment';
-import { templateElement } from '../util';
+
+import { e } from '../../lib/util';
 import VariantGroups from '../VariantGroups';
 
+/**
+ * Control panel element to show current playback time.
+ *
+ * Listens to the following custom events:
+ * - {@link SxndVariantGroupsEvent}
+ */
 export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
   /**
    *
-   * @param {Environment} env
+   * @param {Translator & Identifier} env
    */
   static register(env) {
     const key = env.mkid();
@@ -14,87 +22,100 @@ export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
     shaka.ui.OverflowMenu.registerElement(key, {
       create(rootElement, controls) {
         return new VideoTrackSelection(rootElement, controls, env);
-      }
+      },
     });
 
     return key;
   }
 
   /**
-   * @param {!HTMLElement} parent
-   * @param {!shaka.ui.Controls} controls
-   * @param {Environment} env
+   * @param {HTMLElement} parent
+   * @param {shaka.ui.Controls} controls
+   * @param {Translator} env
    */
   constructor(parent, controls, env) {
     super(parent, controls, 'switch_video');
 
-    this._env = env;
+    this.sxnd = {
+      env,
+      activeCheck: e("i", {
+        className: "material-icons-round shaka-chosen-item",
+      }, ["done"]),
       /** @type {VariantGroups | null} */
-    this._variantGroups = null;
+      variantGroups: null,
+    };
 
-    this._updateLocalizedStrings();
-    this._checkIfShown();
+    this.updateStrings();
+    this.updateVisibility();
 
-    this.activeCheck = templateElement(`
-      <i class="material-icons-round shaka-chosen-item">
-        done
-      </i>
-    `);
     /** @type {Record<string, HTMLElement>} */
     this.menuButtons = {};
 
-    this.eventManager.listen(this.controls, 'sxnd-variant-groups', (e) => {
-      this._variantGroups = e.detail.variantGroups;
+    if (this.eventManager) {
+      this.eventManager.listen(this.controls, 'sxnd-variant-groups', (ev) => {
+        const detail = /** @type {SxndVariantGroupsEvent} */(ev).detail;
+        const variantGroups =
+          this.sxnd.variantGroups = detail.variantGroups;
 
-      this._clearMenu();
-      this._checkIfShown();
+        this.clearMenu();
+        this.updateVisibility();
 
-      try {
-        for (const group of this._variantGroups) {
-          const button = document.createElement('button');
-          button.addEventListener('click', () => {
-            this._variantGroups?.selectGroupByKey(group.key);
-          });
+        try {
+          for (const group of variantGroups) {
+            const button = e("button", {
+              $click: () => {
+                this.sxnd.variantGroups?.selectGroupByKey(group.key);
+              },
+            }, [
+              e("span", {}, [group.key]),
+            ]);
 
-          const span = document.createElement('span');
-          span.textContent = group.key;
+            this.menu.appendChild(button);
 
-          button.appendChild(span);
+            this.menuButtons[group.key] = button;
+          }
 
-          this.menu.appendChild(button);
-
-          this.menuButtons[group.key] = button;
+          this.markActiveGroup();
+        } catch (err) {
+          // TODO: Shaka seems to handle exceptions occurring in listeners
+          console.error(err);
         }
+      });
 
-        this._markActiveGroup();
-      } catch (err) {
-        // TODO: Shaka seems to handle exceptions occurring in listeners in some way
-        console.error(err);
-      }
-    });
-
-    this.eventManager.listen(this.player, 'variantchanged', () => {
-      this._markActiveGroup();
-    });
+      this.eventManager.listen(this.player, 'variantchanged', () => {
+        this.markActiveGroup();
+      });
+    }
   }
 
-  _clearMenu() {
+  /**
+   * @private
+   */
+  clearMenu() {
     for (const button of Object.values(this.menuButtons)) {
       button.remove();
     }
     this.menuButtons = {};
   }
 
-  _markActiveGroup() {
-    const activeGroup = this._variantGroups?.findActiveGroup(this.player);
+  /**
+   * Updates UI to show which group is active
+   */
+  markActiveGroup() {
+    const activeGroup = this.sxnd.variantGroups?.findActiveGroup();
     if (activeGroup) {
-      this.menuButtons[activeGroup.key].appendChild(this.activeCheck);
+      this.menuButtons[activeGroup.key]?.appendChild(this.sxnd.activeCheck);
       this.currentSelection.textContent = activeGroup.key;
     }
   }
 
-  _checkIfShown() {
-    if (this._variantGroups?.numGroups > 0) {
+  /**
+   * Checks if the menu item should be shown and updates the UI accordingly.
+   *
+   * @private
+   */
+  updateVisibility() {
+    if ((this.sxnd.variantGroups?.numGroups ?? 0) > 0) {
       this.button.classList.remove('shaka-hidden');
     } else {
       this.button.classList.add('shaka-hidden');
@@ -104,13 +125,13 @@ export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
   /**
    * @private
    */
-  _updateLocalizedStrings() {
-    const back = this._env.t('control.back');
-    const label = this._env.t('control.video-track.title');
+  updateStrings() {
+    const back = this.sxnd.env.t('control.back');
+    const label = this.sxnd.env.t('control.video-track.title');
 
     this.backButton.ariaLabel = back;
     this.button.ariaLabel = label;
     this.nameSpan.textContent = label;
     this.backSpan.textContent = label;
   }
-};
+}

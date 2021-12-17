@@ -1,40 +1,27 @@
+// @ts-check
+
 import shaka from 'shaka-player/dist/shaka-player.ui';
-import Environment from '../Environment';
+
+import { e } from '../../lib/util';
 
 /**
- * @typedef {{
- *  material_icon: string;
- *  title: string;
- *  onClick: () => void;
- * }} Config
+ * @typedef Config
+ * @property {string} material_icon Key of button icon
+ * @property {string} title Text of button tooltip
+ * @property {() => void} onClick
  */
 
+/**
+ * Generic control panel button with icon, text and click handler.
+ */
 export default class ControlPanelButton extends shaka.ui.Element {
   /**
-   * @param {!HTMLElement} parent
-   * @param {!shaka.ui.Controls} controls
-   * @param {Partial<Config>} config
-   */
-  constructor(parent, controls, config = {}) {
-    super(parent, controls, config.material_icon);
-
-    this._config = config;
-
-    this.button = document.createElement('button');
-    this.button.className = 'material-icons-round';
-    this.button.title = config.title;
-    this.button.textContent = config.material_icon;
-    this.parent.appendChild(this.button);
-
-    if (this._config.onClick) {
-      this.eventManager.listen(this.button, 'click', this._config.onClick);
-    }
-  }
-
-  /**
+   * Registers a factory with specified configuration. The returned key may
+   * be added to `controlPanelElements` in shaka-player config.
    *
-   * @param {Environment} env
+   * @param {Identifier} env
    * @param {Partial<Config>} config
+   * @returns {string} Key of the registered element factory
    */
   static register(env, config = {}) {
     const key = env.mkid();
@@ -42,9 +29,37 @@ export default class ControlPanelButton extends shaka.ui.Element {
     shaka.ui.Controls.registerElement(key, {
       create(rootElement, controls) {
         return new ControlPanelButton(rootElement, controls, config);
-      }
+      },
     });
 
     return key;
   }
-};
+
+  /**
+   * @param {HTMLElement} parent
+   * @param {shaka.ui.Controls} controls
+   * @param {Partial<Config>} config
+   */
+  constructor(parent, controls, config = {}) {
+    super(parent, controls);
+
+    const button = e("button", {
+      className: "material-icons-round",
+    }, [config.material_icon]);
+
+    parent.appendChild(button);
+
+    /** @protected */
+    this.sxnd = { config, button };
+
+    if (this.eventManager && config.onClick) {
+      this.eventManager.listen(button, 'click', config.onClick);
+    }
+
+    this.updateStrings();
+  }
+
+  updateStrings() {
+    this.sxnd.button.title = this.sxnd.config.title ?? "";
+  }
+}

@@ -167,7 +167,6 @@ page {
         sxndScripts >
         x0-shaka = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/SxndPlayerVendor.js
         x0-sachsen = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/SxndPlayerApp.js
-        x2-videoframe = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/VideoPlayer/VideoFrame.min.js
     }
     10 {
         variables {

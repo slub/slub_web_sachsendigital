@@ -1,0 +1,146 @@
+@import "./VideoPlayer.less";
+
+@seek-bar-height: 4px;
+@seek-bar-margin: 6px;
+
+.sxnd-video {
+    width: 100%;
+    height: 100%;
+}
+
+.shaka-video-container {
+    height: 100%;
+}
+
+.sxnd-chapter-marker {
+    width: @seek-bar-height;
+    height: @seek-bar-height;
+    background-color: @light-color;
+    border-radius: @seek-bar-height / 2;
+}
+
+// Taken from Shaka's general.less
+// TODO: Pull in from their LESS files?
+.show-when-controls-shown() {
+    /* Transparent unless explicitly made opaque through container attributes. */
+    opacity: 0;
+
+    /* When we show/hide this, do it gradually using cubic-bezier timing. */
+    transition: opacity cubic-bezier(0.4, 0, 0.6, 1) 600ms;
+
+    /* Show controls when the container's "shown" or "casting" attributes are
+     * set. */
+    .shaka-controls-container[shown="true"] &,
+    .shaka-controls-container[casting="true"] & {
+        opacity: 1;
+    }
+}
+
+body {
+    &.seek-or-scrub * {
+        cursor: grabbing !important;
+    }
+}
+
+.sxnd-seek-bar {
+    .show-when-controls-shown();
+
+    position: relative;
+    margin: 0px 6px;
+    padding-top: @seek-bar-margin;
+    height: @seek-bar-height + 2 * @seek-bar-margin;
+    cursor: pointer;
+
+    .range {
+        position: absolute;
+        width: 100%;
+        height: @seek-bar-height;
+        border-radius: @seek-bar-height;
+    }
+
+    .seek-marker {
+        position: absolute;
+        left: 45%;
+        height: @seek-bar-height;
+        width: 1px;
+        background-color: @base-color;
+        z-index: 1000;
+        visibility: hidden;
+
+        &.shown {
+            visibility: visible;
+        }
+    }
+}
+
+.sxnd-thumbnail-preview {
+    // Use `visibility` instead of `display` because we want to use
+    // `offsetWidth`, which is zero for elements with `display: none`.
+    visibility: hidden;
+    position: absolute;
+    // Position 25px above seekbar, but overlap to the bottom (so that the
+    // mouse can switch between seekbar and thumbnail preview).
+    bottom: 0px;
+    padding-bottom: 25px;
+    // Allow to move mouse a little over the thumbnail preview without
+    // closing it.
+    padding-top: 50px;
+    // Don't be shadowed by Shaka controlbar
+    z-index: 1;
+    cursor: pointer;
+
+    &.shown {
+        visibility: visible;
+    }
+
+    .content-box {
+        background-color: rgba(darken(@base-color, 25%), 0.6);
+        border-radius: 4px;
+        padding: 1em;
+    }
+
+    .display {
+        width: 160px;
+        height: 90px;
+        border: 1px solid white;
+        box-sizing: content-box;
+        margin-bottom: 0.75em;
+        display: none;
+
+        &.shown {
+            display: block;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .info {
+        display: inline-block;
+        // Same color and font-size as `.shaka-current-time`
+        color: white;
+        font-size: 14px;
+        line-height: 110%;
+        max-width: 160px;
+
+        .chapter-text {
+            line-height: 110%;
+            margin-bottom: 0.4em;
+            display: none;
+
+            &.shown {
+                display: block;
+            }
+        }
+
+        .timecode-text {
+            display: block;
+        }
+
+        &.on-chapter-marker .chapter-text {
+            font-weight: bold;
+        }
+    }
+}

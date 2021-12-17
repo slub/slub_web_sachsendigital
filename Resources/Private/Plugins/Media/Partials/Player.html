@@ -1,13 +1,11 @@
 <f:section name="Player">
     <div id="tx-dlf-view" class="tx-dlf-view">
-        <div class="media-viewport">
-            <div class="mediaplayer-container"></div>
-        </div>
+        <div class="media-viewport"></div>
     </div>
 
     <script>
         window.addEventListener('DOMContentLoaded', function () {
-            var container = document.querySelector('.mediaplayer-container');
+            var container = document.querySelector('.media-viewport');
             var videoConfig = {sxnd:videoToJson(settings: settings)};
             var lang = {sxnd:translations(baseFile: settings.playerTranslations.baseFile) -> f:format.json() -> f:format.raw()};
 

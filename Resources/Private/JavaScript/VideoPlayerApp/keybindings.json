@@ -1,0 +1,144 @@
+[
+	{
+		"key": "Escape",
+		"action": "cancel",
+		"kind": "other",
+		"order": 100
+	},
+	{
+		"key": "F1",
+		"action": "modal.help.toggle",
+		"kind": "other",
+		"order": 99
+	},
+	{
+		"key": "b",
+		"scope": "player",
+		"action": "modal.bookmark.open",
+		"kind": "other",
+		"order": 30
+	},
+	{
+		"key": "s",
+		"scope": "player",
+		"action": "modal.screenshot.open",
+		"kind": "other",
+		"order": 31
+	},
+	{
+		"key": "f",
+		"repeat": false,
+		"scope": "player",
+		"action": "fullscreen.toggle",
+		"kind": "other",
+		"order": 20
+	},
+	{
+		"key": " ",
+		"repeat": false,
+		"scope": "player",
+		"action": "playback.toggle",
+		"kind": "other",
+		"order": 0
+	},
+	{
+		"key": "m",
+		"repeat": false,
+		"scope": "player",
+		"action": "playback.volume.mute.toggle",
+		"kind": "other",
+		"order": 12
+	},
+	{
+		"key": "ArrowUp",
+		"scope": "player",
+		"action": "playback.volume.inc",
+		"kind": "other",
+		"order": 10
+	},
+	{
+		"key": "ArrowDown",
+		"scope": "player",
+		"action": "playback.volume.dec",
+		"kind": "other",
+		"order": 11
+	},
+	{
+		"key": "ArrowLeft",
+		"repeat": false,
+		"scope": "player",
+		"action": "navigate.rewind",
+		"kind": "navigate",
+		"order": 0
+	},
+	{
+		"key": "ArrowRight",
+		"repeat": false,
+		"scope": "player",
+		"action": "navigate.seek",
+		"kind": "navigate",
+		"order": 1
+	},
+	{
+		"key": "ArrowLeft",
+		"repeat": true,
+		"scope": "player",
+		"action": "navigate.continuous-rewind",
+		"kind": "navigate",
+		"order": 2
+	},
+	{
+		"key": "ArrowRight",
+		"repeat": true,
+		"scope": "player",
+		"action": "navigate.continuous-seek",
+		"kind": "navigate",
+		"order": 3
+	},
+	{
+		"mod": "CtrlMeta",
+		"key": "ArrowLeft",
+		"scope": "player",
+		"action": "navigate.chapter.prev",
+		"kind": "navigate",
+		"order": 10
+	},
+	{
+		"mod": "CtrlMeta",
+		"key": "ArrowRight",
+		"scope": "player",
+		"action": "navigate.chapter.next",
+		"kind": "navigate",
+		"order": 11
+	},
+	{
+		"mod": "Shift",
+		"key": "ArrowLeft",
+		"scope": "player",
+		"action": "navigate.frame.prev",
+		"kind": "navigate",
+		"order": 20
+	},
+	{
+		"mod": "Shift",
+		"key": "ArrowRight",
+		"scope": "player",
+		"action": "navigate.frame.next",
+		"kind": "navigate",
+		"order": 21
+	},
+	{
+		"key": ",",
+		"scope": "player",
+		"action": "navigate.frame.prev",
+		"kind": "navigate",
+		"order": 20
+	},
+	{
+		"key": ".",
+		"scope": "player",
+		"action": "navigate.frame.next",
+		"kind": "navigate",
+		"order": 21
+	}
+]

@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+		"allowJs": true,
+		"resolveJsonModule": true,
         "module": "commonjs",
         "target": "es5",
         "jsx": "preserve",
@@ -7,6 +9,7 @@
 		"downlevelIteration": true,
 		"strict": true,
 		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
         "baseUrl": ".",
         "paths": {
             "*": [
@@ -16,6 +19,7 @@
     },
     "exclude": [
         "node_modules",
-        "**/node_modules/*"
+        "**/node_modules/*",
+		"**/vendor/*"
     ]
 }
