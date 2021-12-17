@@ -8,7 +8,7 @@ import SimpleModal from './SimpleModal';
  * @typedef ModalFuncs
  * @property {(modal: ValueOf<T>) => void} toggleExclusive Try to toggle the
  * modal while not inducing a state of two open modals.
- * @property {(coverContainer: HTMLElement | null) => void} setFullscreen
+ * @property {(coverContainer: Element | null) => void} setFullscreen
  * @property {() => boolean} hasOpen
  * @property {() => void} closeNext
  * @property {() => void} closeAll
@@ -89,6 +89,10 @@ export default function Modals(modals) {
   // TODO: Performance
   window.addEventListener('resize', () => {
     result.resize();
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    result.setFullscreen(document.fullscreenElement);
   });
 
   for (const modal of modalsArray) {

@@ -6,6 +6,7 @@ import { e } from '../../lib/util';
 
 /**
  * @typedef Config
+ * @property {string} className
  * @property {string} material_icon Key of button icon
  * @property {string} title Text of button tooltip
  * @property {() => void} onClick
@@ -44,7 +45,7 @@ export default class ControlPanelButton extends shaka.ui.Element {
     super(parent, controls);
 
     const button = e("button", {
-      className: "material-icons-round",
+      className: `material-icons-round ${config.className ?? ""}`,
     }, [config.material_icon]);
 
     parent.appendChild(button);

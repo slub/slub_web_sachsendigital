@@ -34,6 +34,12 @@ const DISPLAY_WIDTH = 160;
 const INITIAL_ASPECT_RATIO = 16 / 9;
 
 /**
+ * Amount of the available video height allotted to thumbnail preview. If the
+ * container would exceed that height, the thumbnail image should be hidden.
+ */
+const MAXIMUM_THUMBNAIL_QUOTA = 0.4;
+
+/**
  * Component for a thumbnail preview when sliding over the seekbar.
  *
  * Oriented at https://github.com/google/shaka-player/issues/3371#issuecomment-830001465.
@@ -71,7 +77,7 @@ export default class ThumbnailPreview {
     /** @private @type {boolean} */
     this.isChanging = false;
     /** @private @type {boolean} */
-    this.showContainer = false;
+    this.showContainer = false; // TODO: Dissolve this field by just using `this.current`
     /** @private @type {Current | null} */
     this.current = null;
     /** @private @type {number | null} */
@@ -83,7 +89,7 @@ export default class ThumbnailPreview {
       onWindowResize: this.onWindowResize.bind(this),
       onPointerMove: this.onPointerMove.bind(this),
       onPointerDown: this.onPointerDown.bind(this),
-      onPointerUp: this.onPointerUp.bind(this),
+      onPointerUpOrCancel: this.onPointerUpOrCancel.bind(this),
     };
 
     // Make preview unselectable so that, for example, the info text won't
@@ -112,7 +118,8 @@ export default class ThumbnailPreview {
     // TODO: Find a better solution for this
     document.addEventListener('pointermove', this.handlers.onPointerMove);
     document.addEventListener('pointerdown', this.handlers.onPointerDown);
-    document.addEventListener('pointerup', this.handlers.onPointerUp);
+    document.addEventListener('pointerup', this.handlers.onPointerUpOrCancel);
+    document.addEventListener('pointercancel', this.handlers.onPointerUpOrCancel);
   }
 
   release() {
@@ -120,7 +127,8 @@ export default class ThumbnailPreview {
     window.removeEventListener('resize', this.handlers.onWindowResize);
     document.removeEventListener('pointermove', this.handlers.onPointerMove);
     document.removeEventListener('pointerdown', this.handlers.onPointerDown);
-    document.removeEventListener('pointerup', this.handlers.onPointerUp);
+    document.removeEventListener('pointerup', this.handlers.onPointerUpOrCancel);
+    document.removeEventListener('pointercancel', this.handlers.onPointerUpOrCancel);
   }
 
   /**
@@ -173,8 +181,11 @@ export default class ThumbnailPreview {
   async onPointerMove(e) {
     const seekPosition = this.mouseEventToPosition(e);
     if (seekPosition === undefined) {
-      this.current = null;
       return this.setIsVisible(false);
+    }
+
+    if (e.pointerType === 'touch') {
+      this.beginChange();
     }
 
     const thumbPromises = this.getThumbTracks().map(async (track) => {
@@ -205,7 +216,7 @@ export default class ThumbnailPreview {
   onPointerDown(e) {
     // Check primary button
     if ((e.buttons & 1) !== 0) {
-      const position = this.mouseEventToPosition(e);
+      const position = this.mouseEventToPosition(e, e.pointerType === 'mouse');
       if (position !== undefined) {
         this.beginChange();
 
@@ -218,10 +229,12 @@ export default class ThumbnailPreview {
    * @private
    * @param {PointerEvent} e
    */
-  onPointerUp(e) {
+  onPointerUpOrCancel(e) {
     this.endChange();
 
-    if (this.mouseEventToPosition(e) === undefined) {
+    // Pen & touch: Always close when released
+    // Mouse: Only close when also out of screen area
+    if (e.pointerType !== 'mouse' || this.mouseEventToPosition(e) === undefined) {
       this.setIsVisible(false);
     }
   }
@@ -229,9 +242,10 @@ export default class ThumbnailPreview {
   /**
    * @private
    * @param {MouseEvent} e
+   * @param {boolean} allowWideSeekArea
    * @returns {SeekPosition | undefined}
    */
-  mouseEventToPosition(e) {
+  mouseEventToPosition(e, allowWideSeekArea = true) {
     const duration = this.saneVideoDuration();
     if (duration === undefined) {
       return;
@@ -246,7 +260,7 @@ export default class ThumbnailPreview {
 
     // Don't check bounds when scrubbing
     if (!this.isChanging) {
-      if (this.showContainer) {
+      if (this.showContainer && allowWideSeekArea) {
         // A seek has already been initiated by hovering the seekbar. Check
         // bounds in such a way that quickly moving the mouse left/right won't
         // accidentally close the container.
@@ -536,6 +550,10 @@ export default class ThumbnailPreview {
    * @param {boolean} showThumb Whether or not to show the thumbnail image.
    */
   setIsVisible(showContainer, openThumb = showContainer, showThumb = openThumb) {
+    if (!showContainer) {
+      this.current = null;
+    }
+
     this.showContainer = showContainer;
     setElementClass(this.$container, 'sxnd-visible', showContainer);
     setElementClass(this.$seekMarker, 'sxnd-visible', showContainer);
@@ -549,6 +567,11 @@ export default class ThumbnailPreview {
    * @private
    */
   getThumbTracks() {
+    // We do this check here to avoid superfluous downloads of thumbnails
+    if (!this.showThumbnailImage()) {
+      return [];
+    }
+
     // Image tracks are sorted by quality. Select the best and worst track
     // of acceptable bandwidth.
 
@@ -573,6 +596,20 @@ export default class ThumbnailPreview {
     }
 
     return [];
+  }
+
+  /**
+   * Whether or not to show a thumbnail image (if available).
+   *
+   * @private
+   * @returns {boolean}
+   */
+  showThumbnailImage() {
+    const video = this.player.getMediaElement();
+    const maximumContainerHeight =
+      (video?.clientHeight ?? 0) * MAXIMUM_THUMBNAIL_QUOTA;
+    const estimatedContainerHeight = 300;
+    return estimatedContainerHeight <= maximumContainerHeight;
   }
 
   /**

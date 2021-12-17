@@ -301,16 +301,19 @@ export default class SxndPlayerApp {
 
     this.sxndPlayer.addControlElement(
       ControlPanelButton.register(this.env, {
+        className: "sxnd-screenshot-button",
         material_icon: 'photo_camera',
         title: this.env.t('control.screenshot.tooltip'),
         onClick: this.actions['modal.screenshot.open'],
       }),
       ControlPanelButton.register(this.env, {
+        className: "sxnd-bookmark-button",
         material_icon: 'bookmark_border',
         title: this.env.t('control.bookmark.tooltip'),
         onClick: this.actions['modal.bookmark.open'],
       }),
       ControlPanelButton.register(this.env, {
+        className: "sxnd-help-button",
         material_icon: 'help_outline',
         title: this.env.t('control.help.tooltip'),
         onClick: this.actions['modal.help.open'],
@@ -469,7 +472,6 @@ export default class SxndPlayerApp {
         screen.orientation.unlock();
       }
       await document.exitFullscreen();
-      this.modals.setFullscreen(null);
     } else {
       // If we are in PiP mode, leave PiP mode first.
       try {
@@ -491,7 +493,6 @@ export default class SxndPlayerApp {
         // TODO: Error handling
         console.log(e);
       }
-      this.modals.setFullscreen(this.container);
     }
   }
 

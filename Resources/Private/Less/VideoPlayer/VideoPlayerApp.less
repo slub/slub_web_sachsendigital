@@ -2,10 +2,22 @@
 
 .control-bar {
     border-right: none !important;
+
+    // These buttons are used to toggle TOC and metadata on mobile (see
+    // @slub_digitalcollections). Put them to the top so they won't overlap
+    // with video controls.
+    .offcanvas-toggle {
+        bottom: unset;
+        top: 5px;
+    }
 }
 
 .document-view {
     background-color: black;
+
+    @media screen and (max-width: (@tabletLandscapeViewportWidth - 1px)) {
+        top: 50px;
+    }
 
     .tx-dlf-view {
         width: 100%;
@@ -23,6 +35,7 @@
     text-align: left;
     padding-left: 1em;
     padding-top: 1em;
+    color: white;
 }
 
 // Chapter link in sidebar
@@ -32,6 +45,19 @@
 
 .inline-icon {
     vertical-align: middle;
+}
+
+@media all and (max-width: @tabletViewportWidth) {
+    .sxnd-screenshot-button,
+    .sxnd-bookmark-button,
+    .sxnd-help-button {
+        display: none !important;
+    }
+
+    .shaka-volume-bar-container,
+    .shaka-mute-button {
+        display: none !important;
+    }
 }
 
 .screenshot-modal {
@@ -196,13 +222,14 @@
     background-color: rgba(@base-color, 0.9);
     color: white;
     border-radius: 5px;
-    padding: 3rem;
     z-index: 999999;
 
+    padding: 2rem 1.5rem 2rem 0.6rem;
     left: 1rem;
     right: 1rem;
 
     @media screen and (min-width: @desktopViewportWidth) {
+        padding: 3rem;
         left: 5rem;
         right: 5rem;
     }
