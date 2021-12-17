@@ -45,6 +45,8 @@ export default class ThumbnailPreview {
     this.network = config.network;
     this.interaction = config.interaction;
 
+    this.imageTracks = [];
+
     // Make preview unselectable so that, for example, the info text won't
     // accidentally be selected when scrubbing on FlatSeekBar.
     const container = templateElement(`
@@ -108,6 +110,11 @@ export default class ThumbnailPreview {
     document.removeEventListener('pointerup', this.handlers.onPointerUp);
   }
 
+  setImageTracks(imageTracks) {
+    this.imageTracks = imageTracks;
+    this.refreshLastRendered();
+  }
+
   setCanvasResolution(width, height) {
     // Code adopted from https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio
 
@@ -120,9 +127,7 @@ export default class ThumbnailPreview {
 
     this.ctx.scale(scale, scale);
 
-    if (this.lastRendered) {
-      this.renderImage(this.lastRendered.uri, this.lastRendered.thumb, this.lastRendered.tilesetImage, true);
-    }
+    this.refreshLastRendered();
   }
 
   ensureDisplaySize(thumbWidth, thumbHeight) {
@@ -160,12 +165,14 @@ export default class ThumbnailPreview {
   getThumbsTrack() {
     const estimatedBandwidth = this.player.getStats().estimatedBandwidth;
 
-    const imageTracks = this.player.getImageTracks().filter(
-      track => track.bandwidth < estimatedBandwidth * 0.01
-    );
-    imageTracks.sort((a, b) => b.bandwidth - a.bandwidth);
+    let result;
+    for (const track of this.imageTracks) {
+      if (track.bandwidth < estimatedBandwidth * 0.01 && (!result || track.bandwidth < result.bandwidth)) {
+        result = track;
+      }
+    }
 
-    return imageTracks[0];
+    return result;
   }
 
   /**
@@ -262,8 +269,6 @@ export default class ThumbnailPreview {
       return;
     }
 
-    this.ensureDisplaySize(thumb.width, thumb.height);
-
     const uri = thumb.uris[0];
     if (this.lastRendered === null || uri !== this.lastRendered.uri) {
       this.network.get(uri)
@@ -345,16 +350,6 @@ export default class ThumbnailPreview {
     if (force || this.lastRendered === null || thumb.startTime !== this.lastRendered.thumb.startTime) {
       let { positionX, positionY, width, height } = thumb;
 
-      // When width/height are in the interval [0,1], we treat them as relative
-      // to the tileset size. See `CustomHlsParser`.
-      if ((0 <= width && width <= 1) && (0 <= height && height <= 1)) {
-        positionX *= tilesetImage.width;
-        width *= tilesetImage.width;
-
-        positionY *= tilesetImage.height;
-        height *= tilesetImage.height;
-      }
-
       this.ctx.drawImage(
         tilesetImage,
         // position and size on source image
@@ -370,11 +365,29 @@ export default class ThumbnailPreview {
   }
 
   renderImageAndShow(uri, thumb, tilesetImage, seekPosition) {
+    // When width/height are in the interval [0,1], we treat them as relative
+    // to the tileset size. See `CustomHlsParser`.
+    if ((0 <= thumb.width && thumb.width <= 1) && (0 <= thumb.height && thumb.height <= 1)) {
+      thumb.positionX *= tilesetImage.width;
+      thumb.width *= tilesetImage.width;
+
+      thumb.positionY *= tilesetImage.height;
+      thumb.height *= tilesetImage.height;
+    }
+
+    this.ensureDisplaySize(thumb.width, thumb.height);
+
     this.renderImage(uri, thumb, tilesetImage);
     this.setIsVisible(true);
 
     // If the image has just become visible, the container position may change
     this.positionContainer(seekPosition);
+  }
+
+  refreshLastRendered() {
+    if (this.lastRendered) {
+      this.renderImage(this.lastRendered.uri, this.lastRendered.thumb, this.lastRendered.tilesetImage, true);
+    }
   }
 
   /**

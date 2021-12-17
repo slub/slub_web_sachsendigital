@@ -28,6 +28,17 @@ export default class SimpleModal extends Component {
     this._parent.append(this._dom.main);
 
     this._$main = $(this._dom.main);
+
+    this.resize();
+  }
+
+  resize() {
+    // TODO: Find a CSS-only approach. It should
+    //  - resize dynamically relative to the parent's height (not to viewport)
+    //  - allow to scroll on body when overflowing
+    //  - allow transparent background of modal
+    //  - allow to center the modal vertically
+    this._dom.body.style.maxHeight = `calc(${this._parent.clientHeight}px - 11rem)`;
   }
 
   /**

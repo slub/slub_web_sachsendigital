@@ -12,6 +12,7 @@ export default class BookmarkModal extends SimpleModal {
     super(element, {
       env,
       timecode: null,
+      fps: 0,
       startAtTimecode: true,
     });
   }
@@ -86,10 +87,15 @@ export default class BookmarkModal extends SimpleModal {
     return this;
   }
 
+  setFps(fps) {
+    this.setState({ fps });
+    return this;
+  }
+
   render(state) {
     super.render(state);
 
-    const { env, show, timecode, startAtTimecode } = state;
+    const { env, show, timecode, fps, startAtTimecode } = state;
 
     this._dom.url.value = this.generateUrl(state).toString();
 
@@ -97,7 +103,7 @@ export default class BookmarkModal extends SimpleModal {
       this._dom.startAt.classList.remove('shown');
     } else {
       this._dom.startAtTimecodeCheck.checked = startAtTimecode;
-      this._dom.startAtTimecodeLabel.innerText = env.t('modal.bookmark.start-at-current-time', { timecode: buildTimeString(timecode) });
+      this._dom.startAtTimecodeLabel.innerText = env.t('modal.bookmark.start-at-current-time', { timecode: buildTimeString(timecode, true, fps) });
 
       this._dom.startAt.classList.add('shown');
     }

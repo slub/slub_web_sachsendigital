@@ -62,6 +62,9 @@
 			<trans-unit id="action.playback.volume.mute.toggle">
 				<source><![CDATA[Mute / Unmute]]></source>
 			</trans-unit>
+			<trans-unit id="control.back">
+				<source><![CDATA[Back]]></source>
+			</trans-unit>
 			<trans-unit id="control.bookmark.tooltip">
 				<source><![CDATA[Bookmark]]></source>
 			</trans-unit>
@@ -85,6 +88,9 @@
 			</trans-unit>
 			<trans-unit id="control.time.current-frame.tooltip">
 				<source><![CDATA[Frame Count]]></source>
+			</trans-unit>
+			<trans-unit id="control.video-track.title">
+				<source><![CDATA[Video Track]]></source>
 			</trans-unit>
 			<trans-unit id="error.load-failed">
 				<source><![CDATA[The video could not be loaded.]]></source>

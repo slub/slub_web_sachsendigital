@@ -175,10 +175,12 @@ body {
     }
 
     .keybindings-table {
+        .kb-text {
+            white-space: nowrap;
+        }
+
         .or-sep {
             font-weight: bolder;
-            padding-left: 0.25rem;
-            padding-right: 0.25rem;
         }
 
         td:nth-child(1) {
@@ -222,14 +224,21 @@ body {
     transform: translateY(-50%);
     background-color: rgba(@base-color, 0.9);
     color: white;
-    left: 5rem;
-    right: 5rem;
     border-radius: 5px;
     padding: 3rem;
     z-index: 999999;
 
+    left: 1rem;
+    right: 1rem;
+
+    @media screen and (min-width: @desktopViewportWidth) {
+        left: 5rem;
+        right: 5rem;
+    }
+
     .headline-container {
         position: relative;
+        padding-bottom: 1rem;
 
         .modal-close {
             position: absolute;
@@ -241,6 +250,8 @@ body {
 
     .body-container {
         padding: 2rem;
+        overflow-y: auto;
+        // max-height is set in JS
     }
 
     h3 {

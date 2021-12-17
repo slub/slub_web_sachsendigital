@@ -18,6 +18,13 @@ export default function Modals(modals) {
   });
   document.body.append(modalCover);
 
+  // TODO: Performance
+  window.addEventListener('resize', () => {
+    for (const modal of modalsArray) {
+      modal.resize();
+    }
+  });
+
   for (const modal of modalsArray) {
     modal.on('updated', () => {
       if (result.hasOpen()) {

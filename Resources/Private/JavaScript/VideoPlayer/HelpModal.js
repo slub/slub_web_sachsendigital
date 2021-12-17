@@ -103,7 +103,8 @@ export default class HelpModal extends SimpleModal {
 
           if (i > 0) {
             const sep = templateElement(`<span class="or-sep"></span>`)
-            sep.innerText = env.t('or');
+            // Use spaces (instead of padding) to allow word-wrap around the "or"
+            sep.innerText = ` ${env.t('or')} `;
 
             tdKey.append(sep);
           }
@@ -116,9 +117,11 @@ export default class HelpModal extends SimpleModal {
             text = env.t('key.repeat', { key: text });
           }
 
-          tdKey.append(
-            document.createTextNode(text)
-          );
+          const kbSpan = document.createElement('span');
+          kbSpan.className = "kb-text";
+          kbSpan.innerText = text;
+
+          tdKey.append(kbSpan);
         }
 
         const tdAction = tr.querySelector('.action');

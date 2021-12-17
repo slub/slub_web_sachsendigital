@@ -3,6 +3,7 @@ import shaka from 'shaka-player/dist/shaka-player.ui';
 import ImageFetcher from '../ImageFetcher';
 import ThumbnailPreview from '../ThumbnailPreview';
 import { templateElement } from '../util';
+import VariantGroups from '../VariantGroups';
 
 /**
  * Seek bar that is not based on an input range element. This provides more
@@ -74,13 +75,36 @@ export default class FlatSeekBar extends shaka.ui.Element {
       },
     });
 
+    /** @type {VariantGroups | null} */
+    this._variantGroups = null;
+
     this.eventManager.listen(this.player, 'loaded', () => {
       this.renderChapterMarkers();
+    });
+
+    this.eventManager.listen(this.player, 'variantchanged', () => {
+      this.setPreviewImageTracks();
+    });
+
+    this.eventManager.listen(this.controls, 'sxnd-variant-groups', (e) => {
+      this._variantGroups = e.detail.variantGroups;
+      this.setPreviewImageTracks();
     });
 
     this.eventManager.listen(this.controls, 'sxnd-thumbs-close', () => {
       this._thumbnailPreview.setIsVisible(false);
     });
+  }
+
+  setPreviewImageTracks() {
+    const activeGroup = this._variantGroups?.findActiveGroup();
+    if (activeGroup) {
+      const imageTracks = this.player.getImageTracks().filter(
+        track => VariantGroups.splitRepresentationId(track.originalImageId).group === activeGroup.key
+      );
+
+      this._thumbnailPreview.setImageTracks(imageTracks);
+    }
   }
 
   /**
