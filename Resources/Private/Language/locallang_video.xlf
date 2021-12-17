@@ -6,7 +6,7 @@
 		</header>
 		<body>
 			<trans-unit id="action.cancel">
-				<source><![CDATA[Cancel current action (window, full screen, ...)]]></source>
+				<source><![CDATA[Cancel current action (full screen, window, ...)]]></source>
 			</trans-unit>
 			<trans-unit id="action.fullscreen.toggle">
 				<source><![CDATA[Toggle full screen]]></source>
@@ -17,6 +17,9 @@
 			<trans-unit id="action.kind.other">
 				<source><![CDATA[Other Shortcuts]]></source>
 			</trans-unit>
+			<trans-unit id="action.kind.player">
+				<source><![CDATA[Player]]></source>
+			</trans-unit>
 			<trans-unit id="action.modal.bookmark.open">
 				<source><![CDATA[Bookmark (share link)]]></source>
 			</trans-unit>
@@ -24,7 +27,10 @@
 				<source><![CDATA[Toggle help (this window)]]></source>
 			</trans-unit>
 			<trans-unit id="action.modal.screenshot.open">
-				<source><![CDATA[Screenshot]]></source>
+				<source><![CDATA[Screenshot (show dialog)]]></source>
+			</trans-unit>
+			<trans-unit id="action.modal.screenshot.snap">
+				<source><![CDATA[Screenshot (direct download)]]></source>
 			</trans-unit>
 			<trans-unit id="action.navigate.chapter.next">
 				<source><![CDATA[Next chapter]]></source>
@@ -61,6 +67,9 @@
 			</trans-unit>
 			<trans-unit id="action.playback.volume.mute.toggle">
 				<source><![CDATA[Mute / Unmute]]></source>
+			</trans-unit>
+			<trans-unit id="action.theater.toggle">
+				<source><![CDATA[Toggle theater mode]]></source>
 			</trans-unit>
 			<trans-unit id="control.back">
 				<source><![CDATA[Back]]></source>
@@ -143,6 +152,9 @@
 			<trans-unit id="key.m">
 				<source><![CDATA[Key M]]></source>
 			</trans-unit>
+			<trans-unit id="key.t">
+				<source><![CDATA[Key T]]></source>
+			</trans-unit>
 			<trans-unit id="key.mod.CtrlMeta">
 				<source><![CDATA[Ctrl]]></source>
 			</trans-unit>
@@ -155,6 +167,9 @@
 			<trans-unit id="key.s">
 				<source><![CDATA[Key S]]></source>
 			</trans-unit>
+			<trans-unit id="key.s.mod">
+				<source><![CDATA[S]]></source>
+			</trans-unit>
 			<trans-unit id="modal.bookmark.copy-link">
 				<source><![CDATA[Copy Link]]></source>
 			</trans-unit>
@@ -164,14 +179,26 @@
 			<trans-unit id="modal.bookmark.title">
 				<source><![CDATA[Bookmark (Share Link)]]></source>
 			</trans-unit>
+			<trans-unit id="modal.screenshot.configuration">
+				<source><![CDATA[Configure]]></source>
+			</trans-unit>
 			<trans-unit id="modal.screenshot.download-image">
 				<source><![CDATA[Download Image]]></source>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.error">
+				<source><![CDATA[Sorry, the screenshot could not be taken.]]></source>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.file-format">
 				<source><![CDATA[File Format]]></source>
 			</trans-unit>
-			<trans-unit id="modal.screenshot.show-metadata">
-				<source><![CDATA[Show Metadata]]></source>
+			<trans-unit id="modal.screenshot.metadata">
+				<source><![CDATA[Metadata]]></source>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.metadata-overlay">
+				<source><![CDATA[Overlay on image]]></source>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.snap-tip">
+				<source><![CDATA[Use {keybinding} to save a screenshot without opening this dialog.]]></source>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.title">
 				<source><![CDATA[Screenshot]]></source>
@@ -187,6 +214,9 @@
 			</trans-unit>
 			<trans-unit id="or">
 				<source><![CDATA[or]]></source>
+			</trans-unit>
+			<trans-unit id="player.loading">
+				<source><![CDATA[Loading...]]></source>
 			</trans-unit>
 		</body>
 	</file>

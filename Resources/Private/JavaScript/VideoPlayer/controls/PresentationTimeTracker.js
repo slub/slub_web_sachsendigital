@@ -24,6 +24,7 @@ const TimeMode = {
 
 /**
  * @typedef {{
+ *  isReady: boolean;
  *  activeMode: number;
  *  duration: number;
  *  totalSeconds: number;
@@ -35,6 +36,8 @@ const TimeMode = {
 
 /**
  * Control panel element to show current playback time.
+ *
+ * Originally based upon Shaka's PresentationTimeTracker.
  *
  * Listens to the following custom events:
  * - {@link SxndChaptersEvent}
@@ -74,6 +77,7 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
     this.sxnd = {
       env,
       currentTime,
+
     };
 
     /**
@@ -81,6 +85,7 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
      * @type {State}
      */
     this.state = {
+      isReady: false,
       activeMode: TimeMode.CurrentTime,
       totalSeconds: 0,
       duration: 0,
@@ -97,7 +102,6 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
       });
 
       const updateTime = this.updateTime.bind(this);
-      this.eventManager.listen(this.player, 'loaded', updateTime);
       this.eventManager.listen(this.controls, 'timeandseekrangeupdated', updateTime);
 
       this.eventManager.listen(this.controls, 'sxnd-chapters', (e) => {
@@ -118,19 +122,22 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
   }
 
   updateTime() {
-    if (this.controls === null || this.video === null) {
-      return;
-    }
+    if (this.controls === null || this.video === null || this.video.readyState < 1) {
+      this.render({
+        isReady: false,
+      });
+    } else {
+      let duration = this.video.duration;
+      if (!(duration >= 0)) { // NaN -> 0
+        duration = 0;
+      }
 
-    let duration = this.video.duration;
-    if (!(duration >= 0)) { // NaN -> 0
-      duration = 0;
+      this.render({
+        isReady: true,
+        duration,
+        totalSeconds: clamp(this.controls.getDisplayTime(), [0, duration]),
+      });
     }
-
-    this.render({
-      duration,
-      totalSeconds: clamp(this.controls.getDisplayTime(), [0, duration]),
-    });
   }
 
   /**
@@ -161,14 +168,14 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
   /**
    *
    * @param {TimeModeKey} tKey
-   * @param {Pick<State, 'totalSeconds' | 'duration' | 'vifa' | 'fps'
+   * @param {Pick<State, 'isReady' | 'totalSeconds' | 'duration' | 'vifa' | 'fps'
    * | 'chapters'>} state
    * @returns {string}
    */
-  getTimecodeText(tKey, { totalSeconds, duration, vifa, fps, chapters }) {
+  getTimecodeText(tKey, { isReady, totalSeconds, duration, vifa, fps, chapters }) {
     // Don't show incomplete info when duration is not yet available
-    if (duration === 0) {
-      return "";
+    if (!isReady || duration === 0) {
+      return this.sxnd.env.t('player.loading');
     } else {
       const showHour = duration >= 3600;
 

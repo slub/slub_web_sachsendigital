@@ -4,6 +4,17 @@ interface Window {
   };
 }
 
+/**
+ * Signals that the theater mode should be changed.
+ *
+ * Should be dispatched on the window object.
+ */
+interface DlfTheaterMode
+  extends CustomEvent<{
+    action: "toggle";
+    persist: boolean;
+  }> {}
+
 type VideoInfo = {
   pageNo: number | undefined;
   chapters: {

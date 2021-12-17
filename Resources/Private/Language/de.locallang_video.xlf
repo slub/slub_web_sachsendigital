@@ -7,7 +7,7 @@
 		<body>
 			<trans-unit id="action.cancel" approved="yes">
 				<source><![CDATA[Cancel current action (window, full screen, ...)]]></source>
-				<target><![CDATA[Aktuelle Aktion beenden (Fenster, Vollbild, ...)]]></target>
+				<target><![CDATA[Aktuelle Aktion beenden (Vollbild, Fenster, ...)]]></target>
 			</trans-unit>
 			<trans-unit id="action.fullscreen.toggle" approved="yes">
 				<source><![CDATA[Toggle full screen]]></source>
@@ -21,6 +21,10 @@
 				<source><![CDATA[Other Shortcuts]]></source>
 				<target><![CDATA[Weitere Tastenkürzel]]></target>
 			</trans-unit>
+			<trans-unit id="action.kind.player" approved="yes">
+				<source><![CDATA[Player]]></source>
+				<target><![CDATA[Wiedergabe]]></target>
+			</trans-unit>
 			<trans-unit id="action.modal.bookmark.open" approved="yes">
 				<source><![CDATA[Bookmark (share link)]]></source>
 				<target><![CDATA[Bookmark (Link teilen)]]></target>
@@ -30,8 +34,12 @@
 				<target><![CDATA[Bedienhinweise (dieses Fenster)]]></target>
 			</trans-unit>
 			<trans-unit id="action.modal.screenshot.open" approved="yes">
-				<source><![CDATA[Screenshot]]></source>
-				<target><![CDATA[Screenshot anzeigen]]></target>
+				<source><![CDATA[Screenshot (show dialog)]]></source>
+				<target><![CDATA[Screenshot: Dialog anzeigen]]></target>
+			</trans-unit>
+			<trans-unit id="action.modal.screenshot.snap" approved="yes">
+				<source><![CDATA[Screenshot (direct download)]]></source>
+				<target><![CDATA[Screenshot: Sofort herunterladen]]></target>
 			</trans-unit>
 			<trans-unit id="action.navigate.chapter.next" approved="yes">
 				<source><![CDATA[Next chapter]]></source>
@@ -80,6 +88,10 @@
 			<trans-unit id="action.playback.volume.mute.toggle" approved="yes">
 				<source><![CDATA[Mute / Unmute]]></source>
 				<target><![CDATA[Stummschaltung an / aus]]></target>
+			</trans-unit>
+			<trans-unit id="action.theater.toggle" approved="yes">
+				<source><![CDATA[Toggle theater mode]]></source>
+				<target><![CDATA[Theater-Modus an / aus]]></target>
 			</trans-unit>
 			<trans-unit id="control.back" approved="yes">
 				<source><![CDATA[Back]]></source>
@@ -189,6 +201,10 @@
 				<source><![CDATA[Key M]]></source>
 				<target><![CDATA[Taste M]]></target>
 			</trans-unit>
+			<trans-unit id="key.t" approved="yes">
+				<source><![CDATA[Key T]]></source>
+				<target><![CDATA[Taste T]]></target>
+			</trans-unit>
 			<trans-unit id="key.mod.CtrlMeta" approved="yes">
 				<source><![CDATA[Ctrl]]></source>
 				<target><![CDATA[Strg]]></target>
@@ -205,6 +221,10 @@
 				<source><![CDATA[Key S]]></source>
 				<target><![CDATA[Taste S]]></target>
 			</trans-unit>
+			<trans-unit id="key.s.mod" approved="yes">
+				<source><![CDATA[S]]></source>
+				<target><![CDATA[S]]></target>
+			</trans-unit>
 			<trans-unit id="modal.bookmark.copy-link" approved="yes">
 				<source><![CDATA[Copy Link]]></source>
 				<target><![CDATA[Link kopieren]]></target>
@@ -217,17 +237,37 @@
 				<source><![CDATA[Bookmark (Share Link)]]></source>
 				<target><![CDATA[Bookmark (Link teilen)]]></target>
 			</trans-unit>
-			<trans-unit id="modal.screenshot.show-metadata" approved="yes">
-				<source><![CDATA[Show Metadata]]></source>
-				<target><![CDATA[Metadaten einblenden]]></target>
+			<trans-unit id="modal.screenshot.configuration" approved="yes">
+				<source><![CDATA[Configure]]></source>
+				<target><![CDATA[Konfiguration]]></target>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.metadata-overlay" approved="yes">
+				<source><![CDATA[Show on Screenshot]]></source>
+				<target><![CDATA[Im Bild einblenden]]></target>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.download-image" approved="yes">
 				<source><![CDATA[Download Image]]></source>
 				<target><![CDATA[Bild herunterladen]]></target>
 			</trans-unit>
+			<trans-unit id="modal.screenshot.error" approved="yes">
+				<source><![CDATA[Sorry, the screenshot could not be taken.]]></source>
+				<target><![CDATA[Entschuldigung, der Screenshot konnte nicht erstellt werden.]]></target>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.metadata" approved="yes">
+				<source><![CDATA[Metadata]]></source>
+				<target><![CDATA[Metadaten]]></target>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.metadata-overlay" approved="yes">
+				<source><![CDATA[Show on Screenshot]]></source>
+				<target><![CDATA[Im Bild einblenden]]></target>
+			</trans-unit>
 			<trans-unit id="modal.screenshot.file-format" approved="yes">
 				<source><![CDATA[File Format]]></source>
 				<target><![CDATA[Dateiformat]]></target>
+			</trans-unit>
+			<trans-unit id="modal.screenshot.snap-tip" approved="yes">
+				<source><![CDATA[Use {keybinding} to save a screenshot without opening this dialog.]]></source>
+				<target><![CDATA[Mit {keybinding} kann ein Screenshot direkt heruntergeladen werden.]]></target>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.title" approved="yes">
 				<source><![CDATA[Screenshot]]></source>
@@ -248,6 +288,10 @@
 			<trans-unit id="or" approved="yes">
 				<source><![CDATA[or]]></source>
 				<target><![CDATA[oder]]></target>
+			</trans-unit>
+			<trans-unit id="player.loading" approved="yes">
+				<source><![CDATA[Loading...]]></source>
+				<target><![CDATA[Laden...]]></target>
 			</trans-unit>
 		</body>
 	</file>

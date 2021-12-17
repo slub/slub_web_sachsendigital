@@ -17,10 +17,16 @@ import '../../Less/VideoPlayer/VideoPlayerApp.less';
 import keybindings from './keybindings.json';
 
 /**
- * @typedef {'player' | 'modal'} KeyboardScope Currently active target/scope
- * for mapping keybindings.
+ * @typedef {'player' | 'modal' | 'input'} KeyboardScope Currently active
+ * target/scope for mapping keybindings.
  *
  * @typedef {HTMLElement & { sxndTimecode: number }} ChapterLink
+ *
+ * @typedef {{
+ *  help: HelpModal;
+ *  bookmark: BookmarkModal;
+ *  screenshot: ScreenshotModal;
+ * }} AppModals
  */
 
 export default class SxndPlayerApp {
@@ -53,6 +59,8 @@ export default class SxndPlayerApp {
       seekStep: 10,
       /** Trick play factor for continuous rewind/seek. */
       trickPlayFactor: 4,
+      /** Whether or not to switch to landscape in fullscreen mode. */
+      forceLandscapeOnFullscreen: true,
     };
 
     /** @private */
@@ -60,6 +68,8 @@ export default class SxndPlayerApp {
       onKeyDown: this.onKeyDown.bind(this),
       onKeyUp: this.onKeyUp.bind(this),
       onClickChapterLink: this.onClickChapterLink.bind(this),
+      onPlay: this.onPlay.bind(this),
+      onCloseModal: this.onCloseModal.bind(this),
     };
 
     /** @private */
@@ -85,12 +95,26 @@ export default class SxndPlayerApp {
     /** @private */
     this.modals = Modals({
       help: new HelpModal(this.container, this.env, {
-        constants: this.constants,
+        constants: {
+          ...this.constants,
+          // TODO: Refactor
+          forceLandscapeOnFullscreen: Number(this.constants.forceLandscapeOnFullscreen),
+        },
         keybindings: this.keybindings,
       }),
       bookmark: new BookmarkModal(this.container, this.env),
-      screenshot: new ScreenshotModal(this.container, this.env),
+      screenshot: new ScreenshotModal(this.container, this.env, this.keybindings),
     });
+
+    /** @private */
+    this.sxnd = {
+      /**
+       * The object that has caused current pause state, if any.
+       *
+       * @type {ValueOf<AppModals> | null}
+       */
+      pausedOn: null,
+    };
 
     /** @private */
     this.actions = {
@@ -104,12 +128,11 @@ export default class SxndPlayerApp {
         }
       },
       'modal.help.open': () => {
-        this.sxndPlayer.hideThumbnailPreview();
-        this.modals.help.open();
+        this.openModal(this.modals.help, /* pause= */ false);
       },
       'modal.help.toggle': () => {
         this.sxndPlayer.hideThumbnailPreview();
-        this.modals.help.toggle();
+        this.modals.toggleExclusive(this.modals.help);
       },
       'modal.bookmark.open': () => {
         this.showBookmarkUrl();
@@ -117,9 +140,26 @@ export default class SxndPlayerApp {
       'modal.screenshot.open': () => {
         this.showScreenshot();
       },
+      'modal.screenshot.snap': () => {
+        this.snapScreenshot();
+      },
       'fullscreen.toggle': () => {
         this.sxndPlayer.hideThumbnailPreview();
-        this.sxndPlayer.toggleFullScreen();
+        this.toggleFullScreen();
+      },
+      'theater.toggle': () => {
+        this.sxndPlayer.hideThumbnailPreview();
+
+        // @see DigitalcollectionsScripts.js
+        // TODO: Make sure the theater mode isn't activated on startup; then stop persisting
+        /** @type {DlfTheaterMode} */
+        const ev = new CustomEvent('dlf-theater-mode', {
+          detail: {
+            action: 'toggle',
+            persist: true,
+          },
+        });
+        window.dispatchEvent(ev);
       },
       'playback.toggle': () => {
         if (this.sxndPlayer.paused) {
@@ -163,6 +203,9 @@ export default class SxndPlayerApp {
       },
     };
 
+    this.modals.on('closed', this.handlers.onCloseModal);
+    this.sxndPlayer.getVideo().addEventListener('play', this.handlers.onPlay);
+
     this.load();
   }
 
@@ -199,6 +242,36 @@ export default class SxndPlayerApp {
   }
 
   /**
+   * Extracts timecode to jump to when clicking on {@link link}, or `null` if
+   * none could be determined.
+   *
+   * @private
+   * @param {HTMLAnchorElement} link
+   * @returns {number | null}
+   */
+  getLinkTimecode(link) {
+    // Attempt: Parse data-timecode attribute
+    const timecodeAttr = link.getAttribute("data-timecode");
+    if (timecodeAttr !== null) {
+      const timecode = Number(timecodeAttr);
+      if (Number.isFinite(timecode)) {
+        return timecode;
+      }
+    }
+
+    // Attempt: Parse timecode hash in URL ("#timecode=120")
+    const timecodeMatch = link.hash.match(/timecode=(\d+(\.\d?)?)/);
+    if (timecodeMatch !== null) {
+      const timecode = Number(timecodeMatch[1]);
+      if (Number.isFinite(timecode)) {
+        return timecode;
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * @private
    */
   async load() {
@@ -207,9 +280,10 @@ export default class SxndPlayerApp {
       return;
     }
 
-    document.querySelectorAll("a[data-timecode]").forEach(el => {
-      const timecode = Number(el.getAttribute("data-timecode"));
-      if (Number.isFinite(timecode)) {
+    document.querySelectorAll("a[data-timecode], .tx-dlf-tableofcontents a").forEach(el => {
+      const link = /** @type {HTMLAnchorElement} */(el);
+      const timecode = this.getLinkTimecode(link);
+      if (timecode !== null) {
         const sxndEl = /** @type {ChapterLink} */(el);
         sxndEl.sxndTimecode = timecode;
         sxndEl.addEventListener('click', this.handlers.onClickChapterLink);
@@ -251,8 +325,11 @@ export default class SxndPlayerApp {
     try {
       await this.sxndPlayer.loadManifest(this.manifestUri, startTime);
     } catch (e) {
+      console.error(e);
       this.failWithError('error.load-failed');
     }
+
+    this.modals.resize();
 
     document.addEventListener('keydown', this.handlers.onKeyDown, { capture: true });
     document.addEventListener('keyup', this.handlers.onKeyUp, { capture: true });
@@ -265,6 +342,13 @@ export default class SxndPlayerApp {
   getKeyboardScope() {
     if (this.modals.hasOpen()) {
       return 'modal';
+    }
+
+    for (const input of Array.from(document.querySelectorAll('input:focus'))) {
+      // Check that the input element is visible (would receive the event)
+      if (input instanceof HTMLElement && input.offsetParent !== null) {
+        return 'input';
+      }
     }
 
     return 'player';
@@ -282,7 +366,8 @@ export default class SxndPlayerApp {
 
     const keybinding = this.keybindings.find(kb => (
       typeof this.actions[kb.action] === 'function'
-      && kb.key === e.key
+      // Ignore casing, e.g. for `S` vs. `Shift + S`.
+      && kb.key.toLowerCase() === e.key.toLowerCase()
       && (kb.repeat == null || kb.repeat === e.repeat)
       && (kb.scope == null || kb.scope === curKbScope)
       && Modifier[kb.mod ?? 'None'] === mod
@@ -335,22 +420,139 @@ export default class SxndPlayerApp {
     this.sxndPlayer.seekTo(target.sxndTimecode);
   }
 
+  /**
+   * @private
+   */
+  onPlay() {
+    this.sxnd.pausedOn = null;
+  }
+
+  /**
+   * @private
+   * @param {any} obj
+   */
+  pauseOn(obj) {
+    if (this.sxnd.pausedOn === null && !this.sxndPlayer.paused) {
+      this.sxnd.pausedOn = obj;
+      this.sxndPlayer.pause();
+    }
+  }
+
+  /**
+   * @private
+   * @param {any} obj
+   */
+  resumeOn(obj) {
+    if (this.sxnd.pausedOn === obj) {
+      this.sxndPlayer.play();
+      this.sxnd.pausedOn = null;
+    }
+  }
+
+  /**
+   * @private
+   * @param {ValueOf<AppModals>} modal
+   */
+  onCloseModal(modal) {
+    this.resumeOn(modal);
+  }
+
+  /**
+   * Mostly taken from Shaka player (shaka.ui.Controls).
+   *
+   * We put this here so that we don't need to append the app elements (modals)
+   * to the player container.
+   */
+  async toggleFullScreen() {
+    if (document.fullscreenElement) {
+      if (screen.orientation) {
+        screen.orientation.unlock();
+      }
+      await document.exitFullscreen();
+      this.modals.setFullscreen(null);
+    } else {
+      // If we are in PiP mode, leave PiP mode first.
+      try {
+        if (document.pictureInPictureElement) {
+          await document.exitPictureInPicture();
+        }
+        await this.container.requestFullscreen({ navigationUI: 'hide' });
+        if (this.constants.forceLandscapeOnFullscreen && screen.orientation) {
+          try {
+            // Locking to 'landscape' should let it be either
+            // 'landscape-primary' or 'landscape-secondary' as appropriate.
+            await screen.orientation.lock('landscape');
+          } catch (error) {
+            // If screen.orientation.lock does not work on a device, it will
+            // be rejected with an error. Suppress that error.
+          }
+        }
+      } catch (e) {
+        // TODO: Error handling
+        console.log(e);
+      }
+      this.modals.setFullscreen(this.container);
+    }
+  }
+
   showBookmarkUrl() {
-    this.sxndPlayer.pause();
-    this.sxndPlayer.hideThumbnailPreview();
-    this.modals.bookmark
+    // Don't show modal if we can't expect the current time to be properly
+    // initialized
+    if (!this.sxndPlayer.hasCurrentData) {
+      return;
+    }
+
+    const modal = this.modals.bookmark
       .setTimecode(this.sxndPlayer.displayTime)
-      .setFps(this.sxndPlayer.getFps() ?? 0)
-      .open();
+      .setFps(this.sxndPlayer.getFps() ?? 0);
+
+    this.openModal(modal, /* pause= */ true);
+  }
+
+  /**
+   * @returns {ScreenshotModal | null}
+   */
+  prepareScreenshot() {
+    // Don't do screenshot if there isn't yet an image to be displayed
+    if (!this.sxndPlayer.hasCurrentData) {
+      return null;
+    }
+
+    return (
+      this.modals.screenshot
+        .setVideo(this.sxndPlayer.getVideo())
+        .setMetadata(this.videoInfo.metadata)
+        .setTimecode(this.sxndPlayer.displayTime)
+    );
   }
 
   showScreenshot() {
-    this.sxndPlayer.pause();
+    const modal = this.prepareScreenshot();
+
+    if (modal !== null) {
+      this.openModal(modal, /* pause= */ true);
+    }
+  }
+
+  snapScreenshot() {
+    const modal = this.prepareScreenshot();
+
+    if (modal !== null) {
+      modal.snap();
+    }
+  }
+
+  /**
+   * @private
+   * @param {ValueOf<AppModals>} modal
+   * @param {boolean} pause
+   */
+  openModal(modal, pause) {
+    if (pause) {
+      this.pauseOn(modal);
+    }
+
     this.sxndPlayer.hideThumbnailPreview();
-    this.modals.screenshot
-      .setVideo(this.sxndPlayer.getVideo())
-      .setMetadata(this.videoInfo.metadata)
-      .setTimecode(this.sxndPlayer.displayTime)
-      .open();
+    modal.open();
   }
 }

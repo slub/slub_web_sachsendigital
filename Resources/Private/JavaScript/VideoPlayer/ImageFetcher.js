@@ -3,12 +3,54 @@
 import { blobToImage } from '../lib/util';
 
 /**
- * @template T
+ * @enum {number}
+ */
+const LoadState = /** @type {const} */ ({
+  /** The task is prepared, but execution has not started. */
+  Pending: 0,
+  /** The image is being fetched from the remote URL. */
+  Fetching: 1,
+  /** The image has been fetched. Decoding not yet started. */
+  Fetched: 2,
+  /** The image has been loaded, but not yet decoded. */
+  Decoding: 3,
+  /** The image has been loaded and decoded. */
+  Available: 4,
+});
+
+/**
  * @typedef {{
+ *  type: typeof LoadState.Pending;
+ *  url: string;
+ * }} StatePending
+ *
+ * @typedef {{
+ *  type: typeof LoadState.Fetching;
  *  abortController: AbortController;
- *  promise: Promise<T>;
- *  loaded: boolean;
- *  response?: T;
+ *  responsePromise: Promise<Response>;
+ * }} StateFetching
+ *
+ * @typedef {{
+ *  type: typeof LoadState.Fetched;
+ *  imageBlob: Blob;
+ * }} StateFetched
+ *
+ * @typedef {{
+ *  type: typeof LoadState.Decoding;
+ *  imagePromise: Promise<HTMLImageElement>;
+ * }} StateDecoding
+ *
+ * @typedef {{
+ *  type: typeof LoadState.Available;
+ *  image: HTMLImageElement;
+ * }} StateCompleted
+ *
+ * @typedef {StatePending | StateFetching | StateFetched | StateDecoding | StateCompleted} State
+ *
+ * @typedef {{
+ *  state: State;
+ *  promise: Promise<HTMLImageElement> | null;
+ *  stopNext: boolean;
  * }} Task
  */
 
@@ -23,7 +65,7 @@ export default class ImageFetcher {
      * Map from URL to task.
      *
      * @private
-     * @type {Record<string, Task<HTMLImageElement>>}
+     * @type {Record<string, Task>}
      */
     this.tasks = {};
   }
@@ -37,37 +79,23 @@ export default class ImageFetcher {
    * @returns {Promise<HTMLImageElement>}
    */
   get(url) {
-    let task = this.tasks[url];
+    const task =
+      this.tasks[url] ??= this.createTask(url);
 
-    if (task === undefined) {
-      this.abortPending();
+    return this.resumeTask(task);
+  }
 
-      const abortController = new AbortController();
-
-      const promise = new Promise((resolve, reject) => {
-        this.fetchImage(url, abortController.signal)
-          .then((image) => {
-            const task = this.tasks[url];
-            if (task) {
-              task.loaded = true;
-              task.response = image;
-              resolve(image);
-            }
-          })
-          .catch((e) => {
-            delete this.tasks[url];
-            reject(e);
-          });
-      });
-
-      task = this.tasks[url] = {
-        abortController,
-        promise,
-        loaded: false,
-      };
-    }
-
-    return task.promise;
+  /**
+   * Gets the image from {@link url} if it is already loaded and cached.
+   *
+   * @param {string} url
+   * @returns {HTMLImageElement | null}
+   */
+  getCached(url) {
+    const state = this.tasks[url]?.state;
+    return state?.type === LoadState.Available
+      ? state.image
+      : null;
   }
 
   /**
@@ -75,29 +103,124 @@ export default class ImageFetcher {
    */
   abortPending() {
     for (const [url, task] of Object.entries(this.tasks)) {
-      if (!task.loaded) {
-        task.abortController.abort();
-        delete this.tasks[url];
-      }
+      // TODO: actually abort network request?
+      this.stopTask(task);
     }
   }
 
   /**
-   * Fetches an image from {@link url}.
-   *
    * @protected
    * @param {string} url
-   * @param {AbortSignal} abortSignal
+   * @returns {Task}
+   */
+  createTask(url) {
+    return {
+      state: {
+        type: LoadState.Pending,
+        url,
+      },
+      promise: null,
+      stopNext: false, // Value shouldn't matter because promise === null
+    };
+  }
+
+  /**
+   * @protected
+   * @param {Task} task
+   */
+  stopTask(task) {
+    task.stopNext = true;
+  }
+
+  /**
+   * @protected
+   * @param {Task} task
    * @returns {Promise<HTMLImageElement>}
    */
-  async fetchImage(url, abortSignal) {
-    const response = await fetch(url, { signal: abortSignal });
-    if (response.ok) {
-      const blob = await response.blob();
-      const image = await blobToImage(blob);
-      return image;
-    } else {
-      throw response;
+  resumeTask(task) {
+    // If we're still in the `for(;;)` loop, this just tells them to
+    // continue. It's not a race condition (I think) because of JavaScript's
+    // single-threaded nature.
+    task.stopNext = false;
+
+    if (task.promise === null) {
+      task.promise = new Promise(async (resolve, reject) => {
+        try {
+          // progressTask makes sure that this loop doesn't run indefinitely
+          for (; ;) {
+            if (task.state.type === LoadState.Available) {
+              resolve(task.state.image);
+              break;
+            }
+
+            if (task.stopNext) {
+              task.promise = null;
+              break;
+            }
+
+            await this.progressTask(task);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+
+    return task.promise;
+  }
+
+  /**
+   * This should be the only method that re-sets `task.state`.
+   *
+   * @protected
+   * @param {Task} task
+   */
+  async progressTask(task) {
+    switch (task.state.type) {
+      case LoadState.Pending: {
+        const abortController = new AbortController();
+        const url = task.state.url;
+        const responsePromise = fetch(url, { signal: abortController.signal });
+        task.state = {
+          type: LoadState.Fetching,
+          abortController,
+          responsePromise,
+        }
+        break;
+      }
+
+      case LoadState.Fetching: {
+        const response = await task.state.responsePromise;
+        if (response.ok) {
+          task.state = {
+            type: LoadState.Fetched,
+            imageBlob: await response.blob(),
+          };
+        } else {
+          throw response;
+        }
+        break;
+      }
+
+      case LoadState.Fetched: {
+        task.state = {
+          type: LoadState.Decoding,
+          imagePromise: blobToImage(task.state.imageBlob),
+        };
+        break;
+      }
+
+      case LoadState.Decoding: {
+        const image = await task.state.imagePromise;
+        task.state = {
+          type: LoadState.Available,
+          image,
+        };
+        break;
+      }
+
+      case LoadState.Available:
+        break;
     }
   }
 }

@@ -67,6 +67,8 @@ export default class FlatSeekBar extends shaka.ui.Element {
       seekTimer: null,
       /** @type {ThumbnailPreview | null} */
       thumbnailPreview: null,
+      /** @type {string} */
+      lastGradientStr: "",
     };
 
     this.sxnd.seekTimer = new shaka.util.Timer(() => {
@@ -107,6 +109,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
 
     if (this.eventManager) {
       this.eventManager.listen(this.player, 'loaded', () => {
+        this.update();
         this.renderChapterMarkers();
       });
 
@@ -284,38 +287,37 @@ export default class FlatSeekBar extends shaka.ui.Element {
     };
     const seekRangeSize = seekRange.end - seekRange.start;
 
-    if (bufferedLength == 0) {
-      this.$range.style.background = colors.base;
-    } else {
-      const clampedBufferStart = Math.max(bufferedStart, seekRange.start);
-      const clampedBufferEnd = Math.min(bufferedEnd, seekRange.end);
-      const clampedCurrentTime = Math.min(
-        Math.max(currentTime, seekRange.start),
-        seekRange.end);
+    const clampedBufferStart = Math.max(bufferedStart, seekRange.start);
+    const clampedBufferEnd = Math.min(bufferedEnd, seekRange.end);
+    const clampedCurrentTime = Math.min(
+      Math.max(currentTime, seekRange.start),
+      seekRange.end);
 
-      const bufferStartDistance = clampedBufferStart - seekRange.start;
-      const bufferEndDistance = clampedBufferEnd - seekRange.start;
-      const playheadDistance = clampedCurrentTime - seekRange.start;
+    const bufferStartDistance = clampedBufferStart - seekRange.start;
+    const bufferEndDistance = clampedBufferEnd - seekRange.start;
+    const playheadDistance = clampedCurrentTime - seekRange.start;
 
-      // NOTE: the fallback to zero eliminates NaN.
-      const bufferStartFraction = (bufferStartDistance / seekRangeSize) || 0;
-      const bufferEndFraction = (bufferEndDistance / seekRangeSize) || 0;
-      const playheadFraction = (playheadDistance / seekRangeSize) || 0;
+    // NOTE: the fallback to zero eliminates NaN.
+    const bufferStartFraction = (bufferStartDistance / seekRangeSize) || 0;
+    const bufferEndFraction = (bufferEndDistance / seekRangeSize) || 0;
+    const playheadFraction = (playheadDistance / seekRangeSize) || 0;
 
-      const unbufferedColor =
-        this.sxnd.uiConfig.showUnbufferedStart ? colors.base : colors.played;
+    const unbufferedColor =
+      this.sxnd.uiConfig.showUnbufferedStart ? colors.base : colors.played;
 
-      const gradient = [
-        'to right',
-        this.makeColor(unbufferedColor, bufferStartFraction),
-        this.makeColor(colors.played, bufferStartFraction),
-        this.makeColor(colors.played, playheadFraction),
-        this.makeColor(colors.buffered, playheadFraction),
-        this.makeColor(colors.buffered, bufferEndFraction),
-        this.makeColor(colors.base, bufferEndFraction),
-      ];
-      this.$range.style.background =
-        'linear-gradient(' + gradient.join(',') + ')';
+    const gradient = [
+      'to right',
+      this.makeColor(unbufferedColor, bufferStartFraction),
+      this.makeColor(colors.played, bufferStartFraction),
+      this.makeColor(colors.played, playheadFraction),
+      this.makeColor(colors.buffered, playheadFraction),
+      this.makeColor(colors.buffered, bufferEndFraction),
+      this.makeColor(colors.base, bufferEndFraction),
+    ];
+    const gradientStr = 'linear-gradient(' + gradient.join(',') + ')';
+    if (gradientStr !== this.sxnd.lastGradientStr) {
+      this.sxnd.lastGradientStr = gradientStr;
+      this.$range.style.background = gradientStr;
     }
   }
 }

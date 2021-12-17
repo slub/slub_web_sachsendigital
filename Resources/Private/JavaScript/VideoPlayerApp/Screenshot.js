@@ -9,6 +9,7 @@
  *
  * @typedef {{
  *  captions: ScreenshotCaption[];
+ *  minWidth: number;
  * }} ScreenshotConfig
  */
 
@@ -18,7 +19,7 @@
  * the screenshot is drawn
  * @param {HTMLVideoElement} videoDomElement Source video element from which
  * the screenshot is taken
- * @param {ScreenshotConfig} config
+ * @param {Partial<ScreenshotConfig>} config
  * @returns {boolean}
  */
 export function drawScreenshot(target, videoDomElement, config) {
@@ -31,8 +32,12 @@ export function drawScreenshot(target, videoDomElement, config) {
     return false;
   }
 
-  targetCanvas.width = videoDomElement.videoWidth;
-  targetCanvas.height = videoDomElement.videoHeight;
+  // Make sure the target resolution is a multiple of the video resolution
+  const targetFactor =
+    Math.max(1, Math.ceil((config.minWidth ?? 0) / videoDomElement.videoWidth));
+
+  targetCanvas.width = videoDomElement.videoWidth * targetFactor;
+  targetCanvas.height = videoDomElement.videoHeight * targetFactor;
 
   context.drawImage(
     videoDomElement,
@@ -47,7 +52,7 @@ export function drawScreenshot(target, videoDomElement, config) {
   context.shadowBlur = 5;
   context.shadowColor = "black";
 
-  for (const caption of config.captions) {
+  for (const caption of config.captions ?? []) {
     const x = caption.h === 'left' ? textPad : targetCanvas.width - textPad;
     const y = caption.v === 'top' ? textPad : targetCanvas.height - textPad;
 

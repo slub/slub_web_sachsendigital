@@ -1,6 +1,12 @@
 @import "./VideoPlayer.less";
 
+.control-bar {
+    border-right: none !important;
+}
+
 .document-view {
+    background-color: black;
+
     .tx-dlf-view {
         width: 100%;
         height: 100%;
@@ -24,22 +30,89 @@
     cursor: pointer;
 }
 
+.inline-icon {
+    vertical-align: middle;
+}
+
 .screenshot-modal {
-    height: 90%;
+    .body-container {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        column-gap: 1em;
 
-    .screenshot-config {
         text-align: left;
-        margin-bottom: 0.6rem;
 
-        .show-metadata label {
-            padding-left: @label-padding;
+        .screenshot-config {
+            grid-column: 2;
+            grid-row: 1;
+
+            h4 {
+                margin-bottom: 0.6em;
+                font-size: 120%;
+            }
+
+            section {
+                margin-bottom: 0.8em;
+
+                h1 {
+                    font-weight: bold;
+                    font-size: 100%;
+                    margin-bottom: 0.3em;
+                }
+            }
+
+            .metadata-overlay label {
+                padding-left: @label-padding;
+            }
+
+            .file-format-option {
+                margin-left: 0.3em;
+            }
+
+            .download-link {
+                margin-top: 0.2em;
+            }
+        }
+
+        .snap-tip {
+            display: flex;
+            gap: 0.4em;
+
+            margin-top: 2em;
+            line-height: 1.25;
+            color: @light-color;
+        }
+
+        canvas {
+            grid-column: 1;
+            grid-row: 1;
+
+            background-color: black;
+            width: 100%;
+            height: auto;
         }
     }
 
-    canvas {
-        background-color: black;
-        width: 100%;
-        height: auto;
+    @media screen and (max-width: 1600px) {
+        .body-container {
+            grid-template-columns: 2fr 1fr;
+        }
+    }
+
+    @media screen and (max-width: @desktopViewportWidth) {
+        .body-container {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media screen and (max-width: @phoneLandscapeViewportWidth) {
+        .body-container {
+            display: block;
+        }
+
+        canvas {
+            display: none;
+        }
     }
 }
 
@@ -84,14 +157,6 @@
     }
 
     .keybindings-table {
-        .kb-text {
-            white-space: nowrap;
-        }
-
-        .or-sep {
-            font-weight: bolder;
-        }
-
         td:nth-child(1) {
             width: 40%;
             text-align: right;
@@ -105,16 +170,20 @@
 }
 
 .sxnd-modal-cover {
-    display: none;
+    visibility: hidden;
     position: absolute;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
     z-index: 100000;
+    background-color: black;
+    opacity: 0;
 
     &.shown {
-        display: block;
+        visibility: visible;
+        opacity: 0.33;
+        transition: opacity 200ms linear;
     }
 }
 
@@ -136,6 +205,22 @@
     @media screen and (min-width: @desktopViewportWidth) {
         left: 5rem;
         right: 5rem;
+    }
+
+    .kb-text {
+        white-space: nowrap;
+    }
+
+    .or-sep {
+        font-weight: bolder;
+    }
+
+    button {
+        background-color: rgba(white, 0.8);
+        border: 1px solid black;
+        padding: 0.5em 1em;
+        border-radius: 4px;
+        font-size: 100%;
     }
 
     .headline-container {

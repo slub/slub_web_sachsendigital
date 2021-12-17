@@ -22,9 +22,12 @@ function getEnvironment() {
     twoLetterIsoCode: 'en',
     phrases: {
       'modal.screenshot.title': "Screenshot",
+      'modal.screenshot.configuration': "Show Metadata",
       'modal.screenshot.download-image': "Download Image",
-      'modal.screenshot.show-metadata': "Show Metadata",
+      'modal.screenshot.metadata': "Metadata",
+      'modal.screenshot.metadata-overlay': "Overlay on image",
       'modal.screenshot.file-format': "File Format",
+      'modal.screenshot.snap-tip': "Tip: ...",
     },
   });
   return env;
@@ -50,7 +53,7 @@ test('can open screenshot overlay', async () => {
   expect(overlay()).toBeNull();
 
   // opened; exact tags are in snapshot
-  const modal = new ScreenshotModal(document.body, getEnvironment());
+  const modal = new ScreenshotModal(document.body, getEnvironment(), []);
   modal.setVideo(new VideoMock(1920, 1080));
   modal.setMetadata(getTestMetadataArray());
   modal.open();
@@ -99,8 +102,9 @@ test('can draw to canvas', () => {
   /**
    * @param {number} videoWidth
    * @param {number} videoHeight
+   * @param {number} minWidth
    */
-  const snapshotWithSize = (videoWidth, videoHeight) => {
+  const snapshotWithSize = (videoWidth, videoHeight, minWidth = 0) => {
     const video = new VideoMock(videoWidth, videoHeight);
 
     const canvas = document.createElement("canvas");
@@ -117,13 +121,18 @@ test('can draw to canvas', () => {
         { v: 'bottom', h: 'left', text: "bottom left" },
         { v: 'bottom', h: 'right', text: metadataArrayToString(metadata) },
       ],
+      minWidth,
     });
 
     // @ts-ignore TODO: Why wouldn't it recognize "__getEvents"?
     const events = context.__getEvents();
     expect(events).toMatchSnapshot();
+
+    expect(canvas.width).toBeGreaterThanOrEqual(minWidth);
+    expect(canvas.width / canvas.height).toBeCloseTo(videoWidth / videoHeight);
   };
 
   snapshotWithSize(1920, 1080);
   snapshotWithSize(960, 540);
+  snapshotWithSize(320, 180, /* minWidth= */ 480);
 });

@@ -1,9 +1,14 @@
 // @ts-check
 
+import EventEmitter from 'events';
 import SimpleModal from './SimpleModal';
 
 /**
- * @typedef Modals
+ * @template T
+ * @typedef ModalFuncs
+ * @property {(modal: ValueOf<T>) => void} toggleExclusive Try to toggle the
+ * modal while not inducing a state of two open modals.
+ * @property {(coverContainer: HTMLElement | null) => void} setFullscreen
  * @property {() => boolean} hasOpen
  * @property {() => void} closeNext
  * @property {() => void} closeAll
@@ -12,18 +17,43 @@ import SimpleModal from './SimpleModal';
  */
 
 /**
+ * @template T
+ * @typedef {T & ModalFuncs<T> & EventEmitter} ModalsType
+ */
+
+/**
  * Mixin to add modal-related utility functions to set of modals.
  *
  * @template {Record<string, SimpleModal<any>>} T
  * @param {T} modals
- * @returns {T & Modals}
+ * @returns {ModalsType<T>}
  */
 export default function Modals(modals) {
   const modalsArray = Object.values(modals);
 
-  /** @type {T & Modals} */
-  const result = {
-    ...modals,
+  // Set DOM element that is used to cover the background of the modals. It is
+  // used to make sure that when a modal is open, the background won't respond
+  // to mouse actions. It also makes it simpler to detect clicking outside of
+  // an open modal.
+  const modalCover = document.createElement('div');
+  modalCover.className = "sxnd-modal-cover";
+  modalCover.addEventListener('click', () => {
+    result.closeAll();
+  });
+  document.body.append(modalCover);
+
+  /** @type {ModalFuncs<T>} */
+  const resultFuncs = {
+    toggleExclusive: (modal) => {
+      if (modal.isOpen) {
+        modal.close();
+      } else if (!result.hasOpen()) {
+        modal.open();
+      }
+    },
+    setFullscreen: (coverContainer) => {
+      (coverContainer ?? document.body).append(modalCover);
+    },
     hasOpen: () => {
       return modalsArray.some(modal => modal.isOpen);
     },
@@ -53,16 +83,8 @@ export default function Modals(modals) {
     },
   };
 
-  // Set DOM element that is used to cover the background of the modals. It is
-  // used to make sure that when a modal is open, the background won't respond
-  // to mouse actions. It also makes it simpler to detect clicking outside of
-  // an open modal.
-  const modalCover = document.createElement('div');
-  modalCover.className = "sxnd-modal-cover";
-  modalCover.addEventListener('click', () => {
-    result.closeAll();
-  });
-  document.body.append(modalCover);
+  /** @type {ModalsType<T>} */
+  const result = Object.assign(new EventEmitter(), modals, resultFuncs);
 
   // TODO: Performance
   window.addEventListener('resize', () => {
@@ -71,6 +93,10 @@ export default function Modals(modals) {
 
   for (const modal of modalsArray) {
     modal.on('updated', () => {
+      if (!modal.isOpen) {
+        result.emit('closed', modal);
+      }
+
       if (result.hasOpen()) {
         modalCover.classList.add('shown');
       } else {

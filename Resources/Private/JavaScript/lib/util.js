@@ -90,15 +90,12 @@ export function blobToImage(blob) {
  * @param {string} src
  * @returns {Promise<HTMLImageElement>}
  */
-export function loadImage(src) {
-  return new Promise((resolve, reject) => {
-    const image = document.createElement('img');
-    image.onload = () => {
-      resolve(image);
-    };
-    image.onerror = reject;
-    image.src = src;
-  });
+export async function loadImage(src) {
+  const image = e('img');
+  image.decoding = 'async';
+  image.src = src;
+  await image.decode();
+  return image;
 }
 
 /**
@@ -212,6 +209,19 @@ export function e(tag, attrs = {}, children = []) {
 }
 
 /**
+ * @param {HTMLElement} element
+ * @param {string} className
+ * @param {boolean} hasClass
+ */
+export function setElementClass(element, className, hasClass) {
+  if (hasClass) {
+    element.classList.add(className);
+  } else {
+    element.classList.remove(className);
+  }
+}
+
+/**
  * Sanitizes {@link str} for use in a file name.
  *
  * @param {string} str
@@ -220,4 +230,40 @@ export function e(tag, attrs = {}, children = []) {
 export function sanitizeBasename(str) {
   const result = str.replace(/[^a-zA-Z0-9()]+/g, "_");
   return result.length > 0 ? result : "_";
+}
+
+/**
+ * Returns HTML-encoded string that represents {@link text}.
+ *
+ * @param {string} text
+ * @returns {string}
+ */
+export function textToHtml(text) {
+  return e('span', { innerText: text }).innerHTML;
+}
+
+/**
+ * Promisification of `setTimeout`.
+ *
+ * @param {number} delay Delay in seconds
+ * @returns {Promise<void>}
+ */
+export function sleep(delay) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, delay * 1000);
+  })
+}
+
+/**
+ *
+ * @template T
+ * @param {(T | null)[]} arr
+ * @returns {T[]}
+ */
+export function filterNonNull(arr) {
+  return arr.filter(
+    /** @type {(x: T | null) => x is T} */(x => x !== null)
+  );
 }
