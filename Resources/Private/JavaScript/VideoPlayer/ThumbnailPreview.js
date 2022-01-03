@@ -4,7 +4,13 @@ import shaka from 'shaka-player/dist/shaka-player.ui';
 
 import Chapters from './Chapters';
 import ImageFetcher from './ImageFetcher';
-import { clamp, e, filterNonNull, setElementClass } from '../lib/util';
+import {
+  clamp,
+  disableDragging,
+  e,
+  filterNonNull,
+  setElementClass,
+} from '../lib/util';
 import buildTimeString from './lib/buildTimeString';
 
 /**
@@ -561,6 +567,9 @@ export default class ThumbnailPreview {
     setElementClass(this.$display, 'is-open', openThumb)
     setElementClass(this.$img, 'sxnd-visible', showThumb);
     setElementClass(this.$thumbTimecode, 'sxnd-visible', showThumb);
+
+    // Make sure the thumbnail image won't be dragged when scrubbing
+    disableDragging(this.$img);
   }
 
   /**
