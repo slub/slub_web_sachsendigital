@@ -55,6 +55,8 @@ export default class FlatSeekBar extends shaka.ui.Element {
     this.sxnd = {
       /** @type {Chapters | null} */
       chapters: null,
+      /** @type {boolean} */
+      hasRenderedChapters: false,
       /** @type {VariantGroups | null} */
       variantGroups: null,
       /** @type {number} */
@@ -110,7 +112,6 @@ export default class FlatSeekBar extends shaka.ui.Element {
     if (this.eventManager) {
       this.eventManager.listen(this.player, 'loaded', () => {
         this.update();
-        this.renderChapterMarkers();
       });
 
       this.eventManager.listen(this.player, 'variantchanged', () => {
@@ -126,7 +127,9 @@ export default class FlatSeekBar extends shaka.ui.Element {
       this.eventManager.listen(this.controls, 'sxnd-chapters', (e) => {
         const detail = /** @type {SxndChaptersEvent} */(e).detail;
         this.sxnd.chapters = detail.chapters;
+        this.sxnd.hasRenderedChapters = false;
         this.sxnd.thumbnailPreview?.setChapters(detail.chapters);
+        this.update();
       });
 
       this.eventManager.listen(this.controls, 'sxnd-fps', (e) => {
@@ -172,21 +175,20 @@ export default class FlatSeekBar extends shaka.ui.Element {
   }
 
   /**
-   * @private
    * Adds chapter marker elements to the seekbar.
+   *
+   * @private
+   * @param {Chapters} chapters
+   * @param {number} duration Duration of the video to be assumed.
    */
-  renderChapterMarkers() {
-    if (this.video === null || this.sxnd.chapters === null) {
-      console.log("FlatSeekBar: Missing video or chapters");
-      return;
-    }
+  renderChapterMarkers(chapters, duration) {
+    // Clear chapter markers, which would allow a full refresh
+    this.$range.querySelectorAll('.sxnd-chapter-marker').forEach((marker) => {
+      marker.remove();
+    });
 
-    if (!(this.video.duration > 0)) { // !(NaN > 0)
-      return;
-    }
-
-    for (const chapter of this.sxnd.chapters) {
-      const relative = chapter.timecode / this.video.duration;
+    for (const chapter of chapters) {
+      const relative = chapter.timecode / duration;
 
       // In particular, make sure that we don't put markers outside of the
       // seekbar for wrong timestamps.
@@ -270,6 +272,11 @@ export default class FlatSeekBar extends shaka.ui.Element {
     const duration = this.video.duration;
     if (!(duration > 0)) {
       return;
+    }
+
+    if (this.sxnd.chapters !== null && !this.sxnd.hasRenderedChapters) {
+      this.renderChapterMarkers(this.sxnd.chapters, duration);
+      this.sxnd.hasRenderedChapters = true;
     }
 
     const colors = this.sxnd.uiConfig.seekBarColors;
