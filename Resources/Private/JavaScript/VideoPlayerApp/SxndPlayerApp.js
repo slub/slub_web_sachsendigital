@@ -177,6 +177,9 @@ export default class SxndPlayerApp {
       'playback.volume.dec': () => {
         this.sxndPlayer.volume = this.sxndPlayer.volume - this.constants.volumeStep;
       },
+      'playback.captions.toggle': () => {
+        this.sxndPlayer.showCaptions = !this.sxndPlayer.showCaptions;
+      },
       'navigate.rewind': () => {
         this.sxndPlayer.skipSeconds(-this.constants.seekStep);
       },

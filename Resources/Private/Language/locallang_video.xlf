@@ -56,6 +56,9 @@
 			<trans-unit id="action.navigate.continuous-seek">
 				<source><![CDATA[Fast-forward ({trickPlayFactor}x)]]></source>
 			</trans-unit>
+			<trans-unit id="action.playback.captions.toggle">
+				<source><![CDATA[Toggle captions]]></source>
+			</trans-unit>
 			<trans-unit id="action.playback.toggle">
 				<source><![CDATA[Play / Pause]]></source>
 			</trans-unit>
@@ -145,6 +148,9 @@
 			</trans-unit>
 			<trans-unit id="key.b">
 				<source><![CDATA[Key B]]></source>
+			</trans-unit>
+			<trans-unit id="key.c">
+				<source><![CDATA[Key C]]></source>
 			</trans-unit>
 			<trans-unit id="key.f">
 				<source><![CDATA[Key F]]></source>

@@ -73,6 +73,10 @@
 				<source><![CDATA[Fast-forward ({trickPlayFactor}x)]]></source>
 				<target><![CDATA[Vorspulen ({trickPlayFactor}x)]]></target>
 			</trans-unit>
+			<trans-unit id="action.playback.captions.toggle" approved="yes">
+				<source><![CDATA[Toggle captions]]></source>
+				<target><![CDATA[Untertitel an / aus]]></target>
+			</trans-unit>
 			<trans-unit id="action.playback.toggle" approved="yes">
 				<source><![CDATA[Play / Pause]]></source>
 				<target><![CDATA[Abspielen / Pausieren]]></target>
@@ -192,6 +196,10 @@
 			<trans-unit id="key.b" approved="yes">
 				<source><![CDATA[Key B]]></source>
 				<target><![CDATA[Taste B]]></target>
+			</trans-unit>
+			<trans-unit id="key.c" approved="yes">
+				<source><![CDATA[Key C]]></source>
+				<target><![CDATA[Taste C]]></target>
 			</trans-unit>
 			<trans-unit id="key.f" approved="yes">
 				<source><![CDATA[Key F]]></source>

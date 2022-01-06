@@ -81,6 +81,14 @@
 		"order": 11
 	},
 	{
+		"key": "c",
+		"repeat": false,
+		"scope": "player",
+		"action": "playback.captions.toggle",
+		"kind": "player",
+		"order": 13
+	},
+	{
 		"key": "ArrowLeft",
 		"repeat": false,
 		"scope": "player",

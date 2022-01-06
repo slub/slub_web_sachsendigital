@@ -380,6 +380,14 @@ export default class SachsenShakaPlayer {
     return this.video.readyState >= 2;
   }
 
+  get showCaptions() {
+    return this.player.isTextTrackVisible()
+  }
+
+  set showCaptions(value) {
+    this.player.setTextTrackVisibility(value);
+  }
+
   /**
    * Volume in range [0, 1]. Out-of-bounds values are clamped when set.
    *
