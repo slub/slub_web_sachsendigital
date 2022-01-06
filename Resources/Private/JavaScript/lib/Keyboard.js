@@ -34,3 +34,71 @@ export function modifiersFromEvent(e) {
 
   return mod;
 }
+
+/**
+ *
+ * @template {string} ScopeT
+ * @template {string} ActionT
+ * @param {Keybinding<ScopeT, ActionT>[]} keybindings
+ * @param {KeyboardEvent} e
+ * @param {ScopeT} currentScope
+ * @returns {{ keybinding: Keybinding<ScopeT, ActionT>, keyIndex: number } | undefined}
+ */
+export function Keybindings$find(keybindings, e, currentScope) {
+  const mod = modifiersFromEvent(e);
+
+  // Ignore casing, e.g. for `S` vs. `Shift + S`.
+  const key = e.key.toLowerCase();
+
+  for (const kb of keybindings) {
+    const keyIndex = kb.keys.findIndex(k => k.toLowerCase() === key);
+    if (keyIndex === -1) {
+      continue;
+    }
+
+    const isSuitable = (
+      (kb.repeat == null || kb.repeat === e.repeat)
+      && (kb.scope == null || kb.scope === currentScope)
+      && Modifier[kb.mod ?? 'None'] === mod
+    );
+
+    if (isSuitable) {
+      return {
+        keybinding: kb,
+        keyIndex,
+      };
+    }
+  }
+}
+
+/**
+ * @typedef {{ begin: KeyboardEvent['key']; end: KeyboardEvent['key'] }} KeyRange
+ */
+
+/**
+ *
+ * @param {KeyboardEvent['key'][]} keys
+ * @returns {KeyRange[]}
+ */
+export function Keybinding$splitKeyRanges(keys) {
+  const result = [];
+
+  /** @type {KeyRange | null} */
+  let nextRange = null;
+  for (const key of keys) {
+    if (nextRange === null) {
+      nextRange = { begin: key, end: key };
+    } else if (key.charCodeAt(0) === nextRange.end.charCodeAt(0) + 1) {
+      nextRange.end = key;
+    } else {
+      result.push(nextRange);
+      nextRange = { begin: key, end: key };
+    }
+  }
+
+  if (nextRange !== null) {
+    result.push(nextRange);
+  }
+
+  return result;
+}

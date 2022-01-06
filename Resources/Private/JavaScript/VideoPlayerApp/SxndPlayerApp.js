@@ -1,7 +1,7 @@
 // @ts-check
 
 import { e } from '../lib/util';
-import { Modifier, modifiersFromEvent } from '../lib/Keyboard';
+import { Keybindings$find } from '../lib/Keyboard';
 import {
   Chapters,
   ControlPanelButton,
@@ -367,21 +367,14 @@ export default class SxndPlayerApp {
   onKeyDown(e) {
     let stopPropagation = true;
 
-    const mod = modifiersFromEvent(e);
     const curKbScope = this.getKeyboardScope();
+    const result = Keybindings$find(this.keybindings, e, curKbScope);
 
-    const keybinding = this.keybindings.find(kb => (
-      typeof this.actions[kb.action] === 'function'
-      // Ignore casing, e.g. for `S` vs. `Shift + S`.
-      && kb.key.toLowerCase() === e.key.toLowerCase()
-      && (kb.repeat == null || kb.repeat === e.repeat)
-      && (kb.scope == null || kb.scope === curKbScope)
-      && Modifier[kb.mod ?? 'None'] === mod
-    ));
+    if (result) {
+      const { keybinding, keyIndex } = result;
 
-    if (keybinding) {
       e.preventDefault();
-      this.actions[keybinding.action]();
+      this.actions[keybinding.action]?.(keybinding, keyIndex);
 
       if (keybinding.propagate === true) {
         stopPropagation = false;

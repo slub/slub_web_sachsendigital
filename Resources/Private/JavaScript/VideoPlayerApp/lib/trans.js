@@ -1,5 +1,6 @@
 // @ts-check
 
+import { Keybinding$splitKeyRanges } from '../../lib/Keyboard';
 import { e } from '../../lib/util';
 
 /**
@@ -30,9 +31,25 @@ export function listKeybindingsDisj(env, kbs) {
  * @returns {string}
  */
 export function getKeybindingText(env, kb) {
+  const keyRanges = Keybinding$splitKeyRanges(kb.keys);
+  const rangeTexts = [];
+  const app = kb.mod || keyRanges.length > 1 ? '.mod' : '';
+
+  for (const range of keyRanges) {
+    const beginText = env.t(`key.${range.begin}${app}`);
+
+    if (range.begin === range.end) {
+      rangeTexts.push(beginText);
+    } else {
+      const endText = env.t(`key.${range.end}${app}`);
+
+      rangeTexts.push(`${beginText}${env.t(`key.unto${app}`)}${endText}`);
+    }
+  }
+
   let text = kb.mod
-    ? env.t(`key.mod.${kb.mod}`) + " + " + env.t(`key.${kb.key}.mod`)
-    : env.t(`key.${kb.key}`);
+    ? (env.t(`key.mod.${kb.mod}`) + " + " + rangeTexts.join("/"))
+    : rangeTexts.join(" / ");
 
   if (kb.repeat) {
     text = env.t('key.repeat', { key: text });

@@ -176,6 +176,12 @@
 			<trans-unit id="key.s.mod">
 				<source><![CDATA[S]]></source>
 			</trans-unit>
+			<trans-unit id="key.unto">
+				<source><![CDATA[ to ]]></source>
+			</trans-unit>
+			<trans-unit id="key.unto.mod">
+				<source><![CDATA[-]]></source>
+			</trans-unit>
 			<trans-unit id="modal.bookmark.copy-link">
 				<source><![CDATA[Copy Link]]></source>
 			</trans-unit>

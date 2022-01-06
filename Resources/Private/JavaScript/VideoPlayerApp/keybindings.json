@@ -1,33 +1,33 @@
 [
 	{
-		"key": "Escape",
+		"keys": ["Escape"],
 		"action": "cancel",
 		"kind": "other",
 		"order": 100
 	},
 	{
-		"key": "F1",
+		"keys": ["F1"],
 		"repeat": false,
 		"action": "modal.help.toggle",
 		"kind": "other",
 		"order": 99
 	},
 	{
-		"key": "b",
+		"keys": ["b"],
 		"scope": "player",
 		"action": "modal.bookmark.open",
 		"kind": "other",
 		"order": 30
 	},
 	{
-		"key": "s",
+		"keys": ["s"],
 		"scope": "player",
 		"action": "modal.screenshot.open",
 		"kind": "other",
 		"order": 31
 	},
 	{
-		"key": "s",
+		"keys": ["s"],
 		"mod": "Shift",
 		"scope": "player",
 		"action": "modal.screenshot.snap",
@@ -35,7 +35,7 @@
 		"order": 32
 	},
 	{
-		"key": "f",
+		"keys": ["f"],
 		"repeat": false,
 		"scope": "player",
 		"action": "fullscreen.toggle",
@@ -43,7 +43,7 @@
 		"order": 20
 	},
 	{
-		"key": "t",
+		"keys": ["t"],
 		"repeat": false,
 		"scope": "player",
 		"action": "theater.toggle",
@@ -51,7 +51,7 @@
 		"order": 21
 	},
 	{
-		"key": " ",
+		"keys": [" "],
 		"repeat": false,
 		"scope": "player",
 		"action": "playback.toggle",
@@ -59,7 +59,7 @@
 		"order": 0
 	},
 	{
-		"key": "m",
+		"keys": ["m"],
 		"repeat": false,
 		"scope": "player",
 		"action": "playback.volume.mute.toggle",
@@ -67,21 +67,21 @@
 		"order": 12
 	},
 	{
-		"key": "ArrowUp",
+		"keys": ["ArrowUp"],
 		"scope": "player",
 		"action": "playback.volume.inc",
 		"kind": "player",
 		"order": 10
 	},
 	{
-		"key": "ArrowDown",
+		"keys": ["ArrowDown"],
 		"scope": "player",
 		"action": "playback.volume.dec",
 		"kind": "player",
 		"order": 11
 	},
 	{
-		"key": "c",
+		"keys": ["c"],
 		"repeat": false,
 		"scope": "player",
 		"action": "playback.captions.toggle",
@@ -89,7 +89,7 @@
 		"order": 13
 	},
 	{
-		"key": "ArrowLeft",
+		"keys": ["ArrowLeft"],
 		"repeat": false,
 		"scope": "player",
 		"action": "navigate.rewind",
@@ -97,7 +97,7 @@
 		"order": 0
 	},
 	{
-		"key": "ArrowRight",
+		"keys": ["ArrowRight"],
 		"repeat": false,
 		"scope": "player",
 		"action": "navigate.seek",
@@ -105,7 +105,7 @@
 		"order": 1
 	},
 	{
-		"key": "ArrowLeft",
+		"keys": ["ArrowLeft"],
 		"repeat": true,
 		"scope": "player",
 		"action": "navigate.continuous-rewind",
@@ -113,7 +113,7 @@
 		"order": 2
 	},
 	{
-		"key": "ArrowRight",
+		"keys": ["ArrowRight"],
 		"repeat": true,
 		"scope": "player",
 		"action": "navigate.continuous-seek",
@@ -122,7 +122,7 @@
 	},
 	{
 		"mod": "CtrlMeta",
-		"key": "ArrowLeft",
+		"keys": ["ArrowLeft"],
 		"scope": "player",
 		"action": "navigate.chapter.prev",
 		"kind": "navigate",
@@ -130,7 +130,7 @@
 	},
 	{
 		"mod": "CtrlMeta",
-		"key": "ArrowRight",
+		"keys": ["ArrowRight"],
 		"scope": "player",
 		"action": "navigate.chapter.next",
 		"kind": "navigate",
@@ -138,7 +138,7 @@
 	},
 	{
 		"mod": "Shift",
-		"key": "ArrowLeft",
+		"keys": ["ArrowLeft"],
 		"scope": "player",
 		"action": "navigate.frame.prev",
 		"kind": "navigate",
@@ -146,21 +146,21 @@
 	},
 	{
 		"mod": "Shift",
-		"key": "ArrowRight",
+		"keys": ["ArrowRight"],
 		"scope": "player",
 		"action": "navigate.frame.next",
 		"kind": "navigate",
 		"order": 21
 	},
 	{
-		"key": ",",
+		"keys": [","],
 		"scope": "player",
 		"action": "navigate.frame.prev",
 		"kind": "navigate",
 		"order": 20
 	},
 	{
-		"key": ".",
+		"keys": ["."],
 		"scope": "player",
 		"action": "navigate.frame.next",
 		"kind": "navigate",

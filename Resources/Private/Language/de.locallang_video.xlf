@@ -233,6 +233,14 @@
 				<source><![CDATA[S]]></source>
 				<target><![CDATA[S]]></target>
 			</trans-unit>
+			<trans-unit id="key.unto" approved="yes">
+				<source><![CDATA[ to ]]></source>
+				<target><![CDATA[ bis ]]></target>
+			</trans-unit>
+			<trans-unit id="key.unto.mod" approved="yes">
+				<source><![CDATA[-]]></source>
+				<target><![CDATA[-]]></target>
+			</trans-unit>
 			<trans-unit id="modal.bookmark.copy-link" approved="yes">
 				<source><![CDATA[Copy Link]]></source>
 				<target><![CDATA[Link kopieren]]></target>
