@@ -204,6 +204,19 @@ export default class SxndPlayerApp {
       'navigate.frame.next': () => {
         this.sxndPlayer.getVifa()?.seekForward(1);
       },
+      'navigate.position.percental': (
+        /** @type {Keybinding<any, any>} */ kb,
+        /** @type {number} */ keyIndex
+      ) => {
+        if (0 <= keyIndex && keyIndex < kb.keys.length) {
+          // Implies kb.keys.length > 0
+
+          const relative = keyIndex / kb.keys.length;
+          const absolute = relative * this.sxndPlayer.getVideo().duration;
+
+          this.sxndPlayer.seekTo(absolute);
+        }
+      },
     };
 
     this.modals.on('closed', this.handlers.onCloseModal);

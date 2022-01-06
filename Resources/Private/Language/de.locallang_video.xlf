@@ -73,6 +73,10 @@
 				<source><![CDATA[Fast-forward ({trickPlayFactor}x)]]></source>
 				<target><![CDATA[Vorspulen ({trickPlayFactor}x)]]></target>
 			</trans-unit>
+			<trans-unit id="action.navigate.position.percental" approved="yes">
+				<source><![CDATA[Jump to position (%)]]></source>
+				<target><![CDATA[Zu Position springen (%)]]></target>
+			</trans-unit>
 			<trans-unit id="action.playback.captions.toggle" approved="yes">
 				<source><![CDATA[Toggle captions]]></source>
 				<target><![CDATA[Untertitel an / aus]]></target>

@@ -31,4 +31,10 @@ describe('format translated key description', () => {
     const text = getKeybindingText(env, /** @type {any} */(kb));
     expect(text).toBe("Shift + S");
   });
+
+  test('numeric keys for jumping to position', () => {
+    const kb = keybindings.find(kb => kb.action === 'navigate.position.percental');
+    const text = getKeybindingText(env, /** @type {any} */(kb));
+    expect(text).toBe("Key 0 to Key 9");
+  });
 });

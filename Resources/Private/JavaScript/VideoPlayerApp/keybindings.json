@@ -137,6 +137,13 @@
 		"order": 11
 	},
 	{
+		"keys": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+		"scope": "player",
+		"action": "navigate.position.percental",
+		"kind": "navigate",
+		"order": 11
+	},
+	{
 		"mod": "Shift",
 		"keys": ["ArrowLeft"],
 		"scope": "player",
