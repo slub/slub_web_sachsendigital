@@ -98,17 +98,23 @@ export default class Environment {
    *
    * @param {string} key
    * @param {Record<string, string | number>} values
+   * @param {(() => string) | undefined} fallback (Optional) Function to
+   * generate fallback string when {@link key} is not fonud.
    * @returns {string}
    */
-  t(key, values = {}) {
+  t(key, values = {}, fallback = undefined) {
     let phrase = this.lang.phrasesCompiled[key];
 
     if (phrase === undefined) {
       const phraseStr = this.lang.phrasesInput[key];
 
       if (phraseStr === undefined) {
-        console.error(`Warning: Translation key '${key}' not defined.`);
-        return key;
+        if (typeof fallback === 'function') {
+          return fallback();
+        } else {
+          console.error(`Warning: Translation key '${key}' not defined, fallback not provided.`);
+          return key;
+        }
       }
 
       phrase

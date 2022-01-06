@@ -28,18 +28,24 @@ describe('supportsCanvasExport', () => {
 });
 
 describe('setLang / t', () => {
-  test('basic', () => {
-    const env = new Environment();
-    env.setLang({
-      locale: 'en_US',
-      twoLetterIsoCode: 'en',
-      phrases: {
-        'apple': "{count, plural, =0 {no apple} one {one apple} other {# apples}}",
-      },
-    });
+  const env = new Environment();
+  env.setLang({
+    locale: 'en_US',
+    twoLetterIsoCode: 'en',
+    phrases: {
+      'apple': "{count, plural, =0 {no apple} one {one apple} other {# apples}}",
+      'test': "Test",
+    },
+  });
 
+  test('basic', () => {
     expect(env.t('apple', { count: 0 })).toBe("no apple");
     expect(env.t('apple', { count: 1 })).toBe("one apple");
     expect(env.t('apple', { count: 3 })).toBe("3 apples");
+  });
+
+  test('uses fallback for translation', () => {
+    expect(env.t('test', {}, () => 'fallback')).toBe("Test");
+    expect(env.t('not.existent', {}, () => 'fallback')).toBe("fallback");
   });
 });
