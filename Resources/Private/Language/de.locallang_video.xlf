@@ -149,6 +149,14 @@
 				<source><![CDATA[This video cannot be played back in your browser.]]></source>
 				<target><![CDATA[Dieses Video kann in Ihrem Browser nicht wiedergegeben werden.]]></target>
 			</trans-unit>
+			<trans-unit id="key.generic">
+				<source><![CDATA[Key {key}]]></source>
+				<target><![CDATA[Taste {key}]]></target>
+			</trans-unit>
+			<trans-unit id="key.generic.mod">
+				<source><![CDATA[{key}]]></source>
+				<target><![CDATA[{key}]]></target>
+			</trans-unit>
 			<trans-unit id="key. " approved="yes">
 				<source><![CDATA[Space Bar]]></source>
 				<target><![CDATA[Leertaste]]></target>
@@ -193,26 +201,6 @@
 				<source><![CDATA[F1]]></source>
 				<target><![CDATA[F1]]></target>
 			</trans-unit>
-			<trans-unit id="key.b" approved="yes">
-				<source><![CDATA[Key B]]></source>
-				<target><![CDATA[Taste B]]></target>
-			</trans-unit>
-			<trans-unit id="key.c" approved="yes">
-				<source><![CDATA[Key C]]></source>
-				<target><![CDATA[Taste C]]></target>
-			</trans-unit>
-			<trans-unit id="key.f" approved="yes">
-				<source><![CDATA[Key F]]></source>
-				<target><![CDATA[Taste F]]></target>
-			</trans-unit>
-			<trans-unit id="key.m" approved="yes">
-				<source><![CDATA[Key M]]></source>
-				<target><![CDATA[Taste M]]></target>
-			</trans-unit>
-			<trans-unit id="key.t" approved="yes">
-				<source><![CDATA[Key T]]></source>
-				<target><![CDATA[Taste T]]></target>
-			</trans-unit>
 			<trans-unit id="key.mod.CtrlMeta" approved="yes">
 				<source><![CDATA[Ctrl]]></source>
 				<target><![CDATA[Strg]]></target>
@@ -224,14 +212,6 @@
 			<trans-unit id="key.repeat" approved="yes">
 				<source><![CDATA[{key} (repeat)]]></source>
 				<target><![CDATA[{key} (halten)]]></target>
-			</trans-unit>
-			<trans-unit id="key.s" approved="yes">
-				<source><![CDATA[Key S]]></source>
-				<target><![CDATA[Taste S]]></target>
-			</trans-unit>
-			<trans-unit id="key.s.mod" approved="yes">
-				<source><![CDATA[S]]></source>
-				<target><![CDATA[S]]></target>
 			</trans-unit>
 			<trans-unit id="key.unto" approved="yes">
 				<source><![CDATA[ to ]]></source>

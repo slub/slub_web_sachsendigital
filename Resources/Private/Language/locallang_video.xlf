@@ -113,6 +113,12 @@
 			<trans-unit id="error.playback-not-supported">
 				<source><![CDATA[This video cannot be played back in your browser.]]></source>
 			</trans-unit>
+			<trans-unit id="key.generic">
+				<source><![CDATA[Key {key}]]></source>
+			</trans-unit>
+			<trans-unit id="key.generic.mod">
+				<source><![CDATA[{key}]]></source>
+			</trans-unit>
 			<trans-unit id="key. ">
 				<source><![CDATA[Space Bar]]></source>
 			</trans-unit>
@@ -146,21 +152,6 @@
 			<trans-unit id="key.F1">
 				<source><![CDATA[F1]]></source>
 			</trans-unit>
-			<trans-unit id="key.b">
-				<source><![CDATA[Key B]]></source>
-			</trans-unit>
-			<trans-unit id="key.c">
-				<source><![CDATA[Key C]]></source>
-			</trans-unit>
-			<trans-unit id="key.f">
-				<source><![CDATA[Key F]]></source>
-			</trans-unit>
-			<trans-unit id="key.m">
-				<source><![CDATA[Key M]]></source>
-			</trans-unit>
-			<trans-unit id="key.t">
-				<source><![CDATA[Key T]]></source>
-			</trans-unit>
 			<trans-unit id="key.mod.CtrlMeta">
 				<source><![CDATA[Ctrl]]></source>
 			</trans-unit>
@@ -169,9 +160,6 @@
 			</trans-unit>
 			<trans-unit id="key.repeat">
 				<source><![CDATA[{key} (repeat)]]></source>
-			</trans-unit>
-			<trans-unit id="key.s">
-				<source><![CDATA[Key S]]></source>
 			</trans-unit>
 			<trans-unit id="key.s.mod">
 				<source><![CDATA[S]]></source>
