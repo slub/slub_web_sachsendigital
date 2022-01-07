@@ -59,6 +59,17 @@ export default class Environment {
 
   /**
    * @inheritdoc
+   * @returns {boolean}
+   */
+  supportsMediaSource() {
+    return (
+      window.MediaSource !== undefined
+      && window.MediaSource.isTypeSupported !== undefined
+    );
+  }
+
+  /**
+   * @inheritdoc
    * @param {string} mimeType
    * @returns {boolean}
    */
@@ -66,6 +77,15 @@ export default class Environment {
     const dataUrl = this.getTestElement('canvas').toDataURL(mimeType);
     const actualMime = dataUrlMime(dataUrl);
     return actualMime === mimeType;
+  }
+
+  /**
+   * @inheritdoc
+   * @param {string} mimeType
+   * @returns {boolean}
+   */
+  supportsVideoMime(mimeType) {
+    return this.getTestElement('video').canPlayType(mimeType) !== '';
   }
 
   /**

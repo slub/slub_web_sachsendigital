@@ -79,16 +79,6 @@ export default class SxndPlayerApp {
     /** @private */
     this.sxndPlayer = new SachsenShakaPlayer(this.env);
 
-    // Check if we've got a URL for a supported manifest format
-    /** @private */
-    this.manifestUri = null;
-    for (const format of SachsenShakaPlayer.initSupport()) {
-      if (videoInfo.url[format]) {
-        this.manifestUri = videoInfo.url[format];
-        break;
-      }
-    }
-
     /** @private @type {ChapterLink[]} */
     this.chapterLinks = [];
 
@@ -291,7 +281,12 @@ export default class SxndPlayerApp {
    * @private
    */
   async load() {
-    if (this.manifestUri === null) {
+    // Find source for a supported manifest/video format
+    const videoSource = this.videoInfo.sources.find(
+      source => this.sxndPlayer.supportsMimeType(source.mimeType)
+    );
+
+    if (videoSource === undefined) {
       this.failWithError('error.playback-not-supported');
       return;
     }
@@ -342,7 +337,7 @@ export default class SxndPlayerApp {
     this.sxndPlayer.mount(this.playerMount);
 
     try {
-      await this.sxndPlayer.loadManifest(this.manifestUri, startTime);
+      await this.sxndPlayer.loadManifest(videoSource, startTime);
     } catch (e) {
       console.error(e);
       this.failWithError('error.load-failed');

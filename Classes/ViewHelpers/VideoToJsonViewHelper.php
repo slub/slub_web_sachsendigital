@@ -51,10 +51,23 @@ class VideoToJsonViewHelper extends AbstractViewHelper
                 ],
             ],
 
-            'url' => [
-                'mpd' => "https://media.sachsen.digital/$movieDir/$movieDir.mpd",
+            'sources' => [
+                [
+                    'mimeType' => 'application/dash+xml',
+                    'url' => "https://media.sachsen.digital/$movieDir/$movieDir.mpd",
+                ],
                 // TODO: This assumes the HLS playlist exists, which currently it may not...
-                'hls' => "https://media.sachsen.digital/$movieDir/$movieDir.m3u8",
+                [
+                    'mimeType' => 'application/x-mpegurl',
+                    'url' => "https://media.sachsen.digital/$movieDir/$movieDir.m3u8",
+                ],
+                [
+                    'mimeType' => 'video/mp4',
+                    'url' => "https://media.sachsen.digital/$movieDir.mp4",
+                ],
+            ],
+
+            'url' => [
                 'poster' => "https://media.sachsen.digital/$movieDir/$movieDir.jpg",
             ],
         ];

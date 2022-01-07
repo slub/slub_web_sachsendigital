@@ -14,12 +14,21 @@ describe('generateTimecodeUrl', () => {
    */
   const url = (timecode, env) => generateTimecodeUrl(timecode, env).toString();
 
-  test('basic', () => {
-    /** @type {Browser} */
-    const env = {
-      getLocation: () => new URL("http://localhost/video"),
+  /**
+   * @param {URL} location
+   * @returns {Browser}
+   */
+  const mkEnv = (location) => {
+    return {
+      getLocation: () => location,
+      supportsMediaSource: () => false,
       supportsCanvasExport: () => false,
+      supportsVideoMime: () => false,
     };
+  }
+
+  test('basic', () => {
+    const env = mkEnv(new URL("http://localhost/video"));
 
     expect(url(null, env)).toBe("http://localhost/video");
     expect(url(1, env)).toBe("http://localhost/video?timecode=1");
@@ -27,10 +36,7 @@ describe('generateTimecodeUrl', () => {
 
   test('overrides timecode', () => {
     /** @type {Browser} */
-    const env = {
-      getLocation: () => new URL("http://localhost/video?timecode=2"),
-      supportsCanvasExport: () => false,
-    };
+    const env = mkEnv(new URL("http://localhost/video?timecode=2"));
 
     expect(url(null, env)).toBe("http://localhost/video");
     expect(url(1, env)).toBe("http://localhost/video?timecode=1");

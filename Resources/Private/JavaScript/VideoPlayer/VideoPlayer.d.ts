@@ -59,3 +59,8 @@ type SxndEventDetail = {
     variantGroups: import("./VariantGroups").default;
   };
 };
+
+type VideoSource = {
+  mimeType: string;
+  url: string;
+};

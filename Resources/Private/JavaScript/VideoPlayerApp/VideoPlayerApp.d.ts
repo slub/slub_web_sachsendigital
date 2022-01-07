@@ -22,9 +22,11 @@ type VideoInfo = {
     timecode: string;
   }[];
   metadata: MetadataArray;
+  /**
+   * Sources of available manifest or raw video files, ordered by preference.
+   */
+  sources: VideoSource[];
   url: {
-    mpd: string;
-    hls: string;
     poster: string;
   };
 };

@@ -46,10 +46,21 @@ interface Browser {
   getLocation(): URL;
 
   /**
+   * Checks whether MSE are supported.
+   */
+  supportsMediaSource(): boolean;
+
+  /**
    * Checks whether canvas can be dumped to an image of the specified
    * {@link mimeType}.
    */
   supportsCanvasExport(mimeType: string): boolean;
+
+  /**
+   * Checks whether video playback of the given {@link mimeType} is supported
+   * natively.
+   */
+  supportsVideoMime(mimeType: string): boolean;
 }
 
 /**
