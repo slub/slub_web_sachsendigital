@@ -34,9 +34,9 @@ export default class Environment {
 
     /**
      * @private
-     * @type {HTMLCanvasElement | null}
+     * @type {Partial<HTMLElementTagNameMap>}
      */
-    this.testCanvas = null;
+    this.testElements = {};
 
     /**
      * @private
@@ -63,7 +63,7 @@ export default class Environment {
    * @returns {boolean}
    */
   supportsCanvasExport(mimeType) {
-    const dataUrl = this.getTestCanvas().toDataURL(mimeType);
+    const dataUrl = this.getTestElement('canvas').toDataURL(mimeType);
     const actualMime = dataUrlMime(dataUrl);
     return actualMime === mimeType;
   }
@@ -126,15 +126,13 @@ export default class Environment {
   }
 
   /**
-   *
    * @private
-   * @returns {HTMLCanvasElement}
+   * @template {keyof HTMLElementTagNameMap} K
+   * @param {K} tagName
+   * @returns {HTMLElementTagNameMap[K]}
    */
-  getTestCanvas() {
-    if (!this.testCanvas) {
-      this.testCanvas = document.createElement('canvas');
-    }
-
-    return this.testCanvas;
+  getTestElement(tagName) {
+    // @ts-expect-error TODO
+    return this.testElements[tagName] ?? document.createElement(tagName);
   }
 }
