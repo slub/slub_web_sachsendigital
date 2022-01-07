@@ -281,12 +281,12 @@ export default class SxndPlayerApp {
    * @private
    */
   async load() {
-    // Find source for a supported manifest/video format
-    const videoSource = this.videoInfo.sources.find(
+    // Find sources for supported manifest/video formats
+    const videoSources = this.videoInfo.sources.filter(
       source => this.sxndPlayer.supportsMimeType(source.mimeType)
     );
 
-    if (videoSource === undefined) {
+    if (videoSources.length === 0) {
       this.failWithError('error.playback-not-supported');
       return;
     }
@@ -336,11 +336,21 @@ export default class SxndPlayerApp {
     this.sxndPlayer.setChapters(chapters);
     this.sxndPlayer.mount(this.playerMount);
 
-    try {
-      await this.sxndPlayer.loadManifest(videoSource, startTime);
-    } catch (e) {
-      console.error(e);
+    // Try loading video until one of the sources works.
+    let loadedSource;
+    for (const source of videoSources) {
+      try {
+        await this.sxndPlayer.loadManifest(source, startTime);
+        loadedSource = source;
+        break;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    if (loadedSource === undefined) {
       this.failWithError('error.load-failed');
+      return;
     }
 
     this.modals.resize();
