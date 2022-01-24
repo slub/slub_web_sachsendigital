@@ -27,7 +27,7 @@
 			</trans-unit>
 			<trans-unit id="action.modal.bookmark.open" approved="yes">
 				<source><![CDATA[Bookmark (share link)]]></source>
-				<target><![CDATA[Bookmark (Link teilen)]]></target>
+				<target><![CDATA[Bookmark (Link weitergeben)]]></target>
 			</trans-unit>
 			<trans-unit id="action.modal.help.toggle" approved="yes">
 				<source><![CDATA[Toggle help (this window)]]></source>
@@ -235,7 +235,7 @@
 			</trans-unit>
 			<trans-unit id="modal.bookmark.title" approved="yes">
 				<source><![CDATA[Bookmark (Share Link)]]></source>
-				<target><![CDATA[Bookmark (Link teilen)]]></target>
+				<target><![CDATA[Bookmark (Link weitergeben)]]></target>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.configuration" approved="yes">
 				<source><![CDATA[Configure]]></source>
