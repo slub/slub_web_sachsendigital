@@ -224,7 +224,7 @@ export default class ScreenshotModal extends SimpleModal {
 
     const image = await this.makeImageBlob(
       this.$canvas, selectedImageFormat, metadata, timecode);
-    const filename = this.getFilename(metadata, timecode);
+    const filename = this.getFilename(metadata, timecode, selectedImageFormat);
 
     download(image, filename);
 
@@ -262,12 +262,18 @@ export default class ScreenshotModal extends SimpleModal {
    *
    * @param {MetadataArray} metadata
    * @param {number} timecode
+   * @param {ImageFormatDesc} selectedImageFormat
+   * @return {string}
    */
-  getFilename(metadata, timecode) {
+  getFilename(metadata, timecode, selectedImageFormat) {
     // NOTE: Don't localize (English file name prefix should be alright)
-    return sanitizeBasename(
+    const basename = sanitizeBasename(
       `Screenshot-${metadata.metadata.title?.[0] ?? "Unnamed"}-T${buildTimeString(timecode, true)}`
     );
+
+    const extension = selectedImageFormat.extension;
+
+    return `${basename}.${extension}`;
   }
 
   /**

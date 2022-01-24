@@ -27,6 +27,7 @@ interface ImageFormat {
 
 type ImageFormatDesc = {
   mimeType: string;
+  extension: string;
   label: string;
   parseBinaryString: (s: string) => ImageFormat | undefined;
 };
