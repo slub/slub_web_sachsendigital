@@ -266,8 +266,8 @@
 				<target><![CDATA[Dateiformat]]></target>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.snap-tip" approved="yes">
-				<source><![CDATA[Use {keybinding} to save a screenshot without opening this dialog.]]></source>
-				<target><![CDATA[Mit {keybinding} kann ein Screenshot direkt heruntergeladen werden.]]></target>
+				<source><![CDATA[Use {keybinding} to save a screenshot while watching.]]></source>
+				<target><![CDATA[Mit {keybinding} kann ein Screenshot im laufenden Film heruntergeladen werden.]]></target>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.title" approved="yes">
 				<source><![CDATA[Screenshot]]></source>

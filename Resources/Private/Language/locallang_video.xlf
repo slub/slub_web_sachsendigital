@@ -201,7 +201,7 @@
 				<source><![CDATA[Overlay on image]]></source>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.snap-tip">
-				<source><![CDATA[Use {keybinding} to save a screenshot without opening this dialog.]]></source>
+				<source><![CDATA[Use {keybinding} to save a screenshot while watching.]]></source>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.title">
 				<source><![CDATA[Screenshot]]></source>
