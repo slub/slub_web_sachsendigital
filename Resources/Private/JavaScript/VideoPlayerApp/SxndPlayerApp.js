@@ -34,9 +34,9 @@ export default class SxndPlayerApp {
    *
    * @param {HTMLElement} container
    * @param {VideoInfo} videoInfo
-   * @param {LangDef} lang
+   * @param {AppConfig} config
    */
-  constructor(container, videoInfo, lang) {
+  constructor(container, videoInfo, config) {
     /** @private */
     this.container = container;
     /** @private */
@@ -45,7 +45,7 @@ export default class SxndPlayerApp {
     /** @private */
     this.videoInfo = videoInfo;
     /** @private */
-    this.lang = lang;
+    this.config = config;
     /** @private @type {Keybinding<KeyboardScope, keyof SxndPlayerApp['actions']>[]} */
     this.keybindings = /** @type {any} */(keybindings);
 
@@ -74,7 +74,7 @@ export default class SxndPlayerApp {
 
     /** @private */
     this.env = new Environment();
-    this.env.setLang(lang);
+    this.env.setLang(config.lang);
 
     /** @private */
     this.sxndPlayer = new SachsenShakaPlayer(this.env);
@@ -92,7 +92,9 @@ export default class SxndPlayerApp {
         },
         keybindings: this.keybindings,
       }),
-      bookmark: new BookmarkModal(this.container, this.env),
+      bookmark: new BookmarkModal(this.container, this.env, {
+        shareButtons: this.config.shareButtons,
+      }),
       screenshot: new ScreenshotModal(this.container, this.env, this.keybindings),
     });
 
@@ -332,7 +334,7 @@ export default class SxndPlayerApp {
       })
     );
     this.sxndPlayer.setConstants(this.constants);
-    this.sxndPlayer.setLocale(this.lang.twoLetterIsoCode);
+    this.sxndPlayer.setLocale(this.config.lang.twoLetterIsoCode);
     this.sxndPlayer.setPoster(this.videoInfo.url.poster);
     this.sxndPlayer.setChapters(chapters);
     this.sxndPlayer.mount(this.playerMount);

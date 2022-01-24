@@ -1,6 +1,6 @@
 interface Window {
   SxndPlayerApp: {
-    new (container: HTMLElement, videoInfo: VideoInfo, lang: LangDef);
+    new (container: HTMLElement, videoInfo: VideoInfo, config: AppConfig);
   };
 }
 
@@ -41,6 +41,11 @@ type LangDef = {
   locale: string;
   twoLetterIsoCode: string;
   phrases: PhrasesDict;
+};
+
+type AppConfig = {
+  shareButtons: import("./modals/BookmarkModal").ShareButtonInfo[];
+  lang: LangDef;
 };
 
 type Keybinding<ScopeT extends string, ActionT extends string> = {

@@ -9,5 +9,28 @@ plugin.tx_slubwebsachsendigital_media {
     playerTranslations {
       baseFile=EXT:slub_web_sachsendigital/Resources/Private/Language/locallang_video.xlf
     }
+
+    shareButtons {
+      0 {
+        type = material
+        icon = email
+        titleTranslationKey = share.email.tooltip
+        hrefTemplate = mailto:?body={url}%0A%0A
+      }
+
+      1 {
+        type = material
+        icon = qr_code
+        titleTranslationKey = share.qr_code.tooltip
+        hrefTemplate = dlf:qr_code
+      }
+
+      2 {
+        type = image
+        src = /fileadmin/user_upload/Logo_blue.svg
+        titleTranslationKey = share.tweet.tooltip
+        hrefTemplate = https://twitter.com/intent/tweet?url={url}
+      }
+    }
   }
 }
