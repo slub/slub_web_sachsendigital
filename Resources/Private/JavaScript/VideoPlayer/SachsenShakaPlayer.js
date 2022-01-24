@@ -187,17 +187,16 @@ export default class SachsenShakaPlayer {
     // TODO: Somehow avoid overriding the SeekBar globally?
     FlatSeekBar.register();
 
+    // TODO: Refactor insertion at custom position (left or right of fullscreen)
     this.ui.configure({
       addSeekBar: true,
       controlPanelElements: [
         'play_pause',
-        'chapters_menu',
         PresentationTimeTracker.register(this.env),
         'spacer',
         'volume',
         'mute',
         ...this.controlPanelButtons,
-        'fullscreen',
         'overflow_menu',
       ],
       overflowMenuButtons: [

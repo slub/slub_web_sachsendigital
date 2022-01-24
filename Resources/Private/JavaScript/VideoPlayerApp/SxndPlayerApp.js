@@ -323,9 +323,10 @@ export default class SxndPlayerApp {
         title: this.env.t('control.bookmark.tooltip'),
         onClick: this.actions['modal.bookmark.open'],
       }),
+      'fullscreen',
       ControlPanelButton.register(this.env, {
         className: "sxnd-help-button",
-        material_icon: 'help_outline',
+        material_icon: 'info_outline',
         title: this.env.t('control.help.tooltip'),
         onClick: this.actions['modal.help.open'],
       })

@@ -47,6 +47,28 @@
     vertical-align: middle;
 }
 
+@media all and (min-width: calc(@tabletViewportWidth + 1px)) {
+    .shaka-controls-button-panel button {
+        margin-left: 8px;
+        margin-right: 8px;
+    }
+
+    .shaka-overflow-menu-button {
+        margin-left: 0 !important;
+    }
+
+    .shaka-fullscreen-button {
+        margin-left: 3px !important;
+        margin-right: 4px !important;
+    }
+}
+
+.sxnd-screenshot-button,
+.sxnd-bookmark-button,
+.sxnd-help-button {
+    font-size: 22px !important;
+}
+
 @media all and (max-width: @tabletViewportWidth) {
     .sxnd-screenshot-button,
     .sxnd-bookmark-button,
