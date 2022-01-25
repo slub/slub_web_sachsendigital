@@ -174,6 +174,28 @@ export function binaryStringToArrayBuffer(s) {
 }
 
 /**
+ * May be used as event handlers in situations where the default action should
+ * not be triggered (for example, to prevent dragging or submitting a form).
+ *
+ * @param {Event} e
+ * @returns {boolean}
+ */
+export function cancelAction(e) {
+  e.preventDefault();
+  return false;
+}
+
+/**
+ * Ensures that an element may not be dragged.
+ *
+ * @param {HTMLElement} e
+ */
+export function disableDragging(e) {
+  e.draggable = false;
+  e.ondragstart = cancelAction;
+}
+
+/**
  * Creates a nested HTML element.
  *
  * @template {keyof HTMLElementTagNameMap} K

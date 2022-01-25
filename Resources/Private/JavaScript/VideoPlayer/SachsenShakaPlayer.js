@@ -246,7 +246,8 @@ export default class SachsenShakaPlayer {
 
     this.variantGroups = new VariantGroups(this.player);
 
-    this.variantGroups.selectGroupByRole("main")
+    this.variantGroups.selectGroupWithPrimary()
+      || this.variantGroups.selectGroupByRole("main")
       || this.variantGroups.selectGroupByIndex(0);
 
     this.emitControlEvent('sxnd-variant-groups', {

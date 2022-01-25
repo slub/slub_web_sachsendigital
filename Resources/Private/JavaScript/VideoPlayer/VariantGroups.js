@@ -7,6 +7,7 @@
  *  key: GroupKey;
  *  variants: shaka.extern.Variant[];
  *  roles: Set<string>;
+ *  hasPrimary: boolean;
  * }} Group
  *
  * @typedef {{
@@ -112,6 +113,10 @@ export default class VariantGroups {
       for (const role of video.roles) {
         group.roles.add(role);
       }
+
+      if (video.primary) {
+        group.hasPrimary = true;
+      }
     }
   }
 
@@ -139,6 +144,7 @@ export default class VariantGroups {
         key: key,
         variants: [],
         roles: new Set(),
+        hasPrimary: false,
       };
 
       this.groupKeys.push(key);
@@ -256,6 +262,16 @@ export default class VariantGroups {
    */
   selectGroupByRole(role) {
     return this.trySelectGroup(this.groups.find(g => g.roles.has(role)));
+  }
+
+  /**
+   * Selects a group that has a stream marked as primary via role "main" or
+   * HLS DEFAULT attribute (cf. {@link selectGroup}).
+   *
+   * @returns {boolean} Whether or not a relevant group has been found.
+   */
+  selectGroupWithPrimary() {
+    return this.trySelectGroup(this.groups.find(g => g.hasPrimary));
   }
 
   /**
