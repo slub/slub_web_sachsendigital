@@ -72,5 +72,5 @@ interface Translator {
   /**
    * Get translated phrase of given {@link key}.
    */
-  t(key: string, values?: Record<string, string | number>): string;
+  t(key: string, values?: Record<string, string | number>, fallback?: () => string): string;
 }

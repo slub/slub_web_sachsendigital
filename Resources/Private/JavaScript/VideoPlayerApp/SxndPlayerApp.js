@@ -1,7 +1,7 @@
 // @ts-check
 
 import { e } from '../lib/util';
-import { Modifier, modifiersFromEvent } from '../lib/Keyboard';
+import { Keybindings$find } from '../lib/Keyboard';
 import {
   Chapters,
   ControlPanelButton,
@@ -177,6 +177,9 @@ export default class SxndPlayerApp {
       'playback.volume.dec': () => {
         this.sxndPlayer.volume = this.sxndPlayer.volume - this.constants.volumeStep;
       },
+      'playback.captions.toggle': () => {
+        this.sxndPlayer.showCaptions = !this.sxndPlayer.showCaptions;
+      },
       'navigate.rewind': () => {
         this.sxndPlayer.skipSeconds(-this.constants.seekStep);
       },
@@ -200,6 +203,19 @@ export default class SxndPlayerApp {
       },
       'navigate.frame.next': () => {
         this.sxndPlayer.getVifa()?.seekForward(1);
+      },
+      'navigate.position.percental': (
+        /** @type {Keybinding<any, any>} */ kb,
+        /** @type {number} */ keyIndex
+      ) => {
+        if (0 <= keyIndex && keyIndex < kb.keys.length) {
+          // Implies kb.keys.length > 0
+
+          const relative = keyIndex / kb.keys.length;
+          const absolute = relative * this.sxndPlayer.getVideo().duration;
+
+          this.sxndPlayer.seekTo(absolute);
+        }
       },
     };
 
@@ -364,21 +380,14 @@ export default class SxndPlayerApp {
   onKeyDown(e) {
     let stopPropagation = true;
 
-    const mod = modifiersFromEvent(e);
     const curKbScope = this.getKeyboardScope();
+    const result = Keybindings$find(this.keybindings, e, curKbScope);
 
-    const keybinding = this.keybindings.find(kb => (
-      typeof this.actions[kb.action] === 'function'
-      // Ignore casing, e.g. for `S` vs. `Shift + S`.
-      && kb.key.toLowerCase() === e.key.toLowerCase()
-      && (kb.repeat == null || kb.repeat === e.repeat)
-      && (kb.scope == null || kb.scope === curKbScope)
-      && Modifier[kb.mod ?? 'None'] === mod
-    ));
+    if (result) {
+      const { keybinding, keyIndex } = result;
 
-    if (keybinding) {
       e.preventDefault();
-      this.actions[keybinding.action]();
+      this.actions[keybinding.action]?.(keybinding, keyIndex);
 
       if (keybinding.propagate === true) {
         stopPropagation = false;

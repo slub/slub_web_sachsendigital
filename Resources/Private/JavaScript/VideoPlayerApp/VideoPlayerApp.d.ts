@@ -50,9 +50,15 @@ type Keybinding<ScopeT extends string, ActionT extends string> = {
   mod?: "None" | "CtrlMeta" | "Shift" | "Alt";
 
   /**
-   * Name of the key to be bound.
+   * Names of the key or keys to be bound.
+   *
+   * Using multiple keys signifies that all of those inherently trigger the
+   * same action. The event handler may use the list of keys to parameterize
+   * its action.
+   *
+   * For creating an alias, consider adding a full keybinding entry instead.
    */
-  key: string;
+  keys: KeyboardEvent['key'][];
 
   /**
    * Boolean to indicate that the keypress must / must not be repeated;
