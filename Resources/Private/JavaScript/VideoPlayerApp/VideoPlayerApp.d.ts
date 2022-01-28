@@ -85,11 +85,6 @@ type Keybinding<ScopeT extends string, ActionT extends string> = {
   action: ActionT;
 
   /**
-   * Whether or not to propagate the event for further handling.
-   */
-  propagate?: boolean;
-
-  /**
    * Kind of keybinding as used for grouping in help modal.
    */
   kind: string;

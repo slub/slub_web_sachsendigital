@@ -358,7 +358,7 @@ export default class SxndPlayerApp {
 
     this.modals.resize();
 
-    document.addEventListener('keydown', this.handlers.onKeyDown, { capture: true });
+    document.addEventListener('keydown', this.handlers.onKeyDown);
     document.addEventListener('keyup', this.handlers.onKeyUp, { capture: true });
   }
 
@@ -386,8 +386,6 @@ export default class SxndPlayerApp {
    * @param {KeyboardEvent} e
    */
   onKeyDown(e) {
-    let stopPropagation = true;
-
     const curKbScope = this.getKeyboardScope();
     const result = Keybindings$find(this.keybindings, e, curKbScope);
 
@@ -396,17 +394,6 @@ export default class SxndPlayerApp {
 
       e.preventDefault();
       this.actions[keybinding.action]?.(keybinding, keyIndex);
-
-      if (keybinding.propagate === true) {
-        stopPropagation = false;
-      }
-    }
-
-    if (stopPropagation) {
-      // Stop propagation to suppress Shaka's default keybindings.
-      //
-      // TODO: Find a better solution; tweak this behavior
-      e.stopImmediatePropagation();
     }
   }
 
