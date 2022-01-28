@@ -216,6 +216,7 @@ export default class SachsenShakaPlayer {
         played: 'rgb(255, 255, 255)',
         adBreaks: 'rgb(255, 204, 0)',
       },
+      enableKeyboardPlaybackControls: false,
     });
 
     // Set again after `ui.configure()`
