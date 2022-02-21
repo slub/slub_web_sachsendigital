@@ -20,6 +20,17 @@ export function clamp(value, [min, max]) {
 }
 
 /**
+ * Zero-pad {@link value} to at least {@link length} digits.
+ *
+ * @param {number} value
+ * @param {number} length
+ * @returns {string}
+ */
+export function zeroPad(value, length) {
+  return value.toString().padStart(length, '0');
+}
+
+/**
  * Extracts the mime type from a data URL.
  *
  * @param {string} dataUrl

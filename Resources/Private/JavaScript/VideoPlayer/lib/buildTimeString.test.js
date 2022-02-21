@@ -17,11 +17,15 @@ describe('buildTimeString', () => {
   });
 
   test('with fps', () => {
-    expect(buildTimeString(0.00, false, 5)).toBe("0:00:00");
-    expect(buildTimeString(0.25, false, 5)).toBe("0:00:01");
-    expect(buildTimeString(0.50, false, 5)).toBe("0:00:02");
-    expect(buildTimeString(0.75, false, 5)).toBe("0:00:03");
-    expect(buildTimeString(1.00, false, 5)).toBe("0:01:00");
-    expect(buildTimeString(1.25, false, 5)).toBe("0:01:01");
+    expect(buildTimeString(0.00, false, 5)).toBe("0:00:00f");
+    expect(buildTimeString(0.25, false, 5)).toBe("0:00:01f");
+    expect(buildTimeString(0.50, false, 5)).toBe("0:00:02f");
+    expect(buildTimeString(0.75, false, 5)).toBe("0:00:03f");
+    expect(buildTimeString(1.00, false, 5)).toBe("0:01:00f");
+    expect(buildTimeString(1.25, false, 5)).toBe("0:01:01f");
+  });
+
+  test('no fps marker when showing hour', () => {
+    expect(buildTimeString(1.25, true, 5)).toBe("0:00:01:01");
   });
 });

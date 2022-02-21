@@ -2,13 +2,25 @@
 
 import { beforeEach, describe, expect, test, jest } from '@jest/globals';
 import { Blob } from 'buffer';
-import { dataUrlMime, clamp, sanitizeBasename, withObjectUrl } from './util';
+import { dataUrlMime, clamp, sanitizeBasename, withObjectUrl, zeroPad } from './util';
 
 describe('clamp', () => {
   test('basic', () => {
     expect(clamp(1, [2, 3])).toBe(2);
     expect(clamp(2.5, [2, 3])).toBe(2.5);
     expect(clamp(4, [2, 3])).toBe(3);
+  });
+});
+
+describe('zeroPad', () => {
+  test('basic', () => {
+    expect(zeroPad(0, 0)).toBe('0');
+    expect(zeroPad(0, 1)).toBe('0');
+    expect(zeroPad(0, 2)).toBe('00');
+
+    expect(zeroPad(123, 2)).toBe('123');
+    expect(zeroPad(123, 3)).toBe('123');
+    expect(zeroPad(123, 4)).toBe('0123');
   });
 });
 

@@ -1,5 +1,7 @@
 // @ts-check
 
+import { zeroPad } from '../../lib/util';
+
 /**
  * Formats {@link totalSeconds} to a time string.
  *
@@ -19,14 +21,20 @@ export default function buildTimeString(totalSeconds, showHour, fps = null) {
     ? [totalSeconds / 3600, (totalSeconds / 60) % 60, totalSeconds % 60]
     : [totalSeconds / 60, totalSeconds % 60];
 
-  if (fps) {
-    segments.push(Math.floor((totalSeconds % 1) * fps));
-  }
-
-  return (
+  let result = (
     segments
       // Don't pad the first segment
-      .map((n, i) => Math.floor(n).toString().padStart(i == 0 ? 0 : 2, '0'))
+      .map((n, i) => zeroPad(Math.floor(n), i == 0 ? 0 : 2))
       .join(':')
   );
+
+  if (fps) {
+    result += `:${zeroPad(Math.floor((totalSeconds % 1) * fps), 2)}`;
+
+    if (!showHour) {
+      result += "f";
+    }
+  }
+
+  return result;
 }
