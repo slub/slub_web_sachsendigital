@@ -37,6 +37,14 @@ interface SxndSeekBarEvent
   extends CustomEvent<SxndEventDetail["sxnd-seek-bar"]> {}
 
 /**
+ * Signals that the user has manually seeked to a video position.
+ *
+ * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
+ */
+interface SxndManualSeekEvent
+  extends CustomEvent<SxndEventDetail["sxnd-manual-seek"]> {}
+
+/**
  * Signals variant groups of current video.
  *
  * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
@@ -55,6 +63,7 @@ type SxndEventDetail = {
   "sxnd-seek-bar": {
     seekBar: import("./controls/FlatSeekBar").default;
   };
+  "sxnd-manual-seek": {};
   "sxnd-variant-groups": {
     variantGroups: import("./VariantGroups").default;
   };

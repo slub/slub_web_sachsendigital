@@ -76,6 +76,10 @@ export default class FlatSeekBar extends shaka.ui.Element {
     this.sxnd.seekTimer = new shaka.util.Timer(() => {
       if (this.video !== null) {
         this.video.currentTime = this.getValue();
+
+        this.controls?.dispatchEvent(/** @type {SxndManualSeekEvent} */(
+          new CustomEvent('sxnd-manual-seek', {})
+        ));
       }
     });
 

@@ -56,7 +56,13 @@ export default class SachsenShakaPlayer {
       id: this.env.mkid(),
       className: "sxnd-video",
     });
-    this.container.append(this.video);
+    this.poster = e('img', {
+      className: "sxnd-poster sxnd-visible",
+      $error: () => {
+        this.hidePoster();
+      },
+    });
+    this.container.append(this.video, this.poster);
 
     /** @private @type {string[]} */
     this.controlPanelButtons = [];
@@ -101,6 +107,8 @@ export default class SachsenShakaPlayer {
       onErrorEvent: this.onErrorEvent.bind(this),
       onTrackChange: this.onTrackChange.bind(this),
       onTimeUpdate: this.onTimeUpdate.bind(this),
+      onPlay: this.onPlay.bind(this),
+      onManualSeek: this.onManualSeek.bind(this),
     };
 
     this.player.addEventListener('error', this.handlers.onErrorEvent);
@@ -115,7 +123,11 @@ export default class SachsenShakaPlayer {
       this.seekBar = detail.seekBar;
     });
 
+    this.controls.addEventListener('sxnd-manual-seek', this.handlers.onManualSeek);
+
     this.controls.addEventListener('timeandseekrangeupdated', this.handlers.onTimeUpdate);
+
+    this.video.addEventListener('play', this.handlers.onPlay);
   }
 
   /**
@@ -153,7 +165,7 @@ export default class SachsenShakaPlayer {
    * @param {string} posterUrl
    */
   setPoster(posterUrl) {
-    this.video.poster = posterUrl;
+    this.poster.src = posterUrl;
   }
 
   /**
@@ -293,6 +305,22 @@ export default class SachsenShakaPlayer {
     if (readyState !== this.lastReadyState) {
       this.updateBottomControlsVisibility(readyState);
     }
+  }
+
+  onPlay() {
+    // Hide poster once playback has started the first time
+    // This is necessary because "onTimeUpdate" may be fired with a delay
+    this.hidePoster();
+  }
+
+  onManualSeek() {
+    // Hide poster when seeking in pause mode before playback has started
+    // We don't want to hide the poster when initial timecode is used
+    this.hidePoster();
+  }
+
+  hidePoster() {
+    this.poster.classList.remove('sxnd-visible');
   }
 
   /**
@@ -487,6 +515,8 @@ export default class SachsenShakaPlayer {
     } else if (typeof position.timecode === 'number') {
       this.video.currentTime = position.timecode;
     }
+
+    this.hidePoster();
   }
 
   /**
@@ -495,7 +525,7 @@ export default class SachsenShakaPlayer {
    */
   skipSeconds(delta) {
     // TODO: Consider end of video
-    this.video.currentTime += delta;
+    this.seekTo(this.video.currentTime + delta);
   }
 
   /**
