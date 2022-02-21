@@ -190,6 +190,7 @@ export default class SachsenShakaPlayer {
     // TODO: Refactor insertion at custom position (left or right of fullscreen)
     this.ui.configure({
       addSeekBar: true,
+      enableTooltips: true,
       controlPanelElements: [
         'play_pause',
         PresentationTimeTracker.register(this.env),

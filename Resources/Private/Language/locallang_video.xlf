@@ -84,28 +84,22 @@
 				<source><![CDATA[Bookmark]]></source>
 			</trans-unit>
 			<trans-unit id="control.help.tooltip">
-				<source><![CDATA[Show Help]]></source>
+				<source><![CDATA[Show help]]></source>
 			</trans-unit>
 			<trans-unit id="control.screenshot.tooltip">
-				<source><![CDATA[Take Screenshot]]></source>
+				<source><![CDATA[Take screenshot]]></source>
+			</trans-unit>
+			<trans-unit id="control.time.tooltip">
+				<source><![CDATA[Toggle time display]]></source>
 			</trans-unit>
 			<trans-unit id="control.time.current-time.text">
 				<source><![CDATA[{currentTime} / {totalTime} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></source>
 			</trans-unit>
-			<trans-unit id="control.time.current-time.tooltip">
-				<source><![CDATA[Current Time / Total]]></source>
-			</trans-unit>
 			<trans-unit id="control.time.remaining-time.text">
 				<source><![CDATA[{remainingTime} remaining {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></source>
 			</trans-unit>
-			<trans-unit id="control.time.remaining-time.tooltip">
-				<source><![CDATA[Remaining Time]]></source>
-			</trans-unit>
 			<trans-unit id="control.time.current-frame.text">
 				<source><![CDATA[{currentFrame, plural, =-1 {Frame Count Not Available} other {#}} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></source>
-			</trans-unit>
-			<trans-unit id="control.time.current-frame.tooltip">
-				<source><![CDATA[Frame Count]]></source>
 			</trans-unit>
 			<trans-unit id="control.video-track.title">
 				<source><![CDATA[Video Track]]></source>

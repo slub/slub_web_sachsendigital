@@ -144,7 +144,9 @@ body {
 }
 
 .sxnd-chapter-marker {
-    z-index: 2; // More than .seek-marker
+    // More than .seek-marker
+    // Less than Shaka's tooltips
+    z-index: 0;
 }
 
 @seek-bar-height: 4px;

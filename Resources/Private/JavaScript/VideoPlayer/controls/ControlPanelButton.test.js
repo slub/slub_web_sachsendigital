@@ -22,7 +22,7 @@ describe('ControlPanelButton', () => {
       },
     });
     const domButton = buttonContainer.querySelector('button');
-    expect(domButton?.title).toBe("Do it now");
+    expect(domButton?.ariaLabel).toBe("Do it now");
     domButton?.click();
     expect(clicked).toBe(1);
   });
@@ -31,6 +31,6 @@ describe('ControlPanelButton', () => {
     const buttonContainer = document.createElement('div');
     const button = new ControlPanelButton(buttonContainer, shk.controls);
     const domButton = buttonContainer.querySelector('button');
-    expect(domButton?.title).toBe("");
+    expect(domButton?.ariaLabel).toBe("");
   });
 });
