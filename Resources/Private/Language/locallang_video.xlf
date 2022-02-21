@@ -99,7 +99,7 @@
 				<source><![CDATA[{remainingTime} remaining {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></source>
 			</trans-unit>
 			<trans-unit id="control.time.current-frame.text">
-				<source><![CDATA[{currentFrame, plural, =-1 {Frame Count Not Available} other {#}} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></source>
+				<source><![CDATA[{currentFrame, plural, =-1 {Frame Count Not Available} other {Frame: #}} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></source>
 			</trans-unit>
 			<trans-unit id="control.video-track.title">
 				<source><![CDATA[Video Track]]></source>

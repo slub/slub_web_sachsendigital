@@ -130,8 +130,8 @@
 				<target><![CDATA[noch {remainingTime} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></target>
 			</trans-unit>
 			<trans-unit id="control.time.current-frame.text" approved="yes">
-				<source><![CDATA[{currentFrame, plural, =-1 {Frame Count Not Available} other {#}} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></source>
-				<target><![CDATA[{currentFrame, plural, =-1 {Frame-Nummer unbekannt} other {#}} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></target>
+				<source><![CDATA[{currentFrame, plural, =-1 {Frame Count Not Available} other {Frame: #}} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></source>
+				<target><![CDATA[{currentFrame, plural, =-1 {Frame-Nummer unbekannt} other {Frame: #}} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></target>
 			</trans-unit>
 			<trans-unit id="control.video-track.title" approved="yes">
 				<source><![CDATA[Video Track]]></source>
