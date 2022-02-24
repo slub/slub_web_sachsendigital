@@ -383,16 +383,6 @@ export default class ThumbnailPreview {
    * @param {SeekPosition} seekPosition
    */
   renderImageAndShow(uri, thumb, tilesetImage, seekPosition) {
-    // When width/height are in the interval [0,1], we treat them as relative
-    // to the tileset size. See `CustomHlsParser`.
-    if ((0 <= thumb.width && thumb.width <= 1) && (0 <= thumb.height && thumb.height <= 1)) {
-      thumb.positionX *= tilesetImage.width;
-      thumb.width *= tilesetImage.width;
-
-      thumb.positionY *= tilesetImage.height;
-      thumb.height *= tilesetImage.height;
-    }
-
     this.ensureDisplaySize(thumb.width, thumb.height);
 
     this.renderImage(uri, thumb, tilesetImage);
