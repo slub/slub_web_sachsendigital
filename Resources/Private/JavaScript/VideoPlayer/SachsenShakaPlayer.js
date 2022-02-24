@@ -353,6 +353,14 @@ export default class SachsenShakaPlayer {
 
   /**
    *
+   * @param {boolean} value
+   */
+  setThumbnailSnap(value) {
+    this.seekBar?.setThumbnailSnap(value);
+  }
+
+  /**
+   *
    * @returns {boolean}
    */
   anySettingsMenusAreOpen() {

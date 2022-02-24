@@ -209,6 +209,13 @@ export default class SxndPlayerApp {
           this.sxndPlayer.seekTo(absolute);
         }
       },
+      'navigate.thumbnails.snap': (
+        /** @type {Keybinding<any, any>} */ _kb,
+        /** @type {number} */ _keyIndex,
+        /** @type {KeyEventMode} */ mode
+      ) => {
+        this.sxndPlayer.setThumbnailSnap(mode === 'down');
+      },
     };
 
     this.modals.on('closed', this.handlers.onCloseModal);

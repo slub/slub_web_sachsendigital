@@ -172,5 +172,14 @@
 		"action": "navigate.frame.next",
 		"kind": "navigate",
 		"order": 21
+	},
+	{
+		"keys": ["Shift"],
+		"scope": "player",
+		"action": "navigate.thumbnails.snap",
+		"kind": "navigate",
+		"order": 30,
+		"keydown": true,
+		"keyup": true
 	}
 ]

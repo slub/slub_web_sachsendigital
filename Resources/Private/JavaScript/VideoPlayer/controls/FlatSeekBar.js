@@ -179,6 +179,14 @@ export default class FlatSeekBar extends shaka.ui.Element {
   }
 
   /**
+   *
+   * @param {boolean} value
+   */
+  setThumbnailSnap(value) {
+    this.sxnd.thumbnailPreview?.setThumbnailSnap(value);
+  }
+
+  /**
    * Adds chapter marker elements to the seekbar.
    *
    * @private

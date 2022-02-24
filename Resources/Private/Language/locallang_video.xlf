@@ -59,6 +59,9 @@
 			<trans-unit id="action.navigate.position.percental">
 				<source><![CDATA[Jump to position (%)]]></source>
 			</trans-unit>
+			<trans-unit id="action.navigate.thumbnails.snap">
+				<source><![CDATA[Seek along thumbnails]]></source>
+			</trans-unit>
 			<trans-unit id="action.playback.captions.toggle">
 				<source><![CDATA[Toggle captions]]></source>
 			</trans-unit>
@@ -130,6 +133,9 @@
 			</trans-unit>
 			<trans-unit id="key.Escape">
 				<source><![CDATA[Esc]]></source>
+			</trans-unit>
+			<trans-unit id="key.Shift">
+				<source><![CDATA[⇧ Shift]]></source>
 			</trans-unit>
 			<trans-unit id="key.mod.CtrlMeta">
 				<source><![CDATA[Ctrl]]></source>

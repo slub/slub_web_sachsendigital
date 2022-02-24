@@ -28,4 +28,14 @@
         z-index: -1; // Less than .sxnd-chapter-marker
         visibility: hidden;
     }
+
+    .seek-thumb-bar {
+        position: absolute;
+        left: 45%;
+        height: @seek-bar-height;
+        width: 1px;
+        background-color: rgba(@base-color, 0.4);
+        z-index: -2; // Less than .sxnd-chapter-marker and .seek-marker
+        visibility: hidden;
+    }
 }

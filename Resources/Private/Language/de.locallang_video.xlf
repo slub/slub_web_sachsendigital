@@ -77,6 +77,10 @@
 				<source><![CDATA[Jump to position (%)]]></source>
 				<target><![CDATA[Zu Position springen (%)]]></target>
 			</trans-unit>
+			<trans-unit id="action.navigate.thumbnails.snap" approved="yes">
+				<source><![CDATA[Seek along thumbnails]]></source>
+				<target><![CDATA[Thumbnail-Seeking]]></target>
+			</trans-unit>
 			<trans-unit id="action.playback.captions.toggle" approved="yes">
 				<source><![CDATA[Toggle captions]]></source>
 				<target><![CDATA[Untertitel an / aus]]></target>
@@ -172,6 +176,10 @@
 			<trans-unit id="key.Escape" approved="yes">
 				<source><![CDATA[Esc]]></source>
 				<target><![CDATA[Esc]]></target>
+			</trans-unit>
+			<trans-unit id="key.Shift" approved="yes">
+				<source><![CDATA[⇧ Shift]]></source>
+				<target><![CDATA[⇧ Umschalt]]></target>
 			</trans-unit>
 			<trans-unit id="key.mod.CtrlMeta" approved="yes">
 				<source><![CDATA[Ctrl]]></source>
