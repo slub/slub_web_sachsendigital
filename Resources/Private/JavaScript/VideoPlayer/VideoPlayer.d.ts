@@ -69,6 +69,32 @@ type SxndEventDetail = {
   };
 };
 
+/**
+ * Description on a thumbnail on a tileset.
+ *
+ * Generally oriented at {@link shaka.extern.Thumbnail}.
+ */
+type Thumbnail = {
+  uris: string[];
+  imageTime: number;
+  startTime: number;
+  duration: number;
+  positionX: number;
+  positionY: number;
+  width: number;
+  height: number;
+  bandwidth: number;
+};
+
+type ThumbnailOnTrack = Thumbnail & {
+  track: ThumbnailTrack;
+};
+
+interface ThumbnailTrack {
+  readonly bandwidth: number;
+  getThumb(position: number): Promise<ThumbnailOnTrack | null>;
+}
+
 type VideoSource = {
   mimeType: string;
   url: string;

@@ -21,19 +21,15 @@ import buildTimeString from './lib/buildTimeString';
  *  onChapterMarker: boolean;
  *  }} SeekPosition
  *
- * @typedef {shaka.extern.Thumbnail & {
- *  track: shaka.extern.Track;
- * }} TrackedThumbnail
- *
  * @typedef {{
  *  uri: string;
- *  thumb: TrackedThumbnail;
+ *  thumb: Thumbnail;
  *  tilesetImage: HTMLImageElement;
  * }} LastRendered
  *
  * @typedef Current
  * @property {SeekPosition} seekPosition
- * @property {TrackedThumbnail[]} thumbs Ordered by quality/bandwidth descending.
+ * @property {Thumbnail[]} thumbs Ordered by quality/bandwidth descending.
  *
  * @typedef {{
  *  onChangeStart: () => void;
@@ -79,11 +75,11 @@ export default class ThumbnailPreview {
     /** @private @type {Chapters | null} */
     this.chapters = null;
     /**
-     * Thumbnail image tracks, ordered by quality/bandwidth descending.
+     * Thumbnail tracks, ordered by quality/bandwidth descending.
      * @private
-     * @type {shaka.extern.TrackList}
+     * @type {ThumbnailTrack[]}
      */
-    this.imageTracks = [];
+    this.thumbnailTracks = [];
     /** @private @type {LastRendered | null} */
     this.lastRendered = null;
     /** @private @type {boolean} */
@@ -158,11 +154,12 @@ export default class ThumbnailPreview {
   }
 
   /**
-   * @param {shaka.extern.TrackList} imageTracks
+   * @param {readonly ThumbnailTrack[]} thumbnails
    */
-  setImageTracks(imageTracks) {
-    this.imageTracks = imageTracks.slice();
-    this.imageTracks.sort((a, b) => b.bandwidth - a.bandwidth);
+  setThumbnailTracks(thumbnails) {
+    this.thumbnailTracks = thumbnails.slice();
+    this.thumbnailTracks.sort((a, b) => b.bandwidth - a.bandwidth);
+
     this.currentRenderBest();
   }
 
@@ -198,16 +195,15 @@ export default class ThumbnailPreview {
       this.beginChange();
     }
 
-    const thumbPromises = this.getThumbTracks().map(async (track) => {
-      const thumb =
-        await this.player.getThumbnails(track.id, seekPosition.seconds);
+    /** @type {Thumbnail[]} */
+    let thumbs = [];
 
-      return thumb === null
-        ? null
-        : { ...thumb, track };
-    });
-
-    const thumbs = filterNonNull(await Promise.all(thumbPromises));
+    // If thumbnails are not shown, also avoid unnecessary downloads of images
+    if (this.showThumbnailImage()) {
+      const position = seekPosition.seconds;
+      const maximumBandwidth = 0.01 * this.player.getStats().estimatedBandwidth;
+      thumbs = await this.getThumbnails(position, maximumBandwidth);
+    }
 
     this.current = { seekPosition, thumbs };
 
@@ -378,7 +374,7 @@ export default class ThumbnailPreview {
    *
    * @private
    * @param {string} uri
-   * @param {TrackedThumbnail} thumb
+   * @param {Thumbnail} thumb
    * @param {HTMLImageElement} tilesetImage
    * @param {SeekPosition} seekPosition
    */
@@ -397,17 +393,17 @@ export default class ThumbnailPreview {
    *
    * @private
    * @param {string} uri
-   * @param {TrackedThumbnail} thumb
+   * @param {Thumbnail} thumb
    * @param {HTMLImageElement} tilesetImage
    * @param {boolean} force
    */
   renderImage(uri, thumb, tilesetImage, force = false) {
-    // Check if it's another thumbnail (`startTime` and `bandwidth` as proxy)
+    // Check if it's another thumbnail (`imageTime` and `bandwidth` as proxy)
     const shouldRender = (
       force
       || this.lastRendered === null
-      || thumb.startTime !== this.lastRendered.thumb.startTime
-      || thumb.track.bandwidth !== this.lastRendered.thumb.track.bandwidth
+      || thumb.imageTime !== this.lastRendered.thumb.imageTime
+      || thumb.bandwidth !== this.lastRendered.thumb.bandwidth
     );
 
     if (shouldRender) {
@@ -433,14 +429,12 @@ export default class ThumbnailPreview {
    * Renders timecode label of thumbnail (top right corner).
    *
    * @private
-   * @param {shaka.extern.Thumbnail} thumb
+   * @param {Thumbnail} thumb
    */
   renderThumbTimecode(thumb) {
-    // TODO: Make this more flexible than just accomodating ffmpeg's fps filter
     const videoDuration = this.saneVideoDuration();
     const showHour = videoDuration === undefined || videoDuration >= 3600;
-    const targetTime = thumb.startTime + thumb.duration / 2;
-    const timecode = buildTimeString(targetTime - 0.00001, showHour, this.fps);
+    const timecode = buildTimeString(thumb.imageTime, showHour, this.fps);
 
     this.$thumbTimecode.innerText = timecode;
   }
@@ -567,37 +561,29 @@ export default class ThumbnailPreview {
 
   /**
    * @private
+   * @param {number} position
+   * @param {number} maximumBandwidth
+   * @returns {Promise<Thumbnail[]>}
    */
-  getThumbTracks() {
-    // We do this check here to avoid superfluous downloads of thumbnails
-    if (!this.showThumbnailImage()) {
-      return [];
+  async getThumbnails(position, maximumBandwidth) {
+    /** @type {ThumbnailTrack[]} */
+    let tracks = [];
+
+    // Find best and cheapest track of acceptable bandwidth
+    // Thumbnail tracks are ordered descending
+    let best = this.thumbnailTracks.find(track => track.bandwidth < maximumBandwidth);
+    if (best !== undefined) {
+      let cheapest = /** @type {ThumbnailTrack} */(
+        this.thumbnailTracks[this.thumbnailTracks.length - 1]
+      );
+
+      tracks = best === cheapest
+        ? [best]
+        : [best, cheapest];
     }
 
-    // Image tracks are sorted by quality. Select the best and worst track
-    // of acceptable bandwidth.
-
-    const maximumBandwidth = 0.01 * this.player.getStats().estimatedBandwidth;
-
-    for (let i = 0; i < this.imageTracks.length; i++) {
-      const track = /** @type {shaka.extern.Track} */(this.imageTracks[i]);
-
-      if (track.bandwidth < maximumBandwidth) {
-        const max = track;
-
-        if (i === this.imageTracks.length - 1) {
-          return [max];
-        } else {
-          const min = /** @type {shaka.extern.Track} */(
-            this.imageTracks[this.imageTracks.length - 1]
-          );
-
-          return [max, min];
-        }
-      }
-    }
-
-    return [];
+    const thumbPromises = tracks.map((track) => track.getThumb(position));
+    return filterNonNull(await Promise.all(thumbPromises));
   }
 
   /**

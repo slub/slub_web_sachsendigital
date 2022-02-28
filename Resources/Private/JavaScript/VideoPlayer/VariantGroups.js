@@ -1,5 +1,7 @@
 // @ts-check
 
+import ShakaThumbnailTrack from './lib/thumbnails/ShakaThumbnailTrack';
+
 /**
  * @typedef {string} GroupKey
  *
@@ -154,14 +156,27 @@ export default class VariantGroups {
   }
 
   /**
-   * Returns the image tracks that match the currently active group.
+   * Returns the thumbnail tracks that match the currently active group.
+   *
+   * This abstracts over the ways how thumbnails may be provided, namely either
+   * via the video manifest, or via a separate thumbnails.json manifest.
+   *
+   * @returns {ThumbnailTrack[]}
    */
-  findImageTracks() {
+  findThumbnailTracks() {
+    /** @type {ThumbnailTrack[]} */
+    const result = [];
+
     const activeGroupKey = this.findActiveGroup()?.key;
 
-    return this.player.getImageTracks().filter(
-      track => VariantGroups.splitRepresentationId(track.originalImageId).group === activeGroupKey
-    );
+    // Add thumbnails from DASH / HLS
+    for (const track of this.player.getImageTracks()) {
+      if (VariantGroups.splitRepresentationId(track.originalImageId).group === activeGroupKey) {
+        result.push(new ShakaThumbnailTrack(this.player, track));
+      }
+    }
+
+    return result;
   }
 
   /**

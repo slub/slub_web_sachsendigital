@@ -216,7 +216,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
    */
   updatePreviewImageTracks() {
     if (this.sxnd.thumbnailPreview === null) {
-      console.warn("FlatSeekBar: Missing player or thumbnail preview");
+      console.warn("FlatSeekBar: Missing thumbnail preview");
       return;
     }
 
@@ -224,8 +224,8 @@ export default class FlatSeekBar extends shaka.ui.Element {
       return;
     }
 
-    const imageTracks = this.sxnd.variantGroups.findImageTracks();
-    this.sxnd.thumbnailPreview.setImageTracks(imageTracks);
+    const thumbTracks = this.sxnd.variantGroups.findThumbnailTracks();
+    this.sxnd.thumbnailPreview.setThumbnailTracks(thumbTracks);
   }
 
   /**
