@@ -34,6 +34,7 @@ export default class SachsenShakaPlayer {
   constructor(env) {
     if (!SachsenShakaPlayer.hasInstalledPolyfills) {
       shaka.polyfill.installAll();
+      SachsenShakaPlayer.hasInstalledPolyfills = true;
     }
 
     /** @private */
