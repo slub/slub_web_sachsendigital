@@ -27,7 +27,7 @@ plugin.tx_slubwebsachsendigital_media {
 
       2 {
         type = image
-        src = /fileadmin/user_upload/Logo_blue.svg
+        src = EXT:slub_web_sachsendigital/Resources/Public/Images/Twitter_Logo_blue.svg
         titleTranslationKey = share.tweet.tooltip
         hrefTemplate = https://twitter.com/intent/tweet?url={url}
       }
