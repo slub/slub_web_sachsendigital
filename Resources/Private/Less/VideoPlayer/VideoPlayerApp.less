@@ -47,6 +47,28 @@
     vertical-align: middle;
 }
 
+@media all and (min-width: calc(@tabletViewportWidth + 1px)) {
+    .shaka-controls-button-panel button {
+        margin-left: 8px;
+        margin-right: 8px;
+    }
+
+    .shaka-overflow-menu-button {
+        margin-left: 0 !important;
+    }
+
+    .shaka-fullscreen-button {
+        margin-left: 3px !important;
+        margin-right: 4px !important;
+    }
+}
+
+.sxnd-screenshot-button,
+.sxnd-bookmark-button,
+.sxnd-help-button {
+    font-size: 22px !important;
+}
+
 @media all and (max-width: @tabletViewportWidth) {
     .sxnd-screenshot-button,
     .sxnd-bookmark-button,
@@ -144,6 +166,34 @@
 
 .bookmark-modal {
     text-align: left;
+
+    .share-buttons {
+        margin-bottom: 1em;
+
+        a {
+            margin-right: 1em;
+
+            img,
+            .material-icons-round {
+                width: 40px;
+                height: 40px;
+                font-size: 40px;
+            }
+        }
+    }
+
+    .url-qrcode {
+        padding-top: 1em;
+        display: none;
+
+        hr {
+            margin-bottom: 1.4em;
+        }
+
+        &.sxnd-visible {
+            display: block;
+        }
+    }
 
     .url-line {
         display: flex;

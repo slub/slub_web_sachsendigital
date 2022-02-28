@@ -201,7 +201,7 @@
 				<source><![CDATA[Overlay on image]]></source>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.snap-tip">
-				<source><![CDATA[Use {keybinding} to save a screenshot without opening this dialog.]]></source>
+				<source><![CDATA[Use {keybinding} to save a screenshot while watching.]]></source>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.title">
 				<source><![CDATA[Screenshot]]></source>
@@ -220,6 +220,15 @@
 			</trans-unit>
 			<trans-unit id="player.loading">
 				<source><![CDATA[Loading...]]></source>
+			</trans-unit>
+			<trans-unit id="share.email.tooltip">
+				<source><![CDATA[Send in E-Mail]]></source>
+			</trans-unit>
+			<trans-unit id="share.qr_code.tooltip">
+				<source><![CDATA[Show QR-Code]]>]</source>
+			</trans-unit>
+			<trans-unit id="share.tweet.tooltip">
+				<source><![CDATA[Tweet]]>]</source>
 			</trans-unit>
 		</body>
 	</file>

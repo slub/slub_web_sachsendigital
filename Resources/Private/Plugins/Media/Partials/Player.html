@@ -8,8 +8,12 @@
             var container = document.querySelector('.media-viewport');
             var videoConfig = {sxnd:videoToJson(settings: settings)};
             var lang = {sxnd:translations(baseFile: settings.playerTranslations.baseFile) -> f:format.json() -> f:format.raw()};
+            var shareButtons = {settings.shareButtons -> sxnd:shareButtonsToJson()};
 
-            var app = new SxndPlayerApp(container, videoConfig, lang);
+            var app = new SxndPlayerApp(container, videoConfig, {
+                lang: lang,
+                shareButtons: shareButtons
+            });
         });
     </script>
 </f:section>

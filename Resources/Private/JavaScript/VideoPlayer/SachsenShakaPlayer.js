@@ -24,32 +24,18 @@ import '../../Less/VideoPlayer/SachsenShakaPlayer.less';
  */
 
 export default class SachsenShakaPlayer {
-  /**
-   * Installs polyfills and returns the supported manifest formats in order of
-   * preference.
-   *
-   * @returns {('mpd' | 'hls')[]}
-   */
-  static initSupport() {
-    shaka.polyfill.installAll();
-
-    if (shaka.Player.isBrowserSupported()) {
-      // Conditions taken from shaka.util.Platform.supportsMediaSource()
-      // @ts-expect-error: TS says that `window.MediaSource.isTypeSupported`
-      // will always be truthy...
-      return window.MediaSource && window.MediaSource.isTypeSupported
-        ? ['mpd', 'hls']
-        : ['hls'];
-    } else {
-      return [];
-    }
-  }
+  /** @private */
+  static hasInstalledPolyfills = false;
 
   /**
    *
    * @param {Translator & Identifier & Browser} env
    */
   constructor(env) {
+    if (!SachsenShakaPlayer.hasInstalledPolyfills) {
+      shaka.polyfill.installAll();
+    }
+
     /** @private */
     this.env = env;
 
@@ -133,6 +119,28 @@ export default class SachsenShakaPlayer {
   }
 
   /**
+   * Determines whether or not the player supports playback of videos in the
+   * given mime type.
+   *
+   * @param {string} mimeType
+   * @returns {boolean}
+   */
+  supportsMimeType(mimeType) {
+    switch (mimeType) {
+      case 'application/dash+xml':
+      case 'application/x-mpegurl':
+      case 'application/vnd.apple.mpegurl':
+        return (
+          this.env.supportsMediaSource()
+          || this.env.supportsVideoMime(mimeType)
+        );
+
+      default:
+        return this.env.supportsVideoMime(mimeType);
+    }
+  }
+
+  /**
    *
    * @param {Partial<Constants>} constants
    */
@@ -179,17 +187,16 @@ export default class SachsenShakaPlayer {
     // TODO: Somehow avoid overriding the SeekBar globally?
     FlatSeekBar.register();
 
+    // TODO: Refactor insertion at custom position (left or right of fullscreen)
     this.ui.configure({
       addSeekBar: true,
       controlPanelElements: [
         'play_pause',
-        'chapters_menu',
         PresentationTimeTracker.register(this.env),
         'spacer',
         'volume',
         'mute',
         ...this.controlPanelButtons,
-        'fullscreen',
         'overflow_menu',
       ],
       overflowMenuButtons: [
@@ -209,6 +216,7 @@ export default class SachsenShakaPlayer {
         played: 'rgb(255, 255, 255)',
         adBreaks: 'rgb(255, 204, 0)',
       },
+      enableKeyboardPlaybackControls: false,
     });
 
     // Set again after `ui.configure()`
@@ -238,11 +246,11 @@ export default class SachsenShakaPlayer {
 
   /**
    *
-   * @param {string} manifestUri
+   * @param {VideoSource} videoSource
    * @param {number | null} startTime
    */
-  async loadManifest(manifestUri, startTime = null) {
-    await this.player.load(manifestUri, startTime);
+  async loadManifest(videoSource, startTime = null) {
+    await this.player.load(videoSource.url, startTime, videoSource.mimeType);
 
     this.variantGroups = new VariantGroups(this.player);
 

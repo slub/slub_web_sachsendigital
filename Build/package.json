@@ -23,6 +23,7 @@
     "@babel/preset-env": "^7.15.6",
     "@types/jest": "^27.0.3",
     "@types/jquery": "^3.5.6",
+    "@types/qrcode": "^1.4.2",
     "babel-jest": "^27.2.1",
     "canvas": "^2.8.0",
     "css-loader": "^6.2.0",
@@ -43,6 +44,7 @@
     "jquery": "3.5.1",
     "magnific-popup": "1.1.0",
     "piexifjs": "^1.0.6",
+    "qrcode": "^1.5.0",
     "shaka-player": "3.3.0",
     "tslib": "^2.3.1"
   },

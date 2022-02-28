@@ -9,6 +9,7 @@ import PNG from './png';
 const imageFormats = [
   {
     mimeType: 'image/png',
+    extension: "png",
     label: "PNG",
     parseBinaryString: (s) => {
       return PNG.fromBinaryString(s);
@@ -16,6 +17,7 @@ const imageFormats = [
   },
   {
     mimeType: 'image/jpeg',
+    extension: "jpg",
     label: "JPEG",
     parseBinaryString: (s) => {
       return JPEG.fromBinaryString(s);
@@ -23,6 +25,7 @@ const imageFormats = [
   },
   {
     mimeType: 'image/tiff',
+    extension: "tiff",
     label: "TIFF",
     parseBinaryString: () => undefined,
   },

@@ -1,6 +1,6 @@
 interface Window {
   SxndPlayerApp: {
-    new (container: HTMLElement, videoInfo: VideoInfo, lang: LangDef);
+    new (container: HTMLElement, videoInfo: VideoInfo, config: AppConfig);
   };
 }
 
@@ -22,9 +22,11 @@ type VideoInfo = {
     timecode: string;
   }[];
   metadata: MetadataArray;
+  /**
+   * Sources of available manifest or raw video files, ordered by preference.
+   */
+  sources: VideoSource[];
   url: {
-    mpd: string;
-    hls: string;
     poster: string;
   };
 };
@@ -39,6 +41,11 @@ type LangDef = {
   locale: string;
   twoLetterIsoCode: string;
   phrases: PhrasesDict;
+};
+
+type AppConfig = {
+  shareButtons: import("./modals/BookmarkModal").ShareButtonInfo[];
+  lang: LangDef;
 };
 
 type Keybinding<ScopeT extends string, ActionT extends string> = {
@@ -76,11 +83,6 @@ type Keybinding<ScopeT extends string, ActionT extends string> = {
    * Key of the action to be executed for that keybinding.
    */
   action: ActionT;
-
-  /**
-   * Whether or not to propagate the event for further handling.
-   */
-  propagate?: boolean;
 
   /**
    * Kind of keybinding as used for grouping in help modal.

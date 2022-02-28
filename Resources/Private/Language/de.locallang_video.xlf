@@ -27,7 +27,7 @@
 			</trans-unit>
 			<trans-unit id="action.modal.bookmark.open" approved="yes">
 				<source><![CDATA[Bookmark (share link)]]></source>
-				<target><![CDATA[Bookmark (Link teilen)]]></target>
+				<target><![CDATA[Bookmark (Link weitergeben)]]></target>
 			</trans-unit>
 			<trans-unit id="action.modal.help.toggle" approved="yes">
 				<source><![CDATA[Toggle help (this window)]]></source>
@@ -235,7 +235,7 @@
 			</trans-unit>
 			<trans-unit id="modal.bookmark.title" approved="yes">
 				<source><![CDATA[Bookmark (Share Link)]]></source>
-				<target><![CDATA[Bookmark (Link teilen)]]></target>
+				<target><![CDATA[Bookmark (Link weitergeben)]]></target>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.configuration" approved="yes">
 				<source><![CDATA[Configure]]></source>
@@ -266,8 +266,8 @@
 				<target><![CDATA[Dateiformat]]></target>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.snap-tip" approved="yes">
-				<source><![CDATA[Use {keybinding} to save a screenshot without opening this dialog.]]></source>
-				<target><![CDATA[Mit {keybinding} kann ein Screenshot direkt heruntergeladen werden.]]></target>
+				<source><![CDATA[Use {keybinding} to save a screenshot while watching.]]></source>
+				<target><![CDATA[Mit {keybinding} kann ein Screenshot im laufenden Film heruntergeladen werden.]]></target>
 			</trans-unit>
 			<trans-unit id="modal.screenshot.title" approved="yes">
 				<source><![CDATA[Screenshot]]></source>
@@ -292,6 +292,18 @@
 			<trans-unit id="player.loading" approved="yes">
 				<source><![CDATA[Loading...]]></source>
 				<target><![CDATA[Laden...]]></target>
+			</trans-unit>
+			<trans-unit id="share.email.tooltip" approved="yes">
+				<source><![CDATA[Send in E-Mail]]>]</source>
+				<target><![CDATA[E-Mail senden]]></target>
+			</trans-unit>
+			<trans-unit id="share.qr_code.tooltip" approved="yes">
+				<source><![CDATA[Show QR-Code]]>]</source>
+				<target><![CDATA[QR-Code einblenden]]></target>
+			</trans-unit>
+			<trans-unit id="share.tweet.tooltip" approved="yes">
+				<source><![CDATA[Tweet]]>]</source>
+				<target><![CDATA[Twittern]]></target>
 			</trans-unit>
 		</body>
 	</file>

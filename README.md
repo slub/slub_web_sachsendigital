@@ -7,6 +7,22 @@ This extension needs to reside in a folder called `slub_web_sachsendigital` in T
 
 After activate the extension in the TYPO3 extension manager you need to include a static template called `SLUB: Portal Sachsen.Digital` in the template settings of the source page of the SACHSEN.digtal branch.
 
+## Configuration
+
+The player is configured in [media.typoscript](Configuration/TypoScript/Plugins/media.typoscript).
+
+`settings.shareButtons` may be used to configure which sharing buttons are
+available in the bookmarks modal:
+
+- *Button icon*: Use
+  - either `type = material` and `icon = ...` to use the specified Material Icon,
+  - or `type = image` and `src = ` to use an image at the specified URL.
+- *Tooltips*: Set `titleTranslationKey` to a translation key that is defined in
+  the `playerTranslations` file.
+- *Share target*: Enter a link URL in `hrefTemplate`
+  - The placeholder `{url}` will be replaced by the URL to be shared.
+  - The special value `dlf:qr_code` may be used to generate a QR code.
+
 ## Frontend Development
 
 Anything related to building the JavaScript and Less code is located in `Build/`, which is the working directory for all commands listed in this section.

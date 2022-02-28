@@ -1,15 +1,35 @@
 // @ts-check
 
-import { e } from '../../lib/util';
+import QRCode from 'qrcode';
+
+import { e, filterNonNull } from '../../lib/util';
 import { buildTimeString } from '../../VideoPlayer';
 import generateTimecodeUrl from '../lib/generateTimecodeUrl';
 import SimpleModal from '../lib/SimpleModal';
 
 /**
+ * @typedef {(
+ *  | { type: "material"; icon: string; }
+ *  | { type: "image"; src: string; }
+ * ) & {
+ *  hrefTemplate: string;
+ *  titleTranslationKey: string;
+ * }} ShareButtonInfo
+ *
+ * @typedef {{
+ *  hrefTemplate: string;
+ *  element: HTMLAnchorElement;
+ * }} ShareButton
+ *
+ * @typedef {{
+ *  shareButtons: ShareButtonInfo[];
+ * }} Config
+ *
  * @typedef {{
  *  timecode: number | null;
  *  fps: number;
  *  startAtTimecode: boolean;
+ *  showQrCode: boolean;
  * }} State
  */
 
@@ -21,13 +41,26 @@ export default class BookmarkModal extends SimpleModal {
    *
    * @param {HTMLElement} element
    * @param {Translator & Identifier & Browser} env
+   * @param {Partial<Config>} config
    */
-  constructor(element, env) {
+  constructor(element, env, config) {
     super(element, {
       timecode: null,
       fps: 0,
       startAtTimecode: true,
+      showQrCode: false,
     });
+
+    /** @private */
+    this.sxnd = {
+      /** @type {string | null} */
+      lastUrl: null,
+    }
+
+    /** @private */
+    this.handlers = {
+      handleClickShareButton: this.handleClickShareButton.bind(this),
+    };
 
     /** @private */
     this.env = env;
@@ -37,8 +70,16 @@ export default class BookmarkModal extends SimpleModal {
 
     const startAtCheckId = this.env.mkid();
 
+    const shareButtons = (config.shareButtons ?? []).map(this.createShareButton.bind(this));
+    this.shareButtons = filterNonNull(shareButtons);
+
     this.$body.append(
       e("div", {}, [
+        this.shareButtons.length > 0 && (
+          e("div", { className: "share-buttons" },
+            this.shareButtons.map(btn => btn.element)
+          )
+        ),
         e("div", { className: "url-line" }, [
           this.$urlInput = e("input", {
             type: "url",
@@ -62,8 +103,58 @@ export default class BookmarkModal extends SimpleModal {
           }),
           this.$startAtLabel = e("label", { htmlFor: startAtCheckId }),
         ]),
+        this.$qrCanvasContainer = e("div", { className: "url-qrcode" }, [
+          e("hr"),
+          this.$qrCanvas = e("canvas"),
+        ]),
       ])
     );
+  }
+
+  /**
+   *
+   * @param {ShareButtonInfo} info
+   * @return {ShareButton}
+   */
+  createShareButton(info) {
+    /** @type {HTMLElement} */
+    let iconElement;
+
+    switch (info.type) {
+      case "material":
+        iconElement = e("i", { className: "material-icons-round" }, [info.icon]);
+        break;
+
+      case "image":
+        iconElement = e("img", { src: info.src });
+        break;
+    }
+
+    return {
+      hrefTemplate: info.hrefTemplate,
+      element: e("a", {
+        title: this.env.t(info.titleTranslationKey ?? "", {}, () => ""),
+        target: "_blank",
+        rel: "noopener noreferrer",
+        $click: this.handlers.handleClickShareButton,
+      }, [iconElement]),
+    };
+  }
+
+  /**
+   *
+   * @param {MouseEvent} e
+   */
+  handleClickShareButton(e) {
+    const element =/** @type {HTMLAnchorElement} */(e.currentTarget);
+
+    if (element.href === "dlf:qr_code") {
+      e.preventDefault();
+
+      this.setState({
+        showQrCode: true,
+      });
+    }
   }
 
   async handleCopyToClipboard() {
@@ -125,14 +216,42 @@ export default class BookmarkModal extends SimpleModal {
 
   /**
    * @override
+   * @param {boolean} value
+   */
+  open(value = true) {
+    super.open(value);
+
+    if (!value) {
+      this.setState({ showQrCode: false });
+    }
+  }
+
+  /**
+   * @override
    * @param {import('../lib/SimpleModal').BaseState & State} state
    */
   render(state) {
     super.render(state);
 
-    const { show, timecode, fps, startAtTimecode } = state;
+    const { show, timecode, fps, startAtTimecode, showQrCode } = state;
 
-    this.$urlInput.value = this.generateUrl(state);
+    const url = this.generateUrl(state);
+    const urlChanged = url !== this.sxnd.lastUrl;
+
+    if (urlChanged) {
+      const encodedUrl = encodeURIComponent(url);
+
+      for (const btn of this.shareButtons) {
+        btn.element.href = btn.hrefTemplate.replace(/{url}/g, encodedUrl);
+      }
+
+      this.$urlInput.value = url;
+      this.sxnd.lastUrl = url;
+    }
+
+    if (urlChanged || showQrCode !== this.state.showQrCode) {
+      this.renderQrCode(showQrCode ? url : null);
+    }
 
     // TODO: Just disable when timecode is 0?
     if (timecode === null || timecode === 0) {
@@ -149,6 +268,24 @@ export default class BookmarkModal extends SimpleModal {
 
     if (show && show !== this.state.show) {
       this.$urlInput.select();
+    }
+  }
+
+  /**
+   *
+   * @param {string | null} text
+   */
+  async renderQrCode(text) {
+    if (text !== null) {
+      try {
+        await QRCode.toCanvas(this.$qrCanvas, text);
+        this.$qrCanvasContainer.classList.add("sxnd-visible");
+      } catch (e) {
+        alert(this.env.t('error.qrcode'));
+        console.error(e);
+      }
+    } else {
+      this.$qrCanvasContainer.classList.remove("sxnd-visible");
     }
   }
 }

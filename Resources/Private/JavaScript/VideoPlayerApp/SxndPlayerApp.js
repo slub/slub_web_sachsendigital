@@ -34,9 +34,9 @@ export default class SxndPlayerApp {
    *
    * @param {HTMLElement} container
    * @param {VideoInfo} videoInfo
-   * @param {LangDef} lang
+   * @param {AppConfig} config
    */
-  constructor(container, videoInfo, lang) {
+  constructor(container, videoInfo, config) {
     /** @private */
     this.container = container;
     /** @private */
@@ -45,7 +45,7 @@ export default class SxndPlayerApp {
     /** @private */
     this.videoInfo = videoInfo;
     /** @private */
-    this.lang = lang;
+    this.config = config;
     /** @private @type {Keybinding<KeyboardScope, keyof SxndPlayerApp['actions']>[]} */
     this.keybindings = /** @type {any} */(keybindings);
 
@@ -74,20 +74,10 @@ export default class SxndPlayerApp {
 
     /** @private */
     this.env = new Environment();
-    this.env.setLang(lang);
+    this.env.setLang(config.lang);
 
     /** @private */
     this.sxndPlayer = new SachsenShakaPlayer(this.env);
-
-    // Check if we've got a URL for a supported manifest format
-    /** @private */
-    this.manifestUri = null;
-    for (const format of SachsenShakaPlayer.initSupport()) {
-      if (videoInfo.url[format]) {
-        this.manifestUri = videoInfo.url[format];
-        break;
-      }
-    }
 
     /** @private @type {ChapterLink[]} */
     this.chapterLinks = [];
@@ -102,7 +92,9 @@ export default class SxndPlayerApp {
         },
         keybindings: this.keybindings,
       }),
-      bookmark: new BookmarkModal(this.container, this.env),
+      bookmark: new BookmarkModal(this.container, this.env, {
+        shareButtons: this.config.shareButtons,
+      }),
       screenshot: new ScreenshotModal(this.container, this.env, this.keybindings),
     });
 
@@ -291,7 +283,12 @@ export default class SxndPlayerApp {
    * @private
    */
   async load() {
-    if (this.manifestUri === null) {
+    // Find sources for supported manifest/video formats
+    const videoSources = this.videoInfo.sources.filter(
+      source => this.sxndPlayer.supportsMimeType(source.mimeType)
+    );
+
+    if (videoSources.length === 0) {
       this.failWithError('error.playback-not-supported');
       return;
     }
@@ -328,29 +325,40 @@ export default class SxndPlayerApp {
         title: this.env.t('control.bookmark.tooltip'),
         onClick: this.actions['modal.bookmark.open'],
       }),
+      'fullscreen',
       ControlPanelButton.register(this.env, {
         className: "sxnd-help-button",
-        material_icon: 'help_outline',
+        material_icon: 'info_outline',
         title: this.env.t('control.help.tooltip'),
         onClick: this.actions['modal.help.open'],
       })
     );
     this.sxndPlayer.setConstants(this.constants);
-    this.sxndPlayer.setLocale(this.lang.twoLetterIsoCode);
+    this.sxndPlayer.setLocale(this.config.lang.twoLetterIsoCode);
     this.sxndPlayer.setPoster(this.videoInfo.url.poster);
     this.sxndPlayer.setChapters(chapters);
     this.sxndPlayer.mount(this.playerMount);
 
-    try {
-      await this.sxndPlayer.loadManifest(this.manifestUri, startTime);
-    } catch (e) {
-      console.error(e);
+    // Try loading video until one of the sources works.
+    let loadedSource;
+    for (const source of videoSources) {
+      try {
+        await this.sxndPlayer.loadManifest(source, startTime);
+        loadedSource = source;
+        break;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    if (loadedSource === undefined) {
       this.failWithError('error.load-failed');
+      return;
     }
 
     this.modals.resize();
 
-    document.addEventListener('keydown', this.handlers.onKeyDown, { capture: true });
+    document.addEventListener('keydown', this.handlers.onKeyDown);
     document.addEventListener('keyup', this.handlers.onKeyUp, { capture: true });
   }
 
@@ -378,8 +386,6 @@ export default class SxndPlayerApp {
    * @param {KeyboardEvent} e
    */
   onKeyDown(e) {
-    let stopPropagation = true;
-
     const curKbScope = this.getKeyboardScope();
     const result = Keybindings$find(this.keybindings, e, curKbScope);
 
@@ -388,17 +394,6 @@ export default class SxndPlayerApp {
 
       e.preventDefault();
       this.actions[keybinding.action]?.(keybinding, keyIndex);
-
-      if (keybinding.propagate === true) {
-        stopPropagation = false;
-      }
-    }
-
-    if (stopPropagation) {
-      // Stop propagation to suppress Shaka's default keybindings.
-      //
-      // TODO: Find a better solution; tweak this behavior
-      e.stopImmediatePropagation();
     }
   }
 
