@@ -386,15 +386,7 @@ export default class SxndPlayerApp {
    * @param {KeyboardEvent} e
    */
   onKeyDown(e) {
-    const curKbScope = this.getKeyboardScope();
-    const result = Keybindings$find(this.keybindings, e, curKbScope);
-
-    if (result) {
-      const { keybinding, keyIndex } = result;
-
-      e.preventDefault();
-      this.actions[keybinding.action]?.(keybinding, keyIndex);
-    }
+    this.handleKey(e, 'down');
   }
 
   /**
@@ -409,7 +401,33 @@ export default class SxndPlayerApp {
 
     e.stopImmediatePropagation();
 
+    this.handleKey(e, 'up');
     this.sxndPlayer.cancelTrickPlay();
+  }
+
+  /**
+   * @private
+   * @param {KeyboardEvent} e
+   * @param {KeyEventMode} mode
+   */
+  handleKey(e, mode) {
+    const curKbScope = this.getKeyboardScope();
+    const result = Keybindings$find(this.keybindings, e, curKbScope);
+
+    if (result) {
+      const { keybinding, keyIndex } = result;
+
+      e.preventDefault();
+
+      const shouldHandle = (
+        (mode === 'down' && (keybinding.keydown ?? true))
+        || (mode === 'up' && (keybinding.keyup ?? false))
+      );
+
+      if (shouldHandle) {
+        this.actions[keybinding.action]?.(keybinding, keyIndex, mode);
+      }
+    }
   }
 
   /**
