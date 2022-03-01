@@ -4,10 +4,10 @@ import { describe, expect, test } from '@jest/globals';
 import { modifiersFromEvent, Modifier, Keybinding$splitKeyRanges } from './Keyboard';
 
 describe('modifiersFromEvent', () => {
-  test('basic', () => {
-    // This is mostly for typing
-    const mfe = (/** @type {any} */ e) => modifiersFromEvent(e);
+  // This is mostly for typing
+  const mfe = (/** @type {any} */ e) => modifiersFromEvent(e);
 
+  test('basic', () => {
     expect(mfe({ ctrlKey: true })).toBe(Modifier.CtrlMeta);
     expect(mfe({ metaKey: true })).toBe(Modifier.CtrlMeta);
     expect(mfe({ ctrlKey: true, metaKey: true })).toBe(Modifier.CtrlMeta);
@@ -15,6 +15,19 @@ describe('modifiersFromEvent', () => {
     expect(mfe({ altKey: true })).toBe(Modifier.Alt);
     expect(mfe({ shiftKey: true, altKey: true }))
       .toBe(Modifier.Shift | Modifier.Alt);
+  });
+
+  test('does not modify a modifier key with itself', () => {
+    expect(mfe({ ctrlKey: true, key: 'Control' })).toBe(0);
+    expect(mfe({ ctrlKey: true, key: 'Meta' })).toBe(Modifier.CtrlMeta);
+    expect(mfe({ metaKey: true, key: 'Control' })).toBe(Modifier.CtrlMeta);
+    expect(mfe({ metaKey: true, key: 'Meta' })).toBe(0);
+
+    expect(mfe({ shiftKey: true, key: 'a' })).toBe(Modifier.Shift);
+    expect(mfe({ shiftKey: true, key: 'Shift' })).toBe(0);
+
+    expect(mfe({ altKey: true, key: 'a' })).toBe(Modifier.Alt);
+    expect(mfe({ altKey: true, key: 'Alt' })).toBe(0);
   });
 });
 

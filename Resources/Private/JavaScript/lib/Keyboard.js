@@ -20,15 +20,15 @@ export const Modifier = {
 export function modifiersFromEvent(e) {
   let mod = Modifier.None;
 
-  if (e.ctrlKey || e.metaKey) {
+  if ((e.ctrlKey && e.key !== 'Control') || (e.metaKey && e.key !== 'Meta')) {
     mod |= Modifier.CtrlMeta;
   }
 
-  if (e.shiftKey) {
+  if (e.shiftKey && e.key !== 'Shift') {
     mod |= Modifier.Shift;
   }
 
-  if (e.altKey) {
+  if (e.altKey && e.key !== 'Alt') {
     mod |= Modifier.Alt;
   }
 
