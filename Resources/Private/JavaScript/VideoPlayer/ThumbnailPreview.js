@@ -34,6 +34,19 @@ import buildTimeString from './lib/buildTimeString';
  * @typedef Current
  * @property {SeekPosition} seekPosition
  * @property {TrackedThumbnail[]} thumbs Ordered by quality/bandwidth descending.
+ *
+ * @typedef {{
+ *  onChangeStart: () => void;
+ *  onChange: (pos: SeekPosition) => void;
+ *  onChangeEnd: () => void;
+ * }} Interaction
+ *
+ * @typedef {{
+ *  seekBar: HTMLElement;
+ *  player: shaka.Player;
+ *  network: ImageFetcher;
+ *  interaction: Interaction;
+ * }} Params
  */
 
 const DISPLAY_WIDTH = 160;
@@ -53,20 +66,13 @@ const MAXIMUM_THUMBNAIL_QUOTA = 0.4;
 export default class ThumbnailPreview {
   /**
    *
-   * @param {object} config
-   * @param {HTMLElement} config.seekBar
-   * @param {shaka.Player} config.player
-   * @param {ImageFetcher} config.network
-   * @param {object} config.interaction
-   * @param {() => void} config.interaction.onChangeStart
-   * @param {(pos: SeekPosition) => void} config.interaction.onChange
-   * @param {() => void} config.interaction.onChangeEnd
+   * @param {Params} params
    */
-  constructor(config) {
-    this.seekBar = config.seekBar;
-    this.player = config.player;
-    this.network = config.network;
-    this.interaction = config.interaction;
+  constructor(params) {
+    this.seekBar = params.seekBar;
+    this.player = params.player;
+    this.network = params.network;
+    this.interaction = params.interaction;
 
     /** @private @type {number | null} */
     this.fps = null;
@@ -82,8 +88,6 @@ export default class ThumbnailPreview {
     this.lastRendered = null;
     /** @private @type {boolean} */
     this.isChanging = false;
-    /** @private @type {boolean} */
-    this.showContainer = false; // TODO: Dissolve this field by just using `this.current`
     /** @private @type {Current | null} */
     this.current = null;
     /** @private @type {number | null} */
@@ -266,7 +270,7 @@ export default class ThumbnailPreview {
 
     // Don't check bounds when scrubbing
     if (!this.isChanging) {
-      if (this.showContainer && allowWideSeekArea) {
+      if (this.isVisible && allowWideSeekArea) {
         // A seek has already been initiated by hovering the seekbar. Check
         // bounds in such a way that quickly moving the mouse left/right won't
         // accidentally close the container.
@@ -546,7 +550,7 @@ export default class ThumbnailPreview {
    * @type {boolean}
    */
   get isVisible() {
-    return this.showContainer;
+    return this.current !== null;
   }
 
   /**
@@ -560,7 +564,6 @@ export default class ThumbnailPreview {
       this.current = null;
     }
 
-    this.showContainer = showContainer;
     setElementClass(this.$container, 'sxnd-visible', showContainer);
     setElementClass(this.$seekMarker, 'sxnd-visible', showContainer);
 
