@@ -12,6 +12,7 @@ import {
   setElementClass,
 } from '../lib/util';
 import buildTimeString from './lib/buildTimeString';
+import sanitizeThumbnail from './lib/thumbnails/sanitizeThumbnail';
 
 /**
  * @typedef {{
@@ -582,8 +583,29 @@ export default class ThumbnailPreview {
         : [best, cheapest];
     }
 
-    const thumbPromises = tracks.map((track) => track.getThumb(position));
+    const thumbPromises = tracks.map(
+      (track) => this.getSingleThumbnail(track, position)
+    );
+
     return filterNonNull(await Promise.all(thumbPromises));
+  }
+
+  /**
+   *
+   * @private
+   * @param {ThumbnailTrack} track
+   * @param {number} position
+   * @returns {Promise<ThumbnailOnTrack | null>}
+   */
+  async getSingleThumbnail(track, position) {
+    const thumbRaw = await track.getThumb(position);
+    const videoDuration = this.saneVideoDuration();
+
+    if (thumbRaw === null || videoDuration === undefined) {
+      return null;
+    }
+
+    return sanitizeThumbnail(thumbRaw, videoDuration);
   }
 
   /**
