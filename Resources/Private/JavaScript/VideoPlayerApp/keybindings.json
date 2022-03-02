@@ -141,7 +141,7 @@
 		"scope": "player",
 		"action": "navigate.position.percental",
 		"kind": "navigate",
-		"order": 11
+		"order": 25
 	},
 	{
 		"mod": "Shift",

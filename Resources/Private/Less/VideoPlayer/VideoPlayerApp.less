@@ -227,6 +227,17 @@
 }
 
 .help-modal {
+    width: auto;
+
+    // Center horizontally (TODO: refactor transform into sxnd-modal)
+    left: 50% !important;
+    right: unset !important;
+    transform: translateX(-50%) translateY(-50%) !important;
+
+    .body-container {
+        padding: 0 1em !important;
+    }
+
     .subheader {
         text-align: left;
         font-weight: bold;
@@ -237,12 +248,32 @@
     }
 
     .keybindings-table {
-        td:nth-child(1) {
+        line-height: 1.5rem;
+        font-size: 80%;
+        white-space: nowrap;
+
+        th.kb-group {
+            padding-left: 0.2em;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        tbody tr {
+            &:first-child {
+                border-top: 1px solid @light-color;
+            }
+
+            td {
+                color: white;
+            }
+        }
+
+        td.key {
             width: 40%;
             text-align: right;
         }
 
-        td:nth-child(2) {
+        td.action {
             padding-left: 3em;
             text-align: left;
         }
@@ -288,12 +319,15 @@
         right: 5rem;
     }
 
-    .kb-text {
-        white-space: nowrap;
-    }
-
-    .or-sep {
-        font-weight: bolder;
+    kbd {
+        white-space: pre; // Allow marking space bar with a couple of spaces
+        font-family: monospace;
+        font-weight: bold;
+        color: white;
+        background-color: rgba(#eee, 0.3);
+        border-radius: 3px;
+        border: 1px solid #b4b4b4;
+        padding: 4px 7px;
     }
 
     button {
@@ -324,30 +358,5 @@
 
     h3 {
         font-weight: 700;
-    }
-
-    table {
-        width: 100%;
-        padding: 5rem 0;
-
-        tr {
-            &:not(:last-child) {
-                border-bottom: 1px dotted @light-color;
-            }
-
-            &:first-child {
-                border-bottom: 1px solid @light-color;
-            }
-
-            td {
-                color: white;
-                line-height: 2rem;
-
-                &.legend {
-                    color: @light-color;
-                    font-weight: 700;
-                }
-            }
-        }
     }
 }

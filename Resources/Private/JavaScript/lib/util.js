@@ -210,6 +210,36 @@ export function disableDragging(e) {
 }
 
 /**
+ * Return a new array derived from {@link array} by inserting copies of
+ * {@link elements} between any two consecutive elements.
+ *
+ * @param {(string | HTMLElement)[]} array
+ * @param {(string | HTMLElement) | (string | HTMLElement)[]} elements
+ * @returns {(string | HTMLElement)[]}
+ */
+export function domJoin(array, elements) {
+  const result = [];
+
+  const elementsArr = Array.isArray(elements) ? elements : [elements];
+
+  for (let i = 0; i < array.length; i++) {
+    if (i > 0) {
+      for (const element of elementsArr) {
+        const elementClone = typeof element === 'string'
+          ? element
+          : /** @type {HTMLElement} */(element.cloneNode(true));
+
+        result.push(elementClone);
+      }
+    }
+
+    result.push(/** @type {string | HTMLElement} */(array[i]));
+  }
+
+  return result;
+}
+
+/**
  * Creates a nested HTML element.
  *
  * @template {keyof HTMLElementTagNameMap} K

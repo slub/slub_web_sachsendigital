@@ -8,13 +8,13 @@ import {
   canvasToBlob,
   download,
   e,
+  domJoin,
   sanitizeBasename,
-  textToHtml,
 } from '../../lib/util';
 import generateTimecodeUrl from '../lib/generateTimecodeUrl';
 import { metadataArrayToString } from '../lib/util';
 import SimpleModal from '../lib/SimpleModal';
-import { listKeybindingsDisj } from '../lib/trans';
+import { getKeybindingText } from '../lib/trans';
 import { drawScreenshot } from '../Screenshot';
 
 /**
@@ -55,7 +55,7 @@ export default class ScreenshotModal extends SimpleModal {
     /** @private @type {HTMLVideoElement | null} */
     this.videoDomElement = null;
 
-    const snapKeybindings = keybindings.filter(
+    const snapKeybinding = keybindings.find(
       kb => kb.action === 'modal.screenshot.snap'
     );
 
@@ -115,17 +115,19 @@ export default class ScreenshotModal extends SimpleModal {
           }, ["download"]),
           env.t('modal.screenshot.download-image'),
         ]),
-        e("aside", { className: "snap-tip" }, [
-          e("i", {
-            className: "material-icons-round inline-icon",
-          }, ["info_outline"]),
-          e("span", {
-            // Escape translation string, but allow listKeybindingsDisj (only)
-            // to use HTML (TODO: Refactor?)
-            innerHTML: textToHtml(env.t('modal.screenshot.snap-tip', { keybinding: "{kb}" }))
-              .replace('{kb}', e("span", {}, listKeybindingsDisj(env, snapKeybindings)).outerHTML)
-          }),
-        ]),
+        snapKeybinding && (
+          e("aside", { className: "snap-tip" }, [
+            e("i", {
+              className: "material-icons-round inline-icon",
+            }, ["info_outline"]),
+            e("span", {}, (
+              domJoin(
+                env.t('modal.screenshot.snap-tip', { keybinding: "{kb}" }).split('{kb}'),
+                getKeybindingText(env, snapKeybinding)
+              )
+            )),
+          ])
+        ),
       ]),
 
       this.$canvas = e("canvas")

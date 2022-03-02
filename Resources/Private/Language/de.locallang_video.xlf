@@ -6,8 +6,8 @@
 		</header>
 		<body>
 			<trans-unit id="action.cancel" approved="yes">
-				<source><![CDATA[Cancel current action (window, full screen, ...)]]></source>
-				<target><![CDATA[Aktuelle Aktion beenden (Vollbild, Fenster, ...)]]></target>
+				<source><![CDATA[Cancel action (window, full screen, ...)]]></source>
+				<target><![CDATA[Aktion beenden (Vollbild, Fenster, ...)]]></target>
 			</trans-unit>
 			<trans-unit id="action.fullscreen.toggle" approved="yes">
 				<source><![CDATA[Toggle full screen]]></source>
@@ -18,8 +18,8 @@
 				<target><![CDATA[Navigation]]></target>
 			</trans-unit>
 			<trans-unit id="action.kind.other" approved="yes">
-				<source><![CDATA[Other Shortcuts]]></source>
-				<target><![CDATA[Weitere Tastenkürzel]]></target>
+				<source><![CDATA[Other]]></source>
+				<target><![CDATA[Weitere]]></target>
 			</trans-unit>
 			<trans-unit id="action.kind.player" approved="yes">
 				<source><![CDATA[Player]]></source>
@@ -146,68 +146,44 @@
 				<target><![CDATA[Dieses Video kann in Ihrem Browser nicht wiedergegeben werden.]]></target>
 			</trans-unit>
 			<trans-unit id="key.generic">
-				<source><![CDATA[Key {key}]]></source>
-				<target><![CDATA[Taste {key}]]></target>
-			</trans-unit>
-			<trans-unit id="key.generic.mod">
 				<source><![CDATA[{key}]]></source>
 				<target><![CDATA[{key}]]></target>
 			</trans-unit>
 			<trans-unit id="key. " approved="yes">
 				<source><![CDATA[Space Bar]]></source>
-				<target><![CDATA[Leertaste]]></target>
-			</trans-unit>
-			<trans-unit id="key.," approved="yes">
-				<source><![CDATA[Comma]]></source>
-				<target><![CDATA[Komma]]></target>
-			</trans-unit>
-			<trans-unit id="key.." approved="yes">
-				<source><![CDATA[Period]]></source>
-				<target><![CDATA[Punkt]]></target>
+				<target><![CDATA[     ]]></target>
 			</trans-unit>
 			<trans-unit id="key.ArrowDown" approved="yes">
-				<source><![CDATA[Arrow Down]]></source>
-				<target><![CDATA[Pfeil unten]]></target>
+				<source><![CDATA[▼]]></source>
+				<target><![CDATA[▼]]></target>
 			</trans-unit>
 			<trans-unit id="key.ArrowLeft" approved="yes">
-				<source><![CDATA[Arrow Left]]></source>
-				<target><![CDATA[Pfeil links]]></target>
-			</trans-unit>
-			<trans-unit id="key.ArrowLeft.mod" approved="yes">
-				<source><![CDATA[Left]]></source>
-				<target><![CDATA[links]]></target>
+				<source><![CDATA[◀]]></source>
+				<target><![CDATA[◀]]></target>
 			</trans-unit>
 			<trans-unit id="key.ArrowRight" approved="yes">
-				<source><![CDATA[Arrow Right]]></source>
-				<target><![CDATA[Pfeil rechts]]></target>
-			</trans-unit>
-			<trans-unit id="key.ArrowRight.mod" approved="yes">
-				<source><![CDATA[Right]]></source>
-				<target><![CDATA[rechts]]></target>
+				<source><![CDATA[▶]]></source>
+				<target><![CDATA[▶]]></target>
 			</trans-unit>
 			<trans-unit id="key.ArrowUp" approved="yes">
-				<source><![CDATA[Arrow Up]]></source>
-				<target><![CDATA[Pfeil oben]]></target>
+				<source><![CDATA[▲]]></source>
+				<target><![CDATA[▲]]></target>
 			</trans-unit>
 			<trans-unit id="key.Escape" approved="yes">
-				<source><![CDATA[Escape]]></source>
-				<target><![CDATA[Escape]]></target>
-			</trans-unit>
-			<trans-unit id="key.F1" approved="yes">
-				<source><![CDATA[F1]]></source>
-				<target><![CDATA[F1]]></target>
+				<source><![CDATA[Esc]]></source>
+				<target><![CDATA[Esc]]></target>
 			</trans-unit>
 			<trans-unit id="key.mod.CtrlMeta" approved="yes">
 				<source><![CDATA[Ctrl]]></source>
 				<target><![CDATA[Strg]]></target>
 			</trans-unit>
 			<trans-unit id="key.mod.Shift" approved="yes">
-				<source><![CDATA[Shift]]></source>
-				<target><![CDATA[Umschalt]]></target>
+				<source><![CDATA[⇧ Shift]]></source>
+				<target><![CDATA[⇧ Umschalt]]></target>
 			</trans-unit>
 			<trans-unit id="key.repeat" approved="yes">
-				<source><![CDATA[{key} (repeat)]]></source>
-				<target><![CDATA[{key} (halten)]]></target>
+				<source><![CDATA[(hold) {key}]]></source>
+				<target><![CDATA[(halten) {key}]]></target>
 			</trans-unit>
 			<trans-unit id="key.unto" approved="yes">
 				<source><![CDATA[ to ]]></source>
@@ -265,21 +241,9 @@
 				<source><![CDATA[Screenshot]]></source>
 				<target><![CDATA[Screenshot]]></target>
 			</trans-unit>
-			<trans-unit id="modal.help.action" approved="yes">
-				<source><![CDATA[Action]]></source>
-				<target><![CDATA[Funktion]]></target>
-			</trans-unit>
-			<trans-unit id="modal.help.key" approved="yes">
-				<source><![CDATA[Key]]></source>
-				<target><![CDATA[Taste]]></target>
-			</trans-unit>
 			<trans-unit id="modal.help.title" approved="yes">
 				<source><![CDATA[How to Use]]></source>
 				<target><![CDATA[Bedienhinweise]]></target>
-			</trans-unit>
-			<trans-unit id="or" approved="yes">
-				<source><![CDATA[or]]></source>
-				<target><![CDATA[oder]]></target>
 			</trans-unit>
 			<trans-unit id="player.loading" approved="yes">
 				<source><![CDATA[Loading...]]></source>

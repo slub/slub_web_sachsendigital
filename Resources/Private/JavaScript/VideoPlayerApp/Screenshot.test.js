@@ -21,13 +21,14 @@ function getEnvironment() {
     locale: 'en_US',
     twoLetterIsoCode: 'en',
     phrases: {
+      'key.generic': "{key}",
       'modal.screenshot.title': "Screenshot",
       'modal.screenshot.configuration': "Show Metadata",
       'modal.screenshot.download-image': "Download Image",
       'modal.screenshot.metadata': "Metadata",
       'modal.screenshot.metadata-overlay': "Overlay on image",
       'modal.screenshot.file-format': "File Format",
-      'modal.screenshot.snap-tip': "Tip: ...",
+      'modal.screenshot.snap-tip': "Tip: Snap via {keybinding}",
     },
   });
   return env;
@@ -53,7 +54,14 @@ test('can open screenshot overlay', async () => {
   expect(overlay()).toBeNull();
 
   // opened; exact tags are in snapshot
-  const modal = new ScreenshotModal(document.body, getEnvironment(), []);
+  const modal = new ScreenshotModal(document.body, getEnvironment(), [
+    {
+      keys: ["s"],
+      action: "modal.screenshot.snap",
+      kind: "other",
+      order: 0
+    },
+  ]);
   modal.setVideo(new VideoMock(1920, 1080));
   modal.setMetadata(getTestMetadataArray());
   modal.open();
