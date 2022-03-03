@@ -101,6 +101,8 @@ export default class ThumbnailPreview {
     this.lastRendered = null;
     /** @private @type {boolean} */
     this.isChanging = false;
+    /** @private @type {{ clientX: number; seconds: number } | null} */
+    this.deltaStart = null;
     /** @private @type {Current | null} */
     this.current = null;
     /** @private @type {number | null} */
@@ -307,6 +309,11 @@ export default class ThumbnailPreview {
     }
 
     const bounding = this.seekBar.getBoundingClientRect();
+    let zeroLeft = bounding.left;
+    if (this.deltaStart !== null) {
+      const pxPerSec = bounding.width / duration;
+      zeroLeft = this.deltaStart.clientX - this.deltaStart.seconds * pxPerSec;
+    }
 
     // Don't check bounds when scrubbing
     if (!this.isChanging) {
@@ -315,8 +322,8 @@ export default class ThumbnailPreview {
         // bounds in such a way that quickly moving the mouse left/right won't
         // accidentally close the container.
 
-        const { left, right, bottom } = bounding;
-        if (!(left <= e.clientX && e.clientX <= right && e.clientY <= bottom)) {
+        const { right, bottom } = bounding;
+        if (!(zeroLeft <= e.clientX && e.clientX <= right && e.clientY <= bottom)) {
           return;
         }
 
@@ -336,7 +343,7 @@ export default class ThumbnailPreview {
     }
 
     const secondsPerPixel = duration / bounding.width;
-    const absoluteRaw = e.clientX - bounding.left;
+    let absoluteRaw = clamp(e.clientX - zeroLeft, [0, bounding.width]);
     return { absoluteRaw, secondsPerPixel };
   }
 
@@ -565,10 +572,13 @@ export default class ThumbnailPreview {
   /**
    * Starts seeking and scrubbing.
    *
-   * @private
+   * @public
+   * @param {number | null} clientX
    */
-  beginChange() {
+  beginChange(clientX = null) {
     if (!this.isChanging) {
+      this.deltaStart = this.convertDelta(clientX);
+
       this.interaction?.onChangeStart?.();
       document.body.classList.add('seek-or-scrub');
       this.isChanging = true;
@@ -576,10 +586,32 @@ export default class ThumbnailPreview {
   }
 
   /**
+   *
+   * @private
+   * @param {number | null} clientX
+   */
+  convertDelta(clientX) {
+    if (clientX === null) {
+      return null;
+    }
+
+    const media = this.player.getMediaElement();
+    if (media === null) {
+      return null;
+    }
+
+    return {
+      clientX,
+      seconds: media.currentTime,
+    };
+  }
+
+  /**
    * Stops seeking and scrubbing.
    */
   endChange() {
     if (this.isChanging) {
+      this.deltaStart = null;
       this.interaction?.onChangeEnd?.();
       document.body.classList.remove('seek-or-scrub');
       this.isChanging = false;

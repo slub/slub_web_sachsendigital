@@ -1,5 +1,6 @@
 // @ts-check
 
+import Gestures from '../lib/Gestures';
 import { e } from '../lib/util';
 import { Keybindings$find } from '../lib/Keyboard';
 import {
@@ -365,8 +366,73 @@ export default class SxndPlayerApp {
 
     this.modals.resize();
 
+    this.registerEventHandlers();
+  }
+
+  registerEventHandlers() {
     document.addEventListener('keydown', this.handlers.onKeyDown);
     document.addEventListener('keyup', this.handlers.onKeyUp, { capture: true });
+
+    // TODO: Move actions to SachsenShakaPlayer, then also move gesture detection there
+
+    const g = new Gestures();
+    g.register(this.sxndPlayer.getContainer());
+
+    g.on('gesture', (e) => {
+      if (e.event.clientY >= this.sxndPlayer.userArea.bottom) {
+        return;
+      }
+
+      switch (e.type) {
+        case 'tapup':
+          if (e.event.pointerType === 'mouse') {
+            if (this.sxndPlayer.isUserAreaEvent(e.event)) {
+              if (e.tapCount <= 2) {
+                this.actions['playback.toggle']();
+              }
+
+              if (e.tapCount === 2) {
+                this.actions['fullscreen.toggle']();
+              }
+            }
+          } else if (e.tapCount >= 2) {
+            if (e.position.x < 1 / 3) {
+              this.actions['navigate.rewind']();
+            } else if (e.position.x > 2 / 3) {
+              this.actions['navigate.seek']();
+            } else if (e.tapCount === 2 && !this.isInFullScreen) {
+              this.actions['fullscreen.toggle']();
+            }
+          }
+          break;
+
+        case 'hold':
+          if (e.tapCount === 1) {
+            this.sxndPlayer.beginRelativeSeek(e.event.clientX);
+          } else if (e.tapCount >= 2) {
+            if (e.position.x < 1 / 3) {
+              this.actions['navigate.continuous-rewind']();
+            } else if (e.position.x > 2 / 3) {
+              this.actions['navigate.continuous-seek']();
+            }
+          }
+          break;
+
+        case 'swipe':
+          // "Natural" swiping
+          if (e.direction === 'east') {
+            this.actions['navigate.rewind']();
+          } else if (e.direction === 'west') {
+            this.actions['navigate.seek']();
+          }
+          break;
+      }
+    });
+
+    g.on('release', () => {
+      this.sxndPlayer.endSeek();
+      this.sxndPlayer.cancelTrickPlay();
+    });
   }
 
   /**
@@ -523,6 +589,10 @@ export default class SxndPlayerApp {
         console.log(e);
       }
     }
+  }
+
+  get isInFullScreen() {
+    return document.fullscreenElement !== null;
   }
 
   showBookmarkUrl() {

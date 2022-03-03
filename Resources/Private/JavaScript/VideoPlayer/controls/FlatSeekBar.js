@@ -166,6 +166,10 @@ export default class FlatSeekBar extends shaka.ui.Element {
     super.release();
   }
 
+  get thumbnailPreview() {
+    return this.sxnd.thumbnailPreview;
+  }
+
   /**
    *
    * @returns {boolean}

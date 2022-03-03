@@ -70,8 +70,24 @@
 }
 
 body {
-    &.seek-or-scrub * {
-        cursor: grabbing !important;
+    .shaka-video-container {
+        touch-action: none !important;
+    }
+
+    &.seek-or-scrub {
+        // Don't let the big play button hinder scrubbing,
+        // and make sure there are no tooltips when scrubbing.
+        //
+        // NOTE: We cannot just use a wildcard selector as that would lead to
+        //       issues on mobile (pointercancel when moving mouse vertically).
+        .shaka-play-button,
+        .shaka-controls-button-panel {
+            pointer-events: none;
+        }
+
+        * {
+            cursor: grabbing !important;
+        }
     }
 }
 

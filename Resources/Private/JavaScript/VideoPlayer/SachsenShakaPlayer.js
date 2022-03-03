@@ -50,7 +50,7 @@ export default class SachsenShakaPlayer {
     this.mountPoint = null;
 
     /** @private @type {HTMLElement} */
-    this.container = e('div');
+    this.container = e('div', { className: "noselect" });
 
     /** @private @type {HTMLVideoElement} */
     this.video = e('video', {
@@ -231,6 +231,8 @@ export default class SachsenShakaPlayer {
         adBreaks: 'rgb(255, 204, 0)',
       },
       enableKeyboardPlaybackControls: false,
+      doubleClickForFullscreen: false,
+      singleClickForPlayAndPause: false,
     });
 
     // Set again after `ui.configure()`
@@ -256,6 +258,31 @@ export default class SachsenShakaPlayer {
       this.container.replaceWith(this.mountPoint);
       this.mountPoint = null;
     }
+  }
+
+  getContainer() {
+    return this.container;
+  }
+
+  /**
+   * Check if the event {@link e} interacts with user area (e.g., isn't clicking
+   * the big play button).
+   *
+   * @param {PointerEvent} e
+   */
+  isUserAreaEvent(e) {
+    return e.target === this.container.querySelector('.shaka-play-button-container');
+  }
+
+  /**
+   * Area of the player that may be used for user interaction.
+   *
+   * @type {DOMRect}
+   */
+  get userArea() {
+    const bounding = this.container.getBoundingClientRect();
+    const controlsHeight = this.shakaBottomControls?.getBoundingClientRect().height ?? 0;
+    return new DOMRect(bounding.x, bounding.y, bounding.width, bounding.height - controlsHeight - 20);
   }
 
   /**
@@ -360,6 +387,14 @@ export default class SachsenShakaPlayer {
    */
   setThumbnailSnap(value) {
     this.seekBar?.setThumbnailSnap(value);
+  }
+
+  /**
+   *
+   * @param {number} clientX
+   */
+  beginRelativeSeek(clientX) {
+    this.seekBar?.thumbnailPreview?.beginChange(clientX);
   }
 
   /**
