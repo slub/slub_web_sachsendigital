@@ -78,6 +78,13 @@ npm run typecheck
 npm run tsc-watch
 ```
 
+### Browser Compatibility
+
+```bash
+npm run compat
+npm run compat-build
+```
+
 ### Remarks
 
 - jQuery is marked as external in Webpack config
