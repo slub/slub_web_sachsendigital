@@ -563,7 +563,7 @@ export default class ThumbnailPreview {
   }
 
   /**
-   * Stops seeking and scrubbing.
+   * Starts seeking and scrubbing.
    *
    * @private
    */
@@ -577,8 +577,6 @@ export default class ThumbnailPreview {
 
   /**
    * Stops seeking and scrubbing.
-   *
-   * @private
    */
   endChange() {
     if (this.isChanging) {

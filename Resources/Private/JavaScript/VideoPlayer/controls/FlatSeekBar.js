@@ -174,7 +174,8 @@ export default class FlatSeekBar extends shaka.ui.Element {
     return this.sxnd.thumbnailPreview?.isVisible ?? false;
   }
 
-  hideThumbnailPreview() {
+  endSeek() {
+    this.sxnd.thumbnailPreview?.endChange();
     this.sxnd.thumbnailPreview?.setIsVisible(false);
   }
 

@@ -114,7 +114,7 @@ export default class SxndPlayerApp {
         if (this.modals.hasOpen()) {
           this.modals.closeNext();
         } else if (this.sxndPlayer.isThumbnailPreviewOpen()) {
-          this.sxndPlayer.hideThumbnailPreview();
+          this.sxndPlayer.endSeek();
         } else if (this.sxndPlayer.anySettingsMenusAreOpen()) {
           this.sxndPlayer.hideSettingsMenus();
         }
@@ -123,7 +123,7 @@ export default class SxndPlayerApp {
         this.openModal(this.modals.help);
       },
       'modal.help.toggle': () => {
-        this.sxndPlayer.hideThumbnailPreview();
+        this.sxndPlayer.endSeek();
         this.modals.toggleExclusive(this.modals.help);
       },
       'modal.bookmark.open': () => {
@@ -136,11 +136,11 @@ export default class SxndPlayerApp {
         this.snapScreenshot();
       },
       'fullscreen.toggle': () => {
-        this.sxndPlayer.hideThumbnailPreview();
+        this.sxndPlayer.endSeek();
         this.toggleFullScreen();
       },
       'theater.toggle': () => {
-        this.sxndPlayer.hideThumbnailPreview();
+        this.sxndPlayer.endSeek();
 
         // @see DigitalcollectionsScripts.js
         // TODO: Make sure the theater mode isn't activated on startup; then stop persisting
@@ -582,7 +582,7 @@ export default class SxndPlayerApp {
       this.pauseOn(modal);
     }
 
-    this.sxndPlayer.hideThumbnailPreview();
+    this.sxndPlayer.endSeek();
     modal.open();
   }
 }

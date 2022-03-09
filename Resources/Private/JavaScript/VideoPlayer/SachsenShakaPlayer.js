@@ -347,8 +347,11 @@ export default class SachsenShakaPlayer {
     return this.seekBar?.isThumbnailPreviewOpen() ?? false;
   }
 
-  hideThumbnailPreview() {
-    this.seekBar?.hideThumbnailPreview();
+  /**
+   * Stop any active seeking/scrubbing and close thumbnail preview.
+   */
+  endSeek() {
+    this.seekBar?.endSeek();
   }
 
   /**
