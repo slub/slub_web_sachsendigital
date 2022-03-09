@@ -27,7 +27,7 @@ type VideoInfo = {
    */
   sources: VideoSource[];
   url: {
-    poster: string;
+    poster?: string;
   };
 };
 

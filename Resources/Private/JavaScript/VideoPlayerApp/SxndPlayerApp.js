@@ -346,7 +346,9 @@ export default class SxndPlayerApp {
     );
     this.sxndPlayer.setConstants(this.constants);
     this.sxndPlayer.setLocale(this.config.lang.twoLetterIsoCode);
-    this.sxndPlayer.setPoster(this.videoInfo.url.poster);
+    if (this.videoInfo.url.poster !== undefined) {
+      this.sxndPlayer.setPoster(this.videoInfo.url.poster);
+    }
     this.sxndPlayer.setChapters(chapters);
     this.sxndPlayer.mount(this.playerMount);
 
