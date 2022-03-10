@@ -17,24 +17,51 @@ import { zeroPad } from '../../lib/util';
  * @returns {string}
  */
 export default function buildTimeString(totalSeconds, showHour, fps = null) {
-  const segments = showHour
-    ? [totalSeconds / 3600, (totalSeconds / 60) % 60, totalSeconds % 60]
-    : [totalSeconds / 60, totalSeconds % 60];
-
-  let result = (
-    segments
-      // Don't pad the first segment
-      .map((n, i) => zeroPad(Math.floor(n), i === 0 ? 0 : 2))
-      .join(':')
-  );
-
+  let template = showHour ? "{h}:{mm}:{ss}" : "{m}:{ss}";
   if (fps) {
-    result += `:${zeroPad(Math.floor((totalSeconds % 1) * fps), 2)}`;
+    template += ":{ff}";
 
     if (!showHour) {
-      result += "f";
+      template += "f";
     }
   }
 
-  return result;
+  return timeStringFromTemplate(template, totalSeconds, fps);
+}
+
+/**
+ *
+ * @param {string} template Template string used for building the output.
+ * @param {number} totalSeconds Total number of seconds to be formatted.
+ * @param {number | null} fps (Optional) Number of FPS used to calculate frame count.
+ * @returns {string}
+ */
+export function timeStringFromTemplate(template, totalSeconds, fps = null) {
+  const parts = getTimeStringParts(totalSeconds, fps ?? 0);
+
+  return (
+    template
+      .replace(/{h}/g, `${parts.hours}`)
+      .replace(/{hh}/g, zeroPad(parts.hours, 2))
+      .replace(/{m}/g, `${parts.totalMinutes}`)
+      .replace(/{mm}/g, zeroPad(parts.minutes, 2))
+      .replace(/{ss}/g, zeroPad(parts.seconds, 2))
+      .replace(/{ff}/g, zeroPad(parts.frames, 2))
+  )
+}
+
+/**
+ *
+ * @param {number} totalSeconds
+ * @param {number} fps
+ * @returns {Record<'hours' | 'minutes' | 'totalMinutes' | 'seconds' | 'frames', number>}
+ */
+export function getTimeStringParts(totalSeconds, fps = 0) {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds / 60) % 60);
+  const totalMinutes = hours * 60 + minutes;
+  const seconds = Math.floor(totalSeconds % 60);
+  const frames = Math.floor((totalSeconds % 1) * fps);
+
+  return { hours, minutes, totalMinutes, seconds, frames };
 }

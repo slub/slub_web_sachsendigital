@@ -45,6 +45,7 @@ type LangDef = {
 
 type AppConfig = {
   shareButtons: import("./modals/BookmarkModal").ShareButtonInfo[];
+  screenshotFilenameTemplate: string;
   lang: LangDef;
 };
 

@@ -106,7 +106,10 @@ export default class SxndPlayerApp {
       bookmark: new BookmarkModal(this.container, this.env, {
         shareButtons: this.config.shareButtons,
       }),
-      screenshot: new ScreenshotModal(this.container, this.env, this.keybindings),
+      screenshot: new ScreenshotModal(this.container, this.env, {
+        keybindings: this.keybindings,
+        screenshotFilenameTemplate: this.config.screenshotFilenameTemplate,
+      }),
     });
 
     /** @private */
@@ -622,6 +625,7 @@ export default class SxndPlayerApp {
       this.modals.screenshot
         .setVideo(this.sxndPlayer.getVideo())
         .setMetadata(this.videoInfo.metadata)
+        .setFps(this.sxndPlayer.getFps())
         .setTimecode(this.sxndPlayer.displayTime)
     );
   }

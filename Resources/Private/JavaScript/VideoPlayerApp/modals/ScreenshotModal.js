@@ -1,7 +1,7 @@
 // @ts-check
 
 import imageFormats from '../../lib/image/imageFormats';
-import { buildTimeString } from '../../VideoPlayer';
+import { timeStringFromTemplate } from '../../VideoPlayer';
 import {
   binaryStringToArrayBuffer,
   blobToBinaryString,
@@ -21,10 +21,16 @@ import { drawScreenshot } from '../Screenshot';
  * @typedef {{
  *  metadata: MetadataArray | null;
  *  showMetadata: boolean;
+ *  fps: number | null;
  *  timecode: number | null;
  *  supportedImageFormats: ImageFormatDesc[];
  *  selectedImageFormat: ImageFormatDesc | null;
  * }} State
+ *
+ * @typedef {{
+ *  keybindings: Keybinding<any, any>[];
+ *  screenshotFilenameTemplate: string;
+ * }} Config
  */
 
 /**
@@ -35,9 +41,9 @@ export default class ScreenshotModal extends SimpleModal {
    *
    * @param {HTMLElement} parent
    * @param {Translator & Identifier & Browser} env
-   * @param {Keybinding<any, any>[]} keybindings
+   * @param {Config} config
    */
-  constructor(parent, env, keybindings) {
+  constructor(parent, env, config) {
     const supportedImageFormats = imageFormats.filter(
       format => env.supportsCanvasExport(format.mimeType)
     );
@@ -45,6 +51,7 @@ export default class ScreenshotModal extends SimpleModal {
     super(parent, {
       metadata: null,
       showMetadata: true,
+      fps: null,
       timecode: null,
       supportedImageFormats,
       selectedImageFormat: supportedImageFormats[0] ?? null,
@@ -54,8 +61,10 @@ export default class ScreenshotModal extends SimpleModal {
     this.env = env;
     /** @private @type {HTMLVideoElement | null} */
     this.videoDomElement = null;
+    /** @private */
+    this.config = config;
 
-    const snapKeybinding = keybindings.find(
+    const snapKeybinding = this.config.keybindings.find(
       kb => kb.action === 'modal.screenshot.snap'
     );
 
@@ -157,6 +166,17 @@ export default class ScreenshotModal extends SimpleModal {
   }
 
   /**
+   * Triggers UI update using new {@link fps}.
+   *
+   * @param {number | null} fps
+   * @returns {this}
+   */
+  setFps(fps) {
+    this.setState({ fps });
+    return this;
+  }
+
+  /**
    * Triggers UI update using new {@link timecode}.
    *
    * @param {number} timecode
@@ -215,7 +235,7 @@ export default class ScreenshotModal extends SimpleModal {
 
   /**
    *
-   * @param {Pick<State, 'metadata' | 'timecode' | 'selectedImageFormat'>} state
+   * @param {Pick<State, 'metadata'| 'fps' | 'timecode' | 'selectedImageFormat'>} state
    */
   async downloadCurrentImage(state) {
     const { metadata, timecode, selectedImageFormat } = state;
@@ -226,7 +246,7 @@ export default class ScreenshotModal extends SimpleModal {
 
     const image = await this.makeImageBlob(
       this.$canvas, selectedImageFormat, metadata, timecode);
-    const filename = this.getFilename(metadata, timecode, selectedImageFormat);
+    const filename = this.getFilename(metadata, state.fps, timecode, selectedImageFormat);
 
     download(image, filename);
 
@@ -263,15 +283,15 @@ export default class ScreenshotModal extends SimpleModal {
   /**
    *
    * @param {MetadataArray} metadata
+   * @param {number | null} fps
    * @param {number} timecode
    * @param {ImageFormatDesc} selectedImageFormat
    * @return {string}
    */
-  getFilename(metadata, timecode, selectedImageFormat) {
+  getFilename(metadata, fps, timecode, selectedImageFormat) {
     // NOTE: Don't localize (English file name prefix should be alright)
-    const basename = sanitizeBasename(
-      `Screenshot-${metadata.metadata.title?.[0] ?? "Unnamed"}-T${buildTimeString(timecode, true)}`
-    );
+    const basename = timeStringFromTemplate(this.config.screenshotFilenameTemplate, timecode, fps)
+      .replace(/{title}/g, metadata.metadata.title?.[0] ?? "Unnamed");
 
     const extension = selectedImageFormat.extension;
 
