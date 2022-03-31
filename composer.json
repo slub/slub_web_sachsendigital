@@ -11,17 +11,22 @@
   "authors": [
     {
       "name": "Tino Riedel",
-      "email": "tino.riedel@slub-dresden.de",
+      "email": "typo3@slub-dresden.de",
       "role": "Developer"
     },
     {
       "name": "Thomas Jung",
-      "email": "thomas.jung@slub-dresden.de",
+      "email": "thomas@jung.digital",
       "role": "Developer"
     },
     {
       "name": "Alexander Bigga",
-      "email": "alexander.bigga@slub-dresden.de",
+      "email": "typo3@slub-dresden.de",
+      "role": "Developer"
+    },
+    {
+      "name": "Kajetan Dvoracek",
+      "email": "typo3@slub-dresden.de",
       "role": "Developer"
     }
   ],
