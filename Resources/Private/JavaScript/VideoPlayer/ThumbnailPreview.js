@@ -12,8 +12,14 @@ import {
   setElementClass,
 } from '../lib/util';
 import buildTimeString from './lib/buildTimeString';
+import sanitizeThumbnail from './lib/thumbnails/sanitizeThumbnail';
 
 /**
+ * @typedef {{
+ *  absoluteRaw: number;
+ *  secondsPerPixel: number;
+ * }} RawSeekPosition
+ *
  * @typedef {{
  *  absolute: number;
  *  seconds: number;
@@ -21,19 +27,29 @@ import buildTimeString from './lib/buildTimeString';
  *  onChapterMarker: boolean;
  *  }} SeekPosition
  *
- * @typedef {shaka.extern.Thumbnail & {
- *  track: shaka.extern.Track;
- * }} TrackedThumbnail
- *
  * @typedef {{
  *  uri: string;
- *  thumb: TrackedThumbnail;
+ *  thumb: ThumbnailOnTrack;
  *  tilesetImage: HTMLImageElement;
  * }} LastRendered
  *
  * @typedef Current
+ * @property {RawSeekPosition} rawSeekPosition
  * @property {SeekPosition} seekPosition
- * @property {TrackedThumbnail[]} thumbs Ordered by quality/bandwidth descending.
+ * @property {ThumbnailOnTrack[]} thumbs Ordered by quality/bandwidth descending.
+ *
+ * @typedef {{
+ *  onChangeStart: () => void;
+ *  onChange: (pos: SeekPosition) => void;
+ *  onChangeEnd: () => void;
+ * }} Interaction
+ *
+ * @typedef {{
+ *  seekBar: HTMLElement;
+ *  player: shaka.Player;
+ *  network: ImageFetcher;
+ *  interaction: Interaction;
+ * }} Params
  */
 
 const DISPLAY_WIDTH = 160;
@@ -53,37 +69,40 @@ const MAXIMUM_THUMBNAIL_QUOTA = 0.4;
 export default class ThumbnailPreview {
   /**
    *
-   * @param {object} config
-   * @param {HTMLElement} config.seekBar
-   * @param {shaka.Player} config.player
-   * @param {ImageFetcher} config.network
-   * @param {object} config.interaction
-   * @param {() => void} config.interaction.onChangeStart
-   * @param {(pos: SeekPosition) => void} config.interaction.onChange
-   * @param {() => void} config.interaction.onChangeEnd
+   * @param {Params} params
    */
-  constructor(config) {
-    this.seekBar = config.seekBar;
-    this.player = config.player;
-    this.network = config.network;
-    this.interaction = config.interaction;
+  constructor(params) {
+    this.seekBar = params.seekBar;
+    this.player = params.player;
+    this.network = params.network;
+    this.interaction = params.interaction;
 
     /** @private @type {number | null} */
     this.fps = null;
     /** @private @type {Chapters | null} */
     this.chapters = null;
     /**
-     * Thumbnail image tracks, ordered by quality/bandwidth descending.
+     * Thumbnail tracks, ordered by quality/bandwidth descending.
      * @private
-     * @type {shaka.extern.TrackList}
+     * @type {ThumbnailTrack[]}
      */
-    this.imageTracks = [];
+    this.thumbnailTracks = [];
+    /**
+     * Thumbnail track to which cursor is currently snapped.
+     *
+     * This is also used for downloading thumbnail images, so that the thumbnail
+     * segmentation cannot change during snap.
+     *
+     * @private
+     * @type {ThumbnailTrack | null}
+     */
+    this.snapToThumbnail = null;
     /** @private @type {LastRendered | null} */
     this.lastRendered = null;
     /** @private @type {boolean} */
     this.isChanging = false;
-    /** @private @type {boolean} */
-    this.showContainer = false; // TODO: Dissolve this field by just using `this.current`
+    /** @private @type {{ clientX: number; seconds: number } | null} */
+    this.deltaStart = null;
     /** @private @type {Current | null} */
     this.current = null;
     /** @private @type {number | null} */
@@ -104,7 +123,6 @@ export default class ThumbnailPreview {
       e('div', { className: "content-box" }, [
         this.$display = e('div', { className: "display" }, [
           this.$img = e('img'),
-          this.$thumbTimecode = e('div', { className: "thumb-timecode" }),
         ]),
         this.$info = e('span', { className: "info" }, [
           this.$chapterText = e('span', { className: "chapter-text" }),
@@ -114,8 +132,9 @@ export default class ThumbnailPreview {
     ]);
 
     this.$seekMarker = e('div', { className: "seek-marker" });
+    this.$seekThumbBar = e('div', { className: "seek-thumb-bar" });
 
-    this.seekBar.append(this.$seekMarker, this.$container);
+    this.seekBar.append(this.$seekMarker, this.$seekThumbBar, this.$container);
 
     this.ensureDisplaySize(DISPLAY_WIDTH, DISPLAY_WIDTH / INITIAL_ASPECT_RATIO);
 
@@ -154,11 +173,34 @@ export default class ThumbnailPreview {
   }
 
   /**
-   * @param {shaka.extern.TrackList} imageTracks
+   * @param {readonly ThumbnailTrack[]} thumbnails
    */
-  setImageTracks(imageTracks) {
-    this.imageTracks = imageTracks.slice();
-    this.imageTracks.sort((a, b) => b.bandwidth - a.bandwidth);
+  async setThumbnailTracks(thumbnails) {
+    this.thumbnailTracks = thumbnails.slice();
+    this.thumbnailTracks.sort((a, b) => b.bandwidth - a.bandwidth);
+
+    await this.setThumbnailSnap(false);
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  async setThumbnailSnap(value) {
+    if (value) {
+      this.snapToThumbnail = this.lastRendered?.thumb.track ?? this.thumbnailTracks[0] ?? null;
+    } else {
+      this.snapToThumbnail = null;
+    }
+
+    if (this.current) {
+      this.current.seekPosition = await this.snapPosition(this.current.rawSeekPosition);
+    }
+
+    if (this.current) {
+      this.renderSeekPosition(this.current.seekPosition)
+    }
+
     this.currentRenderBest();
   }
 
@@ -185,27 +227,28 @@ export default class ThumbnailPreview {
    * @param {PointerEvent} e
    */
   async onPointerMove(e) {
-    const seekPosition = this.mouseEventToPosition(e);
-    if (seekPosition === undefined) {
+    const rawSeekPosition = this.mouseEventToPosition(e);
+    if (rawSeekPosition === undefined) {
       return this.setIsVisible(false);
     }
+
+    const seekPosition = await this.snapPosition(rawSeekPosition);
 
     if (e.pointerType === 'touch') {
       this.beginChange();
     }
 
-    const thumbPromises = this.getThumbTracks().map(async (track) => {
-      const thumb =
-        await this.player.getThumbnails(track.id, seekPosition.seconds);
+    /** @type {ThumbnailOnTrack[]} */
+    let thumbs = [];
 
-      return thumb === null
-        ? null
-        : { ...thumb, track };
-    });
+    // If thumbnails are not shown, also avoid unnecessary downloads of images
+    if (this.showThumbnailImage()) {
+      const position = seekPosition.seconds;
+      const maximumBandwidth = 0.01 * this.player.getStats().estimatedBandwidth;
+      thumbs = await this.getThumbnails(position, maximumBandwidth);
+    }
 
-    const thumbs = filterNonNull(await Promise.all(thumbPromises));
-
-    this.current = { seekPosition, thumbs };
+    this.current = { rawSeekPosition, seekPosition, thumbs };
 
     // Check primary button
     if (this.isChanging && (e.buttons & 1) !== 0) {
@@ -219,14 +262,17 @@ export default class ThumbnailPreview {
    * @private
    * @param {PointerEvent} e
    */
-  onPointerDown(e) {
+  async onPointerDown(e) {
     // Check primary button
     if ((e.buttons & 1) !== 0) {
       const position = this.mouseEventToPosition(e, e.pointerType === 'mouse');
       if (position !== undefined) {
-        this.beginChange();
+        const fullPosition = await this.snapPosition(position);
 
-        this.interaction?.onChange?.(position);
+        // Call beginChange() after snapPosition(), so that it won't think
+        // we're scrubbing
+        this.beginChange();
+        this.interaction?.onChange?.(fullPosition);
       }
     }
   }
@@ -249,7 +295,7 @@ export default class ThumbnailPreview {
    * @private
    * @param {MouseEvent} e
    * @param {boolean} allowWideSeekArea
-   * @returns {SeekPosition | undefined}
+   * @returns {RawSeekPosition | undefined}
    */
   mouseEventToPosition(e, allowWideSeekArea = true) {
     const duration = this.saneVideoDuration();
@@ -263,16 +309,21 @@ export default class ThumbnailPreview {
     }
 
     const bounding = this.seekBar.getBoundingClientRect();
+    let zeroLeft = bounding.left;
+    if (this.deltaStart !== null) {
+      const pxPerSec = bounding.width / duration;
+      zeroLeft = this.deltaStart.clientX - this.deltaStart.seconds * pxPerSec;
+    }
 
     // Don't check bounds when scrubbing
     if (!this.isChanging) {
-      if (this.showContainer && allowWideSeekArea) {
+      if (this.isVisible && allowWideSeekArea) {
         // A seek has already been initiated by hovering the seekbar. Check
         // bounds in such a way that quickly moving the mouse left/right won't
         // accidentally close the container.
 
-        const { left, right, bottom } = bounding;
-        if (!(left <= e.clientX && e.clientX <= right && e.clientY <= bottom)) {
+        const { right, bottom } = bounding;
+        if (!(zeroLeft <= e.clientX && e.clientX <= right && e.clientY <= bottom)) {
           return;
         }
 
@@ -292,20 +343,43 @@ export default class ThumbnailPreview {
     }
 
     const secondsPerPixel = duration / bounding.width;
+    let absoluteRaw = clamp(e.clientX - zeroLeft, [0, bounding.width]);
+    return { absoluteRaw, secondsPerPixel };
+  }
 
-    let absolute = e.clientX - bounding.left;
-    let seconds = clamp(absolute * secondsPerPixel, [0, duration]);
-    const chapter = this.chapters?.timeToChapter(seconds);
+  /**
+   *
+   * @param {RawSeekPosition} position
+   * @returns {Promise<SeekPosition>}
+   */
+  async snapPosition(position) {
+    let { absoluteRaw: absolute, secondsPerPixel } = position;
+    let seconds = absolute * secondsPerPixel;
+
+    // Two pixels of leeway to the left
+    const chapter = this.chapters?.timeToChapter(seconds + secondsPerPixel * 2);
     let onChapterMarker = false;
 
-    // "Capture" mouse on chapter markers,
+    // "Capture" mouse on chapter markers or thumbnail snap,
     // but only if the user is not currently scrubbing.
-    if (chapter && !this.isChanging) {
-      const offsetPixels = (seconds - chapter.timecode) / secondsPerPixel;
-      if (-2 <= offsetPixels && offsetPixels < 6) {
-        seconds = chapter.timecode;
-        absolute = seconds / secondsPerPixel;
-        onChapterMarker = true;
+    if (!this.isChanging) {
+      if (this.snapToThumbnail !== null) {
+        const thumb = await this.getSingleThumbnail(this.snapToThumbnail, seconds);
+        if (thumb !== null) {
+          seconds = thumb.imageTime;
+          absolute = seconds / secondsPerPixel;
+        }
+      }
+
+      if (chapter) {
+        const offsetPixels = (seconds - chapter.timecode) / secondsPerPixel;
+        if (offsetPixels < 6) {
+          if (this.snapToThumbnail === null) {
+            seconds = chapter.timecode;
+            absolute = seconds / secondsPerPixel;
+          }
+          onChapterMarker = true;
+        }
       }
     }
 
@@ -374,21 +448,11 @@ export default class ThumbnailPreview {
    *
    * @private
    * @param {string} uri
-   * @param {TrackedThumbnail} thumb
+   * @param {ThumbnailOnTrack} thumb
    * @param {HTMLImageElement} tilesetImage
    * @param {SeekPosition} seekPosition
    */
   renderImageAndShow(uri, thumb, tilesetImage, seekPosition) {
-    // When width/height are in the interval [0,1], we treat them as relative
-    // to the tileset size. See `CustomHlsParser`.
-    if ((0 <= thumb.width && thumb.width <= 1) && (0 <= thumb.height && thumb.height <= 1)) {
-      thumb.positionX *= tilesetImage.width;
-      thumb.width *= tilesetImage.width;
-
-      thumb.positionY *= tilesetImage.height;
-      thumb.height *= tilesetImage.height;
-    }
-
     this.ensureDisplaySize(thumb.width, thumb.height);
 
     this.renderImage(uri, thumb, tilesetImage);
@@ -396,6 +460,9 @@ export default class ThumbnailPreview {
 
     // If the image has just become visible, the container position may change
     this.positionContainer(seekPosition);
+
+    // The thumbnail snap range may need to be re-rendered
+    this.renderSeekPosition(seekPosition, thumb);
   }
 
   /**
@@ -403,17 +470,17 @@ export default class ThumbnailPreview {
    *
    * @private
    * @param {string} uri
-   * @param {TrackedThumbnail} thumb
+   * @param {ThumbnailOnTrack} thumb
    * @param {HTMLImageElement} tilesetImage
    * @param {boolean} force
    */
   renderImage(uri, thumb, tilesetImage, force = false) {
-    // Check if it's another thumbnail (`startTime` and `bandwidth` as proxy)
+    // Check if it's another thumbnail (`imageTime` and `bandwidth` as proxy)
     const shouldRender = (
       force
       || this.lastRendered === null
-      || thumb.startTime !== this.lastRendered.thumb.startTime
-      || thumb.track.bandwidth !== this.lastRendered.thumb.track.bandwidth
+      || thumb.imageTime !== this.lastRendered.thumb.imageTime
+      || thumb.bandwidth !== this.lastRendered.thumb.bandwidth
     );
 
     if (shouldRender) {
@@ -429,26 +496,8 @@ export default class ThumbnailPreview {
       ].join(' ');
       this.$img.style.transformOrigin = 'left top';
 
-      this.renderThumbTimecode(thumb);
-
       this.lastRendered = { uri, thumb, tilesetImage };
     }
-  }
-
-  /**
-   * Renders timecode label of thumbnail (top right corner).
-   *
-   * @private
-   * @param {shaka.extern.Thumbnail} thumb
-   */
-  renderThumbTimecode(thumb) {
-    // TODO: Make this more flexible than just accomodating ffmpeg's fps filter
-    const videoDuration = this.saneVideoDuration();
-    const showHour = videoDuration === undefined || videoDuration >= 3600;
-    const targetTime = thumb.startTime + thumb.duration / 2;
-    const timecode = buildTimeString(targetTime - 0.00001, showHour, this.fps);
-
-    this.$thumbTimecode.innerText = timecode;
   }
 
   /**
@@ -476,8 +525,9 @@ export default class ThumbnailPreview {
    *
    * @private
    * @param {SeekPosition} seekPosition
+   * @param {Thumbnail | null} thumb
    */
-  renderSeekPosition(seekPosition) {
+  renderSeekPosition(seekPosition, thumb = null) {
     const duration = this.saneVideoDuration();
     if (duration === undefined) {
       this.setIsVisible(false);
@@ -485,6 +535,11 @@ export default class ThumbnailPreview {
     }
 
     this.$seekMarker.style.left = `${seekPosition.absolute}px`;
+
+    if (thumb !== null && this.snapToThumbnail !== null) {
+      this.$seekThumbBar.style.left = `${thumb.startTime / duration * 100}%`;
+      this.$seekThumbBar.style.width = `${thumb.duration / duration * 100}%`;
+    }
 
     if (seekPosition.onChapterMarker) {
       this.$info.classList.add("on-chapter-marker");
@@ -515,12 +570,15 @@ export default class ThumbnailPreview {
   }
 
   /**
-   * Stops seeking and scrubbing.
+   * Starts seeking and scrubbing.
    *
-   * @private
+   * @public
+   * @param {number | null} clientX
    */
-  beginChange() {
+  beginChange(clientX = null) {
     if (!this.isChanging) {
+      this.deltaStart = this.convertDelta(clientX);
+
       this.interaction?.onChangeStart?.();
       document.body.classList.add('seek-or-scrub');
       this.isChanging = true;
@@ -528,12 +586,32 @@ export default class ThumbnailPreview {
   }
 
   /**
-   * Stops seeking and scrubbing.
    *
    * @private
+   * @param {number | null} clientX
+   */
+  convertDelta(clientX) {
+    if (clientX === null) {
+      return null;
+    }
+
+    const media = this.player.getMediaElement();
+    if (media === null) {
+      return null;
+    }
+
+    return {
+      clientX,
+      seconds: media.currentTime,
+    };
+  }
+
+  /**
+   * Stops seeking and scrubbing.
    */
   endChange() {
     if (this.isChanging) {
+      this.deltaStart = null;
       this.interaction?.onChangeEnd?.();
       document.body.classList.remove('seek-or-scrub');
       this.isChanging = false;
@@ -546,7 +624,7 @@ export default class ThumbnailPreview {
    * @type {boolean}
    */
   get isVisible() {
-    return this.showContainer;
+    return this.current !== null;
   }
 
   /**
@@ -560,13 +638,12 @@ export default class ThumbnailPreview {
       this.current = null;
     }
 
-    this.showContainer = showContainer;
     setElementClass(this.$container, 'sxnd-visible', showContainer);
     setElementClass(this.$seekMarker, 'sxnd-visible', showContainer);
+    setElementClass(this.$seekThumbBar, 'sxnd-visible', showThumb && this.snapToThumbnail !== null);
 
     setElementClass(this.$display, 'is-open', openThumb)
     setElementClass(this.$img, 'sxnd-visible', showThumb);
-    setElementClass(this.$thumbTimecode, 'sxnd-visible', showThumb);
 
     // Make sure the thumbnail image won't be dragged when scrubbing
     disableDragging(this.$img);
@@ -574,37 +651,54 @@ export default class ThumbnailPreview {
 
   /**
    * @private
+   * @param {number} position
+   * @param {number} maximumBandwidth
+   * @returns {Promise<ThumbnailOnTrack[]>}
    */
-  getThumbTracks() {
-    // We do this check here to avoid superfluous downloads of thumbnails
-    if (!this.showThumbnailImage()) {
-      return [];
-    }
+  async getThumbnails(position, maximumBandwidth) {
+    /** @type {ThumbnailTrack[]} */
+    let tracks = [];
 
-    // Image tracks are sorted by quality. Select the best and worst track
-    // of acceptable bandwidth.
+    if (this.snapToThumbnail !== null) {
+      tracks = [this.snapToThumbnail];
+    } else {
+      // Find best and cheapest track of acceptable bandwidth
+      // Thumbnail tracks are ordered descending
+      let best = this.thumbnailTracks.find(track => track.bandwidth < maximumBandwidth);
+      if (best !== undefined) {
+        let cheapest = /** @type {ThumbnailTrack} */(
+          this.thumbnailTracks[this.thumbnailTracks.length - 1]
+        );
 
-    const maximumBandwidth = 0.01 * this.player.getStats().estimatedBandwidth;
-
-    for (let i = 0; i < this.imageTracks.length; i++) {
-      const track = /** @type {shaka.extern.Track} */(this.imageTracks[i]);
-
-      if (track.bandwidth < maximumBandwidth) {
-        const max = track;
-
-        if (i === this.imageTracks.length - 1) {
-          return [max];
-        } else {
-          const min = /** @type {shaka.extern.Track} */(
-            this.imageTracks[this.imageTracks.length - 1]
-          );
-
-          return [max, min];
-        }
+        tracks = best === cheapest
+          ? [best]
+          : [best, cheapest];
       }
     }
 
-    return [];
+    const thumbPromises = tracks.map(
+      (track) => this.getSingleThumbnail(track, position)
+    );
+
+    return filterNonNull(await Promise.all(thumbPromises));
+  }
+
+  /**
+   *
+   * @private
+   * @param {ThumbnailTrack} track
+   * @param {number} position
+   * @returns {Promise<ThumbnailOnTrack | null>}
+   */
+  async getSingleThumbnail(track, position) {
+    const thumbRaw = await track.getThumb(position);
+    const videoDuration = this.saneVideoDuration();
+
+    if (thumbRaw === null || videoDuration === undefined) {
+      return null;
+    }
+
+    return sanitizeThumbnail(thumbRaw, videoDuration);
   }
 
   /**

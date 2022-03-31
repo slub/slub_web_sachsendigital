@@ -34,6 +34,7 @@ export default class SachsenShakaPlayer {
   constructor(env) {
     if (!SachsenShakaPlayer.hasInstalledPolyfills) {
       shaka.polyfill.installAll();
+      SachsenShakaPlayer.hasInstalledPolyfills = true;
     }
 
     /** @private */
@@ -49,14 +50,20 @@ export default class SachsenShakaPlayer {
     this.mountPoint = null;
 
     /** @private @type {HTMLElement} */
-    this.container = e('div');
+    this.container = e('div', { className: "noselect" });
 
     /** @private @type {HTMLVideoElement} */
     this.video = e('video', {
       id: this.env.mkid(),
       className: "sxnd-video",
     });
-    this.container.append(this.video);
+    this.poster = e('img', {
+      className: "sxnd-poster sxnd-visible",
+      $error: () => {
+        this.hidePoster();
+      },
+    });
+    this.container.append(this.video, this.poster);
 
     /** @private @type {string[]} */
     this.controlPanelButtons = [];
@@ -101,6 +108,8 @@ export default class SachsenShakaPlayer {
       onErrorEvent: this.onErrorEvent.bind(this),
       onTrackChange: this.onTrackChange.bind(this),
       onTimeUpdate: this.onTimeUpdate.bind(this),
+      onPlay: this.onPlay.bind(this),
+      onManualSeek: this.onManualSeek.bind(this),
     };
 
     this.player.addEventListener('error', this.handlers.onErrorEvent);
@@ -115,7 +124,11 @@ export default class SachsenShakaPlayer {
       this.seekBar = detail.seekBar;
     });
 
+    this.controls.addEventListener('sxnd-manual-seek', this.handlers.onManualSeek);
+
     this.controls.addEventListener('timeandseekrangeupdated', this.handlers.onTimeUpdate);
+
+    this.video.addEventListener('play', this.handlers.onPlay);
   }
 
   /**
@@ -153,7 +166,7 @@ export default class SachsenShakaPlayer {
    * @param {string} posterUrl
    */
   setPoster(posterUrl) {
-    this.video.poster = posterUrl;
+    this.poster.src = posterUrl;
   }
 
   /**
@@ -190,6 +203,7 @@ export default class SachsenShakaPlayer {
     // TODO: Refactor insertion at custom position (left or right of fullscreen)
     this.ui.configure({
       addSeekBar: true,
+      enableTooltips: true,
       controlPanelElements: [
         'play_pause',
         PresentationTimeTracker.register(this.env),
@@ -217,6 +231,8 @@ export default class SachsenShakaPlayer {
         adBreaks: 'rgb(255, 204, 0)',
       },
       enableKeyboardPlaybackControls: false,
+      doubleClickForFullscreen: false,
+      singleClickForPlayAndPause: false,
     });
 
     // Set again after `ui.configure()`
@@ -242,6 +258,31 @@ export default class SachsenShakaPlayer {
       this.container.replaceWith(this.mountPoint);
       this.mountPoint = null;
     }
+  }
+
+  getContainer() {
+    return this.container;
+  }
+
+  /**
+   * Check if the event {@link e} interacts with user area (e.g., isn't clicking
+   * the big play button).
+   *
+   * @param {PointerEvent} e
+   */
+  isUserAreaEvent(e) {
+    return e.target === this.container.querySelector('.shaka-play-button-container');
+  }
+
+  /**
+   * Area of the player that may be used for user interaction.
+   *
+   * @type {DOMRect}
+   */
+  get userArea() {
+    const bounding = this.container.getBoundingClientRect();
+    const controlsHeight = this.shakaBottomControls?.getBoundingClientRect().height ?? 0;
+    return new DOMRect(bounding.x, bounding.y, bounding.width, bounding.height - controlsHeight - 20);
   }
 
   /**
@@ -294,6 +335,22 @@ export default class SachsenShakaPlayer {
     }
   }
 
+  onPlay() {
+    // Hide poster once playback has started the first time
+    // This is necessary because "onTimeUpdate" may be fired with a delay
+    this.hidePoster();
+  }
+
+  onManualSeek() {
+    // Hide poster when seeking in pause mode before playback has started
+    // We don't want to hide the poster when initial timecode is used
+    this.hidePoster();
+  }
+
+  hidePoster() {
+    this.poster.classList.remove('sxnd-visible');
+  }
+
   /**
    * @private
    * @param {number} readyState
@@ -317,8 +374,27 @@ export default class SachsenShakaPlayer {
     return this.seekBar?.isThumbnailPreviewOpen() ?? false;
   }
 
-  hideThumbnailPreview() {
-    this.seekBar?.hideThumbnailPreview();
+  /**
+   * Stop any active seeking/scrubbing and close thumbnail preview.
+   */
+  endSeek() {
+    this.seekBar?.endSeek();
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setThumbnailSnap(value) {
+    this.seekBar?.setThumbnailSnap(value);
+  }
+
+  /**
+   *
+   * @param {number} clientX
+   */
+  beginRelativeSeek(clientX) {
+    this.seekBar?.thumbnailPreview?.beginChange(clientX);
   }
 
   /**
@@ -486,6 +562,8 @@ export default class SachsenShakaPlayer {
     } else if (typeof position.timecode === 'number') {
       this.video.currentTime = position.timecode;
     }
+
+    this.hidePoster();
   }
 
   /**
@@ -494,7 +572,7 @@ export default class SachsenShakaPlayer {
    */
   skipSeconds(delta) {
     // TODO: Consider end of video
-    this.video.currentTime += delta;
+    this.seekTo(this.video.currentTime + delta);
   }
 
   /**

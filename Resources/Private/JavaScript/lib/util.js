@@ -20,6 +20,17 @@ export function clamp(value, [min, max]) {
 }
 
 /**
+ * Zero-pad {@link value} to at least {@link length} digits.
+ *
+ * @param {number} value
+ * @param {number} length
+ * @returns {string}
+ */
+export function zeroPad(value, length) {
+  return value.toString().padStart(length, '0');
+}
+
+/**
  * Extracts the mime type from a data URL.
  *
  * @param {string} dataUrl
@@ -141,8 +152,11 @@ export function withObjectUrl(obj, callback) {
   if (result instanceof Promise) {
     const resultPromise = result;
 
-    // @ts-expect-error: The typing is indeed not exact here because `T` could
-    // be a type extending `Promise` (TODO).
+    // @ts-expect-error
+    // - The typing isn't exact because `T` could be extending `Promise` (TODO).
+    // - Simply doing `result.then().catch()` or `result.finally()` without
+    //   creating a new Promise wouldn't suffice, as that would alter behavior
+    //   w.r.t. unhandled rejections (TODO: demnstrate in test case?).
     return new Promise((resolve, reject) => {
       resultPromise
         .then((value) => {
@@ -193,6 +207,36 @@ export function cancelAction(e) {
 export function disableDragging(e) {
   e.draggable = false;
   e.ondragstart = cancelAction;
+}
+
+/**
+ * Return a new array derived from {@link array} by inserting copies of
+ * {@link elements} between any two consecutive elements.
+ *
+ * @param {(string | HTMLElement)[]} array
+ * @param {(string | HTMLElement) | (string | HTMLElement)[]} elements
+ * @returns {(string | HTMLElement)[]}
+ */
+export function domJoin(array, elements) {
+  const result = [];
+
+  const elementsArr = Array.isArray(elements) ? elements : [elements];
+
+  for (let i = 0; i < array.length; i++) {
+    if (i > 0) {
+      for (const element of elementsArr) {
+        const elementClone = typeof element === 'string'
+          ? element
+          : /** @type {HTMLElement} */(element.cloneNode(true));
+
+        result.push(elementClone);
+      }
+    }
+
+    result.push(/** @type {string | HTMLElement} */(array[i]));
+  }
+
+  return result;
 }
 
 /**
@@ -262,20 +306,6 @@ export function sanitizeBasename(str) {
  */
 export function textToHtml(text) {
   return e('span', { innerText: text }).innerHTML;
-}
-
-/**
- * Promisification of `setTimeout`.
- *
- * @param {number} delay Delay in seconds
- * @returns {Promise<void>}
- */
-export function sleep(delay) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, delay * 1000);
-  })
 }
 
 /**

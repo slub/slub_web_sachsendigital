@@ -21,7 +21,7 @@ export default class Component extends EventEmitter {
 
     /**
      * @private
-     * @type {Partial<State>[]}
+     * @type {((prevState: State) => Partial<State>)[]}
      */
     this.pendingStateUpdates = [];
 
@@ -40,18 +40,18 @@ export default class Component extends EventEmitter {
 
   /**
    *
-   * @param {Partial<State>} state
+   * @param {Partial<State> | ((prevState: State) => Partial<State>)} state
    */
   setState(state = {}) {
-    this.pendingStateUpdates.push(state);
+    const stateFn = typeof state === 'function' ? state : (() => state);
+    this.pendingStateUpdates.push(stateFn);
 
     // Postpone updates so that multiple synchronous calls to `setState` don't
     // lead to multiple renderings.
     if (!this.renderTimeout) {
       this.renderPromise = new Promise((resolve) => {
         this.renderTimeout = setTimeout(() => {
-          const stateUpdate = this.squashStateUpdates();
-          const newState = Object.assign({}, this.state, stateUpdate);
+          const newState = this.squashStateUpdates();
           this.render(newState);
           this.state = newState;
           this.renderTimeout = null;
@@ -75,15 +75,15 @@ export default class Component extends EventEmitter {
 
   /**
    * @private
-   * @returns {Partial<State>}
+   * @returns {State}
    */
   squashStateUpdates() {
-    const stateUpdate = this.pendingStateUpdates.reduce(
-      (prev, cur, _currentIndex, _array) => Object.assign(prev, cur),
-      {}
-    );
+    const newState = Object.assign({}, this.state);
+    for (const updateState of this.pendingStateUpdates) {
+      Object.assign(newState, updateState(newState));
+    }
     this.pendingStateUpdates = [];
-    return stateUpdate;
+    return newState;
   }
 
   /**

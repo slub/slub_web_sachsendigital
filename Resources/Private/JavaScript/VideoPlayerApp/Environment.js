@@ -63,8 +63,8 @@ export default class Environment {
    */
   supportsMediaSource() {
     return (
-      window.MediaSource !== undefined
-      && window.MediaSource.isTypeSupported !== undefined
+      window.MediaSource !== undefined // eslint-disable-line compat/compat
+      && window.MediaSource.isTypeSupported !== undefined // eslint-disable-line compat/compat
     );
   }
 

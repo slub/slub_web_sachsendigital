@@ -2,7 +2,7 @@
 
 import shaka from 'shaka-player/dist/shaka-player.ui';
 
-import { e } from '../../lib/util';
+import { e, setElementClass } from '../../lib/util';
 
 /**
  * @typedef Config
@@ -61,6 +61,8 @@ export default class ControlPanelButton extends shaka.ui.Element {
   }
 
   updateStrings() {
-    this.sxnd.button.title = this.sxnd.config.title ?? "";
+    let tooltip = this.sxnd.config.title ?? "";
+    this.sxnd.button.ariaLabel = tooltip;
+    setElementClass(this.sxnd.button, 'shaka-tooltip', tooltip !== "");
   }
 }

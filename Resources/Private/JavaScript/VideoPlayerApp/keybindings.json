@@ -141,7 +141,7 @@
 		"scope": "player",
 		"action": "navigate.position.percental",
 		"kind": "navigate",
-		"order": 11
+		"order": 25
 	},
 	{
 		"mod": "Shift",
@@ -172,5 +172,14 @@
 		"action": "navigate.frame.next",
 		"kind": "navigate",
 		"order": 21
+	},
+	{
+		"keys": ["Shift"],
+		"scope": "player",
+		"action": "navigate.thumbnails.snap",
+		"kind": "navigate",
+		"order": 30,
+		"keydown": true,
+		"keyup": true
 	}
 ]

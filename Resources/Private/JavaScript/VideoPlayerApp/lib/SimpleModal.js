@@ -14,6 +14,7 @@ import Component from './Component';
 /**
  * @template {object} ModalState
  * @extends {Component<BaseState & ModalState>}
+ * @implements {Modal}
  */
 export default class SimpleModal extends Component {
   /**
@@ -120,7 +121,7 @@ export default class SimpleModal extends Component {
   render(state) {
     const { show } = state;
 
-    if (show != this.state.show) {
+    if (show !== this.state.show) {
       this.isAnimating = true;
       const fn = show ? 'show' : 'hide';
       this.jqMain[fn]({

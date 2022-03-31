@@ -1,0 +1,6 @@
+# NOTE: This file is on top level so that both eslint-plugin-compat and Babel find it
+
+defaults
+ios_saf >= 12
+not ie 11
+not op_mini all

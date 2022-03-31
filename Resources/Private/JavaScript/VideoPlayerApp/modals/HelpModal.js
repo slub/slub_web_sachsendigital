@@ -1,8 +1,8 @@
 // @ts-check
 
-import { e } from '../../lib/util';
+import { domJoin, e } from '../../lib/util';
 import SimpleModal from '../lib/SimpleModal';
-import { listKeybindingsDisj } from '../lib/trans';
+import { getKeybindingText } from '../lib/trans';
 
 /**
  * @typedef {string} KeybindingKind See `Keybinding::kind`.
@@ -73,43 +73,47 @@ export default class HelpModal extends SimpleModal {
   createBodyDom() {
     const env = this.env;
 
-    this.$body.classList.add('help-modal');
+    this.$main.classList.add('help-modal');
     this.$title.innerText = env.t('modal.help.title');
 
     const allKbGrouped = groupKeybindings(this.config.keybindings);
 
-    const els = Object.entries(allKbGrouped)
-      .flatMap(([kind, kbGrouped]) => {
-        const keybindings = [...Object.entries(kbGrouped)];
-        if (keybindings.length === 0) {
-          return [];
-        }
+    const els = e("table", { className: "keybindings-table" }, (
+      Object.entries(allKbGrouped)
+        .flatMap(([kind, kbGrouped]) => {
+          const keybindings = [...Object.entries(kbGrouped)];
+          if (keybindings.length === 0) {
+            return;
+          }
 
-        return [
-          e("h3", {
-            className: "subheader",
-            innerText: env.t(`action.kind.${kind}`),
-          }),
-
-          e("table", { className: "keybindings-table" }, [
-            e("tbody", {}, [
-              e("tr", {}, [
-                e("td", { className: "legend key" }, [env.t('modal.help.key')]),
-                e("td", { className: "legend action" }, [env.t('modal.help.action')]),
+          return [
+            e("thead", {}, [
+              e("th", { className: "kb-group", colSpan: 2 }, [
+                env.t(`action.kind.${kind}`)
               ]),
-
-              ...keybindings.map(([action, kbs]) => (
+            ]),
+            e("tbody", {}, (
+              keybindings.map(([action, kbs]) => (
                 e("tr", {}, [
-                  e("td", { className: "key" }, listKeybindingsDisj(env, kbs)),
+                  e("td", { className: "key" }, this.listKeybindings(kbs)),
                   e("td", { className: "action" }, [this.describeAction(action)]),
                 ])
-              )),
-            ]),
-          ]),
-        ];
-      });
+              ))
+            ))
+          ];
+        })
+    ));
 
-    this.$body.append(...els);
+    this.$body.append(els);
+  }
+
+  /**
+   * Generates and concatenates texts of multiple keybindings.
+   *
+   * @param {ShownKeybinding[]} kbs
+   */
+  listKeybindings(kbs) {
+    return domJoin(kbs.map(kb => getKeybindingText(this.env, kb)), e("br"));
   }
 
   /**

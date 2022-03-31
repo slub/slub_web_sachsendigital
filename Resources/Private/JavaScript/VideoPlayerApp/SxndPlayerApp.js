@@ -1,5 +1,6 @@
 // @ts-check
 
+import Gestures from '../lib/Gestures';
 import { e } from '../lib/util';
 import { Keybindings$find } from '../lib/Keyboard';
 import {
@@ -83,6 +84,16 @@ export default class SxndPlayerApp {
     this.chapterLinks = [];
 
     /** @private */
+    this.sxnd = {
+      /**
+       * The object that has caused current pause state, if any.
+       *
+       * @type {ValueOf<AppModals> | null}
+       */
+      pausedOn: null,
+    };
+
+    /** @private */
     this.modals = Modals({
       help: new HelpModal(this.container, this.env, {
         constants: {
@@ -95,18 +106,11 @@ export default class SxndPlayerApp {
       bookmark: new BookmarkModal(this.container, this.env, {
         shareButtons: this.config.shareButtons,
       }),
-      screenshot: new ScreenshotModal(this.container, this.env, this.keybindings),
+      screenshot: new ScreenshotModal(this.container, this.env, {
+        keybindings: this.keybindings,
+        screenshotFilenameTemplate: this.config.screenshotFilenameTemplate,
+      }),
     });
-
-    /** @private */
-    this.sxnd = {
-      /**
-       * The object that has caused current pause state, if any.
-       *
-       * @type {ValueOf<AppModals> | null}
-       */
-      pausedOn: null,
-    };
 
     /** @private */
     this.actions = {
@@ -114,16 +118,16 @@ export default class SxndPlayerApp {
         if (this.modals.hasOpen()) {
           this.modals.closeNext();
         } else if (this.sxndPlayer.isThumbnailPreviewOpen()) {
-          this.sxndPlayer.hideThumbnailPreview();
+          this.sxndPlayer.endSeek();
         } else if (this.sxndPlayer.anySettingsMenusAreOpen()) {
           this.sxndPlayer.hideSettingsMenus();
         }
       },
       'modal.help.open': () => {
-        this.openModal(this.modals.help, /* pause= */ false);
+        this.openModal(this.modals.help);
       },
       'modal.help.toggle': () => {
-        this.sxndPlayer.hideThumbnailPreview();
+        this.sxndPlayer.endSeek();
         this.modals.toggleExclusive(this.modals.help);
       },
       'modal.bookmark.open': () => {
@@ -136,11 +140,11 @@ export default class SxndPlayerApp {
         this.snapScreenshot();
       },
       'fullscreen.toggle': () => {
-        this.sxndPlayer.hideThumbnailPreview();
+        this.sxndPlayer.endSeek();
         this.toggleFullScreen();
       },
       'theater.toggle': () => {
-        this.sxndPlayer.hideThumbnailPreview();
+        this.sxndPlayer.endSeek();
 
         // @see DigitalcollectionsScripts.js
         // TODO: Make sure the theater mode isn't activated on startup; then stop persisting
@@ -208,6 +212,13 @@ export default class SxndPlayerApp {
 
           this.sxndPlayer.seekTo(absolute);
         }
+      },
+      'navigate.thumbnails.snap': (
+        /** @type {Keybinding<any, any>} */ _kb,
+        /** @type {number} */ _keyIndex,
+        /** @type {KeyEventMode} */ mode
+      ) => {
+        this.sxndPlayer.setThumbnailSnap(mode === 'down');
       },
     };
 
@@ -358,8 +369,73 @@ export default class SxndPlayerApp {
 
     this.modals.resize();
 
+    this.registerEventHandlers();
+  }
+
+  registerEventHandlers() {
     document.addEventListener('keydown', this.handlers.onKeyDown);
     document.addEventListener('keyup', this.handlers.onKeyUp, { capture: true });
+
+    // TODO: Move actions to SachsenShakaPlayer, then also move gesture detection there
+
+    const g = new Gestures();
+    g.register(this.sxndPlayer.getContainer());
+
+    g.on('gesture', (e) => {
+      if (e.event.clientY >= this.sxndPlayer.userArea.bottom) {
+        return;
+      }
+
+      switch (e.type) {
+        case 'tapup':
+          if (e.event.pointerType === 'mouse') {
+            if (this.sxndPlayer.isUserAreaEvent(e.event)) {
+              if (e.tapCount <= 2) {
+                this.actions['playback.toggle']();
+              }
+
+              if (e.tapCount === 2) {
+                this.actions['fullscreen.toggle']();
+              }
+            }
+          } else if (e.tapCount >= 2) {
+            if (e.position.x < 1 / 3) {
+              this.actions['navigate.rewind']();
+            } else if (e.position.x > 2 / 3) {
+              this.actions['navigate.seek']();
+            } else if (e.tapCount === 2 && !this.isInFullScreen) {
+              this.actions['fullscreen.toggle']();
+            }
+          }
+          break;
+
+        case 'hold':
+          if (e.tapCount === 1) {
+            this.sxndPlayer.beginRelativeSeek(e.event.clientX);
+          } else if (e.tapCount >= 2) {
+            if (e.position.x < 1 / 3) {
+              this.actions['navigate.continuous-rewind']();
+            } else if (e.position.x > 2 / 3) {
+              this.actions['navigate.continuous-seek']();
+            }
+          }
+          break;
+
+        case 'swipe':
+          // "Natural" swiping
+          if (e.direction === 'east') {
+            this.actions['navigate.rewind']();
+          } else if (e.direction === 'west') {
+            this.actions['navigate.seek']();
+          }
+          break;
+      }
+    });
+
+    g.on('release', () => {
+      this.sxndPlayer.endSeek();
+      this.sxndPlayer.cancelTrickPlay();
+    });
   }
 
   /**
@@ -386,15 +462,7 @@ export default class SxndPlayerApp {
    * @param {KeyboardEvent} e
    */
   onKeyDown(e) {
-    const curKbScope = this.getKeyboardScope();
-    const result = Keybindings$find(this.keybindings, e, curKbScope);
-
-    if (result) {
-      const { keybinding, keyIndex } = result;
-
-      e.preventDefault();
-      this.actions[keybinding.action]?.(keybinding, keyIndex);
-    }
+    this.handleKey(e, 'down');
   }
 
   /**
@@ -409,7 +477,33 @@ export default class SxndPlayerApp {
 
     e.stopImmediatePropagation();
 
+    this.handleKey(e, 'up');
     this.sxndPlayer.cancelTrickPlay();
+  }
+
+  /**
+   * @private
+   * @param {KeyboardEvent} e
+   * @param {KeyEventMode} mode
+   */
+  handleKey(e, mode) {
+    const curKbScope = this.getKeyboardScope();
+    const result = Keybindings$find(this.keybindings, e, curKbScope);
+
+    if (result) {
+      const { keybinding, keyIndex } = result;
+
+      e.preventDefault();
+
+      const shouldHandle = (
+        (mode === 'down' && (keybinding.keydown ?? true))
+        || (mode === 'up' && (keybinding.keyup ?? false))
+      );
+
+      if (shouldHandle) {
+        this.actions[keybinding.action]?.(keybinding, keyIndex, mode);
+      }
+    }
   }
 
   /**
@@ -500,6 +594,10 @@ export default class SxndPlayerApp {
     }
   }
 
+  get isInFullScreen() {
+    return document.fullscreenElement !== null;
+  }
+
   showBookmarkUrl() {
     // Don't show modal if we can't expect the current time to be properly
     // initialized
@@ -527,6 +625,7 @@ export default class SxndPlayerApp {
       this.modals.screenshot
         .setVideo(this.sxndPlayer.getVideo())
         .setMetadata(this.videoInfo.metadata)
+        .setFps(this.sxndPlayer.getFps())
         .setTimecode(this.sxndPlayer.displayTime)
     );
   }
@@ -552,12 +651,12 @@ export default class SxndPlayerApp {
    * @param {ValueOf<AppModals>} modal
    * @param {boolean} pause
    */
-  openModal(modal, pause) {
+  openModal(modal, pause = false) {
     if (pause) {
       this.pauseOn(modal);
     }
 
-    this.sxndPlayer.hideThumbnailPreview();
+    this.sxndPlayer.endSeek();
     modal.open();
   }
 }

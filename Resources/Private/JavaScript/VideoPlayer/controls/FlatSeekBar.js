@@ -76,6 +76,10 @@ export default class FlatSeekBar extends shaka.ui.Element {
     this.sxnd.seekTimer = new shaka.util.Timer(() => {
       if (this.video !== null) {
         this.video.currentTime = this.getValue();
+
+        this.controls?.dispatchEvent(/** @type {SxndManualSeekEvent} */(
+          new CustomEvent('sxnd-manual-seek', {})
+        ));
       }
     });
 
@@ -162,6 +166,10 @@ export default class FlatSeekBar extends shaka.ui.Element {
     super.release();
   }
 
+  get thumbnailPreview() {
+    return this.sxnd.thumbnailPreview;
+  }
+
   /**
    *
    * @returns {boolean}
@@ -170,8 +178,17 @@ export default class FlatSeekBar extends shaka.ui.Element {
     return this.sxnd.thumbnailPreview?.isVisible ?? false;
   }
 
-  hideThumbnailPreview() {
+  endSeek() {
+    this.sxnd.thumbnailPreview?.endChange();
     this.sxnd.thumbnailPreview?.setIsVisible(false);
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setThumbnailSnap(value) {
+    this.sxnd.thumbnailPreview?.setThumbnailSnap(value);
   }
 
   /**
@@ -212,7 +229,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
    */
   updatePreviewImageTracks() {
     if (this.sxnd.thumbnailPreview === null) {
-      console.warn("FlatSeekBar: Missing player or thumbnail preview");
+      console.warn("FlatSeekBar: Missing thumbnail preview");
       return;
     }
 
@@ -220,8 +237,8 @@ export default class FlatSeekBar extends shaka.ui.Element {
       return;
     }
 
-    const imageTracks = this.sxnd.variantGroups.findImageTracks();
-    this.sxnd.thumbnailPreview.setImageTracks(imageTracks);
+    const thumbTracks = this.sxnd.variantGroups.findThumbnailTracks();
+    this.sxnd.thumbnailPreview.setThumbnailTracks(thumbTracks);
   }
 
   /**

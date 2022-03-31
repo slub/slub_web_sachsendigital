@@ -45,6 +45,7 @@ type LangDef = {
 
 type AppConfig = {
   shareButtons: import("./modals/BookmarkModal").ShareButtonInfo[];
+  screenshotFilenameTemplate: string;
   lang: LangDef;
 };
 
@@ -85,6 +86,16 @@ type Keybinding<ScopeT extends string, ActionT extends string> = {
   action: ActionT;
 
   /**
+   * Whether or not to use this keybinding for `keydown` events.
+   */
+  keydown?: boolean = true;
+
+  /**
+   * Whether or not to use this keybinding for `keyup` events.
+   */
+  keyup?: boolean = false;
+
+  /**
    * Kind of keybinding as used for grouping in help modal.
    */
   kind: string;
@@ -94,3 +105,17 @@ type Keybinding<ScopeT extends string, ActionT extends string> = {
    */
   order: number;
 };
+
+type KeyEventMode = 'down' | 'up';
+
+type ModalEventHandlers = {
+  updated: () => void;
+};
+
+interface Modal extends TypedEvents<ModalEventHandlers> {
+  readonly isOpen: boolean;
+  open(): void;
+  close(): void;
+  update(): Promise<void>;
+  resize(): void;
+}

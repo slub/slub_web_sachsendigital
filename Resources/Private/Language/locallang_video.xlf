@@ -6,7 +6,7 @@
 		</header>
 		<body>
 			<trans-unit id="action.cancel">
-				<source><![CDATA[Cancel current action (full screen, window, ...)]]></source>
+				<source><![CDATA[Cancel action (full screen, window, ...)]]></source>
 			</trans-unit>
 			<trans-unit id="action.fullscreen.toggle">
 				<source><![CDATA[Toggle full screen]]></source>
@@ -15,7 +15,7 @@
 				<source><![CDATA[Navigate]]></source>
 			</trans-unit>
 			<trans-unit id="action.kind.other">
-				<source><![CDATA[Other Shortcuts]]></source>
+				<source><![CDATA[Other]]></source>
 			</trans-unit>
 			<trans-unit id="action.kind.player">
 				<source><![CDATA[Player]]></source>
@@ -59,6 +59,9 @@
 			<trans-unit id="action.navigate.position.percental">
 				<source><![CDATA[Jump to position (%)]]></source>
 			</trans-unit>
+			<trans-unit id="action.navigate.thumbnails.snap">
+				<source><![CDATA[Seek along thumbnails]]></source>
+			</trans-unit>
 			<trans-unit id="action.playback.captions.toggle">
 				<source><![CDATA[Toggle captions]]></source>
 			</trans-unit>
@@ -84,28 +87,22 @@
 				<source><![CDATA[Bookmark]]></source>
 			</trans-unit>
 			<trans-unit id="control.help.tooltip">
-				<source><![CDATA[Show Help]]></source>
+				<source><![CDATA[Show help]]></source>
 			</trans-unit>
 			<trans-unit id="control.screenshot.tooltip">
-				<source><![CDATA[Take Screenshot]]></source>
+				<source><![CDATA[Take screenshot]]></source>
+			</trans-unit>
+			<trans-unit id="control.time.tooltip">
+				<source><![CDATA[Toggle time display]]></source>
 			</trans-unit>
 			<trans-unit id="control.time.current-time.text">
 				<source><![CDATA[{currentTime} / {totalTime} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></source>
 			</trans-unit>
-			<trans-unit id="control.time.current-time.tooltip">
-				<source><![CDATA[Current Time / Total]]></source>
-			</trans-unit>
 			<trans-unit id="control.time.remaining-time.text">
 				<source><![CDATA[{remainingTime} remaining {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></source>
 			</trans-unit>
-			<trans-unit id="control.time.remaining-time.tooltip">
-				<source><![CDATA[Remaining Time]]></source>
-			</trans-unit>
 			<trans-unit id="control.time.current-frame.text">
-				<source><![CDATA[{currentFrame, plural, =-1 {Frame Count Not Available} other {#}} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></source>
-			</trans-unit>
-			<trans-unit id="control.time.current-frame.tooltip">
-				<source><![CDATA[Frame Count]]></source>
+				<source><![CDATA[{currentFrame, plural, =-1 {Frame Count Not Available} other {Frame: #}} {chapterTitle, select, _ {} other {— {chapterTitle}}}]]></source>
 			</trans-unit>
 			<trans-unit id="control.video-track.title">
 				<source><![CDATA[Video Track]]></source>
@@ -117,55 +114,37 @@
 				<source><![CDATA[This video cannot be played back in your browser.]]></source>
 			</trans-unit>
 			<trans-unit id="key.generic">
-				<source><![CDATA[Key {key}]]></source>
-			</trans-unit>
-			<trans-unit id="key.generic.mod">
 				<source><![CDATA[{key}]]></source>
 			</trans-unit>
 			<trans-unit id="key. ">
 				<source><![CDATA[Space Bar]]></source>
 			</trans-unit>
-			<trans-unit id="key.,">
-				<source><![CDATA[Comma]]></source>
-			</trans-unit>
-			<trans-unit id="key..">
-				<source><![CDATA[Period]]></source>
-			</trans-unit>
 			<trans-unit id="key.ArrowDown">
-				<source><![CDATA[Arrow Down]]></source>
+				<source><![CDATA[▼]]></source>
 			</trans-unit>
 			<trans-unit id="key.ArrowLeft">
-				<source><![CDATA[Arrow Left]]></source>
-			</trans-unit>
-			<trans-unit id="key.ArrowLeft.mod">
-				<source><![CDATA[Left]]></source>
+				<source><![CDATA[◀]]></source>
 			</trans-unit>
 			<trans-unit id="key.ArrowRight">
-				<source><![CDATA[Arrow Right]]></source>
-			</trans-unit>
-			<trans-unit id="key.ArrowRight.mod">
-				<source><![CDATA[Right]]></source>
+				<source><![CDATA[▶]]></source>
 			</trans-unit>
 			<trans-unit id="key.ArrowUp">
-				<source><![CDATA[Arrow Up]]></source>
+				<source><![CDATA[▲]]></source>
 			</trans-unit>
 			<trans-unit id="key.Escape">
-				<source><![CDATA[Escape]]></source>
+				<source><![CDATA[Esc]]></source>
 			</trans-unit>
-			<trans-unit id="key.F1">
-				<source><![CDATA[F1]]></source>
+			<trans-unit id="key.Shift">
+				<source><![CDATA[⇧ Shift]]></source>
 			</trans-unit>
 			<trans-unit id="key.mod.CtrlMeta">
 				<source><![CDATA[Ctrl]]></source>
 			</trans-unit>
 			<trans-unit id="key.mod.Shift">
-				<source><![CDATA[Shift]]></source>
+				<source><![CDATA[⇧ Shift]]></source>
 			</trans-unit>
 			<trans-unit id="key.repeat">
-				<source><![CDATA[{key} (repeat)]]></source>
-			</trans-unit>
-			<trans-unit id="key.s.mod">
-				<source><![CDATA[S]]></source>
+				<source><![CDATA[(hold) {key}]]></source>
 			</trans-unit>
 			<trans-unit id="key.unto">
 				<source><![CDATA[ to ]]></source>
@@ -206,17 +185,8 @@
 			<trans-unit id="modal.screenshot.title">
 				<source><![CDATA[Screenshot]]></source>
 			</trans-unit>
-			<trans-unit id="modal.help.action">
-				<source><![CDATA[Action]]></source>
-			</trans-unit>
-			<trans-unit id="modal.help.key">
-				<source><![CDATA[Key]]></source>
-			</trans-unit>
 			<trans-unit id="modal.help.title">
 				<source><![CDATA[How to Use]]></source>
-			</trans-unit>
-			<trans-unit id="or">
-				<source><![CDATA[or]]></source>
 			</trans-unit>
 			<trans-unit id="player.loading">
 				<source><![CDATA[Loading...]]></source>

@@ -37,6 +37,14 @@ interface SxndSeekBarEvent
   extends CustomEvent<SxndEventDetail["sxnd-seek-bar"]> {}
 
 /**
+ * Signals that the user has manually seeked to a video position.
+ *
+ * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
+ */
+interface SxndManualSeekEvent
+  extends CustomEvent<SxndEventDetail["sxnd-manual-seek"]> {}
+
+/**
  * Signals variant groups of current video.
  *
  * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
@@ -55,10 +63,37 @@ type SxndEventDetail = {
   "sxnd-seek-bar": {
     seekBar: import("./controls/FlatSeekBar").default;
   };
+  "sxnd-manual-seek": {};
   "sxnd-variant-groups": {
     variantGroups: import("./VariantGroups").default;
   };
 };
+
+/**
+ * Description on a thumbnail on a tileset.
+ *
+ * Generally oriented at {@link shaka.extern.Thumbnail}.
+ */
+type Thumbnail = {
+  uris: string[];
+  imageTime: number;
+  startTime: number;
+  duration: number;
+  positionX: number;
+  positionY: number;
+  width: number;
+  height: number;
+  bandwidth: number;
+};
+
+type ThumbnailOnTrack = Thumbnail & {
+  track: ThumbnailTrack;
+};
+
+interface ThumbnailTrack {
+  readonly bandwidth: number;
+  getThumb(position: number): Promise<ThumbnailOnTrack | null>;
+}
 
 type VideoSource = {
   mimeType: string;

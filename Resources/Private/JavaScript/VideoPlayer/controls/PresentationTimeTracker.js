@@ -70,7 +70,10 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
   constructor(parent, controls, env) {
     super(parent, controls);
 
-    const currentTime = e('button', { className: 'shaka-current-time' });
+    const currentTime = e('button', {
+      className: 'shaka-current-time shaka-tooltip',
+      ariaLabel: env.t('control.time.tooltip'),
+    });
     parent.appendChild(currentTime);
 
     /** @private */
@@ -145,7 +148,6 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
    * @param {Partial<State>} state
    */
   render(state) {
-    const { env, currentTime } = this.sxnd;
     const newState = Object.assign({}, this.state, state);
 
     const newKeys = /** @type {(keyof State)[]} */(Object.keys(state));
@@ -158,8 +160,7 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
         [TimeMode.CurrentFrame]: 'current-frame',
       }[newState.activeMode] ?? 'current-time');
 
-      currentTime.textContent = this.getTimecodeText(tKey, newState);
-      currentTime.title = env.t(`control.time.${tKey}.tooltip`);
+      this.sxnd.currentTime.textContent = this.getTimecodeText(tKey, newState);
     }
 
     this.state = newState;

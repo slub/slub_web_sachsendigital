@@ -35,12 +35,12 @@ class VideoToJsonViewHelper extends AbstractViewHelper
         $movieDir = $settings['movieDir'];
         $chapters = $settings['chapters'] ?? [];
 
+        // @see `VideoInfo` in VideoPlayerApp.d.ts
         $result = [
             'chapters' => array_map(function ($item) {
                 return $item['chapter'];
             }, array_values($chapters)),
 
-            // @see `MetadataArray` in VideoPlayerApp.d.ts
             'metadata' => [
                 'metadata' => [
                     'title' => [$settings['media']],
