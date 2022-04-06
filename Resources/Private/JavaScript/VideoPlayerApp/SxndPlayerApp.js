@@ -55,7 +55,7 @@ export default class SxndPlayerApp {
     this.constants = typoConstants(config.constants ?? {}, {
       prevChapterTolerance: 5,
       volumeStep: 0.05,
-      seekStep: 10,
+      seekStep: 5,
       trickPlayFactor: 4,
       forceLandscapeOnFullscreen: true,
     });
