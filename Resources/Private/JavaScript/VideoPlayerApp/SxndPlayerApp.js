@@ -3,6 +3,7 @@
 import Gestures from '../lib/Gestures';
 import { e } from '../lib/util';
 import { Keybindings$find } from '../lib/Keyboard';
+import typoConstants from '../lib/typoConstants';
 import {
   Chapters,
   ControlPanelButton,
@@ -50,19 +51,14 @@ export default class SxndPlayerApp {
     /** @private @type {Keybinding<KeyboardScope, keyof SxndPlayerApp['actions']>[]} */
     this.keybindings = /** @type {any} */(keybindings);
 
-    /** @private */
-    this.constants = {
-      /** Number of seconds in which to still rewind to previous chapter. */
+    /** @private @type {AppConstants} */
+    this.constants = typoConstants(config.constants ?? {}, {
       prevChapterTolerance: 5,
-      /** Volume increase/decrease in relevant keybinding. */
       volumeStep: 0.05,
-      /** Number of seconds to seek or rewind in relevant keybinding. */
       seekStep: 10,
-      /** Trick play factor for continuous rewind/seek. */
       trickPlayFactor: 4,
-      /** Whether or not to switch to landscape in fullscreen mode. */
       forceLandscapeOnFullscreen: true,
-    };
+    });
 
     /** @private */
     this.handlers = {

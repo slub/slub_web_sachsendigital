@@ -40,7 +40,7 @@ export default class SachsenShakaPlayer {
     /** @private */
     this.env = env;
 
-    /** @private @type {Constants} */
+    /** @private @type {Constants} @see {setConstants} */
     this.constants = {
       prevChapterTolerance: 5,
       minBottomControlsReadyState: 2, // Enough data for current position

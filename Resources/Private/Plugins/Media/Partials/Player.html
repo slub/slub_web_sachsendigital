@@ -10,11 +10,13 @@
             var lang = {sxnd:translations(baseFile: settings.playerTranslations.baseFile) -> f:format.json() -> f:format.raw()};
             var shareButtons = {settings.shareButtons -> sxnd:shareButtonsToJson()};
             var screenshotFilenameTemplate = {settings.screenshotFilenameTemplate -> f:format.json() -> f:format.raw()};
+            var constants = {settings.constants -> f:format.json() -> f:format.raw()};
 
             var app = new SxndPlayerApp(container, videoConfig, {
                 lang: lang,
                 shareButtons: shareButtons,
-                screenshotFilenameTemplate: screenshotFilenameTemplate
+                screenshotFilenameTemplate: screenshotFilenameTemplate,
+                constants: constants
             });
         });
     </script>

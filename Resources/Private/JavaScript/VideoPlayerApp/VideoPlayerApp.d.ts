@@ -43,10 +43,41 @@ type LangDef = {
   phrases: PhrasesDict;
 };
 
+type AppConstants = {
+  /**
+   * Number of seconds in which to still rewind to previous chapter.
+   */
+  prevChapterTolerance: number;
+
+  /**
+   * Volume increase/decrease in relevant keybinding.
+   */
+  volumeStep: number;
+
+  /**
+   * Number of seconds to seek or rewind in relevant keybinding.
+   */
+  seekStep: number;
+
+  /**
+   * Trick play factor for continuous rewind/seek.
+   * TODO: Check if this should be input as setting or retrieved from current manifest
+   */
+  trickPlayFactor: number,
+
+  /**
+   * Whether or not to switch to landscape in fullscreen mode.
+   */
+  forceLandscapeOnFullscreen: boolean;
+};
+
+type AppConstantsConfig = import('../lib/typoConstants').TypoConstants<AppConstants>;
+
 type AppConfig = {
   shareButtons: import("./modals/BookmarkModal").ShareButtonInfo[];
   screenshotFilenameTemplate: string;
   lang: LangDef;
+  constants?: Partial<AppConstantsConfig> | null;
 };
 
 type Keybinding<ScopeT extends string, ActionT extends string> = {
