@@ -98,7 +98,7 @@ export default class DlfMediaPlayer {
     this.controlEventQueue = [];
 
     /** @private @type {FlatSeekBar | null} */
-    this.seekBar = null;
+    this.seekBar_ = null;
 
     /** @private @type {VideoFrame | null} */
     this.vifa = null;
@@ -129,7 +129,7 @@ export default class DlfMediaPlayer {
     // TODO: Figure out a good flow of events
     this.controls.addEventListener('dlf-media-seek-bar', (e) => {
       const detail = /** @type {dlf.media.SeekBarEvent} */(e).detail;
-      this.seekBar = detail.seekBar;
+      this.seekBar_ = detail.seekBar;
     });
 
     this.controls.addEventListener('dlf-media-manual-seek', this.handlers.onManualSeek);
@@ -167,6 +167,14 @@ export default class DlfMediaPlayer {
    */
   setConstants(constants) {
     Object.assign(this.constants, constants);
+  }
+
+  /**
+   *
+   * @returns {FlatSeekBar | null}
+   */
+  get seekBar() {
+    return this.seekBar_;
   }
 
   /**
@@ -375,36 +383,6 @@ export default class DlfMediaPlayer {
     } else if (readyState >= this.constants.minBottomControlsReadyState) {
       this.shakaBottomControls?.classList.add('dlf-visible');
     }
-  }
-
-  /**
-   * @returns {boolean}
-   */
-  isThumbnailPreviewOpen() {
-    return this.seekBar?.isThumbnailPreviewOpen() ?? false;
-  }
-
-  /**
-   * Stop any active seeking/scrubbing and close thumbnail preview.
-   */
-  endSeek() {
-    this.seekBar?.endSeek();
-  }
-
-  /**
-   *
-   * @param {boolean} value
-   */
-  setThumbnailSnap(value) {
-    this.seekBar?.setThumbnailSnap(value);
-  }
-
-  /**
-   *
-   * @param {number} clientX
-   */
-  beginRelativeSeek(clientX) {
-    this.seekBar?.thumbnailPreview?.beginChange(clientX);
   }
 
   /**

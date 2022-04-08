@@ -103,8 +103,8 @@ export default class SlubMediaPlayer {
       'cancel': () => {
         if (this.modals.hasOpen()) {
           this.modals.closeNext();
-        } else if (this.dlfPlayer.isThumbnailPreviewOpen()) {
-          this.dlfPlayer.endSeek();
+        } else if (this.dlfPlayer.seekBar?.isThumbnailPreviewOpen() ?? false) {
+          this.dlfPlayer.seekBar?.endSeek();
         } else if (this.dlfPlayer.anySettingsMenusAreOpen()) {
           this.dlfPlayer.hideSettingsMenus();
         }
@@ -113,7 +113,7 @@ export default class SlubMediaPlayer {
         this.openModal(this.modals.help);
       },
       'modal.help.toggle': () => {
-        this.dlfPlayer.endSeek();
+        this.dlfPlayer.seekBar?.endSeek();
         this.modals.toggleExclusive(this.modals.help);
       },
       'modal.bookmark.open': () => {
@@ -126,11 +126,11 @@ export default class SlubMediaPlayer {
         this.snapScreenshot();
       },
       'fullscreen.toggle': () => {
-        this.dlfPlayer.endSeek();
+        this.dlfPlayer.seekBar?.endSeek();
         this.toggleFullScreen();
       },
       'theater.toggle': () => {
-        this.dlfPlayer.endSeek();
+        this.dlfPlayer.seekBar?.endSeek();
 
         // @see DigitalcollectionsScripts.js
         // TODO: Make sure the theater mode isn't activated on startup; then stop persisting
@@ -204,7 +204,7 @@ export default class SlubMediaPlayer {
         /** @type {number} */ _keyIndex,
         /** @type {KeyEventMode} */ mode
       ) => {
-        this.dlfPlayer.setThumbnailSnap(mode === 'down');
+        this.dlfPlayer.seekBar?.setThumbnailSnap(mode === 'down');
       },
     };
 
@@ -400,7 +400,8 @@ export default class SlubMediaPlayer {
 
         case 'hold':
           if (e.tapCount === 1) {
-            this.dlfPlayer.beginRelativeSeek(e.event.clientX);
+            // TODO: Somehow extract an action "navigate.relative-seek"? How to pass clientX?
+            this.dlfPlayer.seekBar?.thumbnailPreview?.beginChange(e.event.clientX);
           } else if (e.tapCount >= 2) {
             if (e.position.x < 1 / 3) {
               this.actions['navigate.continuous-rewind']();
@@ -422,7 +423,7 @@ export default class SlubMediaPlayer {
     });
 
     g.on('release', () => {
-      this.dlfPlayer.endSeek();
+      this.dlfPlayer.seekBar?.endSeek();
       this.dlfPlayer.cancelTrickPlay();
     });
   }
@@ -612,7 +613,7 @@ export default class SlubMediaPlayer {
       this.dlfPlayer.pauseOn(modal);
     }
 
-    this.dlfPlayer.endSeek();
+    this.dlfPlayer.seekBar?.endSeek();
     modal.open();
   }
 }
