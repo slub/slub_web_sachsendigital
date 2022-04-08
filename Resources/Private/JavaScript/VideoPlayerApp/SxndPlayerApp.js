@@ -384,17 +384,19 @@ export default class SxndPlayerApp {
         return;
       }
 
+      if (!this.sxndPlayer.isUserAreaEvent(e.event)) {
+        return;
+      }
+
       switch (e.type) {
         case 'tapup':
           if (e.event.pointerType === 'mouse') {
-            if (this.sxndPlayer.isUserAreaEvent(e.event)) {
-              if (e.tapCount <= 2) {
-                this.actions['playback.toggle']();
-              }
+            if (e.tapCount <= 2) {
+              this.actions['playback.toggle']();
+            }
 
-              if (e.tapCount === 2) {
-                this.actions['fullscreen.toggle']();
-              }
+            if (e.tapCount === 2) {
+              this.actions['fullscreen.toggle']();
             }
           } else if (e.tapCount >= 2) {
             if (e.position.x < 1 / 3) {
