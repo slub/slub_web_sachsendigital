@@ -73,6 +73,12 @@ export default class DlfMediaPlayer {
      */
     this.videoPausedOn = null;
 
+    /** @private @type {dlf.media.Source[]} */
+    this.sources_ = [];
+
+    /** @private @type {number | null} */
+    this.startTime = null;
+
     /** @private @type {string[]} */
     this.controlPanelButtons = [];
 
@@ -143,6 +149,7 @@ export default class DlfMediaPlayer {
    * Determines whether or not the player supports playback of videos in the
    * given mime type.
    *
+   * @private
    * @param {string} mimeType
    * @returns {boolean}
    */
@@ -301,13 +308,27 @@ export default class DlfMediaPlayer {
     return new DOMRect(bounding.x, bounding.y, bounding.width, bounding.height - controlsHeight - 20);
   }
 
+  async load() {
+    // Try loading video until one of the sources works.
+    for (const source of this.sources_) {
+      try {
+        await this.loadManifest(source);
+        return true;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    return false;
+  }
+
   /**
    *
+   * @private
    * @param {dlf.media.Source} videoSource
-   * @param {number | null} startTime
    */
-  async loadManifest(videoSource, startTime = null) {
-    await this.player.load(videoSource.url, startTime, videoSource.mimeType);
+  async loadManifest(videoSource) {
+    await this.player.load(videoSource.url, this.startTime, videoSource.mimeType);
 
     this.variantGroups = new VariantGroups(this.player);
 
@@ -416,6 +437,28 @@ export default class DlfMediaPlayer {
   setChapters(chapters) {
     this.chapters = chapters;
     this.emitControlEvent('dlf-media-chapters', { chapters });
+  }
+
+  /**
+   *
+   * @param {number | null} startTime
+   */
+  setStartTime(startTime) {
+    this.startTime = startTime;
+  }
+
+  get sources() {
+    return this.sources_;
+  }
+
+  /**
+   *
+   * @param {dlf.media.Source[]} sources
+   */
+  setSources(sources) {
+    this.sources_ = sources.filter(
+      source => this.supportsMimeType(source.mimeType)
+    );
   }
 
   /**

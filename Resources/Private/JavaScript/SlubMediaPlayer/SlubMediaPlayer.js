@@ -279,16 +279,6 @@ export default class SlubMediaPlayer {
    * @private
    */
   async load() {
-    // Find sources for supported manifest/video formats
-    const videoSources = this.videoInfo.sources.filter(
-      source => this.dlfPlayer.supportsMimeType(source.mimeType)
-    );
-
-    if (videoSources.length === 0) {
-      this.failWithError('error.playback-not-supported');
-      return;
-    }
-
     document.querySelectorAll("a[data-timecode], .tx-dlf-tableofcontents a").forEach(el => {
       const link = /** @type {HTMLAnchorElement} */(el);
       const timecode = this.getLinkTimecode(link);
@@ -335,21 +325,17 @@ export default class SlubMediaPlayer {
       this.dlfPlayer.setPoster(this.videoInfo.url.poster);
     }
     this.dlfPlayer.setChapters(chapters);
+    this.dlfPlayer.setStartTime(startTime ?? null);
+    this.dlfPlayer.setSources(this.videoInfo.sources);
     this.dlfPlayer.mount(this.playerMount);
 
-    // Try loading video until one of the sources works.
-    let loadedSource;
-    for (const source of videoSources) {
-      try {
-        await this.dlfPlayer.loadManifest(source, startTime);
-        loadedSource = source;
-        break;
-      } catch (e) {
-        console.error(e);
-      }
+    if (this.dlfPlayer.sources.length === 0) {
+      this.failWithError('error.playback-not-supported');
+      return;
     }
 
-    if (loadedSource === undefined) {
+    const hasLoadedVideo = await this.dlfPlayer.load();
+    if (!hasLoadedVideo) {
       this.failWithError('error.load-failed');
       return;
     }
