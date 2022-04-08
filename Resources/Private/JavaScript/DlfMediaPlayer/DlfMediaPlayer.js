@@ -5,6 +5,7 @@ import 'shaka-player/ui/controls.less';
 
 import VideoFrame from './vendor/VideoFrame';
 
+import Gestures from '../lib/Gestures';
 import typoConstants from '../lib/typoConstants';
 import { clamp, e, setElementClass } from '../lib/util';
 import Chapters from './Chapters';
@@ -125,6 +126,83 @@ export default class DlfMediaPlayer {
       onManualSeek: this.onManualSeek.bind(this),
     };
 
+    this.registerEventHandlers();
+
+    /** @readonly */
+    this.actions = {
+      'fullscreen.toggle': () => {
+        // Override in application
+      },
+      'playback.toggle': () => {
+        if (this.paused) {
+          this.play();
+        } else {
+          this.pause();
+        }
+      },
+      'playback.volume.mute.toggle': () => {
+        this.muted = !this.muted;
+      },
+      'playback.volume.inc': () => {
+        this.volume = this.volume + this.constants.volumeStep;
+      },
+      'playback.volume.dec': () => {
+        this.volume = this.volume - this.constants.volumeStep;
+      },
+      'playback.captions.toggle': () => {
+        this.showCaptions = !this.showCaptions;
+      },
+      'navigate.rewind': () => {
+        this.skipSeconds(-this.constants.seekStep);
+      },
+      'navigate.seek': () => {
+        this.skipSeconds(+this.constants.seekStep);
+      },
+      'navigate.continuous-rewind': () => {
+        this.ensureTrickPlay(-this.constants.trickPlayFactor);
+      },
+      'navigate.continuous-seek': () => {
+        this.ensureTrickPlay(this.constants.trickPlayFactor);
+      },
+      'navigate.chapter.prev': () => {
+        this.prevChapter();
+      },
+      'navigate.chapter.next': () => {
+        this.nextChapter();
+      },
+      'navigate.frame.prev': () => {
+        this.getVifa()?.seekBackward(1);
+      },
+      'navigate.frame.next': () => {
+        this.getVifa()?.seekForward(1);
+      },
+      'navigate.position.percental': (
+        /** @type {Keybinding<any, any>} */ kb,
+        /** @type {number} */ keyIndex
+      ) => {
+        if (0 <= keyIndex && keyIndex < kb.keys.length) {
+          // Implies kb.keys.length > 0
+
+          const relative = keyIndex / kb.keys.length;
+          const absolute = relative * this.video.duration;
+
+          this.seekTo(absolute);
+        }
+      },
+      'navigate.thumbnails.snap': (
+        /** @type {Keybinding<any, any>} */ _kb,
+        /** @type {number} */ _keyIndex,
+        /** @type {KeyEventMode} */ mode
+      ) => {
+        this.seekBar?.setThumbnailSnap(mode === 'down');
+      },
+    }
+  }
+
+  /**
+   * @private
+   */
+  registerEventHandlers() {
     this.player.addEventListener('error', this.handlers.onErrorEvent);
     this.controls.addEventListener('error', this.handlers.onErrorEvent);
 
@@ -142,6 +220,75 @@ export default class DlfMediaPlayer {
     this.controls.addEventListener('timeandseekrangeupdated', this.handlers.onTimeUpdate);
 
     this.video.addEventListener('play', this.handlers.onPlay);
+
+    this.registerGestures();
+  }
+
+  /**
+   * @private
+   */
+  registerGestures() {
+    const g = new Gestures();
+    g.register(this.container);
+
+    g.on('gesture', (e) => {
+      if (e.event.clientY >= this.userArea.bottom) {
+        return;
+      }
+
+      if (!this.isUserAreaEvent(e.event)) {
+        return;
+      }
+
+      switch (e.type) {
+        case 'tapup':
+          if (e.event.pointerType === 'mouse') {
+            if (e.tapCount <= 2) {
+              this.actions['playback.toggle']();
+            }
+
+            if (e.tapCount === 2) {
+              this.actions['fullscreen.toggle']();
+            }
+          } else if (e.tapCount >= 2) {
+            if (e.position.x < 1 / 3) {
+              this.actions['navigate.rewind']();
+            } else if (e.position.x > 2 / 3) {
+              this.actions['navigate.seek']();
+            } else if (e.tapCount === 2 && !this.env.isInFullScreen()) {
+              this.actions['fullscreen.toggle']();
+            }
+          }
+          break;
+
+        case 'hold':
+          if (e.tapCount === 1) {
+            // TODO: Somehow extract an action "navigate.relative-seek"? How to pass clientX?
+            this.seekBar?.thumbnailPreview?.beginChange(e.event.clientX);
+          } else if (e.tapCount >= 2) {
+            if (e.position.x < 1 / 3) {
+              this.actions['navigate.continuous-rewind']();
+            } else if (e.position.x > 2 / 3) {
+              this.actions['navigate.continuous-seek']();
+            }
+          }
+          break;
+
+        case 'swipe':
+          // "Natural" swiping
+          if (e.direction === 'east') {
+            this.actions['navigate.rewind']();
+          } else if (e.direction === 'west') {
+            this.actions['navigate.seek']();
+          }
+          break;
+      }
+    });
+
+    g.on('release', () => {
+      this.seekBar?.endSeek();
+      this.cancelTrickPlay();
+    });
   }
 
   /**
@@ -300,10 +447,6 @@ export default class DlfMediaPlayer {
     }
 
     setElementClass(this.errorBox, 'dlf-visible', langKey !== null);
-  }
-
-  getContainer() {
-    return this.container;
   }
 
   /**

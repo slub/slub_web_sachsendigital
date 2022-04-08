@@ -1,6 +1,5 @@
 // @ts-check
 
-import Gestures from '../lib/Gestures';
 import { e } from '../lib/util';
 import { Keybindings$find } from '../lib/Keyboard';
 import typoConstants from '../lib/typoConstants';
@@ -74,8 +73,6 @@ export default class SlubMediaPlayer {
     this.dlfPlayer = new DlfMediaPlayer(this.env);
     this.dlfPlayer.parseConstants(config.constants ?? {});
 
-    const playerConstants = this.dlfPlayer.getConstants();
-
     /** @private @type {ChapterLink[]} */
     this.chapterLinks = [];
 
@@ -83,7 +80,11 @@ export default class SlubMediaPlayer {
     this.modals = null;
 
     /** @private */
-    this.actions = {
+    this.dlfPlayer.actions['fullscreen.toggle'] = () => {
+      this.dlfPlayer.seekBar?.endSeek();
+      this.toggleFullScreen();
+    };
+    this.actions = Object.assign({}, this.dlfPlayer.actions, {
       'cancel': () => {
         if (this.modals?.hasOpen()) {
           this.modals.closeNext();
@@ -111,10 +112,6 @@ export default class SlubMediaPlayer {
       'modal.screenshot.snap': () => {
         this.snapScreenshot();
       },
-      'fullscreen.toggle': () => {
-        this.dlfPlayer.seekBar?.endSeek();
-        this.toggleFullScreen();
-      },
       'theater.toggle': () => {
         this.dlfPlayer.seekBar?.endSeek();
 
@@ -129,70 +126,7 @@ export default class SlubMediaPlayer {
         });
         window.dispatchEvent(ev);
       },
-      'playback.toggle': () => {
-        if (this.dlfPlayer.paused) {
-          this.dlfPlayer.play();
-        } else {
-          this.dlfPlayer.pause();
-        }
-      },
-      'playback.volume.mute.toggle': () => {
-        this.dlfPlayer.muted = !this.dlfPlayer.muted;
-      },
-      'playback.volume.inc': () => {
-        this.dlfPlayer.volume = this.dlfPlayer.volume + playerConstants.volumeStep;
-      },
-      'playback.volume.dec': () => {
-        this.dlfPlayer.volume = this.dlfPlayer.volume - playerConstants.volumeStep;
-      },
-      'playback.captions.toggle': () => {
-        this.dlfPlayer.showCaptions = !this.dlfPlayer.showCaptions;
-      },
-      'navigate.rewind': () => {
-        this.dlfPlayer.skipSeconds(-playerConstants.seekStep);
-      },
-      'navigate.seek': () => {
-        this.dlfPlayer.skipSeconds(+playerConstants.seekStep);
-      },
-      'navigate.continuous-rewind': () => {
-        this.dlfPlayer.ensureTrickPlay(-playerConstants.trickPlayFactor);
-      },
-      'navigate.continuous-seek': () => {
-        this.dlfPlayer.ensureTrickPlay(playerConstants.trickPlayFactor);
-      },
-      'navigate.chapter.prev': () => {
-        this.dlfPlayer.prevChapter();
-      },
-      'navigate.chapter.next': () => {
-        this.dlfPlayer.nextChapter();
-      },
-      'navigate.frame.prev': () => {
-        this.dlfPlayer.getVifa()?.seekBackward(1);
-      },
-      'navigate.frame.next': () => {
-        this.dlfPlayer.getVifa()?.seekForward(1);
-      },
-      'navigate.position.percental': (
-        /** @type {Keybinding<any, any>} */ kb,
-        /** @type {number} */ keyIndex
-      ) => {
-        if (0 <= keyIndex && keyIndex < kb.keys.length) {
-          // Implies kb.keys.length > 0
-
-          const relative = keyIndex / kb.keys.length;
-          const absolute = relative * this.dlfPlayer.getVideo().duration;
-
-          this.dlfPlayer.seekTo(absolute);
-        }
-      },
-      'navigate.thumbnails.snap': (
-        /** @type {Keybinding<any, any>} */ _kb,
-        /** @type {number} */ _keyIndex,
-        /** @type {KeyEventMode} */ mode
-      ) => {
-        this.dlfPlayer.seekBar?.setThumbnailSnap(mode === 'down');
-      },
-    };
+    });
 
     this.createModals();
     this.load();
@@ -336,70 +270,6 @@ export default class SlubMediaPlayer {
   registerEventHandlers() {
     document.addEventListener('keydown', this.handlers.onKeyDown);
     document.addEventListener('keyup', this.handlers.onKeyUp, { capture: true });
-
-    // TODO: Move actions to DlfMediaPlayer, then also move gesture detection there
-
-    const g = new Gestures();
-    g.register(this.dlfPlayer.getContainer());
-
-    g.on('gesture', (e) => {
-      if (e.event.clientY >= this.dlfPlayer.userArea.bottom) {
-        return;
-      }
-
-      if (!this.dlfPlayer.isUserAreaEvent(e.event)) {
-        return;
-      }
-
-      switch (e.type) {
-        case 'tapup':
-          if (e.event.pointerType === 'mouse') {
-            if (e.tapCount <= 2) {
-              this.actions['playback.toggle']();
-            }
-
-            if (e.tapCount === 2) {
-              this.actions['fullscreen.toggle']();
-            }
-          } else if (e.tapCount >= 2) {
-            if (e.position.x < 1 / 3) {
-              this.actions['navigate.rewind']();
-            } else if (e.position.x > 2 / 3) {
-              this.actions['navigate.seek']();
-            } else if (e.tapCount === 2 && !this.env.isInFullScreen()) {
-              this.actions['fullscreen.toggle']();
-            }
-          }
-          break;
-
-        case 'hold':
-          if (e.tapCount === 1) {
-            // TODO: Somehow extract an action "navigate.relative-seek"? How to pass clientX?
-            this.dlfPlayer.seekBar?.thumbnailPreview?.beginChange(e.event.clientX);
-          } else if (e.tapCount >= 2) {
-            if (e.position.x < 1 / 3) {
-              this.actions['navigate.continuous-rewind']();
-            } else if (e.position.x > 2 / 3) {
-              this.actions['navigate.continuous-seek']();
-            }
-          }
-          break;
-
-        case 'swipe':
-          // "Natural" swiping
-          if (e.direction === 'east') {
-            this.actions['navigate.rewind']();
-          } else if (e.direction === 'west') {
-            this.actions['navigate.seek']();
-          }
-          break;
-      }
-    });
-
-    g.on('release', () => {
-      this.dlfPlayer.seekBar?.endSeek();
-      this.dlfPlayer.cancelTrickPlay();
-    });
   }
 
   /**
