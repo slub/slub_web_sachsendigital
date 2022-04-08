@@ -24,6 +24,7 @@ describe('generateTimecodeUrl', () => {
       supportsMediaSource: () => false,
       supportsCanvasExport: () => false,
       supportsVideoMime: () => false,
+      isInFullScreen: () => false,
     };
   }
 

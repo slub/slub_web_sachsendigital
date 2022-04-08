@@ -90,6 +90,14 @@ export default class Environment {
 
   /**
    * @inheritdoc
+   * @returns {boolean}
+   */
+  isInFullScreen() {
+    return document.fullscreenElement !== null;
+  }
+
+  /**
+   * @inheritdoc
    * @returns {string}
    */
   mkid() {

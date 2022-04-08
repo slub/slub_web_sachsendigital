@@ -403,7 +403,7 @@ export default class SxndPlayerApp {
               this.actions['navigate.rewind']();
             } else if (e.position.x > 2 / 3) {
               this.actions['navigate.seek']();
-            } else if (e.tapCount === 2 && !this.isInFullScreen) {
+            } else if (e.tapCount === 2 && !this.env.isInFullScreen()) {
               this.actions['fullscreen.toggle']();
             }
           }
@@ -592,10 +592,6 @@ export default class SxndPlayerApp {
         console.log(e);
       }
     }
-  }
-
-  get isInFullScreen() {
-    return document.fullscreenElement !== null;
   }
 
   showBookmarkUrl() {
