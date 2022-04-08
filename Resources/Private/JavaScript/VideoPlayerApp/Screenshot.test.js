@@ -22,6 +22,7 @@ function getEnvironment() {
     twoLetterIsoCode: 'en',
     phrases: {
       'key.generic': "{key}",
+      'key.unto': " to ",
       'modal.screenshot.title': "Screenshot",
       'modal.screenshot.configuration': "Show Metadata",
       'modal.screenshot.download-image': "Download Image",
@@ -54,14 +55,17 @@ test('can open screenshot overlay', async () => {
   expect(overlay()).toBeNull();
 
   // opened; exact tags are in snapshot
-  const modal = new ScreenshotModal(document.body, getEnvironment(), [
-    {
-      keys: ["s"],
-      action: "modal.screenshot.snap",
-      kind: "other",
-      order: 0
-    },
-  ]);
+  const modal = new ScreenshotModal(document.body, getEnvironment(), {
+    keybindings: [
+      {
+        keys: ["s"],
+        action: "modal.screenshot.snap",
+        kind: "other",
+        order: 0
+      },
+    ],
+    screenshotFilenameTemplate: '',
+  });
   modal.setVideo(new VideoMock(1920, 1080));
   modal.setMetadata(getTestMetadataArray());
   modal.open();
