@@ -44,8 +44,6 @@ namespace dlf {
        * TODO: Check if this should be input as setting or retrieved from current manifest
        */
       trickPlayFactor: number;
-
-      minBottomControlsReadyState: number;
     };
 
     type Fps = {

@@ -33,7 +33,6 @@ export default class DlfMediaPlayer {
       volumeStep: 0.05,
       seekStep: 5,
       trickPlayFactor: 4,
-      minBottomControlsReadyState: 2, // Enough data for current position
     };
 
     /** @private @type {HTMLElement | null} */
@@ -64,9 +63,6 @@ export default class DlfMediaPlayer {
     /** @private @type {shaka.Player} */
     this.player = new shaka.Player(this.video);
 
-    /** @private */
-    this.lastReadyState = 0;
-
     /** @private @type {dlf.media.Fps | null} */
     this.fps = null;
 
@@ -76,15 +72,13 @@ export default class DlfMediaPlayer {
     /** @private @type {Chapters} */
     this.chapters = new Chapters([]);
 
-    /** @private */
+    /** @private @type {dlf.media.PlayerFrontend} */
     this.frontend = new ShakaFrontend(this.env, this.player, this.video);
-    this.videoBox = this.frontend.$videoBox;
-    this.errorBox = this.frontend.$errorBox;
 
+    /** @private */
     this.handlers = {
-      onErrorEvent: this.onErrorEvent.bind(this),
+      onPlayerErrorEvent: this.onPlayerErrorEvent.bind(this),
       onTrackChange: this.onTrackChange.bind(this),
-      onTimeUpdate: this.onTimeUpdate.bind(this),
       onPlay: this.onPlay.bind(this),
     };
 
@@ -163,25 +157,13 @@ export default class DlfMediaPlayer {
     }
   }
 
-  get controls() {
-    return this.frontend.controls;
-  }
-
-  get shakaBottomControls() {
-    return this.frontend.shakaBottomControls;
-  }
-
   /**
    * @private
    */
   registerEventHandlers() {
-    this.player.addEventListener('error', this.handlers.onErrorEvent);
-    this.controls.addEventListener('error', this.handlers.onErrorEvent);
-
+    this.player.addEventListener('error', this.handlers.onPlayerErrorEvent);
     this.player.addEventListener('adaptation', this.handlers.onTrackChange);
     this.player.addEventListener('variantchanged', this.handlers.onTrackChange);
-
-    this.controls.addEventListener('timeandseekrangeupdated', this.handlers.onTimeUpdate);
 
     this.video.addEventListener('play', this.handlers.onPlay);
 
@@ -397,36 +379,8 @@ export default class DlfMediaPlayer {
     });
   }
 
-  onTimeUpdate() {
-    const readyState = this.video.readyState;
-
-    if (readyState !== this.lastReadyState) {
-      this.updateBottomControlsVisibility(readyState);
-    }
-  }
-
   onPlay() {
     this.videoPausedOn = null;
-
-    // Hide poster once playback has started the first time
-    // This is necessary because "onTimeUpdate" may be fired with a delay
-    this.frontend.hidePoster();
-  }
-
-  /**
-   * @private
-   * @param {number} readyState
-   */
-  updateBottomControlsVisibility(readyState) {
-    // When readyState is strictly between 0 and minBottomControlsReadyState,
-    // don't change whether controls are shown. Thus, on first load the controls
-    // may remain hidden, and on seeking the controls remain visible.
-
-    if (readyState === 0) {
-      this.shakaBottomControls?.classList.remove('dlf-visible');
-    } else if (readyState >= this.constants.minBottomControlsReadyState) {
-      this.shakaBottomControls?.classList.add('dlf-visible');
-    }
   }
 
   /**
@@ -527,7 +481,8 @@ export default class DlfMediaPlayer {
    * @type {number}
    */
   get displayTime() {
-    return this.controls.getDisplayTime();
+    // Adopted from "getDisplayTime" in "shaka.ui.Controls"
+    return this.frontend.seekBar?.getValue() ?? this.video.currentTime;
   }
 
   /**
@@ -557,7 +512,6 @@ export default class DlfMediaPlayer {
    */
   play() {
     this.video.play();
-    this.videoPausedOn = null;
   }
 
   /**
@@ -678,11 +632,11 @@ export default class DlfMediaPlayer {
    *
    * @param {Event} event
    */
-  onErrorEvent(event) {
+  onPlayerErrorEvent(event) {
     if (event instanceof CustomEvent) {
       // TODO: Propagate to user
       const error = event.detail;
-      console.error('Error code', error.code, 'object', error);
+      console.error('Error from Shaka player', error.code, error);
     }
   }
 }

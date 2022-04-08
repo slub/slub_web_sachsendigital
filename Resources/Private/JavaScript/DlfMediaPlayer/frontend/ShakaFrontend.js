@@ -30,6 +30,11 @@ export default class ShakaFrontend {
    */
   constructor(env, player, media) {
     /** @private */
+    this.constants = {
+      minBottomControlsReadyState: 2, // Enough data for current position
+    };
+
+    /** @private */
     this.env = env;
 
     /** @private */
@@ -46,6 +51,9 @@ export default class ShakaFrontend {
       variantGroups: null,
     };
 
+    /** @private */
+    this.lastReadyState = 0;
+
     /** @private @type {dlf.media.PlayerProperties} */
     this.playerProperties = {
       locale: '',
@@ -59,7 +67,7 @@ export default class ShakaFrontend {
     /** @private @type {string[]} */
     this.overflowMenuButtons = [];
 
-    /** @type {HTMLElement | null} */
+    /** @private @type {HTMLElement | null} */
     this.shakaBottomControls = null;
 
     /** @private @type {FlatSeekBar | null} */
@@ -86,6 +94,7 @@ export default class ShakaFrontend {
     /** @private */
     this.ui = new shaka.ui.Overlay(this.player, this.$videoBox, this.media);
 
+    /** @private */
     this.controls = /** @type {shaka.ui.Controls} */(this.ui.getControls());
 
     /** @private */
@@ -95,6 +104,9 @@ export default class ShakaFrontend {
 
     /** @private */
     this.handlers = {
+      onControlsErrorEvent: this.onControlsErrorEvent.bind(this),
+      onPlay: this.onPlay.bind(this),
+      onTimeUpdate: this.onTimeUpdate.bind(this),
       afterManualSeek: this.afterManualSeek.bind(this),
     };
 
@@ -105,12 +117,16 @@ export default class ShakaFrontend {
    * @private
    */
   registerEventHandlers() {
+    this.controls.addEventListener('error', this.handlers.onControlsErrorEvent);
     // TODO: Figure out a good flow of events
     this.controls.addEventListener('dlf-media-seek-bar', (e) => {
       const detail = /** @type {dlf.media.SeekBarEvent} */(e).detail;
       this.seekBar_ = detail.seekBar;
     });
+    this.controls.addEventListener('timeandseekrangeupdated', this.handlers.onTimeUpdate);
     this.controls.addEventListener('dlf-media-manual-seek', this.handlers.afterManualSeek);
+
+    this.media.addEventListener('play', this.handlers.onPlay);
 
     this.gestures_.register(this.$videoBox);
   }
@@ -261,6 +277,9 @@ export default class ShakaFrontend {
     this.notifyMediaProperties();
   }
 
+  /**
+   * @private
+   */
   hidePoster() {
     this.$poster.classList.remove('dlf-visible');
   }
@@ -313,5 +332,55 @@ export default class ShakaFrontend {
     }
 
     return true;
+  }
+
+  /**
+   * @param {Event} event
+   */
+  onControlsErrorEvent(event) {
+    if (event instanceof CustomEvent) {
+      // TODO: Propagate to user
+      const error = event.detail;
+      console.error('Error from Shaka controls', error.code, error);
+    }
+  }
+
+  /**
+   * @private
+   */
+  onPlay() {
+    // Hide poster once playback has started the first time.
+    // Reasons for doing this here instead of in `onTimeUpdate`:
+    // - Keep poster when using startTime in player
+    // - `onTimeUpdate` may be called with a delay
+    // - No need to call it on every time update anyways
+    this.hidePoster();
+  }
+
+  /**
+   * @private
+   */
+  onTimeUpdate() {
+    const readyState = this.media.readyState;
+
+    if (readyState !== this.lastReadyState) {
+      this.updateBottomControlsVisibility(readyState);
+    }
+  }
+
+  /**
+   * @private
+   * @param {number} readyState
+   */
+  updateBottomControlsVisibility(readyState) {
+    // When readyState is strictly between 0 and minBottomControlsReadyState,
+    // don't change whether controls are shown. Thus, on first load the controls
+    // may remain hidden, and on seeking the controls remain visible.
+
+    if (readyState === 0) {
+      this.shakaBottomControls?.classList.remove('dlf-visible');
+    } else if (readyState >= this.constants.minBottomControlsReadyState) {
+      this.shakaBottomControls?.classList.add('dlf-visible');
+    }
   }
 }
