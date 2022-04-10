@@ -13,61 +13,65 @@ interface Network<T> {
   abortPending(): void;
 }
 
-/**
- * Signals chapters available in current video.
- *
- * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
- */
-interface SxndChaptersEvent
-  extends CustomEvent<SxndEventDetail["sxnd-chapters"]> {}
+namespace dlf {
+  namespace media {
+    /**
+     * Signals chapters available in current video.
+     *
+     * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
+     */
+    interface ChaptersEvent
+      extends CustomEvent<EventDetail["dlf-media-chapters"]> {}
 
-/**
- * Signals information about FPS of current video.
- *
- * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
- */
-interface SxndFpsEvent extends CustomEvent<SxndEventDetail["sxnd-fps"]> {}
+    /**
+     * Signals information about FPS of current video.
+     *
+     * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
+     */
+    interface FpsEvent extends CustomEvent<EventDetail["dlf-media-fps"]> {}
 
-/**
- * Registers seekbar to parent DlfMediaPlayer.
- *
- * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
- */
-interface SxndSeekBarEvent
-  extends CustomEvent<SxndEventDetail["sxnd-seek-bar"]> {}
+    /**
+     * Registers seekbar to parent DlfMediaPlayer.
+     *
+     * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
+     */
+    interface SeekBarEvent
+      extends CustomEvent<EventDetail["dlf-media-seek-bar"]> {}
 
-/**
- * Signals that the user has manually seeked to a video position.
- *
- * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
- */
-interface SxndManualSeekEvent
-  extends CustomEvent<SxndEventDetail["sxnd-manual-seek"]> {}
+    /**
+     * Signals that the user has manually seeked to a video position.
+     *
+     * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
+     */
+    interface ManualSeekEvent
+      extends CustomEvent<EventDetail["dlf-media-manual-seek"]> {}
 
-/**
- * Signals variant groups of current video.
- *
- * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
- */
-interface SxndVariantGroupsEvent
-  extends CustomEvent<SxndEventDetail["sxnd-variant-groups"]> {}
+    /**
+     * Signals variant groups of current video.
+     *
+     * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
+     */
+    interface VariantGroupsEvent
+      extends CustomEvent<EventDetail["dlf-media-variant-groups"]> {}
 
-type SxndEventDetail = {
-  "sxnd-chapters": {
-    chapters: import("./Chapters").default;
-  };
-  "sxnd-fps": {
-    vifa: import("./vendor/VideoFrame").default | null;
-    fps: number | null;
-  };
-  "sxnd-seek-bar": {
-    seekBar: import("./controls/FlatSeekBar").default;
-  };
-  "sxnd-manual-seek": {};
-  "sxnd-variant-groups": {
-    variantGroups: import("./VariantGroups").default;
-  };
-};
+    type EventDetail = {
+      "dlf-media-chapters": {
+        chapters: import("./Chapters").default;
+      };
+      "dlf-media-fps": {
+        vifa: import("./vendor/VideoFrame").default | null;
+        fps: number | null;
+      };
+      "dlf-media-seek-bar": {
+        seekBar: import("./controls/FlatSeekBar").default;
+      };
+      "dlf-media-manual-seek": {};
+      "dlf-media-variant-groups": {
+        variantGroups: import("./VariantGroups").default;
+      };
+    };
+  }
+}
 
 /**
  * Description on a thumbnail on a tileset.

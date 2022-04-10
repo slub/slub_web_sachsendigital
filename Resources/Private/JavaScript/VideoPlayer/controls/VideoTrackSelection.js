@@ -9,7 +9,7 @@ import VariantGroups from '../VariantGroups';
  * Control panel element to show current playback time.
  *
  * Listens to the following custom events:
- * - {@link SxndVariantGroupsEvent}
+ * - {@link dlf.media.VariantGroupsEvent}
  */
 export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
   /**
@@ -52,8 +52,8 @@ export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
     this.menuButtons = {};
 
     if (this.eventManager) {
-      this.eventManager.listen(this.controls, 'sxnd-variant-groups', (ev) => {
-        const detail = /** @type {SxndVariantGroupsEvent} */(ev).detail;
+      this.eventManager.listen(this.controls, 'dlf-media-variant-groups', (ev) => {
+        const detail = /** @type {dlf.media.VariantGroupsEvent} */(ev).detail;
         const variantGroups =
           this.sxnd.variantGroups = detail.variantGroups;
 

@@ -17,12 +17,12 @@ import VariantGroups from '../VariantGroups';
  * mostly taken from Shaka.
  *
  * Listens to the following custom events:
- * - {@link SxndVariantGroupsEvent}
- * - {@link SxndChaptersEvent}
- * - {@link SxndFpsEvent}
+ * - {@link dlf.media.VariantGroupsEvent}
+ * - {@link dlf.media.ChaptersEvent}
+ * - {@link dlf.media.FpsEvent}
  *
  * Emits the following custom events:
- * - {@link SxndSeekBarEvent}
+ * - {@link dlf.media.SeekBarEvent}
  *
  * @implements {shaka.extern.IUISeekBar}
  */
@@ -77,8 +77,8 @@ export default class FlatSeekBar extends shaka.ui.Element {
       if (this.video !== null) {
         this.video.currentTime = this.getValue();
 
-        this.controls?.dispatchEvent(/** @type {SxndManualSeekEvent} */(
-          new CustomEvent('sxnd-manual-seek', {})
+        this.controls?.dispatchEvent(/** @type {dlf.media.ManualSeekEvent} */(
+          new CustomEvent('dlf-media-manual-seek', {})
         ));
       }
     });
@@ -122,27 +122,27 @@ export default class FlatSeekBar extends shaka.ui.Element {
         this.updatePreviewImageTracks();
       });
 
-      this.eventManager.listen(this.controls, 'sxnd-variant-groups', (e) => {
-        const detail = /** @type {SxndVariantGroupsEvent} */(e).detail;
+      this.eventManager.listen(this.controls, 'dlf-media-variant-groups', (e) => {
+        const detail = /** @type {dlf.media.VariantGroupsEvent} */(e).detail;
         this.sxnd.variantGroups = detail.variantGroups;
         this.updatePreviewImageTracks();
       });
 
-      this.eventManager.listen(this.controls, 'sxnd-chapters', (e) => {
-        const detail = /** @type {SxndChaptersEvent} */(e).detail;
+      this.eventManager.listen(this.controls, 'dlf-media-chapters', (e) => {
+        const detail = /** @type {dlf.media.ChaptersEvent} */(e).detail;
         this.sxnd.chapters = detail.chapters;
         this.sxnd.hasRenderedChapters = false;
         this.sxnd.thumbnailPreview?.setChapters(detail.chapters);
         this.update();
       });
 
-      this.eventManager.listen(this.controls, 'sxnd-fps', (e) => {
-        const detail = /** @type {SxndFpsEvent} */(e).detail;
+      this.eventManager.listen(this.controls, 'dlf-media-fps', (e) => {
+        const detail = /** @type {dlf.media.FpsEvent} */(e).detail;
         this.sxnd.thumbnailPreview?.setFps(detail.fps);
       });
 
-      this.controls?.dispatchEvent(/** @type {SxndSeekBarEvent} */(
-        new CustomEvent('sxnd-seek-bar', {
+      this.controls?.dispatchEvent(/** @type {dlf.media.SeekBarEvent} */(
+        new CustomEvent('dlf-media-seek-bar', {
           detail: { seekBar: this },
         })
       ));

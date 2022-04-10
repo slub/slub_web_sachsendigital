@@ -40,8 +40,8 @@ const TimeMode = {
  * Originally based upon Shaka's PresentationTimeTracker.
  *
  * Listens to the following custom events:
- * - {@link SxndChaptersEvent}
- * - {@link SxndFpsEvent}
+ * - {@link dlf.media.ChaptersEvent}
+ * - {@link dlf.media.FpsEvent}
  */
 export default class PresentationTimeTracker extends shaka.ui.Element {
   /**
@@ -107,15 +107,15 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
       const updateTime = this.updateTime.bind(this);
       this.eventManager.listen(this.controls, 'timeandseekrangeupdated', updateTime);
 
-      this.eventManager.listen(this.controls, 'sxnd-chapters', (e) => {
-        const detail = /** @type {SxndChaptersEvent} */(e).detail;
+      this.eventManager.listen(this.controls, 'dlf-media-chapters', (e) => {
+        const detail = /** @type {dlf.media.ChaptersEvent} */(e).detail;
         this.render({
           chapters: detail.chapters,
         });
       });
 
-      this.eventManager.listen(this.controls, 'sxnd-fps', (e) => {
-        const detail = /** @type {SxndFpsEvent} */(e).detail;
+      this.eventManager.listen(this.controls, 'dlf-media-fps', (e) => {
+        const detail = /** @type {dlf.media.FpsEvent} */(e).detail;
         this.render({
           vifa: detail.vifa,
           fps: detail.fps,

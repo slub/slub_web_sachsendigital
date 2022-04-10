@@ -119,12 +119,12 @@ export default class DlfMediaPlayer {
     this.player.addEventListener('variantchanged', this.handlers.onTrackChange);
 
     // TODO: Figure out a good flow of events
-    this.controls.addEventListener('sxnd-seek-bar', (e) => {
-      const detail = /** @type {SxndSeekBarEvent} */(e).detail;
+    this.controls.addEventListener('dlf-media-seek-bar', (e) => {
+      const detail = /** @type {dlf.media.SeekBarEvent} */(e).detail;
       this.seekBar = detail.seekBar;
     });
 
-    this.controls.addEventListener('sxnd-manual-seek', this.handlers.onManualSeek);
+    this.controls.addEventListener('dlf-media-manual-seek', this.handlers.onManualSeek);
 
     this.controls.addEventListener('timeandseekrangeupdated', this.handlers.onTimeUpdate);
 
@@ -299,7 +299,7 @@ export default class DlfMediaPlayer {
       || this.variantGroups.selectGroupByRole("main")
       || this.variantGroups.selectGroupByIndex(0);
 
-    this.emitControlEvent('sxnd-variant-groups', {
+    this.emitControlEvent('dlf-media-variant-groups', {
       variantGroups: this.variantGroups,
     });
 
@@ -324,7 +324,7 @@ export default class DlfMediaPlayer {
       });
     }
 
-    this.emitControlEvent('sxnd-fps', { vifa: this.vifa, fps: this.fps });
+    this.emitControlEvent('dlf-media-fps', { vifa: this.vifa, fps: this.fps });
   }
 
   onTimeUpdate() {
@@ -427,7 +427,7 @@ export default class DlfMediaPlayer {
    */
   setChapters(chapters) {
     this.chapters = chapters;
-    this.emitControlEvent('sxnd-chapters', { chapters });
+    this.emitControlEvent('dlf-media-chapters', { chapters });
   }
 
   /**
@@ -627,9 +627,9 @@ export default class DlfMediaPlayer {
   /**
    *
    * @private
-   * @template {keyof SxndEventDetail} K
+   * @template {keyof dlf.media.EventDetail} K
    * @param {K} key
-   * @param {SxndEventDetail[K]} detail
+   * @param {dlf.media.EventDetail[K]} detail
    */
   emitControlEvent(key, detail) {
     this.controlEventQueue.push(new CustomEvent(key, { detail }));
