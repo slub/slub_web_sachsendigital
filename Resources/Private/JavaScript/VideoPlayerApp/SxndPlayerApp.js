@@ -7,7 +7,7 @@ import typoConstants from '../lib/typoConstants';
 import {
   Chapters,
   ControlPanelButton,
-  SachsenShakaPlayer,
+  DlfMediaPlayer,
 } from '../VideoPlayer';
 
 import Modals from './lib/Modals';
@@ -76,7 +76,7 @@ export default class SxndPlayerApp {
     this.env.setLang(config.lang);
 
     /** @private */
-    this.sxndPlayer = new SachsenShakaPlayer(this.env);
+    this.dlfPlayer = new DlfMediaPlayer(this.env);
 
     /** @private @type {ChapterLink[]} */
     this.chapterLinks = [];
@@ -116,17 +116,17 @@ export default class SxndPlayerApp {
       'cancel': () => {
         if (this.modals.hasOpen()) {
           this.modals.closeNext();
-        } else if (this.sxndPlayer.isThumbnailPreviewOpen()) {
-          this.sxndPlayer.endSeek();
-        } else if (this.sxndPlayer.anySettingsMenusAreOpen()) {
-          this.sxndPlayer.hideSettingsMenus();
+        } else if (this.dlfPlayer.isThumbnailPreviewOpen()) {
+          this.dlfPlayer.endSeek();
+        } else if (this.dlfPlayer.anySettingsMenusAreOpen()) {
+          this.dlfPlayer.hideSettingsMenus();
         }
       },
       'modal.help.open': () => {
         this.openModal(this.modals.help);
       },
       'modal.help.toggle': () => {
-        this.sxndPlayer.endSeek();
+        this.dlfPlayer.endSeek();
         this.modals.toggleExclusive(this.modals.help);
       },
       'modal.bookmark.open': () => {
@@ -139,11 +139,11 @@ export default class SxndPlayerApp {
         this.snapScreenshot();
       },
       'fullscreen.toggle': () => {
-        this.sxndPlayer.endSeek();
+        this.dlfPlayer.endSeek();
         this.toggleFullScreen();
       },
       'theater.toggle': () => {
-        this.sxndPlayer.endSeek();
+        this.dlfPlayer.endSeek();
 
         // @see DigitalcollectionsScripts.js
         // TODO: Make sure the theater mode isn't activated on startup; then stop persisting
@@ -157,47 +157,47 @@ export default class SxndPlayerApp {
         window.dispatchEvent(ev);
       },
       'playback.toggle': () => {
-        if (this.sxndPlayer.paused) {
-          this.sxndPlayer.play();
+        if (this.dlfPlayer.paused) {
+          this.dlfPlayer.play();
         } else {
-          this.sxndPlayer.pause();
+          this.dlfPlayer.pause();
         }
       },
       'playback.volume.mute.toggle': () => {
-        this.sxndPlayer.muted = !this.sxndPlayer.muted;
+        this.dlfPlayer.muted = !this.dlfPlayer.muted;
       },
       'playback.volume.inc': () => {
-        this.sxndPlayer.volume = this.sxndPlayer.volume + this.constants.volumeStep;
+        this.dlfPlayer.volume = this.dlfPlayer.volume + this.constants.volumeStep;
       },
       'playback.volume.dec': () => {
-        this.sxndPlayer.volume = this.sxndPlayer.volume - this.constants.volumeStep;
+        this.dlfPlayer.volume = this.dlfPlayer.volume - this.constants.volumeStep;
       },
       'playback.captions.toggle': () => {
-        this.sxndPlayer.showCaptions = !this.sxndPlayer.showCaptions;
+        this.dlfPlayer.showCaptions = !this.dlfPlayer.showCaptions;
       },
       'navigate.rewind': () => {
-        this.sxndPlayer.skipSeconds(-this.constants.seekStep);
+        this.dlfPlayer.skipSeconds(-this.constants.seekStep);
       },
       'navigate.seek': () => {
-        this.sxndPlayer.skipSeconds(+this.constants.seekStep);
+        this.dlfPlayer.skipSeconds(+this.constants.seekStep);
       },
       'navigate.continuous-rewind': () => {
-        this.sxndPlayer.ensureTrickPlay(-this.constants.trickPlayFactor);
+        this.dlfPlayer.ensureTrickPlay(-this.constants.trickPlayFactor);
       },
       'navigate.continuous-seek': () => {
-        this.sxndPlayer.ensureTrickPlay(this.constants.trickPlayFactor);
+        this.dlfPlayer.ensureTrickPlay(this.constants.trickPlayFactor);
       },
       'navigate.chapter.prev': () => {
-        this.sxndPlayer.prevChapter();
+        this.dlfPlayer.prevChapter();
       },
       'navigate.chapter.next': () => {
-        this.sxndPlayer.nextChapter();
+        this.dlfPlayer.nextChapter();
       },
       'navigate.frame.prev': () => {
-        this.sxndPlayer.getVifa()?.seekBackward(1);
+        this.dlfPlayer.getVifa()?.seekBackward(1);
       },
       'navigate.frame.next': () => {
-        this.sxndPlayer.getVifa()?.seekForward(1);
+        this.dlfPlayer.getVifa()?.seekForward(1);
       },
       'navigate.position.percental': (
         /** @type {Keybinding<any, any>} */ kb,
@@ -207,9 +207,9 @@ export default class SxndPlayerApp {
           // Implies kb.keys.length > 0
 
           const relative = keyIndex / kb.keys.length;
-          const absolute = relative * this.sxndPlayer.getVideo().duration;
+          const absolute = relative * this.dlfPlayer.getVideo().duration;
 
-          this.sxndPlayer.seekTo(absolute);
+          this.dlfPlayer.seekTo(absolute);
         }
       },
       'navigate.thumbnails.snap': (
@@ -217,12 +217,12 @@ export default class SxndPlayerApp {
         /** @type {number} */ _keyIndex,
         /** @type {KeyEventMode} */ mode
       ) => {
-        this.sxndPlayer.setThumbnailSnap(mode === 'down');
+        this.dlfPlayer.setThumbnailSnap(mode === 'down');
       },
     };
 
     this.modals.on('closed', this.handlers.onCloseModal);
-    this.sxndPlayer.getVideo().addEventListener('play', this.handlers.onPlay);
+    this.dlfPlayer.getVideo().addEventListener('play', this.handlers.onPlay);
 
     this.load();
   }
@@ -234,7 +234,7 @@ export default class SxndPlayerApp {
    * @param {string} langKey
    */
   failWithError(langKey) {
-    this.sxndPlayer.unmount();
+    this.dlfPlayer.unmount();
 
     const errorBox = e('div', {
       className: "sxnd-player-fatal-error",
@@ -295,7 +295,7 @@ export default class SxndPlayerApp {
   async load() {
     // Find sources for supported manifest/video formats
     const videoSources = this.videoInfo.sources.filter(
-      source => this.sxndPlayer.supportsMimeType(source.mimeType)
+      source => this.dlfPlayer.supportsMimeType(source.mimeType)
     );
 
     if (videoSources.length === 0) {
@@ -322,7 +322,7 @@ export default class SxndPlayerApp {
 
     const startTime = this.getStartTime(chapters);
 
-    this.sxndPlayer.addControlElement(
+    this.dlfPlayer.addControlElement(
       ControlPanelButton.register(this.env, {
         className: "sxnd-screenshot-button",
         material_icon: 'photo_camera',
@@ -343,19 +343,19 @@ export default class SxndPlayerApp {
         onClick: this.actions['modal.help.open'],
       })
     );
-    this.sxndPlayer.setConstants(this.constants);
-    this.sxndPlayer.setLocale(this.config.lang.twoLetterIsoCode);
+    this.dlfPlayer.setConstants(this.constants);
+    this.dlfPlayer.setLocale(this.config.lang.twoLetterIsoCode);
     if (this.videoInfo.url.poster !== undefined) {
-      this.sxndPlayer.setPoster(this.videoInfo.url.poster);
+      this.dlfPlayer.setPoster(this.videoInfo.url.poster);
     }
-    this.sxndPlayer.setChapters(chapters);
-    this.sxndPlayer.mount(this.playerMount);
+    this.dlfPlayer.setChapters(chapters);
+    this.dlfPlayer.mount(this.playerMount);
 
     // Try loading video until one of the sources works.
     let loadedSource;
     for (const source of videoSources) {
       try {
-        await this.sxndPlayer.loadManifest(source, startTime);
+        await this.dlfPlayer.loadManifest(source, startTime);
         loadedSource = source;
         break;
       } catch (e) {
@@ -377,17 +377,17 @@ export default class SxndPlayerApp {
     document.addEventListener('keydown', this.handlers.onKeyDown);
     document.addEventListener('keyup', this.handlers.onKeyUp, { capture: true });
 
-    // TODO: Move actions to SachsenShakaPlayer, then also move gesture detection there
+    // TODO: Move actions to DlfMediaPlayer, then also move gesture detection there
 
     const g = new Gestures();
-    g.register(this.sxndPlayer.getContainer());
+    g.register(this.dlfPlayer.getContainer());
 
     g.on('gesture', (e) => {
-      if (e.event.clientY >= this.sxndPlayer.userArea.bottom) {
+      if (e.event.clientY >= this.dlfPlayer.userArea.bottom) {
         return;
       }
 
-      if (!this.sxndPlayer.isUserAreaEvent(e.event)) {
+      if (!this.dlfPlayer.isUserAreaEvent(e.event)) {
         return;
       }
 
@@ -414,7 +414,7 @@ export default class SxndPlayerApp {
 
         case 'hold':
           if (e.tapCount === 1) {
-            this.sxndPlayer.beginRelativeSeek(e.event.clientX);
+            this.dlfPlayer.beginRelativeSeek(e.event.clientX);
           } else if (e.tapCount >= 2) {
             if (e.position.x < 1 / 3) {
               this.actions['navigate.continuous-rewind']();
@@ -436,8 +436,8 @@ export default class SxndPlayerApp {
     });
 
     g.on('release', () => {
-      this.sxndPlayer.endSeek();
-      this.sxndPlayer.cancelTrickPlay();
+      this.dlfPlayer.endSeek();
+      this.dlfPlayer.cancelTrickPlay();
     });
   }
 
@@ -481,7 +481,7 @@ export default class SxndPlayerApp {
     e.stopImmediatePropagation();
 
     this.handleKey(e, 'up');
-    this.sxndPlayer.cancelTrickPlay();
+    this.dlfPlayer.cancelTrickPlay();
   }
 
   /**
@@ -520,8 +520,8 @@ export default class SxndPlayerApp {
     // been attached.
     const target = /** @type {ChapterLink} */(e.currentTarget);
 
-    this.sxndPlayer.play();
-    this.sxndPlayer.seekTo(target.sxndTimecode);
+    this.dlfPlayer.play();
+    this.dlfPlayer.seekTo(target.sxndTimecode);
   }
 
   /**
@@ -536,9 +536,9 @@ export default class SxndPlayerApp {
    * @param {any} obj
    */
   pauseOn(obj) {
-    if (this.sxnd.pausedOn === null && !this.sxndPlayer.paused) {
+    if (this.sxnd.pausedOn === null && !this.dlfPlayer.paused) {
       this.sxnd.pausedOn = obj;
-      this.sxndPlayer.pause();
+      this.dlfPlayer.pause();
     }
   }
 
@@ -548,7 +548,7 @@ export default class SxndPlayerApp {
    */
   resumeOn(obj) {
     if (this.sxnd.pausedOn === obj) {
-      this.sxndPlayer.play();
+      this.dlfPlayer.play();
       this.sxnd.pausedOn = null;
     }
   }
@@ -600,13 +600,13 @@ export default class SxndPlayerApp {
   showBookmarkUrl() {
     // Don't show modal if we can't expect the current time to be properly
     // initialized
-    if (!this.sxndPlayer.hasCurrentData) {
+    if (!this.dlfPlayer.hasCurrentData) {
       return;
     }
 
     const modal = this.modals.bookmark
-      .setTimecode(this.sxndPlayer.displayTime)
-      .setFps(this.sxndPlayer.getFps() ?? 0);
+      .setTimecode(this.dlfPlayer.displayTime)
+      .setFps(this.dlfPlayer.getFps() ?? 0);
 
     this.openModal(modal, /* pause= */ true);
   }
@@ -616,16 +616,16 @@ export default class SxndPlayerApp {
    */
   prepareScreenshot() {
     // Don't do screenshot if there isn't yet an image to be displayed
-    if (!this.sxndPlayer.hasCurrentData) {
+    if (!this.dlfPlayer.hasCurrentData) {
       return null;
     }
 
     return (
       this.modals.screenshot
-        .setVideo(this.sxndPlayer.getVideo())
+        .setVideo(this.dlfPlayer.getVideo())
         .setMetadata(this.videoInfo.metadata)
-        .setFps(this.sxndPlayer.getFps())
-        .setTimecode(this.sxndPlayer.displayTime)
+        .setFps(this.dlfPlayer.getFps())
+        .setTimecode(this.dlfPlayer.displayTime)
     );
   }
 
@@ -655,7 +655,7 @@ export default class SxndPlayerApp {
       this.pauseOn(modal);
     }
 
-    this.sxndPlayer.endSeek();
+    this.dlfPlayer.endSeek();
     modal.open();
   }
 }

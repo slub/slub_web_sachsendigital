@@ -14,7 +14,7 @@ import {
 } from './controls';
 import VariantGroups from './VariantGroups';
 
-import '../../Less/VideoPlayer/SachsenShakaPlayer.less';
+import '../../Less/VideoPlayer/DlfMediaPlayer.less';
 
 /**
  * @typedef {{
@@ -23,7 +23,7 @@ import '../../Less/VideoPlayer/SachsenShakaPlayer.less';
  * }} Constants
  */
 
-export default class SachsenShakaPlayer {
+export default class DlfMediaPlayer {
   /** @private */
   static hasInstalledPolyfills = false;
 
@@ -32,9 +32,9 @@ export default class SachsenShakaPlayer {
    * @param {Translator & Identifier & Browser} env
    */
   constructor(env) {
-    if (!SachsenShakaPlayer.hasInstalledPolyfills) {
+    if (!DlfMediaPlayer.hasInstalledPolyfills) {
       shaka.polyfill.installAll();
-      SachsenShakaPlayer.hasInstalledPolyfills = true;
+      DlfMediaPlayer.hasInstalledPolyfills = true;
     }
 
     /** @private */

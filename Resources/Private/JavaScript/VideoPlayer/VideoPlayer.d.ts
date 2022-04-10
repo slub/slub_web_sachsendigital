@@ -29,7 +29,7 @@ interface SxndChaptersEvent
 interface SxndFpsEvent extends CustomEvent<SxndEventDetail["sxnd-fps"]> {}
 
 /**
- * Registers seekbar to parent SachsenShakaPlayer.
+ * Registers seekbar to parent DlfMediaPlayer.
  *
  * Should be dispatched on a Shaka control ({@link shaka.ui.Controls}).
  */
