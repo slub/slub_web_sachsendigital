@@ -287,7 +287,7 @@ export default class DlfMediaPlayer {
 
   /**
    *
-   * @param {VideoSource} videoSource
+   * @param {dlf.media.Source} videoSource
    * @param {number | null} startTime
    */
   async loadManifest(videoSource, startTime = null) {
@@ -432,7 +432,7 @@ export default class DlfMediaPlayer {
 
   /**
    *
-   * @returns {Chapter | undefined}
+   * @returns {dlf.media.Chapter | undefined}
    */
   getCurrentChapter() {
     return this.timeToChapter(this.currentTime);
@@ -441,7 +441,7 @@ export default class DlfMediaPlayer {
   /**
    *
    * @param {number} timecode
-   * @returns {Chapter | undefined}
+   * @returns {dlf.media.Chapter | undefined}
    */
   timeToChapter(timecode) {
     return this.chapters.timeToChapter(timecode);
@@ -554,7 +554,7 @@ export default class DlfMediaPlayer {
 
   /**
    *
-   * @param {number | Chapter} position Timecode (in seconds) or chapter
+   * @param {number | dlf.media.Chapter} position Timecode (in seconds) or chapter
    */
   seekTo(position) {
     if (typeof position === 'number') {

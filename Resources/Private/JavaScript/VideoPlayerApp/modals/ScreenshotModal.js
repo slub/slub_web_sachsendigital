@@ -1,7 +1,7 @@
 // @ts-check
 
 import imageFormats from '../../lib/image/imageFormats';
-import { timeStringFromTemplate } from '../../VideoPlayer';
+import { timeStringFromTemplate } from '../../DlfMediaPlayer';
 import {
   binaryStringToArrayBuffer,
   blobToBinaryString,

@@ -23,20 +23,20 @@ import sanitizeThumbnail from './lib/thumbnails/sanitizeThumbnail';
  * @typedef {{
  *  absolute: number;
  *  seconds: number;
- *  chapter: Chapter | undefined;
+ *  chapter: dlf.media.Chapter | undefined;
  *  onChapterMarker: boolean;
  *  }} SeekPosition
  *
  * @typedef {{
  *  uri: string;
- *  thumb: ThumbnailOnTrack;
+ *  thumb: dlf.media.ThumbnailOnTrack;
  *  tilesetImage: HTMLImageElement;
  * }} LastRendered
  *
  * @typedef Current
  * @property {RawSeekPosition} rawSeekPosition
  * @property {SeekPosition} seekPosition
- * @property {ThumbnailOnTrack[]} thumbs Ordered by quality/bandwidth descending.
+ * @property {dlf.media.ThumbnailOnTrack[]} thumbs Ordered by quality/bandwidth descending.
  *
  * @typedef {{
  *  onChangeStart: () => void;
@@ -85,7 +85,7 @@ export default class ThumbnailPreview {
     /**
      * Thumbnail tracks, ordered by quality/bandwidth descending.
      * @private
-     * @type {ThumbnailTrack[]}
+     * @type {dlf.media.ThumbnailTrack[]}
      */
     this.thumbnailTracks = [];
     /**
@@ -95,7 +95,7 @@ export default class ThumbnailPreview {
      * segmentation cannot change during snap.
      *
      * @private
-     * @type {ThumbnailTrack | null}
+     * @type {dlf.media.ThumbnailTrack | null}
      */
     this.snapToThumbnail = null;
     /** @private @type {LastRendered | null} */
@@ -176,7 +176,7 @@ export default class ThumbnailPreview {
   }
 
   /**
-   * @param {readonly ThumbnailTrack[]} thumbnails
+   * @param {readonly dlf.media.ThumbnailTrack[]} thumbnails
    */
   async setThumbnailTracks(thumbnails) {
     this.thumbnailTracks = thumbnails.slice();
@@ -241,7 +241,7 @@ export default class ThumbnailPreview {
       this.beginChange();
     }
 
-    /** @type {ThumbnailOnTrack[]} */
+    /** @type {dlf.media.ThumbnailOnTrack[]} */
     let thumbs = [];
 
     // If thumbnails are not shown, also avoid unnecessary downloads of images
@@ -470,7 +470,7 @@ export default class ThumbnailPreview {
    *
    * @private
    * @param {string} uri
-   * @param {ThumbnailOnTrack} thumb
+   * @param {dlf.media.ThumbnailOnTrack} thumb
    * @param {HTMLImageElement} tilesetImage
    * @param {SeekPosition} seekPosition
    */
@@ -492,7 +492,7 @@ export default class ThumbnailPreview {
    *
    * @private
    * @param {string} uri
-   * @param {ThumbnailOnTrack} thumb
+   * @param {dlf.media.ThumbnailOnTrack} thumb
    * @param {HTMLImageElement} tilesetImage
    * @param {boolean} force
    */
@@ -547,7 +547,7 @@ export default class ThumbnailPreview {
    *
    * @private
    * @param {SeekPosition} seekPosition
-   * @param {Thumbnail | null} thumb
+   * @param {dlf.media.Thumbnail | null} thumb
    */
   renderSeekPosition(seekPosition, thumb = null) {
     const duration = this.saneVideoDuration();
@@ -675,10 +675,10 @@ export default class ThumbnailPreview {
    * @private
    * @param {number} position
    * @param {number} maximumBandwidth
-   * @returns {Promise<ThumbnailOnTrack[]>}
+   * @returns {Promise<dlf.media.ThumbnailOnTrack[]>}
    */
   async getThumbnails(position, maximumBandwidth) {
-    /** @type {ThumbnailTrack[]} */
+    /** @type {dlf.media.ThumbnailTrack[]} */
     let tracks = [];
 
     if (this.snapToThumbnail !== null) {
@@ -688,7 +688,7 @@ export default class ThumbnailPreview {
       // Thumbnail tracks are ordered descending
       let best = this.thumbnailTracks.find(track => track.bandwidth < maximumBandwidth);
       if (best !== undefined) {
-        let cheapest = /** @type {ThumbnailTrack} */(
+        let cheapest = /** @type {dlf.media.ThumbnailTrack} */(
           this.thumbnailTracks[this.thumbnailTracks.length - 1]
         );
 
@@ -708,9 +708,9 @@ export default class ThumbnailPreview {
   /**
    *
    * @private
-   * @param {ThumbnailTrack} track
+   * @param {dlf.media.ThumbnailTrack} track
    * @param {number} position
-   * @returns {Promise<ThumbnailOnTrack | null>}
+   * @returns {Promise<dlf.media.ThumbnailOnTrack | null>}
    */
   async getSingleThumbnail(track, position) {
     const thumbRaw = await track.getThumb(position);

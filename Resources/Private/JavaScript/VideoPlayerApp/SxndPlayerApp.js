@@ -8,7 +8,7 @@ import {
   Chapters,
   ControlPanelButton,
   DlfMediaPlayer,
-} from '../VideoPlayer';
+} from '../DlfMediaPlayer';
 
 import Modals from './lib/Modals';
 import { BookmarkModal, HelpModal, ScreenshotModal } from './modals';

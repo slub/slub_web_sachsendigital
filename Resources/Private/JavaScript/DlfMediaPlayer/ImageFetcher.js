@@ -57,7 +57,7 @@ const LoadState = /** @type {const} */ ({
 /**
  * Fetch images to a cache.
  *
- * @implements {Network<HTMLImageElement>}
+ * @implements {dlf.Network<HTMLImageElement>}
  */
 export default class ImageFetcher {
   constructor() {

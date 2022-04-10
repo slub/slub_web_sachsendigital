@@ -3,7 +3,7 @@
 /**
  * Make sure that {@link thumbnail} does not exceed given {@link maxDuration}.
  *
- * @template {Thumbnail} T
+ * @template {dlf.media.Thumbnail} T
  * @param {T} thumbnail
  * @param {number} maxDuration
  * @returns {T | null}

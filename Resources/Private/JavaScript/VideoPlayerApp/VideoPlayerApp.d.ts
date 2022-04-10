@@ -25,7 +25,7 @@ type VideoInfo = {
   /**
    * Sources of available manifest or raw video files, ordered by preference.
    */
-  sources: VideoSource[];
+  sources: dlf.media.Source[];
   url: {
     poster?: string;
   };

@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @implements {ThumbnailTrack}
+ * @implements {dlf.media.ThumbnailTrack}
  */
 export default class ShakaThumbnailTrack {
   /**
@@ -24,7 +24,7 @@ export default class ShakaThumbnailTrack {
   /**
    *
    * @param {number} position
-   * @returns {Promise<ThumbnailOnTrack | null>}
+   * @returns {Promise<dlf.media.ThumbnailOnTrack | null>}
    */
   async getThumb(position) {
     const thumb = await this.player.getThumbnails(this.track.id, position);

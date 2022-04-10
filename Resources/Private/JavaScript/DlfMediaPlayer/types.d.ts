@@ -1,20 +1,28 @@
+// This file declares some additional types used in the media player.
+// There also are @typedef declarations directly in .js files.
+
 declare module "shaka-player/dist/shaka-player.ui" {
   export = shaka;
 }
 
-type Chapter = {
-  title: string;
-  timecode: number;
-};
-
-interface Network<T> {
-  get(url: string): Promise<T>;
-  getCached(url: string): T | null;
-  abortPending(): void;
-}
-
 namespace dlf {
+  interface Network<T> {
+    get(url: string): Promise<T>;
+    getCached(url: string): T | null;
+    abortPending(): void;
+  }
+
   namespace media {
+    type Chapter = {
+      title: string;
+      timecode: number;
+    };
+
+    type Source = {
+      mimeType: string;
+      url: string;
+    };
+
     /**
      * Signals chapters available in current video.
      *
@@ -70,36 +78,31 @@ namespace dlf {
         variantGroups: import("./VariantGroups").default;
       };
     };
+
+    /**
+     * Description on a thumbnail on a tileset.
+     *
+     * Generally oriented at {@link shaka.extern.Thumbnail}.
+     */
+    type Thumbnail = {
+      uris: string[];
+      imageTime: number;
+      startTime: number;
+      duration: number;
+      positionX: number;
+      positionY: number;
+      width: number;
+      height: number;
+      bandwidth: number;
+    };
+
+    type ThumbnailOnTrack = Thumbnail & {
+      track: ThumbnailTrack;
+    };
+
+    interface ThumbnailTrack {
+      readonly bandwidth: number;
+      getThumb(position: number): Promise<ThumbnailOnTrack | null>;
+    }
   }
 }
-
-/**
- * Description on a thumbnail on a tileset.
- *
- * Generally oriented at {@link shaka.extern.Thumbnail}.
- */
-type Thumbnail = {
-  uris: string[];
-  imageTime: number;
-  startTime: number;
-  duration: number;
-  positionX: number;
-  positionY: number;
-  width: number;
-  height: number;
-  bandwidth: number;
-};
-
-type ThumbnailOnTrack = Thumbnail & {
-  track: ThumbnailTrack;
-};
-
-interface ThumbnailTrack {
-  readonly bandwidth: number;
-  getThumb(position: number): Promise<ThumbnailOnTrack | null>;
-}
-
-type VideoSource = {
-  mimeType: string;
-  url: string;
-};

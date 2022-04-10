@@ -3,7 +3,7 @@
 import TimecodeIndex from '../lib/TimecodeIndex';
 
 /**
- * @extends TimecodeIndex<Chapter>
+ * @extends TimecodeIndex<dlf.media.Chapter>
  */
 export default class Chapters extends TimecodeIndex {
   /**

@@ -3,7 +3,7 @@
 import QRCode from 'qrcode';
 
 import { e, filterNonNull } from '../../lib/util';
-import { buildTimeString } from '../../VideoPlayer';
+import { buildTimeString } from '../../DlfMediaPlayer';
 import generateTimecodeUrl from '../lib/generateTimecodeUrl';
 import SimpleModal from '../lib/SimpleModal';
 

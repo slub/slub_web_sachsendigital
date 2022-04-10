@@ -161,10 +161,10 @@ export default class VariantGroups {
    * This abstracts over the ways how thumbnails may be provided, namely either
    * via the video manifest, or via a separate thumbnails.json manifest.
    *
-   * @returns {ThumbnailTrack[]}
+   * @returns {dlf.media.ThumbnailTrack[]}
    */
   findThumbnailTracks() {
-    /** @type {ThumbnailTrack[]} */
+    /** @type {dlf.media.ThumbnailTrack[]} */
     const result = [];
 
     const activeGroupKey = this.findActiveGroup()?.key;
