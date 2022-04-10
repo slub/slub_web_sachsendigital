@@ -295,7 +295,7 @@ export default class ScreenshotModal extends SimpleModal {
 
     const extension = selectedImageFormat.extension;
 
-    return `${basename}.${extension}`;
+    return `${sanitizeBasename(basename)}.${extension}`;
   }
 
   /**
