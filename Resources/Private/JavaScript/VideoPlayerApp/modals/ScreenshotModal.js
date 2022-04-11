@@ -16,6 +16,7 @@ import { fillMetadata, metadataArrayToString } from '../lib/metadata';
 import SimpleModal from '../lib/SimpleModal';
 import { getKeybindingText } from '../lib/trans';
 import { drawScreenshot } from '../Screenshot';
+import typoConstants from '../../lib/typoConstants';
 
 /**
  * @typedef {{
@@ -28,8 +29,13 @@ import { drawScreenshot } from '../Screenshot';
  * }} State
  *
  * @typedef {{
- *  keybindings: Keybinding<any, any>[];
  *  screenshotFilenameTemplate: string;
+ *  screenshotCommentTemplate: string;
+ * }} Constants
+ *
+ * @typedef {{
+ *  keybindings: Keybinding<any, any>[];
+ *  constants: import('../../lib/typoConstants').TypoConstants<Constants>;
  * }} Config
  */
 
@@ -63,6 +69,11 @@ export default class ScreenshotModal extends SimpleModal {
     this.videoDomElement = null;
     /** @private */
     this.config = config;
+    /** @private */
+    this.constants = typoConstants(config.constants, {
+      screenshotFilenameTemplate: 'Screenshot',
+      screenshotCommentTemplate: '',
+    });
 
     const snapKeybinding = this.config.keybindings.find(
       kb => kb.action === 'modal.screenshot.snap'
@@ -271,7 +282,10 @@ export default class ScreenshotModal extends SimpleModal {
       image.addMetadata({
         title: metadata.metadata.title?.[0] ?? "",
         // NOTE: Don't localize (not only relevant to current user)
-        comment: `Screenshot taken on Sachsen.Digital.\n\n${url.toString()}`,
+        comment: fillMetadata(this.constants.screenshotCommentTemplate, {
+          ...metadata.metadata,
+          url: [url.toString()],
+        }),
       });
       const buffer = binaryStringToArrayBuffer(image.toBinaryString());
       return new Blob([buffer], { type: imageBlob.type });
@@ -290,7 +304,7 @@ export default class ScreenshotModal extends SimpleModal {
    */
   getFilename(metadata, fps, timecode, selectedImageFormat) {
     const basename = fillMetadata(
-      timeStringFromTemplate(this.config.screenshotFilenameTemplate, timecode, fps),
+      timeStringFromTemplate(this.constants.screenshotFilenameTemplate, timecode, fps),
       metadata.metadata
     );
 

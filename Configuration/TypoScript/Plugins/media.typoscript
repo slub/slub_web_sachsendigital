@@ -35,6 +35,11 @@ plugin.tx_slubwebsachsendigital_media {
 
     constants {
       screenshotFilenameTemplate = sachsen-digital-de_{title}_h{hh}m{mm}s{ss}f{ff}
+      screenshotCommentTemplate (
+Screenshot taken on Sachsen.Digital.
+
+{url}
+)
     }
   }
 }

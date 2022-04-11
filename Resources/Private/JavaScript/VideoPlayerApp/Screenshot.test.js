@@ -64,7 +64,7 @@ test('can open screenshot overlay', async () => {
         order: 0
       },
     ],
-    screenshotFilenameTemplate: '',
+    constants: {},
   });
   modal.setVideo(new VideoMock(1920, 1080));
   modal.setMetadata(getTestMetadataArray());

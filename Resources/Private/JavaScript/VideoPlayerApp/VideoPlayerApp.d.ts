@@ -50,6 +50,11 @@ type AppConstants = {
   screenshotFilenameTemplate: string;
 
   /**
+   * Template for comment added to metadata of screenshot image file.
+   */
+  screenshotCommentTemplate: string;
+
+  /**
    * Number of seconds in which to still rewind to previous chapter.
    */
   prevChapterTolerance: number;
