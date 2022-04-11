@@ -36,7 +36,8 @@ export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
   constructor(parent, controls, env) {
     super(parent, controls, 'switch_video');
 
-    this.sxnd = {
+    /** @private Avoid naming conflicts with parent class */
+    this.dlf = {
       env,
       activeCheck: e("i", {
         className: "material-icons-round shaka-chosen-item",
@@ -55,7 +56,7 @@ export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
       this.eventManager.listen(this.controls, 'dlf-media-variant-groups', (ev) => {
         const detail = /** @type {dlf.media.VariantGroupsEvent} */(ev).detail;
         const variantGroups =
-          this.sxnd.variantGroups = detail.variantGroups;
+          this.dlf.variantGroups = detail.variantGroups;
 
         this.clearMenu();
         this.updateVisibility();
@@ -64,7 +65,7 @@ export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
           for (const group of variantGroups) {
             const button = e("button", {
               $click: () => {
-                this.sxnd.variantGroups?.selectGroupByKey(group.key);
+                this.dlf.variantGroups?.selectGroupByKey(group.key);
               },
             }, [
               e("span", {}, [group.key]),
@@ -102,9 +103,9 @@ export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
    * Updates UI to show which group is active
    */
   markActiveGroup() {
-    const activeGroup = this.sxnd.variantGroups?.findActiveGroup();
+    const activeGroup = this.dlf.variantGroups?.findActiveGroup();
     if (activeGroup) {
-      this.menuButtons[activeGroup.key]?.appendChild(this.sxnd.activeCheck);
+      this.menuButtons[activeGroup.key]?.appendChild(this.dlf.activeCheck);
       this.currentSelection.textContent = activeGroup.key;
     }
   }
@@ -115,7 +116,7 @@ export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
    * @private
    */
   updateVisibility() {
-    if ((this.sxnd.variantGroups?.numGroups ?? 0) > 0) {
+    if ((this.dlf.variantGroups?.numGroups ?? 0) > 0) {
       this.button.classList.remove('shaka-hidden');
     } else {
       this.button.classList.add('shaka-hidden');
@@ -126,8 +127,8 @@ export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
    * @private
    */
   updateStrings() {
-    const back = this.sxnd.env.t('control.back');
-    const label = this.sxnd.env.t('control.video-track.title');
+    const back = this.dlf.env.t('control.back');
+    const label = this.dlf.env.t('control.video-track.title');
 
     this.backButton.ariaLabel = back;
     this.button.ariaLabel = label;

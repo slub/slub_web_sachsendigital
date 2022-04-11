@@ -40,8 +40,8 @@ export default class OverflowMenuButton extends shaka.ui.SettingsMenu {
   constructor(parent, controls, config = {}) {
     super(parent, controls, config.material_icon ?? "");
 
-    /** @protected */
-    this.sxnd = { config };
+    /** @protected Avoid naming conflicts with parent class */
+    this.dlf = { config };
 
     if (this.eventManager) {
       // In particular, unbind button click handler pre-attached in base class
@@ -53,11 +53,11 @@ export default class OverflowMenuButton extends shaka.ui.SettingsMenu {
   }
 
   updateStrings() {
-    this.nameSpan.textContent = this.sxnd.config.name ?? "";
+    this.nameSpan.textContent = this.dlf.config.name ?? "";
   }
 
   onButtonClick() {
     this.controls?.hideSettingsMenus();
-    this.sxnd.config.onClick?.();
+    this.dlf.config.onClick?.();
   }
 }

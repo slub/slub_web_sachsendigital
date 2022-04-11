@@ -50,8 +50,8 @@ export default class ControlPanelButton extends shaka.ui.Element {
 
     parent.appendChild(button);
 
-    /** @protected */
-    this.sxnd = { config, button };
+    /** @protected Avoid naming conflicts with parent class */
+    this.dlf = { config, button };
 
     if (this.eventManager && config.onClick) {
       this.eventManager.listen(button, 'click', config.onClick);
@@ -61,8 +61,8 @@ export default class ControlPanelButton extends shaka.ui.Element {
   }
 
   updateStrings() {
-    let tooltip = this.sxnd.config.title ?? "";
-    this.sxnd.button.ariaLabel = tooltip;
-    setElementClass(this.sxnd.button, 'shaka-tooltip', tooltip !== "");
+    let tooltip = this.dlf.config.title ?? "";
+    this.dlf.button.ariaLabel = tooltip;
+    setElementClass(this.dlf.button, 'shaka-tooltip', tooltip !== "");
   }
 }

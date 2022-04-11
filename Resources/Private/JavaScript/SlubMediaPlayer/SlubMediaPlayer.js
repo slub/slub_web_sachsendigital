@@ -22,7 +22,7 @@ import keybindings from './keybindings.json';
  * @typedef {'player' | 'modal' | 'input'} KeyboardScope Currently active
  * target/scope for mapping keybindings.
  *
- * @typedef {HTMLElement & { sxndTimecode: number }} ChapterLink
+ * @typedef {HTMLElement & { dlfTimecode: number }} ChapterLink
  *
  * @typedef {{
  *  help: HelpModal;
@@ -81,15 +81,16 @@ export default class SlubMediaPlayer {
     /** @private @type {ChapterLink[]} */
     this.chapterLinks = [];
 
-    /** @private */
-    this.sxnd = {
-      /**
-       * The object that has caused current pause state, if any.
-       *
-       * @type {ValueOf<AppModals> | null}
-       */
-      pausedOn: null,
-    };
+    /**
+     * The object that has caused current pause state, if any.
+     *
+     * When a video is paused on opening a modal (such as the screenshot modal),
+     * this is used to resume the video when the modal is closed.
+     *
+     * @private
+     * @type {ValueOf<AppModals> | null}
+     */
+    this.videoPausedOn = null;
 
     /** @private */
     this.modals = Modals({
@@ -307,10 +308,10 @@ export default class SlubMediaPlayer {
       const link = /** @type {HTMLAnchorElement} */(el);
       const timecode = this.getLinkTimecode(link);
       if (timecode !== null) {
-        const sxndEl = /** @type {ChapterLink} */(el);
-        sxndEl.sxndTimecode = timecode;
-        sxndEl.addEventListener('click', this.handlers.onClickChapterLink);
-        this.chapterLinks.push(sxndEl);
+        const dlfEl = /** @type {ChapterLink} */(el);
+        dlfEl.dlfTimecode = timecode;
+        dlfEl.addEventListener('click', this.handlers.onClickChapterLink);
+        this.chapterLinks.push(dlfEl);
       }
     });
 
@@ -521,14 +522,14 @@ export default class SlubMediaPlayer {
     const target = /** @type {ChapterLink} */(e.currentTarget);
 
     this.dlfPlayer.play();
-    this.dlfPlayer.seekTo(target.sxndTimecode);
+    this.dlfPlayer.seekTo(target.dlfTimecode);
   }
 
   /**
    * @private
    */
   onPlay() {
-    this.sxnd.pausedOn = null;
+    this.videoPausedOn = null;
   }
 
   /**
@@ -536,8 +537,8 @@ export default class SlubMediaPlayer {
    * @param {any} obj
    */
   pauseOn(obj) {
-    if (this.sxnd.pausedOn === null && !this.dlfPlayer.paused) {
-      this.sxnd.pausedOn = obj;
+    if (this.videoPausedOn === null && !this.dlfPlayer.paused) {
+      this.videoPausedOn = obj;
       this.dlfPlayer.pause();
     }
   }
@@ -547,9 +548,9 @@ export default class SlubMediaPlayer {
    * @param {any} obj
    */
   resumeOn(obj) {
-    if (this.sxnd.pausedOn === obj) {
+    if (this.videoPausedOn === obj) {
       this.dlfPlayer.play();
-      this.sxnd.pausedOn = null;
+      this.videoPausedOn = null;
     }
   }
 

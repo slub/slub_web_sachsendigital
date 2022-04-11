@@ -51,11 +51,8 @@ export default class BookmarkModal extends SimpleModal {
       showQrCode: false,
     });
 
-    /** @private */
-    this.sxnd = {
-      /** @type {string | null} */
-      lastUrl: null,
-    }
+    /** @private @type {string | null} */
+    this.lastRenderedUrl = null;
 
     /** @private */
     this.handlers = {
@@ -236,7 +233,7 @@ export default class BookmarkModal extends SimpleModal {
     const { show, timecode, fps, startAtTimecode, showQrCode } = state;
 
     const url = this.generateUrl(state);
-    const urlChanged = url !== this.sxnd.lastUrl;
+    const urlChanged = url !== this.lastRenderedUrl;
 
     if (urlChanged) {
       const encodedUrl = encodeURIComponent(url);
@@ -246,7 +243,7 @@ export default class BookmarkModal extends SimpleModal {
       }
 
       this.$urlInput.value = url;
-      this.sxnd.lastUrl = url;
+      this.lastRenderedUrl = url;
     }
 
     if (urlChanged || showQrCode !== this.state.showQrCode) {

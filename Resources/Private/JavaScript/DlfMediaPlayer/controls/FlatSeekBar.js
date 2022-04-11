@@ -51,8 +51,8 @@ export default class FlatSeekBar extends shaka.ui.Element {
 
     parent.prepend(this.$container);
 
-    /** @private */
-    this.sxnd = {
+    /** @private Avoid naming conflicts with parent class */
+    this.dlf = {
       /** @type {Chapters | null} */
       chapters: null,
       /** @type {boolean} */
@@ -73,7 +73,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
       lastGradientStr: "",
     };
 
-    this.sxnd.seekTimer = new shaka.util.Timer(() => {
+    this.dlf.seekTimer = new shaka.util.Timer(() => {
       if (this.video !== null) {
         this.video.currentTime = this.getValue();
 
@@ -84,7 +84,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
     });
 
     if (this.player !== null) {
-      this.sxnd.thumbnailPreview = new ThumbnailPreview({
+      this.dlf.thumbnailPreview = new ThumbnailPreview({
         seekBar: this.$container,
         player: this.player,
         network: new ImageFetcher(),
@@ -93,19 +93,19 @@ export default class FlatSeekBar extends shaka.ui.Element {
             this.controls?.setSeeking(true);
 
             if (this.video !== null) {
-              this.sxnd.wasPlaying = !this.video.paused;
+              this.dlf.wasPlaying = !this.video.paused;
               this.video.pause();
             }
           },
           onChange: (pos) => {
-            this.sxnd.value = pos.seconds;
+            this.dlf.value = pos.seconds;
             this.update();
-            this.sxnd.seekTimer?.tickAfter(0.125);
+            this.dlf.seekTimer?.tickAfter(0.125);
           },
           onChangeEnd: () => {
-            this.sxnd.seekTimer?.tickNow();
+            this.dlf.seekTimer?.tickNow();
             this.controls?.setSeeking(false);
-            if (this.sxnd.wasPlaying) {
+            if (this.dlf.wasPlaying) {
               this.video?.play();
             }
           },
@@ -124,21 +124,21 @@ export default class FlatSeekBar extends shaka.ui.Element {
 
       this.eventManager.listen(this.controls, 'dlf-media-variant-groups', (e) => {
         const detail = /** @type {dlf.media.VariantGroupsEvent} */(e).detail;
-        this.sxnd.variantGroups = detail.variantGroups;
+        this.dlf.variantGroups = detail.variantGroups;
         this.updatePreviewImageTracks();
       });
 
       this.eventManager.listen(this.controls, 'dlf-media-chapters', (e) => {
         const detail = /** @type {dlf.media.ChaptersEvent} */(e).detail;
-        this.sxnd.chapters = detail.chapters;
-        this.sxnd.hasRenderedChapters = false;
-        this.sxnd.thumbnailPreview?.setChapters(detail.chapters);
+        this.dlf.chapters = detail.chapters;
+        this.dlf.hasRenderedChapters = false;
+        this.dlf.thumbnailPreview?.setChapters(detail.chapters);
         this.update();
       });
 
       this.eventManager.listen(this.controls, 'dlf-media-fps', (e) => {
         const detail = /** @type {dlf.media.FpsEvent} */(e).detail;
-        this.sxnd.thumbnailPreview?.setFps(detail.fps);
+        this.dlf.thumbnailPreview?.setFps(detail.fps);
       });
 
       this.controls?.dispatchEvent(/** @type {dlf.media.SeekBarEvent} */(
@@ -153,21 +153,21 @@ export default class FlatSeekBar extends shaka.ui.Element {
    * @override
    */
   release() {
-    if (this.sxnd.seekTimer !== null) {
-      this.sxnd.seekTimer.stop();
-      this.sxnd.seekTimer = null;
+    if (this.dlf.seekTimer !== null) {
+      this.dlf.seekTimer.stop();
+      this.dlf.seekTimer = null;
     }
 
-    if (this.sxnd.thumbnailPreview !== null) {
-      this.sxnd.thumbnailPreview.release();
-      this.sxnd.thumbnailPreview = null;
+    if (this.dlf.thumbnailPreview !== null) {
+      this.dlf.thumbnailPreview.release();
+      this.dlf.thumbnailPreview = null;
     }
 
     super.release();
   }
 
   get thumbnailPreview() {
-    return this.sxnd.thumbnailPreview;
+    return this.dlf.thumbnailPreview;
   }
 
   /**
@@ -175,12 +175,15 @@ export default class FlatSeekBar extends shaka.ui.Element {
    * @returns {boolean}
    */
   isThumbnailPreviewOpen() {
-    return this.sxnd.thumbnailPreview?.isVisible ?? false;
+    return this.dlf.thumbnailPreview?.isVisible ?? false;
   }
 
+  /**
+   * Stop any active seeking/scrubbing and close thumbnail preview.
+   */
   endSeek() {
-    this.sxnd.thumbnailPreview?.endChange();
-    this.sxnd.thumbnailPreview?.setIsVisible(false);
+    this.dlf.thumbnailPreview?.endChange();
+    this.dlf.thumbnailPreview?.setIsVisible(false);
   }
 
   /**
@@ -188,7 +191,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
    * @param {boolean} value
    */
   setThumbnailSnap(value) {
-    this.sxnd.thumbnailPreview?.setThumbnailSnap(value);
+    this.dlf.thumbnailPreview?.setThumbnailSnap(value);
   }
 
   /**
@@ -228,24 +231,24 @@ export default class FlatSeekBar extends shaka.ui.Element {
    * passes those to the thumbnail preview.
    */
   updatePreviewImageTracks() {
-    if (this.sxnd.thumbnailPreview === null) {
+    if (this.dlf.thumbnailPreview === null) {
       console.warn("FlatSeekBar: Missing thumbnail preview");
       return;
     }
 
-    if (this.sxnd.variantGroups === null) {
+    if (this.dlf.variantGroups === null) {
       return;
     }
 
-    const thumbTracks = this.sxnd.variantGroups.findThumbnailTracks();
-    this.sxnd.thumbnailPreview.setThumbnailTracks(thumbTracks);
+    const thumbTracks = this.dlf.variantGroups.findThumbnailTracks();
+    this.dlf.thumbnailPreview.setThumbnailTracks(thumbTracks);
   }
 
   /**
    * @returns {number}
    */
   getValue() {
-    return this.sxnd.value;
+    return this.dlf.value;
   }
 
   /**
@@ -263,7 +266,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
       return;
     }
 
-    this.sxnd.value = value;
+    this.dlf.value = value;
   }
 
   /**
@@ -291,12 +294,12 @@ export default class FlatSeekBar extends shaka.ui.Element {
       return;
     }
 
-    if (this.sxnd.chapters !== null && !this.sxnd.hasRenderedChapters) {
-      this.renderChapterMarkers(this.sxnd.chapters, duration);
-      this.sxnd.hasRenderedChapters = true;
+    if (this.dlf.chapters !== null && !this.dlf.hasRenderedChapters) {
+      this.renderChapterMarkers(this.dlf.chapters, duration);
+      this.dlf.hasRenderedChapters = true;
     }
 
-    const colors = this.sxnd.uiConfig.seekBarColors;
+    const colors = this.dlf.uiConfig.seekBarColors;
     const currentTime = this.getValue();
     const bufferedLength = this.video.buffered.length;
     const bufferedStart = bufferedLength ? this.video.buffered.start(0) : 0;
@@ -327,7 +330,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
     const playheadFraction = (playheadDistance / seekRangeSize) || 0;
 
     const unbufferedColor =
-      this.sxnd.uiConfig.showUnbufferedStart ? colors.base : colors.played;
+      this.dlf.uiConfig.showUnbufferedStart ? colors.base : colors.played;
 
     const gradient = [
       'to right',
@@ -339,8 +342,8 @@ export default class FlatSeekBar extends shaka.ui.Element {
       this.makeColor(colors.base, bufferEndFraction),
     ];
     const gradientStr = 'linear-gradient(' + gradient.join(',') + ')';
-    if (gradientStr !== this.sxnd.lastGradientStr) {
-      this.sxnd.lastGradientStr = gradientStr;
+    if (gradientStr !== this.dlf.lastGradientStr) {
+      this.dlf.lastGradientStr = gradientStr;
       this.$range.style.background = gradientStr;
     }
   }

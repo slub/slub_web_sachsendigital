@@ -76,12 +76,8 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
     });
     parent.appendChild(currentTime);
 
-    /** @private */
-    this.sxnd = {
-      env,
-      currentTime,
-
-    };
+    /** @private Avoid naming conflicts with parent class */
+    this.dlf = { env, currentTime };
 
     /**
      * @private
@@ -160,7 +156,7 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
         [TimeMode.CurrentFrame]: 'current-frame',
       }[newState.activeMode] ?? 'current-time');
 
-      this.sxnd.currentTime.textContent = this.getTimecodeText(tKey, newState);
+      this.dlf.currentTime.textContent = this.getTimecodeText(tKey, newState);
     }
 
     this.state = newState;
@@ -176,7 +172,7 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
   getTimecodeText(tKey, { isReady, totalSeconds, duration, vifa, fps, chapters }) {
     // Don't show incomplete info when duration is not yet available
     if (!isReady || duration === 0) {
-      return this.sxnd.env.t('player.loading');
+      return this.dlf.env.t('player.loading');
     } else {
       const showHour = duration >= 3600;
 
@@ -198,7 +194,7 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
         },
       };
 
-      return this.sxnd.env.t(`control.time.${tKey}.text`, textValues);
+      return this.dlf.env.t(`control.time.${tKey}.text`, textValues);
     }
   }
 }
