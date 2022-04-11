@@ -10,10 +10,9 @@ import {
   e,
   domJoin,
   sanitizeBasename,
-  fillPlaceholders,
 } from '../../lib/util';
 import generateTimecodeUrl from '../lib/generateTimecodeUrl';
-import { metadataArrayToString } from '../lib/util';
+import { fillMetadata, metadataArrayToString } from '../lib/metadata';
 import SimpleModal from '../lib/SimpleModal';
 import { getKeybindingText } from '../lib/trans';
 import { drawScreenshot } from '../Screenshot';
@@ -290,11 +289,10 @@ export default class ScreenshotModal extends SimpleModal {
    * @return {string}
    */
   getFilename(metadata, fps, timecode, selectedImageFormat) {
-    let basename = timeStringFromTemplate(this.config.screenshotFilenameTemplate, timecode, fps);
-    basename = fillPlaceholders(basename, {
-      // NOTE: Don't localize (English file name prefix should be alright)
-      title: metadata.metadata.title?.[0] ?? "Unnamed",
-    });
+    const basename = fillMetadata(
+      timeStringFromTemplate(this.config.screenshotFilenameTemplate, timecode, fps),
+      metadata.metadata
+    );
 
     const extension = selectedImageFormat.extension;
 

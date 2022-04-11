@@ -5,7 +5,7 @@
 // @ts-check
 
 import { beforeEach, expect, test } from '@jest/globals';
-import { metadataArrayToString } from './lib/util';
+import { metadataArrayToString } from './lib/metadata';
 import ScreenshotModal from './modals/ScreenshotModal';
 import Environment from './Environment';
 import { drawScreenshot } from './Screenshot';
