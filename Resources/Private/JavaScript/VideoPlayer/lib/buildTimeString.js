@@ -1,6 +1,6 @@
 // @ts-check
 
-import { zeroPad } from '../../lib/util';
+import { fillPlaceholders, zeroPad } from '../../lib/util';
 
 /**
  * Formats {@link totalSeconds} to a time string.
@@ -39,15 +39,14 @@ export default function buildTimeString(totalSeconds, showHour, fps = null) {
 export function timeStringFromTemplate(template, totalSeconds, fps = null) {
   const parts = getTimeStringParts(totalSeconds, fps ?? 0);
 
-  return (
-    template
-      .replace(/{h}/g, `${parts.hours}`)
-      .replace(/{hh}/g, zeroPad(parts.hours, 2))
-      .replace(/{m}/g, `${parts.totalMinutes}`)
-      .replace(/{mm}/g, zeroPad(parts.minutes, 2))
-      .replace(/{ss}/g, zeroPad(parts.seconds, 2))
-      .replace(/{ff}/g, zeroPad(parts.frames, 2))
-  )
+  return fillPlaceholders(template, {
+    h: `${parts.hours}`,
+    hh: zeroPad(parts.hours, 2),
+    m: `${parts.totalMinutes}`,
+    mm: zeroPad(parts.minutes, 2),
+    ss: zeroPad(parts.seconds, 2),
+    ff: zeroPad(parts.frames, 2),
+  });
 }
 
 /**
