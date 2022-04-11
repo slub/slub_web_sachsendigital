@@ -65,7 +65,6 @@ export default class SlubMediaPlayer {
       onKeyDown: this.onKeyDown.bind(this),
       onKeyUp: this.onKeyUp.bind(this),
       onClickChapterLink: this.onClickChapterLink.bind(this),
-      onPlay: this.onPlay.bind(this),
       onCloseModal: this.onCloseModal.bind(this),
     };
 
@@ -78,17 +77,6 @@ export default class SlubMediaPlayer {
 
     /** @private @type {ChapterLink[]} */
     this.chapterLinks = [];
-
-    /**
-     * The object that has caused current pause state, if any.
-     *
-     * When a video is paused on opening a modal (such as the screenshot modal),
-     * this is used to resume the video when the modal is closed.
-     *
-     * @private
-     * @type {ValueOf<AppModals> | null}
-     */
-    this.videoPausedOn = null;
 
     /** @private */
     this.modals = Modals({
@@ -221,7 +209,6 @@ export default class SlubMediaPlayer {
     };
 
     this.modals.on('closed', this.handlers.onCloseModal);
-    this.dlfPlayer.getVideo().addEventListener('play', this.handlers.onPlay);
 
     this.load();
   }
@@ -525,39 +512,10 @@ export default class SlubMediaPlayer {
 
   /**
    * @private
-   */
-  onPlay() {
-    this.videoPausedOn = null;
-  }
-
-  /**
-   * @private
-   * @param {any} obj
-   */
-  pauseOn(obj) {
-    if (this.videoPausedOn === null && !this.dlfPlayer.paused) {
-      this.videoPausedOn = obj;
-      this.dlfPlayer.pause();
-    }
-  }
-
-  /**
-   * @private
-   * @param {any} obj
-   */
-  resumeOn(obj) {
-    if (this.videoPausedOn === obj) {
-      this.dlfPlayer.play();
-      this.videoPausedOn = null;
-    }
-  }
-
-  /**
-   * @private
    * @param {ValueOf<AppModals>} modal
    */
   onCloseModal(modal) {
-    this.resumeOn(modal);
+    this.dlfPlayer.resumeOn(modal);
   }
 
   /**
@@ -651,7 +609,7 @@ export default class SlubMediaPlayer {
    */
   openModal(modal, pause = false) {
     if (pause) {
-      this.pauseOn(modal);
+      this.dlfPlayer.pauseOn(modal);
     }
 
     this.dlfPlayer.endSeek();

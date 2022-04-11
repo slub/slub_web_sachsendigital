@@ -63,6 +63,16 @@ export default class DlfMediaPlayer {
     });
     this.container.append(this.video, this.poster);
 
+    /**
+     * The object that has caused current pause state, if any.
+     *
+     * See {@link pauseOn} and {@link resumeOn}.
+     *
+     * @private
+     * @type {any}
+     */
+    this.videoPausedOn = null;
+
     /** @private @type {string[]} */
     this.controlPanelButtons = [];
 
@@ -334,6 +344,8 @@ export default class DlfMediaPlayer {
   }
 
   onPlay() {
+    this.videoPausedOn = null;
+
     // Hide poster once playback has started the first time
     // This is necessary because "onTimeUpdate" may be fired with a delay
     this.hidePoster();
@@ -525,6 +537,7 @@ export default class DlfMediaPlayer {
    */
   play() {
     this.video.play();
+    this.videoPausedOn = null;
   }
 
   /**
@@ -532,6 +545,33 @@ export default class DlfMediaPlayer {
    */
   pause() {
     this.video.pause();
+  }
+
+  /**
+   * Pause playback on the given {@link obj}. See {@link resumeOn}.
+   *
+   * For example, this may be used to pause the video on opening a modal and
+   * resume it when the modal is closed.
+   *
+   * @param {any} obj
+   */
+  pauseOn(obj) {
+    if (this.videoPausedOn === null && !this.paused) {
+      this.videoPausedOn = obj;
+      this.pause();
+    }
+  }
+
+  /**
+   * If the video is currently paused because of calling {@link pauseOn} on
+   * {@link obj}, resume the video.
+   *
+   * @param {any} obj
+   */
+  resumeOn(obj) {
+    if (this.videoPausedOn === obj) {
+      this.play();
+    }
   }
 
   /**
