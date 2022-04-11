@@ -14,7 +14,7 @@ import Modals from './lib/Modals';
 import { BookmarkModal, HelpModal, ScreenshotModal } from './modals';
 import Environment from './Environment';
 
-import '../../Less/VideoPlayer/VideoPlayerApp.less';
+import '../../Less/VideoPlayer/SlubMediaPlayer.less';
 
 import keybindings from './keybindings.json';
 
@@ -31,7 +31,7 @@ import keybindings from './keybindings.json';
  * }} AppModals
  */
 
-export default class SxndPlayerApp {
+export default class SlubMediaPlayer {
   /**
    *
    * @param {HTMLElement} container
@@ -48,7 +48,7 @@ export default class SxndPlayerApp {
     this.videoInfo = videoInfo;
     /** @private */
     this.config = config;
-    /** @private @type {Keybinding<KeyboardScope, keyof SxndPlayerApp['actions']>[]} */
+    /** @private @type {Keybinding<KeyboardScope, keyof SlubMediaPlayer['actions']>[]} */
     this.keybindings = /** @type {any} */(keybindings);
 
     /** @private @type {AppConstants} */

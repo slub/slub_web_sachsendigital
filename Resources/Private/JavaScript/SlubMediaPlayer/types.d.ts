@@ -1,5 +1,8 @@
+// This file declares some additional types used in the SLUB media player.
+// There also are @typedef declarations directly in .js files.
+
 interface Window {
-  SxndPlayerApp: {
+  SlubMediaPlayer: {
     new (container: HTMLElement, videoInfo: VideoInfo, config: AppConfig);
   };
 }
@@ -104,7 +107,7 @@ type Keybinding<ScopeT extends string, ActionT extends string> = {
    *
    * For creating an alias, consider adding a full keybinding entry instead.
    */
-  keys: KeyboardEvent['key'][];
+  keys: KeyboardEvent["key"][];
 
   /**
    * Boolean to indicate that the keypress must / must not be repeated;
@@ -124,14 +127,14 @@ type Keybinding<ScopeT extends string, ActionT extends string> = {
   action: ActionT;
 
   /**
-   * Whether or not to use this keybinding for `keydown` events.
+   * Whether or not to use this keybinding for `keydown` events. (Default: `true`.)
    */
-  keydown?: boolean = true;
+  keydown?: boolean;
 
   /**
-   * Whether or not to use this keybinding for `keyup` events.
+   * Whether or not to use this keybinding for `keyup` events. (Default:`false`.)
    */
-  keyup?: boolean = false;
+  keyup?: boolean;
 
   /**
    * Kind of keybinding as used for grouping in help modal.
@@ -144,7 +147,7 @@ type Keybinding<ScopeT extends string, ActionT extends string> = {
   order: number;
 };
 
-type KeyEventMode = 'down' | 'up';
+type KeyEventMode = "down" | "up";
 
 type ModalEventHandlers = {
   updated: () => void;

@@ -35,7 +35,7 @@ class VideoToJsonViewHelper extends AbstractViewHelper
         $movieDir = $settings['movieDir'];
         $chapters = $settings['chapters'] ?? [];
 
-        // @see `VideoInfo` in VideoPlayerApp.d.ts
+        // @see `VideoInfo` in SlubMediaPlayer/types.d.ts
         $result = [
             'chapters' => array_map(function ($item) {
                 return $item['chapter'];

@@ -16,7 +16,7 @@ module.exports = (env, argv) => {
       'SxndScripts': `${PRIVATE_PATH}/JavaScript/SxndScripts.js`,
 
       // We only list the entry JS here; the Less and CSS are imported there.
-      'SxndPlayerApp': `${PRIVATE_PATH}/JavaScript/VideoPlayerApp`,
+      'SxndPlayerApp': `${PRIVATE_PATH}/JavaScript/SlubMediaPlayer`,
 
       'SxndStyles': `${PRIVATE_PATH}/Less/All.less`,
       'RteStyles': `${PRIVATE_PATH}/Less/Rte.less`,

@@ -10,7 +10,7 @@
             var playerConfig = {sxnd:playerConfigToJson(settings: settings)};
             playerConfig.lang = {sxnd:translations(baseFile: settings.playerTranslations.baseFile) -> f:format.json() -> f:format.raw()};
 
-            var app = new SxndPlayerApp(container, videoConfig, playerConfig);
+            var app = new SlubMediaPlayer(container, videoConfig, playerConfig);
         });
     </script>
 </f:section>
