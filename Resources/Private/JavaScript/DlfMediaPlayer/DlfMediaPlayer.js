@@ -14,8 +14,6 @@ import {
 } from './controls';
 import VariantGroups from './VariantGroups';
 
-import '../../Less/VideoPlayer/DlfMediaPlayer.less';
-
 /**
  * @typedef {{
  *  prevChapterTolerance: number;

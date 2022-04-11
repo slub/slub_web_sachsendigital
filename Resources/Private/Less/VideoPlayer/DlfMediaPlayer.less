@@ -1,3 +1,4 @@
+@import (reference) "shaka-player/ui/controls.less";
 @import "./VideoPlayer.less";
 
 .sxnd-video {
@@ -49,23 +50,6 @@
 
     &::-webkit-scrollbar {
         display: none;
-    }
-}
-
-// Taken from Shaka's general.less
-// TODO: Pull in from their LESS files?
-.show-when-controls-shown() {
-    /* Transparent unless explicitly made opaque through container attributes. */
-    opacity: 0;
-
-    /* When we show/hide this, do it gradually using cubic-bezier timing. */
-    transition: opacity cubic-bezier(0.4, 0, 0.6, 1) 600ms;
-
-    /* Show controls when the container's "shown" or "casting" attributes are
-     * set. */
-    .shaka-controls-container[shown="true"] &,
-    .shaka-controls-container[casting="true"] & {
-        opacity: 1;
     }
 }
 
