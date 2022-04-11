@@ -1,5 +1,9 @@
 @import (reference) "shaka-player/ui/controls.less";
-@import "./VideoPlayer.less";
+@import "util.less";
+
+.dlf-media-player {
+    .noselect();
+}
 
 .sxnd-video {
     width: 100%;
@@ -40,6 +44,22 @@
     justify-content: flex-start !important;
 }
 
+@media all and (min-width: calc(@tabletViewportWidth + 1px)) {
+    .shaka-controls-button-panel button {
+        margin-left: 8px;
+        margin-right: 8px;
+    }
+
+    .shaka-overflow-menu-button {
+        margin-left: 0 !important;
+    }
+
+    .shaka-fullscreen-button {
+        margin-left: 3px !important;
+        margin-right: 4px !important;
+    }
+}
+
 .shaka-current-time {
     // On small screens, let the time tracker adapt
 
@@ -76,6 +96,8 @@ body {
 }
 
 .sxnd-thumbnail-preview {
+    .noselect();
+
     // Use `visibility` instead of `display` because we want to use
     // `offsetWidth`, which is zero for elements with `display: none`.
     visibility: hidden;

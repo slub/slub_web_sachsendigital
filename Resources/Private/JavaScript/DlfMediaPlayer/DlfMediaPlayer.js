@@ -48,7 +48,7 @@ export default class DlfMediaPlayer {
     this.mountPoint = null;
 
     /** @private @type {HTMLElement} */
-    this.container = e('div', { className: "noselect" });
+    this.container = e('div', { className: "dlf-media-player" });
 
     /** @private @type {HTMLVideoElement} */
     this.video = e('video', {

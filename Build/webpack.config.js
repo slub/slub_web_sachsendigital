@@ -21,9 +21,7 @@ module.exports = (env, argv) => {
       'SxndStyles': `${PRIVATE_PATH}/Less/All.less`,
       'RteStyles': `${PRIVATE_PATH}/Less/Rte.less`,
       'SxndKitodoViewer': `${PRIVATE_PATH}/Less/KitodoViewer.less`,
-
-      'DlfMediaPlayerStyles': `${PRIVATE_PATH}/Less/VideoPlayer/DlfMediaPlayer.less`,
-      'SlubMediaPlayerStyles': `${PRIVATE_PATH}/Less/VideoPlayer/SlubMediaPlayer.less`,
+      'SxndMediaPlayer': `${PRIVATE_PATH}/Less/SxndMediaPlayer.less`,
     },
     output: {
       filename: 'JavaScript/[name].js',

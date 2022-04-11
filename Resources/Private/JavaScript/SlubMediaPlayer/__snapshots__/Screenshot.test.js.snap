@@ -639,8 +639,10 @@ exports[`can open screenshot overlay 1`] = `
   >
     <h3 />
     <span
-      class="modal-close icon-close"
-    />
+      class="modal-close material-icons-round"
+    >
+      close
+    </span>
   </div>
   <div
     class="body-container"

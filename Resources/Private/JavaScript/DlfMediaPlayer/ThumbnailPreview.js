@@ -122,7 +122,7 @@ export default class ThumbnailPreview {
 
     // Make preview unselectable so that, for example, the info text won't
     // accidentally be selected when scrubbing on FlatSeekBar.
-    this.$container = e('div', { className: "sxnd-thumbnail-preview noselect" }, [
+    this.$container = e('div', { className: "sxnd-thumbnail-preview" }, [
       e('div', { className: "content-box" }, [
         this.$display = e('div', { className: "display" }, [
           this.$img = e('img'),

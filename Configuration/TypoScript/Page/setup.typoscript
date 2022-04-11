@@ -156,8 +156,7 @@ page {
     includeCSS {
         sxndKitodoViewerCss = EXT:slub_web_sachsendigital/Resources/Public/Css/SxndKitodoViewer.css
         sxndCss >
-        dlf-mediaplayer-css = EXT:slub_web_sachsendigital/Resources/Public/Css/DlfMediaPlayerStyles.css
-        slub-mediaplayer-css = EXT:slub_web_sachsendigital/Resources/Public/Css/SlubMediaPlayerStyles.css
+        sxnd-mediaplayer-css = EXT:slub_web_sachsendigital/Resources/Public/Css/SxndMediaPlayer.css
         shaka-css = EXT:slub_web_sachsendigital/Resources/Public/Css/SxndPlayerVendor.css
         shaka-css.excludeFromConcatenation = 1
     }

@@ -49,9 +49,9 @@ export default class SimpleModal extends Component {
       this.$headline = e('div', { className: "headline-container" }, [
         this.$title = e('h3'),
         this.$close = e('span', {
-          className: "modal-close icon-close",
+          className: "modal-close material-icons-round",
           $click: this.close.bind(this),
-        }),
+        }, ["close"]),
       ]),
       this.$body = e('div', { className: "body-container" }),
     ]);
