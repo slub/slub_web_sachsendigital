@@ -45,6 +45,11 @@ type LangDef = {
 
 type AppConstants = {
   /**
+   * Template for filename when downloading screenshot (without extension).
+   */
+  screenshotFilenameTemplate: string;
+
+  /**
    * Number of seconds in which to still rewind to previous chapter.
    */
   prevChapterTolerance: number;
@@ -75,7 +80,6 @@ type AppConstantsConfig = import('../lib/typoConstants').TypoConstants<AppConsta
 
 type AppConfig = {
   shareButtons: import("./modals/BookmarkModal").ShareButtonInfo[];
-  screenshotFilenameTemplate: string;
   lang: LangDef;
   constants?: Partial<AppConstantsConfig> | null;
 };

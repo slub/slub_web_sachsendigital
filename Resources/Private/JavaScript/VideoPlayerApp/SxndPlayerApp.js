@@ -53,6 +53,7 @@ export default class SxndPlayerApp {
 
     /** @private @type {AppConstants} */
     this.constants = typoConstants(config.constants ?? {}, {
+      screenshotFilenameTemplate: 'Screenshot',
       prevChapterTolerance: 5,
       volumeStep: 0.05,
       seekStep: 5,
@@ -104,7 +105,7 @@ export default class SxndPlayerApp {
       }),
       screenshot: new ScreenshotModal(this.container, this.env, {
         keybindings: this.keybindings,
-        screenshotFilenameTemplate: this.config.screenshotFilenameTemplate,
+        screenshotFilenameTemplate: this.constants.screenshotFilenameTemplate,
       }),
     });
 
