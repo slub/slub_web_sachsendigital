@@ -276,13 +276,13 @@ export default class BookmarkModal extends SimpleModal {
     if (text !== null) {
       try {
         await QRCode.toCanvas(this.$qrCanvas, text);
-        this.$qrCanvasContainer.classList.add("sxnd-visible");
+        this.$qrCanvasContainer.classList.add("dlf-visible");
       } catch (e) {
         alert(this.env.t('error.qrcode'));
         console.error(e);
       }
     } else {
-      this.$qrCanvasContainer.classList.remove("sxnd-visible");
+      this.$qrCanvasContainer.classList.remove("dlf-visible");
     }
   }
 }

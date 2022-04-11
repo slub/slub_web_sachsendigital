@@ -1,6 +1,6 @@
 // Imported from DlfMediaPlayer.less
 
-.sxnd-seek-bar {
+.dlf-media-flat-seek-bar {
     .show-when-controls-shown();
     .no-tap-highlight();
 
@@ -25,7 +25,7 @@
         height: @seek-bar-height;
         width: 1px;
         background-color: @base-color;
-        z-index: -1; // Less than .sxnd-chapter-marker
+        z-index: -1; // Less than .dlf-media-chapter-marker
         visibility: hidden;
     }
 
@@ -35,7 +35,7 @@
         height: @seek-bar-height;
         width: 1px;
         background-color: rgba(@base-color, 0.4);
-        z-index: -2; // Less than .sxnd-chapter-marker and .seek-marker
+        z-index: -2; // Less than .dlf-media-chapter-marker and .seek-marker
         visibility: hidden;
     }
 }

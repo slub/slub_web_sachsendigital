@@ -53,10 +53,10 @@ export default class DlfMediaPlayer {
     /** @private @type {HTMLVideoElement} */
     this.video = e('video', {
       id: this.env.mkid(),
-      className: "sxnd-video",
+      className: "dlf-media",
     });
     this.poster = e('img', {
-      className: "sxnd-poster sxnd-visible",
+      className: "dlf-media-poster dlf-visible",
       $error: () => {
         this.hidePoster();
       },
@@ -346,7 +346,7 @@ export default class DlfMediaPlayer {
   }
 
   hidePoster() {
-    this.poster.classList.remove('sxnd-visible');
+    this.poster.classList.remove('dlf-visible');
   }
 
   /**
@@ -359,9 +359,9 @@ export default class DlfMediaPlayer {
     // may remain hidden, and on seeking the controls remain visible.
 
     if (readyState === 0) {
-      this.shakaBottomControls?.classList.remove('sxnd-visible');
+      this.shakaBottomControls?.classList.remove('dlf-visible');
     } else if (readyState >= this.constants.minBottomControlsReadyState) {
-      this.shakaBottomControls?.classList.add('sxnd-visible');
+      this.shakaBottomControls?.classList.add('dlf-visible');
     }
   }
 

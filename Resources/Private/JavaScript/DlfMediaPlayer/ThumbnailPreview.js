@@ -122,7 +122,7 @@ export default class ThumbnailPreview {
 
     // Make preview unselectable so that, for example, the info text won't
     // accidentally be selected when scrubbing on FlatSeekBar.
-    this.$container = e('div', { className: "sxnd-thumbnail-preview" }, [
+    this.$container = e('div', { className: "dlf-media-thumbnail-preview" }, [
       e('div', { className: "content-box" }, [
         this.$display = e('div', { className: "display" }, [
           this.$img = e('img'),
@@ -660,12 +660,12 @@ export default class ThumbnailPreview {
       this.current = null;
     }
 
-    setElementClass(this.$container, 'sxnd-visible', showContainer);
-    setElementClass(this.$seekMarker, 'sxnd-visible', showContainer);
-    setElementClass(this.$seekThumbBar, 'sxnd-visible', showThumb && this.snapToThumbnail !== null);
+    setElementClass(this.$container, 'dlf-visible', showContainer);
+    setElementClass(this.$seekMarker, 'dlf-visible', showContainer);
+    setElementClass(this.$seekThumbBar, 'dlf-visible', showThumb && this.snapToThumbnail !== null);
 
     setElementClass(this.$display, 'is-open', openThumb)
-    setElementClass(this.$img, 'sxnd-visible', showThumb);
+    setElementClass(this.$img, 'dlf-visible', showThumb);
 
     // Make sure the thumbnail image won't be dragged when scrubbing
     disableDragging(this.$img);

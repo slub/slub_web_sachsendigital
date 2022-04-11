@@ -45,7 +45,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
   constructor(parent, controls) {
     super(parent, controls);
 
-    this.$container = e("div", { className: "sxnd-seek-bar" }, [
+    this.$container = e("div", { className: "dlf-media-flat-seek-bar" }, [
       this.$range = e("div", { className: "range" }),
     ]);
 
@@ -203,7 +203,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
    */
   renderChapterMarkers(chapters, duration) {
     // Clear chapter markers, which would allow a full refresh
-    this.$range.querySelectorAll('.sxnd-chapter-marker').forEach((marker) => {
+    this.$range.querySelectorAll('.dlf-media-chapter-marker').forEach((marker) => {
       marker.remove();
     });
 
@@ -217,7 +217,7 @@ export default class FlatSeekBar extends shaka.ui.Element {
       }
 
       const marker = document.createElement('span');
-      marker.className = 'sxnd-chapter-marker';
+      marker.className = 'dlf-media-chapter-marker';
       marker.style.position = 'absolute';
       marker.style.left = `${relative * 100}%`;
 
