@@ -214,23 +214,6 @@ export default class SlubMediaPlayer {
   }
 
   /**
-   * Prints global error message into {@link container} and quits.
-   *
-   * @private
-   * @param {string} langKey
-   */
-  failWithError(langKey) {
-    this.dlfPlayer.unmount();
-
-    const errorBox = e('div', {
-      className: "sxnd-player-fatal-error",
-    }, [this.env.t(langKey)]);
-
-    this.container.innerHTML = "";
-    this.container.append(errorBox);
-  }
-
-  /**
    * @private
    * @param {Chapters} chapters
    * @returns {number | undefined}
@@ -329,14 +312,8 @@ export default class SlubMediaPlayer {
     this.dlfPlayer.setSources(this.videoInfo.sources);
     this.dlfPlayer.mount(this.playerMount);
 
-    if (this.dlfPlayer.sources.length === 0) {
-      this.failWithError('error.playback-not-supported');
-      return;
-    }
-
     const hasLoadedVideo = await this.dlfPlayer.load();
     if (!hasLoadedVideo) {
-      this.failWithError('error.load-failed');
       return;
     }
 

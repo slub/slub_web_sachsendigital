@@ -5,7 +5,7 @@ import 'shaka-player/ui/controls.less';
 
 import VideoFrame from './vendor/VideoFrame';
 
-import { clamp, e } from '../lib/util';
+import { clamp, e, setElementClass } from '../lib/util';
 import Chapters from './Chapters';
 import {
   FlatSeekBar,
@@ -61,7 +61,9 @@ export default class DlfMediaPlayer {
         this.hidePoster();
       },
     });
-    this.container.append(this.video, this.poster);
+    this.videoBox = e('div', { className: "dlf-media-shaka-box" }, [this.video, this.poster]);
+    this.errorBox = e('div', { className: "dlf-media-shaka-box dlf-media-error" });
+    this.container.append(this.videoBox, this.errorBox);
 
     /**
      * The object that has caused current pause state, if any.
@@ -89,7 +91,7 @@ export default class DlfMediaPlayer {
     this.player = new shaka.Player(this.video);
 
     /** @private @type {shaka.ui.Overlay} */
-    this.ui = new shaka.ui.Overlay(this.player, this.container, this.video);
+    this.ui = new shaka.ui.Overlay(this.player, this.videoBox, this.video);
 
     /** @private @type {shaka.ui.Controls} */
     this.controls = /** @type {shaka.ui.Controls} */(this.ui.getControls());
@@ -260,7 +262,7 @@ export default class DlfMediaPlayer {
 
     // Set again after `ui.configure()`
     this.shakaBottomControls =
-      this.container.querySelector('.shaka-bottom-controls');
+      this.videoBox.querySelector('.shaka-bottom-controls');
 
     mount.replaceWith(this.container);
 
@@ -283,6 +285,18 @@ export default class DlfMediaPlayer {
     }
   }
 
+  /**
+   *
+   * @param {string | null} langKey
+   */
+  showError(langKey) {
+    if (langKey !== null) {
+      this.errorBox.innerText = this.env.t(langKey);
+    }
+
+    setElementClass(this.errorBox, 'dlf-visible', langKey !== null);
+  }
+
   getContainer() {
     return this.container;
   }
@@ -294,7 +308,7 @@ export default class DlfMediaPlayer {
    * @param {PointerEvent} e
    */
   isUserAreaEvent(e) {
-    return e.target === this.container.querySelector('.shaka-play-button-container');
+    return e.target === this.videoBox.querySelector('.shaka-play-button-container');
   }
 
   /**
@@ -303,12 +317,17 @@ export default class DlfMediaPlayer {
    * @type {DOMRect}
    */
   get userArea() {
-    const bounding = this.container.getBoundingClientRect();
+    const bounding = this.videoBox.getBoundingClientRect();
     const controlsHeight = this.shakaBottomControls?.getBoundingClientRect().height ?? 0;
     return new DOMRect(bounding.x, bounding.y, bounding.width, bounding.height - controlsHeight - 20);
   }
 
   async load() {
+    if (this.sources_.length === 0) {
+      this.showError('error.playback-not-supported');
+      return false;
+    }
+
     // Try loading video until one of the sources works.
     for (const source of this.sources_) {
       try {
@@ -319,6 +338,7 @@ export default class DlfMediaPlayer {
       }
     }
 
+    this.showError('error.load-failed');
     return false;
   }
 

@@ -25,6 +25,27 @@
     }
 }
 
+.dlf-media-shaka-box {
+    background-color: black;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.dlf-media-error {
+    display: none;
+    color: white;
+    z-index: 1;
+
+    &.dlf-visible {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
 .shaka-video-container {
     height: 100%;
 }
