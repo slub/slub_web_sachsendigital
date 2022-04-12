@@ -84,7 +84,7 @@ export default class BookmarkModal extends SimpleModal {
           this.$urlInput = e("input", {
             type: "url",
             readOnly: true,
-            value: "https://sachsen.digital",
+            value: location.href,
           }),
           e("a", {
             href: "javascript:void(0)",
