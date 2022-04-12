@@ -5,7 +5,7 @@
 // @ts-check
 
 import { beforeEach, expect, test } from '@jest/globals';
-import { metadataArrayToString } from './lib/metadata';
+import { fillMetadata } from './lib/metadata';
 import ScreenshotModal from './modals/ScreenshotModal';
 import Environment from './Environment';
 import { drawScreenshot } from './Screenshot';
@@ -37,14 +37,8 @@ function getEnvironment() {
 
 function getTestMetadataArray() {
   return {
-    metadata: {
-      title: ["Test Video"],
-      year: ["1912"],
-    },
-    screenshotFields: [
-      "title",
-      "year",
-    ],
+    title: ["Test Video"],
+    year: ["1912"],
   };
 }
 
@@ -64,6 +58,7 @@ test('can open screenshot overlay', async () => {
         order: 0
       },
     ],
+    screnshotCaptions: [],
     constants: {},
   });
   modal.setVideo(new VideoMock(1920, 1080));
@@ -131,7 +126,7 @@ test('can draw to canvas', () => {
         { v: 'top', h: 'left', text: "top left" },
         { v: 'top', h: 'right', text: "top right" },
         { v: 'bottom', h: 'left', text: "bottom left" },
-        { v: 'bottom', h: 'right', text: metadataArrayToString(metadata) },
+        { v: 'bottom', h: 'right', text: fillMetadata("{title} / {year}", metadata) },
       ],
       minWidth,
     });

@@ -31,10 +31,7 @@ type VideoInfo = {
   };
 };
 
-type MetadataArray = {
-  metadata: Record<string, string[]>;
-  screenshotFields: string[];
-};
+type MetadataArray = Record<string, string[]>;
 
 type PhrasesDict = Record<string, string>;
 type LangDef = {
@@ -86,6 +83,7 @@ type AppConstantsConfig = import('../lib/typoConstants').TypoConstants<AppConsta
 type AppConfig = {
   shareButtons: import("./modals/BookmarkModal").ShareButtonInfo[];
   lang: LangDef;
+  screenshotCaptions?: import("./Screenshot").ScreenshotCaption[];
   constants?: Partial<AppConstantsConfig> | null;
 };
 

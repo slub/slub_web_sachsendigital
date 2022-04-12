@@ -42,13 +42,7 @@ class VideoToJsonViewHelper extends AbstractViewHelper
             }, array_values($chapters)),
 
             'metadata' => [
-                'metadata' => [
-                    'title' => [$settings['media']],
-                ],
-
-                'screenshotFields' => [
-                    'title',
-                ],
+                'title' => [$settings['media']],
             ],
 
             // NOTE: If one of these doesn't exist (in particular, HLS), the

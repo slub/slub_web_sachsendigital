@@ -4,20 +4,8 @@ import { fillPlaceholders } from '../../lib/util';
 
 /**
  *
- * @param {MetadataArray} metadataArray
- * @returns {string}
- */
-export function metadataArrayToString(metadataArray) {
-  return metadataArray.screenshotFields
-    // TODO: Find a better way
-    .map(field => metadataArray.metadata[field]?.[0] ?? "")
-    .join(' / ');
-}
-
-/**
- *
  * @param {string} template
- * @param {MetadataArray['metadata']} metadata
+ * @param {MetadataArray} metadata
  * @returns {string}
  */
 export function fillMetadata(template, metadata) {

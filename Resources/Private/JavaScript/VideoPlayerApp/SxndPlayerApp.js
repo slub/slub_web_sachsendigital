@@ -106,6 +106,7 @@ export default class SxndPlayerApp {
       }),
       screenshot: new ScreenshotModal(this.container, this.env, {
         keybindings: this.keybindings,
+        screnshotCaptions: this.config.screenshotCaptions ?? [],
         constants: this.constants,
       }),
     });

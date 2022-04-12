@@ -33,6 +33,20 @@ plugin.tx_slubwebsachsendigital_media {
       }
     }
 
+    screenshotCaptions {
+      0 {
+        h = left
+        v = bottom
+        text = {host}
+      }
+
+      1 {
+        h = right
+        v = bottom
+        text = {title}
+      }
+    }
+
     constants {
       screenshotFilenameTemplate = sachsen-digital-de_{title}_h{hh}m{mm}s{ss}f{ff}
       screenshotCommentTemplate (

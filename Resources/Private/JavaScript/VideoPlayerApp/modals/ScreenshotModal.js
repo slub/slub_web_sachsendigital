@@ -12,7 +12,7 @@ import {
   sanitizeBasename,
 } from '../../lib/util';
 import generateTimecodeUrl from '../lib/generateTimecodeUrl';
-import { fillMetadata, metadataArrayToString } from '../lib/metadata';
+import { fillMetadata } from '../lib/metadata';
 import SimpleModal from '../lib/SimpleModal';
 import { getKeybindingText } from '../lib/trans';
 import { drawScreenshot } from '../Screenshot';
@@ -35,6 +35,7 @@ import typoConstants from '../../lib/typoConstants';
  *
  * @typedef {{
  *  keybindings: Keybinding<any, any>[];
+ *  screnshotCaptions: import('../Screenshot').ScreenshotCaption[];
  *  constants: import('../../lib/typoConstants').TypoConstants<Constants>;
  * }} Config
  */
@@ -280,10 +281,10 @@ export default class ScreenshotModal extends SimpleModal {
       const url = generateTimecodeUrl(timecode, this.env);
 
       image.addMetadata({
-        title: metadata.metadata.title?.[0] ?? "",
+        title: metadata.title?.[0] ?? "",
         // NOTE: Don't localize (not only relevant to current user)
-        comment: fillMetadata(this.constants.screenshotCommentTemplate, {
-          ...metadata.metadata,
+        comment: this.fillExtendedMetadata(this.constants.screenshotCommentTemplate, {
+          ...metadata,
           url: [url.toString()],
         }),
       });
@@ -303,9 +304,9 @@ export default class ScreenshotModal extends SimpleModal {
    * @return {string}
    */
   getFilename(metadata, fps, timecode, selectedImageFormat) {
-    const basename = fillMetadata(
+    const basename = this.fillExtendedMetadata(
       timeStringFromTemplate(this.constants.screenshotFilenameTemplate, timecode, fps),
-      metadata.metadata
+      metadata
     );
 
     const extension = selectedImageFormat.extension;
@@ -319,10 +320,24 @@ export default class ScreenshotModal extends SimpleModal {
    * @returns {import('../Screenshot').ScreenshotCaption[]}
    */
   getCaptions(metadata) {
-    return [
-      { v: 'bottom', h: 'left', text: "https://sachsen.digital" },
-      { v: 'bottom', h: 'right', text: metadata ? metadataArrayToString(metadata) : "" },
-    ];
+    return this.config.screnshotCaptions.map(caption => ({
+      ...caption,
+      text: this.fillExtendedMetadata(caption.text, metadata ?? {}),
+    }));
+  }
+
+  /**
+   *
+   * @private
+   * @param {string} template
+   * @param {MetadataArray} metadata
+   * @returns {string}
+   */
+  fillExtendedMetadata(template, metadata) {
+    return fillMetadata(template, {
+      ...metadata,
+      host: [`${location.protocol}//${location.host}`],
+    });
   }
 
   /**
