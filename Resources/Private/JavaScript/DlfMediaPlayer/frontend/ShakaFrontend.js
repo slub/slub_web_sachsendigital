@@ -56,6 +56,7 @@ export default class ShakaFrontend {
 
     /** @private @type {dlf.media.PlayerProperties} */
     this.playerProperties = {
+      mode: 'audio',
       locale: '',
       state: 'poster',
       error: null,
@@ -75,7 +76,7 @@ export default class ShakaFrontend {
 
     /** @private */
     this.$container = e('div', {
-      className: "dlf-media-player dlf-media-frontend-shaka"
+      className: "dlf-media-player dlf-shaka"
     }, [
       this.$videoBox = e('div', { className: "dlf-media-shaka-box" }, [
         this.$video = media,
@@ -99,6 +100,9 @@ export default class ShakaFrontend {
 
     /** @private @type {ReturnType<setTimeout> | null} */
     this.configureTimeout = null;
+
+    /** @private */
+    this.isConfigured = false;
 
     /** @private */
     this.gestures_ = new Gestures({
@@ -184,6 +188,11 @@ export default class ShakaFrontend {
    * @param {Partial<dlf.media.PlayerProperties>} props
    */
   updatePlayerProperties(props) {
+    const shouldReconfigure = (
+      props.mode !== undefined
+      && (!this.isConfigured || props.mode !== this.playerProperties.mode)
+    );
+
     Object.assign(this.playerProperties, props);
 
     if (props.locale !== undefined) {
@@ -196,6 +205,10 @@ export default class ShakaFrontend {
 
     if (props.error !== undefined) {
       this.renderError();
+    }
+
+    if (shouldReconfigure) {
+      this.scheduleConfigure();
     }
   }
 
@@ -261,7 +274,30 @@ export default class ShakaFrontend {
     // TODO: Somehow avoid overriding the SeekBar globally?
     FlatSeekBar.register();
 
-    this.ui.configure({
+    this.$container.setAttribute("data-mode", this.playerProperties.mode);
+
+    // TODO: Refactor insertion at custom position (left or right of fullscreen)
+    this.ui.configure(this.getShakaConfiguration());
+    this.isConfigured = true;
+
+    // Fade in controls, especially when switching from video to audio (TODO: Refactor)
+    this.$videoBox.dispatchEvent(new MouseEvent('mousemove'));
+
+    // DOM is (re-)created in `ui.configure()`, so query container afterwards
+    this.shakaBottomControls =
+      this.$videoBox.querySelector('.shaka-bottom-controls');
+
+    this.notifyMediaProperties();
+  }
+
+  /**
+   * @private
+   */
+  getShakaConfiguration() {
+    const playerMode = this.playerProperties.mode;
+
+    /** @type {any} */
+    const result = {
       addSeekBar: true,
       enableTooltips: true,
       controlPanelElements: [
@@ -283,23 +319,35 @@ export default class ShakaFrontend {
         'captions',
         ...this.overflowMenuButtons,
       ],
-      addBigPlayButton: true,
-      seekBarColors: {
-        base: 'rgba(255, 255, 255, 0.3)',
-        buffered: 'rgba(255, 255, 255, 0.54)',
-        played: 'rgb(255, 255, 255)',
-        adBreaks: 'rgb(255, 204, 0)',
-      },
+      addBigPlayButton: playerMode === 'video',
+      fadeDelay: playerMode === 'audio'
+        ? 100_000_000  // Just some large value
+        : undefined,  // Use default
+      seekBarColors: playerMode === 'video'
+        ? {
+          base: 'rgba(255, 255, 255, 0.3)',
+          buffered: 'rgba(255, 255, 255, 0.54)',
+          played: 'rgb(255, 255, 255)',
+          adBreaks: 'rgb(255, 204, 0)',
+        }
+        : {
+          base: 'rgba(0, 0, 0, 0.3)',
+          buffered: 'rgba(0, 0, 0, 0.54)',
+          played: '#2a2b2c',
+          adBreaks: 'rgb(255, 204, 0)',
+        },
+      volumeBarColors: playerMode === 'audio'
+        ? {
+          base: 'rgba(0, 0, 0, 40%)',
+          level: 'rgb(0, 0, 0, 80%)',
+        }
+        : undefined,  // Use default
       enableKeyboardPlaybackControls: false,
       doubleClickForFullscreen: false,
       singleClickForPlayAndPause: false,
-    });
+    };
 
-    // DOM is (re-)created in `ui.configure()`, so query container afterwards
-    this.shakaBottomControls =
-      this.$videoBox.querySelector('.shaka-bottom-controls');
-
-    this.notifyMediaProperties();
+    return result;
   }
 
   /**

@@ -322,6 +322,9 @@ export default class DlfMediaPlayer {
     for (const source of this.sources_) {
       try {
         await this.loadManifest(source);
+        this.ui.updatePlayerProperties({
+          mode: this.player.isAudioOnly() ? 'audio' : 'video',
+        });
         return true;
       } catch (e) {
         console.error(e);

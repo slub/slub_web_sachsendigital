@@ -23,6 +23,8 @@ namespace dlf {
       url: string;
     };
 
+    type PlayerMode = "audio" | "video";
+
     type PlayerConstants = {
       /**
        * Number of seconds in which to still rewind to previous chapter.
@@ -59,6 +61,7 @@ namespace dlf {
     };
 
     type PlayerProperties = {
+      mode: PlayerMode;
       locale: string;
       state: "poster" | "media";
       error: string | null;

@@ -150,12 +150,12 @@
 				<target><![CDATA[Videospur]]></target>
 			</trans-unit>
 			<trans-unit id="error.load-failed" approved="yes">
-				<source><![CDATA[The video could not be loaded.]]></source>
-				<target><![CDATA[Das Video konnte nicht geladen werden.]]></target>
+				<source><![CDATA[The media file could not be loaded.]]></source>
+				<target><![CDATA[Das A/V-Dokument konnte nicht geladen werden.]]></target>
 			</trans-unit>
 			<trans-unit id="error.playback-not-supported" approved="yes">
-				<source><![CDATA[This video cannot be played back in your browser.]]></source>
-				<target><![CDATA[Dieses Video kann in Ihrem Browser nicht wiedergegeben werden.]]></target>
+				<source><![CDATA[This media file cannot be played back in your browser.]]></source>
+				<target><![CDATA[Dieses A/V-Dokument kann in Ihrem Browser nicht wiedergegeben werden.]]></target>
 			</trans-unit>
 			<trans-unit id="key.generic">
 				<source><![CDATA[{key}]]></source>

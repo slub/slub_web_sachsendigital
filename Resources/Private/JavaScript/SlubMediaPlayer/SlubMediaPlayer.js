@@ -306,6 +306,17 @@ export default class SlubMediaPlayer {
       e.stopImmediatePropagation();
     }
 
+    // TODO: Remove
+    if (this.dlfPlayer.ui instanceof ShakaFrontend) {
+      if (e.key === 'F2') {
+        this.dlfPlayer.ui.updatePlayerProperties({ mode: 'audio' });
+        this.modals?.resize();
+      } else if (e.key === 'F4') {
+        this.dlfPlayer.ui.updatePlayerProperties({ mode: 'video' });
+        this.modals?.resize();
+      }
+    }
+
     this.handleKey(e, 'down');
   }
 

@@ -1,4 +1,6 @@
-.dlf-media-frontend-shaka {
+@audio-controls-color: #2a2b2c;
+
+.dlf-shaka {
     .dlf-media-shaka-box {
         background-color: black;
         position: absolute;
@@ -17,6 +19,64 @@
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+    }
+
+    .shaka-scrim-container {
+        display: none;
+    }
+
+    &[data-mode=""] {
+        display: none;
+    }
+
+    &[data-mode="audio"] {
+        height: 3.5em;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+
+        background-color: rgba(79, 179, 199, 0.6);
+
+        .dlf-media-error {
+            color: @audio-controls-color;
+        }
+
+        video {
+            display: none;
+        }
+
+        .dlf-media-poster {
+            display: none !important;
+        }
+
+        // Use background color from parent
+        .dlf-media-shaka-box {
+            background-color: transparent;
+        }
+
+        .shaka-spinner-container {
+            display: none;
+        }
+
+        .shaka-controls-button-panel > * {
+            color: @audio-controls-color;
+        }
+
+        .shaka-bottom-controls {
+            width: 100%;
+            padding-bottom: 0.4em;
+        }
+
+        .shaka-volume-bar {
+            &::-webkit-slider-thumb,
+            &::-moz-range-thumb {
+                background: @audio-controls-color;
+            }
+        }
+
+        .dlf-media-chapter-marker {
+            background-color: lighten(rgb(79, 179, 199), 30%);
         }
     }
 }

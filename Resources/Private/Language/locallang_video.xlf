@@ -114,10 +114,10 @@
 				<source><![CDATA[Video Track]]></source>
 			</trans-unit>
 			<trans-unit id="error.load-failed">
-				<source><![CDATA[The video could not be loaded.]]></source>
+				<source><![CDATA[The media file could not be loaded.]]></source>
 			</trans-unit>
 			<trans-unit id="error.playback-not-supported">
-				<source><![CDATA[This video cannot be played back in your browser.]]></source>
+				<source><![CDATA[This media file cannot be played back in your browser.]]></source>
 			</trans-unit>
 			<trans-unit id="key.generic">
 				<source><![CDATA[{key}]]></source>
