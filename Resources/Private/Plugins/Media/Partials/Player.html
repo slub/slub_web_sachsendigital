@@ -1,17 +1,23 @@
 <f:section name="Player">
-    <div id="tx-dlf-view" class="tx-dlf-view">
-        <div class="media-viewport"></div>
-    </div>
-
     <script>
-        window.addEventListener('DOMContentLoaded', function () {
-            var container = document.querySelector('.media-viewport');
-            var fullscreenElement = document.querySelector('.tx-dlf-view');
-            var videoConfig = {sxnd:videoToJson(settings: settings)};
-            var playerConfig = {sxnd:playerConfigToJson(settings: settings)};
-            playerConfig.lang = {sxnd:translations(baseFile: settings.playerTranslations.baseFile) -> f:format.json() -> f:format.raw()};
+        var playerConfig = {sxnd:playerConfigToJson(settings: settings)};
+        playerConfig.lang = {sxnd:translations(baseFile: settings.playerTranslations.baseFile) -> f:format.json() -> f:format.raw()};
 
-            var app = new SlubMediaPlayer(container, fullscreenElement, videoConfig, playerConfig);
-        });
+        window.MEDIA_CONFIG = playerConfig;
     </script>
+
+    <div id="tx-dlf-view" class="tx-dlf-view">
+        <slub-media id="media-viewport" fullscreen-element="tx-dlf-view" config="MEDIA_CONFIG" poster="https://media.sachsen.digital/{settings.movieDir}/{settings.movieDir}.jpg" mode="video">
+            <f:comment>NOTE: If one of these doesn't exist (in particular, HLS), the player will try the next one.</f:comment>
+            <source src="https://media.sachsen.digital/{settings.movieDir}/{settings.movieDir}.mpd" type="application/dash+xml">
+            <source src="https://media.sachsen.digital/{settings.movieDir}/{settings.movieDir}.m3u8" type="application/x-mpegurl">
+            <source src="https://media.sachsen.digital/{settings.movieDir}.mp4" type="video/mp4">
+
+            <f:for each="{settings.chapters}" as="chapter">
+                <dlf-chapter timecode="{chapter.chapter.timecode}" title="{chapter.chapter.title}"></dlf-chapter>
+            </f:for>
+
+            <dlf-meta key="title" value="{settings.media}"></dlf-meta>
+        </slub-media>
+    </div>
 </f:section>

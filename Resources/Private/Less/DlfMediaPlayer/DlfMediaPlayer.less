@@ -6,6 +6,20 @@
     .noselect();
 }
 
+.dlf-media-base() {
+    &:not(:defined) {
+        display: none;
+    }
+
+    dlf-chapter {
+        display: none;
+    }
+}
+
+dlf-media {
+    .dlf-media-base();
+}
+
 .dlf-media {
     width: 100%;
     height: 100%;

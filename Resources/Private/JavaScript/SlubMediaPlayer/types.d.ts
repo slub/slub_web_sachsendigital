@@ -3,12 +3,7 @@
 
 interface Window {
   SlubMediaPlayer: {
-    new (
-      container: HTMLElement,
-      fullscreenElement: HTMLElement,
-      videoInfo: VideoInfo,
-      config: AppConfig
-    );
+    new ();
   };
 }
 
@@ -22,24 +17,6 @@ interface DlfTheaterMode
     action: "toggle";
     persist: boolean;
   }> {}
-
-type VideoInfo = {
-  pageNo: number | undefined;
-  chapters: {
-    title: string;
-    timecode: string;
-  }[];
-  metadata: MetadataArray;
-  /**
-   * Sources of available manifest or raw video files, ordered by preference.
-   */
-  sources: dlf.media.Source[];
-  url: {
-    poster?: string;
-  };
-  mode?: dlf.media.PlayerMode | 'auto';
-  fallbackMode?: dlf.media.PlayerMode;
-};
 
 type MetadataArray = Record<string, string[]>;
 

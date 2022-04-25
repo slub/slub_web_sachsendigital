@@ -31,34 +31,18 @@ import keybindings from './keybindings.json';
  * }} AppModals
  */
 
+/**
+ * @extends {DlfMediaPlayer}
+ */
 export default class SlubMediaPlayer extends DlfMediaPlayer {
-  /**
-   *
-   * @param {HTMLElement} container
-   * @param {HTMLElement} fullscreenElement
-   * @param {VideoInfo} videoInfo
-   * @param {AppConfig} config
-   */
-  constructor(container, fullscreenElement, videoInfo, config) {
-    const env = new Environment();
-    env.setLang(config.lang);
+  constructor() {
+    super();
 
-    super(env);
+    /** @type {MetadataArray} */
+    this.metadata = {};
 
-    /** @private */
-    this.container = container;
-    /** @private */
-    this.fullscreenElement = fullscreenElement;
-    /** @private */
-    this.videoInfo = videoInfo;
-    /** @private */
-    this.config = config;
     /** @private @type {Keybinding<KeyboardScope, keyof SlubMediaPlayer['actions']>[]} */
     this.keybindings = /** @type {any} */(keybindings);
-
-    this.constants = /** @type {any} */(
-      typoConstants(config.constants ?? {}, this.constants)
-    );
 
     /** @private */
     this.handlers = {
@@ -68,45 +52,89 @@ export default class SlubMediaPlayer extends DlfMediaPlayer {
       onCloseModal: this.onCloseModal.bind(this),
     };
 
-    this.setPlayerMode(videoInfo.mode ?? 'auto', videoInfo.fallbackMode ?? 'audio');
-
     /** @private @type {ChapterLink[]} */
     this.chapterLinks = [];
 
     /** @private */
-    this.modals = null;
+    this.fullscreenElement = null;
 
-    this.createModals();
-    this.setupSlubPlayer();
+    /** @private */
+    this.modals = null;
   }
 
-  createModals() {
-    /** @private */
-    this.modals = Modals({
-      help: new HelpModal(this.fullscreenElement, this.env, {
-        constants: {
-          ...this.constants,
-          // TODO: Refactor
-          forceLandscapeOnFullscreen: Number(this.constants.forceLandscapeOnFullscreen),
-        },
-        keybindings: this.keybindings,
-        actionIsAvailable: (actionKey) => {
-          // @ts-expect-error
-          const action = this.actions[actionKey];
-          return action !== undefined && action.isAvailable();
-        },
-      }),
-      bookmark: new BookmarkModal(this.fullscreenElement, this.env, {
-        shareButtons: this.config.shareButtons,
-      }),
-      screenshot: new ScreenshotModal(this.fullscreenElement, this.env, {
-        keybindings: this.keybindings,
-        screnshotCaptions: this.config.screenshotCaptions ?? [],
-        constants: this.config.constants ?? {},
-      }),
-    });
+  /**
+   * @override
+   */
+  connectedCallback() {
+    super.connectedCallback();
 
-    this.modals.on('closed', this.handlers.onCloseModal);
+    if (this.startTime === null) {
+      this.startTime = this.getStartTime() ?? null;
+    }
+
+    this.fullscreenElement = document.getElementById(
+      this.getAttribute('fullscreen-element') ?? ''
+    );
+
+    /** @type {Partial<AppConfig>} */
+    const config = this.getConfig();
+
+    // @ts-expect-error TODO
+    const constants = typoConstants(config.constants ?? {}, this.constants);
+
+    if (this.fullscreenElement !== null) {
+      this.modals = Modals({
+        help: new HelpModal(this.fullscreenElement, this.env, {
+          constants: {
+            ...constants,
+            // TODO: Refactor
+            forceLandscapeOnFullscreen: Number(this.constants.forceLandscapeOnFullscreen),
+          },
+          keybindings: this.keybindings,
+          actionIsAvailable: (actionKey) => {
+            // @ts-expect-error
+            const action = this.actions[actionKey];
+            return action !== undefined && action.isAvailable();
+          },
+        }),
+        bookmark: new BookmarkModal(this.fullscreenElement, this.env, {
+          shareButtons: config.shareButtons ?? [],
+        }),
+        screenshot: new ScreenshotModal(this.fullscreenElement, this.env, {
+          keybindings: this.keybindings,
+          screnshotCaptions: config.screenshotCaptions ?? [],
+          constants: config.constants ?? {},
+        }),
+      });
+
+      this.modals.on('closed', this.handlers.onCloseModal);
+    }
+
+    // In `connectedCallback`, the DOM children may not yet be available.
+    setTimeout(() => {
+      this.loadMetadata();
+    });
+  }
+
+  /**
+   * @private
+   */
+  loadMetadata() {
+    this.querySelectorAll('dlf-meta').forEach((el) => {
+      const key = el.getAttribute('key');
+      const value = el.getAttribute('value');
+
+      if (!key || !value) {
+        console.warn('Ignoring invalid <dlf-meta>');
+        return;
+      }
+
+      let values = this.metadata[key];
+      if (values === undefined) {
+        values = this.metadata[key] = [];
+      }
+      values.push(value);
+    });
   }
 
   /**
@@ -178,18 +206,21 @@ export default class SlubMediaPlayer extends DlfMediaPlayer {
   }
 
   /**
-   * @private
-   * @param {Chapters} chapters
-   * @returns {number | undefined}
+   * @override
    */
-  getStartTime(chapters) {
-    const timecode = this.env.getLocation().searchParams.get('timecode');
-
-    if (timecode !== null) {
-      return timecode ? parseFloat(timecode) : undefined;
-    } else if (this.videoInfo.pageNo !== undefined) {
-      return chapters.at(this.videoInfo.pageNo - 1)?.timecode;
+  getStartTime() {
+    const baseValue = super.getStartTime();
+    if (baseValue !== null) {
+      return baseValue;
     }
+
+    // TODO: Also from hash?
+    const searchTimecode = this.env.getLocation().searchParams.get('timecode');
+    if (searchTimecode !== null) {
+      return searchTimecode ? parseFloat(searchTimecode) : null;
+    }
+
+    return null;
   }
 
   /**
@@ -223,9 +254,11 @@ export default class SlubMediaPlayer extends DlfMediaPlayer {
   }
 
   /**
-   * @returns {Promise<boolean>}
+   * @override
    */
-  async setupSlubPlayer() {
+  onDomContentLoaded() {
+    super.onDomContentLoaded();
+
     document.querySelectorAll("a[data-timecode], .tx-dlf-tableofcontents a").forEach(el => {
       const link = /** @type {HTMLAnchorElement} */(el);
       const timecode = this.getLinkTimecode(link);
@@ -236,14 +269,22 @@ export default class SlubMediaPlayer extends DlfMediaPlayer {
         this.chapterLinks.push(dlfEl);
       }
     });
+  }
 
-    const chapterInfos = this.videoInfo.chapters.map(chapter => ({
-      ...chapter,
-      timecode: parseInt(chapter.timecode, 10),
-    }));
-    const chapters = new Chapters(chapterInfos);
+  /**
+   * @override
+   */
+  loaded() {
+    // TODO: Resize appropriately
+    this.modals?.resize();
+  }
 
-    const startTime = this.getStartTime(chapters);
+  /**
+   * @override
+   * @param {dlf.media.PlayerConfig} config
+   */
+  configureFrontend(config) {
+    super.configureFrontend(config);
 
     // TODO: How to deal with this check?
     if (this.ui instanceof ShakaFrontend) {
@@ -271,28 +312,9 @@ export default class SlubMediaPlayer extends DlfMediaPlayer {
         })
       );
     }
-    this.ui.updatePlayerProperties({
-      locale: this.config.lang.twoLetterIsoCode,
-    });
-    this.ui.updateMediaProperties({
-      poster: this.videoInfo.url.poster,
-    });
-    this.setChapters(chapters);
-    this.setStartTime(startTime ?? null);
-    this.container.append(this.ui.domElement);
-
-    try {
-      await this.loadOneOf(this.videoInfo.sources);
-    } catch (e) {
-      return false;
-    }
-
-    this.modals?.resize();
 
     document.addEventListener('keydown', this.handlers.onKeyDown, { capture: true });
     document.addEventListener('keyup', this.handlers.onKeyUp, { capture: true });
-
-    return true;
   }
 
   /**
@@ -418,7 +440,7 @@ export default class SlubMediaPlayer extends DlfMediaPlayer {
   async toggleFullScreen() {
     // We use this instead of Shaka's toggleFullScreen so that we don't need to
     // append the app elements (modals) to the player container.
-    this.env.toggleFullScreen(this.fullscreenElement,
+    this.env.toggleFullScreen(this.fullscreenElement ?? this.ui.domElement,
       this.constants.forceLandscapeOnFullscreen);
   }
 
@@ -448,7 +470,7 @@ export default class SlubMediaPlayer extends DlfMediaPlayer {
     return (
       this.modals?.screenshot
         .setVideo(this.video)
-        .setMetadata(this.videoInfo.metadata)
+        .setMetadata(this.metadata)
         .setFps(this.getFps())
         .setTimecode(this.displayTime)
     );
@@ -482,3 +504,5 @@ export default class SlubMediaPlayer extends DlfMediaPlayer {
     modal.open();
   }
 }
+
+customElements.define('slub-media', SlubMediaPlayer);

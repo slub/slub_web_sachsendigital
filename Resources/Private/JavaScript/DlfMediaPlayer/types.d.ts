@@ -1,6 +1,12 @@
 // This file declares some additional types used in the media player.
 // There also are @typedef declarations directly in .js files.
 
+interface Window {
+  DlfMediaPlayer: {
+    new ();
+  };
+}
+
 declare module "shaka-player/dist/shaka-player.ui" {
   export = shaka;
 }
@@ -46,6 +52,10 @@ namespace dlf {
        * TODO: Check if this should be input as setting or retrieved from current manifest
        */
       trickPlayFactor: number;
+    };
+
+    type PlayerConfig = {
+      lang: LangDef;
     };
 
     type PlayerAction = {

@@ -5,27 +5,30 @@ import shaka from 'shaka-player/dist/shaka-player.ui';
 import VideoFrame from './vendor/VideoFrame';
 
 import { action } from './lib/action';
+import Environment from '../lib/Environment';
 import { clamp, e } from '../lib/util';
 import ShakaFrontend from './frontend/ShakaFrontend';
 import Chapters from './Chapters';
 import VariantGroups from './VariantGroups';
+import { isPlayerMode } from './lib/util';
 
-export default class DlfMediaPlayer {
+export default class DlfMediaPlayer extends HTMLElement {
   /** @private */
   static hasInstalledPolyfills = false;
 
-  /**
-   *
-   * @param {Translator & Identifier & Browser} env
-   */
-  constructor(env) {
+  constructor() {
+    super();
+
     if (!DlfMediaPlayer.hasInstalledPolyfills) {
       shaka.polyfill.installAll();
       DlfMediaPlayer.hasInstalledPolyfills = true;
     }
 
+    /** @protected @type {dlf.media.PlayerConfig | null} */
+    this.config = null;
+
     /** @protected */
-    this.env = env;
+    this.env = new Environment();
 
     /**
      * @protected
@@ -37,6 +40,7 @@ export default class DlfMediaPlayer {
     /** @private Avoid naming conflicts with child classes */
     this.dlf = {
       handlers: {
+        onDomContentLoaded: this.onDomContentLoaded.bind(this),
         onPlayerErrorEvent: this.onPlayerErrorEvent.bind(this),
         onTrackChange: this.onTrackChange.bind(this),
         onPlay: this.onPlay.bind(this),
@@ -62,7 +66,7 @@ export default class DlfMediaPlayer {
     /** @private @type {dlf.media.Source | null} */
     this.currentSource = null;
 
-    /** @private @type {number | null} */
+    /** @protected @type {number | null} */
     this.startTime = null;
 
     /** @private @type {shaka.Player} */
@@ -79,9 +83,6 @@ export default class DlfMediaPlayer {
 
     /** @private @type {dlf.media.PlayerFrontend} */
     this.frontend = new ShakaFrontend(this.env, this.player, this.video);
-    this.frontend.updatePlayerProperties({
-      error: 'error.no-media-source',
-    });
 
     /** @private @type {dlf.media.PlayerMode | 'auto'} */
     this.mode = 'auto';
@@ -100,7 +101,88 @@ export default class DlfMediaPlayer {
   }
 
   /**
-   * Get defaul constant/configuration values for the player. This may be
+   * @protected
+   */
+  connectedCallback() {
+    const config = this.getConfig();
+    this.env.setLang(config.lang);
+
+    this.startTime = this.getStartTime();
+
+    this.configureFrontend(config);
+
+    // In `connectedCallback`, the DOM children may not yet be available.
+    // Wait for DOM being parsed before loading sources.
+    setTimeout(() => {
+      this.loadSources();
+      this.loadChapters();
+    });
+
+    this.appendChild(this.frontend.domElement);
+    this.frontend.domElement.className += ` ${this.className}`;
+  }
+
+  /**
+   * @protected
+   * @param {dlf.media.PlayerConfig} config
+   */
+  configureFrontend(config) {
+    const mode = this.getAttribute('mode');
+    let initialMode = undefined;
+    if (mode === 'auto') {
+      const fallbackMode = this.getAttribute('mode-fallback');
+      if (isPlayerMode(fallbackMode)) {
+        initialMode = fallbackMode;
+      }
+      this.mode = mode;
+    } else if (isPlayerMode(mode)) {
+      this.mode = initialMode = mode;
+    }
+
+    this.frontend.updatePlayerProperties({
+      locale: config.lang.twoLetterIsoCode,
+      mode: initialMode,
+    });
+
+    const posterUrl = this.getAttribute('poster');
+    if (posterUrl !== null) {
+      this.frontend.updateMediaProperties({
+        poster: posterUrl,
+      });
+    }
+  }
+
+  /**
+   * @protected
+   * @returns {dlf.media.PlayerConfig}
+   */
+  getConfig() {
+    let config = this.config;
+
+    if (config === null) {
+      const configVar = this.getAttribute('config');
+
+      if (configVar) {
+        config = /** @type {any} */(window[/** @type {any} */(configVar)]);
+      } else {
+        config = {
+          lang: {
+            locale: 'en_US.UTF8',
+            twoLetterIsoCode: 'en',
+            phrases: {},
+          },
+        };
+      }
+
+      this.config = config;
+    }
+
+    // @ts-expect-error TODO: Why doesn't TypeScript recognize this?
+    return config;
+  }
+
+  /**
+   * Get default constant/configuration values for the player. This may be
    * extended in a child class.
    */
   constantDefaults() {
@@ -227,9 +309,28 @@ export default class DlfMediaPlayer {
   }
 
   /**
+   * Determines start time from user settings. Returns `null` if no such setting
+   * is made, which a child class may take as a hint to use another value.
+   *
+   * @protected
+   * @return {number | null}
+   */
+  getStartTime() {
+    // Also ignore empty start value to simplify HTML template
+    const start = this.getAttribute('start');
+    if (start === null || start === '') {
+      return null;
+    }
+
+    return Number(start);
+  }
+
+  /**
    * @private
    */
   __dlfRegisterEvents() {
+    window.addEventListener('DOMContentLoaded', this.dlf.handlers.onDomContentLoaded);
+
     this.player.addEventListener('error', this.dlf.handlers.onPlayerErrorEvent);
     this.player.addEventListener('adaptation', this.dlf.handlers.onTrackChange);
     this.player.addEventListener('variantchanged', this.dlf.handlers.onTrackChange);
@@ -330,6 +431,25 @@ export default class DlfMediaPlayer {
     }
   }
 
+  loadSources() {
+    /** @type {dlf.media.Source[]} */
+    const sources = [];
+
+    this.querySelectorAll('source').forEach((el) => {
+      const url = el.getAttribute("src");
+      const mimeType = el.getAttribute("type");
+
+      if (!url || !mimeType) {
+        console.warn('Ignoring <source> that does not specify URL or MIME type');
+        return;
+      }
+
+      sources.push({ url, mimeType });
+    });
+
+    this.loadOneOf(sources);
+  }
+
   /**
    *
    * @param {dlf.media.Source[]} sources
@@ -359,6 +479,7 @@ export default class DlfMediaPlayer {
             ? (this.player.isAudioOnly() ? 'audio' : 'video')
             : undefined,
         });
+        this.loaded();
         return true;
       } catch (e) {
         console.error(e);
@@ -393,6 +514,13 @@ export default class DlfMediaPlayer {
     });
 
     this.updateFrameRate();
+  }
+
+  /**
+   * @protected
+   */
+  onDomContentLoaded() {
+    // Override in child
   }
 
   onTrackChange() {
@@ -431,16 +559,25 @@ export default class DlfMediaPlayer {
   }
 
   /**
-   *
-   * @param {dlf.media.PlayerMode | 'auto'} mode
-   * @param {dlf.media.PlayerMode} fallbackMode
+   * @private
    */
-  setPlayerMode(mode, fallbackMode = 'audio') {
-    this.frontend.updatePlayerProperties({
-      mode: mode === 'auto' ? fallbackMode : mode,
+  loadChapters() {
+    /** @type {dlf.media.Chapter[]} */
+    const chapters = [];
+
+    this.querySelectorAll('dlf-chapter').forEach((el) => {
+      const title = el.getAttribute('title');
+      const timecode = Number(el.getAttribute('timecode'));
+
+      if (!title || !(timecode >= 0)) {
+        console.warn('Ignoring invalid <dlf-chapter>');
+        return;
+      }
+
+      chapters.push({ title, timecode });
     });
 
-    this.mode = mode;
+    this.setChapters(new Chapters(chapters));
   }
 
   /**
@@ -452,12 +589,8 @@ export default class DlfMediaPlayer {
     this.frontend.updateMediaProperties({ chapters });
   }
 
-  /**
-   *
-   * @param {number | null} startTime
-   */
-  setStartTime(startTime) {
-    this.startTime = startTime;
+  loaded() {
+    //
   }
 
   get hasVideo() {
@@ -651,3 +784,5 @@ export default class DlfMediaPlayer {
     }
   }
 }
+
+customElements.define('dlf-media', DlfMediaPlayer);
