@@ -1,5 +1,6 @@
 // @ts-check
 
+import Environment from '../lib/Environment';
 import { e } from '../lib/util';
 import { Keybindings$find } from '../lib/Keyboard';
 import typoConstants from '../lib/typoConstants';
@@ -14,7 +15,6 @@ import ShakaFrontend from '../DlfMediaPlayer/frontend/ShakaFrontend';
 
 import Modals from './lib/Modals';
 import { BookmarkModal, HelpModal, ScreenshotModal } from './modals';
-import Environment from './Environment';
 
 import keybindings from './keybindings.json';
 

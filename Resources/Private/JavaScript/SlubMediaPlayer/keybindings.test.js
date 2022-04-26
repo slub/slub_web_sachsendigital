@@ -5,7 +5,7 @@
 // @ts-check
 
 import { describe, expect, test } from '@jest/globals';
-import Environment from './Environment';
+import Environment from '../lib/Environment';
 import { getKeybindingText } from './lib/trans';
 
 import keybindings from './keybindings.json';

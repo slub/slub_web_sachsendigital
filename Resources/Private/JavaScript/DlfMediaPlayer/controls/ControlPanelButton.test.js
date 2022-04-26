@@ -5,7 +5,7 @@
 // @ts-check
 
 import { describe, expect, test } from '@jest/globals';
-import Environment from '../../SlubMediaPlayer/Environment';
+import Environment from '../../lib/Environment';
 import { action } from '../lib/action';
 import ControlPanelButton from './ControlPanelButton';
 import { createShakaPlayer } from './test-util';
