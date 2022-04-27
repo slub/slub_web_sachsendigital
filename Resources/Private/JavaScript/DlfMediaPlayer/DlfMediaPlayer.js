@@ -4,7 +4,6 @@ import shaka from 'shaka-player/dist/shaka-player.ui';
 
 import VideoFrame from './vendor/VideoFrame';
 
-import typoConstants from '../lib/typoConstants';
 import { action } from './lib/action';
 import { clamp, e } from '../lib/util';
 import ShakaFrontend from './frontend/ShakaFrontend';
@@ -25,21 +24,29 @@ export default class DlfMediaPlayer {
       DlfMediaPlayer.hasInstalledPolyfills = true;
     }
 
-    /** @private */
+    /** @protected */
     this.env = env;
 
-    /** @private @type {dlf.media.PlayerConstants} @see {parseConstants} */
-    this.constants = {
-      prevChapterTolerance: 5,
-      volumeStep: 0.05,
-      seekStep: 5,
-      trickPlayFactor: 4,
+    /**
+     * @protected
+     * @type {ReturnType<this['constantDefaults']>}
+     */
+    // @ts-expect-error
+    this.constants = this.constantDefaults();
+
+    /** @private Avoid naming conflicts with child classes */
+    this.dlf = {
+      handlers: {
+        onPlayerErrorEvent: this.onPlayerErrorEvent.bind(this),
+        onTrackChange: this.onTrackChange.bind(this),
+        onPlay: this.onPlay.bind(this),
+      },
     };
 
     /** @private @type {HTMLElement | null} */
     this.mountPoint = null;
 
-    /** @private @type {HTMLVideoElement} */
+    /** @protected @readonly @type {HTMLVideoElement} */
     this.video = e('video', {
       id: this.env.mkid(),
       className: "dlf-media",
@@ -79,23 +86,56 @@ export default class DlfMediaPlayer {
     /** @private @type {dlf.media.PlayerMode | 'auto'} */
     this.mode = 'auto';
 
-    /** @private */
-    this.handlers = {
-      onPlayerErrorEvent: this.onPlayerErrorEvent.bind(this),
-      onTrackChange: this.onTrackChange.bind(this),
-      onPlay: this.onPlay.bind(this),
+    this.__dlfRegisterEvents();
+
+    /**
+     * The actions of the player. This is typed in a way that includes additions
+     * made by overriding {@link getActions}.
+     *
+     * @protected
+     * @type {Readonly<ReturnType<this['getActions']>>}
+     */
+    // @ts-expect-error
+    this.actions = this.getActions();
+  }
+
+  /**
+   * Get defaul constant/configuration values for the player. This may be
+   * extended in a child class.
+   */
+  constantDefaults() {
+    return {
+      prevChapterTolerance: 5,
+      volumeStep: 0.05,
+      seekStep: 5,
+      trickPlayFactor: 4,
     };
+  }
 
-    this.registerEventHandlers();
-
-    /** @readonly */
-    this.actions = {
+  /**
+   * Get actions of the player that can be used in keybindings.
+   *
+   * To add actions in a child class, override this method and return an object
+   * that extends the result of this method:
+   *
+   * ```js
+   * getActions() {
+   *   return {
+   *     ...super.getActions(),
+   *     // your actions here
+   *   };
+   * }
+   * ```
+   */
+  getActions() {
+    return {
       'fullscreen.toggle': action({
         isAvailable: () => {
           return document.fullscreenEnabled;
         },
         execute: () => {
-          // Override in application
+          this.frontend.seekBar?.endSeek();
+          this.toggleFullScreen();
         },
       }),
       'playback.toggle': action(() => {
@@ -183,18 +223,18 @@ export default class DlfMediaPlayer {
           this.frontend.seekBar?.setThumbnailSnap(mode === 'down');
         },
       }),
-    }
+    };
   }
 
   /**
    * @private
    */
-  registerEventHandlers() {
-    this.player.addEventListener('error', this.handlers.onPlayerErrorEvent);
-    this.player.addEventListener('adaptation', this.handlers.onTrackChange);
-    this.player.addEventListener('variantchanged', this.handlers.onTrackChange);
+  __dlfRegisterEvents() {
+    this.player.addEventListener('error', this.dlf.handlers.onPlayerErrorEvent);
+    this.player.addEventListener('adaptation', this.dlf.handlers.onTrackChange);
+    this.player.addEventListener('variantchanged', this.dlf.handlers.onTrackChange);
 
-    this.video.addEventListener('play', this.handlers.onPlay);
+    this.video.addEventListener('play', this.dlf.handlers.onPlay);
 
     this.registerGestures();
   }
@@ -288,22 +328,6 @@ export default class DlfMediaPlayer {
       default:
         return this.env.supportsVideoMime(mimeType);
     }
-  }
-
-  /**
-   *
-   * @returns {Readonly<dlf.media.PlayerConstants>}
-   */
-  getConstants() {
-    return this.constants;
-  }
-
-  /**
-   *
-   * @param {import('../lib/typoConstants').TypoConstants<dlf.media.PlayerConstants>} constants
-   */
-  parseConstants(constants) {
-    this.constants = typoConstants(constants, this.constants);
   }
 
   /**
@@ -415,6 +439,13 @@ export default class DlfMediaPlayer {
 
   onPlay() {
     this.videoPausedOn = null;
+  }
+
+  /**
+   * Override in child class.
+   */
+  async toggleFullScreen() {
+    this.env.toggleFullScreen(this.frontend.domElement, true);
   }
 
   /**

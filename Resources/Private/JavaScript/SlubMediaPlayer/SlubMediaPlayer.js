@@ -31,7 +31,7 @@ import keybindings from './keybindings.json';
  * }} AppModals
  */
 
-export default class SlubMediaPlayer {
+export default class SlubMediaPlayer extends DlfMediaPlayer {
   /**
    *
    * @param {HTMLElement} container
@@ -40,6 +40,11 @@ export default class SlubMediaPlayer {
    * @param {AppConfig} config
    */
   constructor(container, fullscreenElement, videoInfo, config) {
+    const env = new Environment();
+    env.setLang(config.lang);
+
+    super(env);
+
     /** @private */
     this.container = container;
     /** @private */
@@ -54,10 +59,9 @@ export default class SlubMediaPlayer {
     /** @private @type {Keybinding<KeyboardScope, keyof SlubMediaPlayer['actions']>[]} */
     this.keybindings = /** @type {any} */(keybindings);
 
-    /** @private @type {AppConstants} */
-    this.constants = typoConstants(config.constants ?? {}, {
-      forceLandscapeOnFullscreen: true,
-    });
+    this.constants = /** @type {any} */(
+      typoConstants(config.constants ?? {}, this.constants)
+    );
 
     /** @private */
     this.handlers = {
@@ -67,14 +71,7 @@ export default class SlubMediaPlayer {
       onCloseModal: this.onCloseModal.bind(this),
     };
 
-    /** @private */
-    this.env = new Environment();
-    this.env.setLang(config.lang);
-
-    /** @private */
-    this.dlfPlayer = new DlfMediaPlayer(this.env);
-    this.dlfPlayer.parseConstants(config.constants ?? {});
-    this.dlfPlayer.setPlayerMode(videoInfo.mode ?? 'auto', videoInfo.fallbackMode ?? 'audio');
+    this.setPlayerMode(videoInfo.mode ?? 'auto', videoInfo.fallbackMode ?? 'audio');
 
     /** @private @type {ChapterLink[]} */
     this.chapterLinks = [];
@@ -82,65 +79,7 @@ export default class SlubMediaPlayer {
     /** @private */
     this.modals = null;
 
-    /** @private */
-    this.dlfPlayer.actions['fullscreen.toggle'].execute = () => {
-      this.dlfPlayer.ui.seekBar?.endSeek();
-      this.toggleFullScreen();
-    };
-    this.actions = Object.assign({}, this.dlfPlayer.actions, {
-      'cancel': action(() => {
-        if (this.modals?.hasOpen()) {
-          this.modals.closeNext();
-        } else {
-          this.dlfPlayer.ui.handleEscape();
-        }
-      }),
-      'modal.help.open': action(() => {
-        this.openModal(this.modals?.help);
-      }),
-      'modal.help.toggle': action(() => {
-        if (this.modals !== null) {
-          this.dlfPlayer.ui.seekBar?.endSeek();
-          this.modals.toggleExclusive(this.modals.help);
-        }
-      }),
-      'modal.bookmark.open': action(() => {
-        this.showBookmarkUrl();
-      }),
-      'modal.screenshot.open': action({
-        isAvailable: () => {
-          return !this.dlfPlayer.isAudioOnly();
-        },
-        execute: () => {
-          this.showScreenshot();
-        },
-      }),
-      'modal.screenshot.snap': action({
-        isAvailable: () => {
-          return !this.dlfPlayer.isAudioOnly();
-        },
-        execute: () => {
-          this.snapScreenshot();
-        },
-      }),
-      'theater.toggle': action(() => {
-        this.dlfPlayer.ui.seekBar?.endSeek();
-
-        // @see DigitalcollectionsScripts.js
-        // TODO: Make sure the theater mode isn't activated on startup; then stop persisting
-        /** @type {DlfTheaterMode} */
-        const ev = new CustomEvent('dlf-theater-mode', {
-          detail: {
-            action: 'toggle',
-            persist: true,
-          },
-        });
-        window.dispatchEvent(ev);
-      }),
-    });
-
     this.createModals();
-    this.load();
   }
 
   createModals() {
@@ -149,7 +88,6 @@ export default class SlubMediaPlayer {
       help: new HelpModal(this.fullscreenElement, this.env, {
         constants: {
           ...this.constants,
-          ...this.dlfPlayer.getConstants(),
           // TODO: Refactor
           forceLandscapeOnFullscreen: Number(this.constants.forceLandscapeOnFullscreen),
         },
@@ -171,6 +109,74 @@ export default class SlubMediaPlayer {
     });
 
     this.modals.on('closed', this.handlers.onCloseModal);
+  }
+
+  /**
+   * @override
+   */
+  constantDefaults() {
+    return {
+      ...super.constantDefaults(),
+      forceLandscapeOnFullscreen: true,
+    };
+  }
+
+  /**
+   * @override
+   */
+  getActions() {
+    return {
+      ...super.getActions(),
+      'cancel': action(() => {
+        if (this.modals?.hasOpen()) {
+          this.modals.closeNext();
+        } else {
+          this.ui.handleEscape();
+        }
+      }),
+      'modal.help.open': action(() => {
+        this.openModal(this.modals?.help);
+      }),
+      'modal.help.toggle': action(() => {
+        if (this.modals !== null) {
+          this.ui.seekBar?.endSeek();
+          this.modals.toggleExclusive(this.modals.help);
+        }
+      }),
+      'modal.bookmark.open': action(() => {
+        this.showBookmarkUrl();
+      }),
+      'modal.screenshot.open': action({
+        isAvailable: () => {
+          return !this.isAudioOnly();
+        },
+        execute: () => {
+          this.showScreenshot();
+        },
+      }),
+      'modal.screenshot.snap': action({
+        isAvailable: () => {
+          return !this.isAudioOnly();
+        },
+        execute: () => {
+          this.snapScreenshot();
+        },
+      }),
+      'theater.toggle': action(() => {
+        this.ui.seekBar?.endSeek();
+
+        // @see DigitalcollectionsScripts.js
+        // TODO: Make sure the theater mode isn't activated on startup; then stop persisting
+        /** @type {DlfTheaterMode} */
+        const ev = new CustomEvent('dlf-theater-mode', {
+          detail: {
+            action: 'toggle',
+            persist: true,
+          },
+        });
+        window.dispatchEvent(ev);
+      }),
+    };
   }
 
   /**
@@ -219,7 +225,8 @@ export default class SlubMediaPlayer {
   }
 
   /**
-   * @private
+   * @override
+   * @returns {Promise<boolean>}
    */
   async load() {
     document.querySelectorAll("a[data-timecode], .tx-dlf-tableofcontents a").forEach(el => {
@@ -242,8 +249,8 @@ export default class SlubMediaPlayer {
     const startTime = this.getStartTime(chapters);
 
     // TODO: How to deal with this check?
-    if (this.dlfPlayer.ui instanceof ShakaFrontend) {
-      this.dlfPlayer.ui.addControlElement(
+    if (this.ui instanceof ShakaFrontend) {
+      this.ui.addControlElement(
         ControlPanelButton.register(this.env, {
           className: "sxnd-screenshot-button",
           material_icon: 'photo_camera',
@@ -267,30 +274,28 @@ export default class SlubMediaPlayer {
         })
       );
     }
-    this.dlfPlayer.ui.updatePlayerProperties({
+    this.ui.updatePlayerProperties({
       locale: this.config.lang.twoLetterIsoCode,
     });
-    this.dlfPlayer.ui.updateMediaProperties({
+    this.ui.updateMediaProperties({
       poster: this.videoInfo.url.poster,
     });
-    this.dlfPlayer.setChapters(chapters);
-    this.dlfPlayer.setStartTime(startTime ?? null);
-    this.dlfPlayer.setSources(this.videoInfo.sources);
-    this.dlfPlayer.mount(this.playerMount);
+    this.setChapters(chapters);
+    this.setStartTime(startTime ?? null);
+    this.setSources(this.videoInfo.sources);
+    this.mount(this.playerMount);
 
-    const hasLoadedVideo = await this.dlfPlayer.load();
+    const hasLoadedVideo = await super.load();
     if (!hasLoadedVideo) {
-      return;
+      return false;
     }
 
     this.modals?.resize();
 
-    this.registerEventHandlers();
-  }
-
-  registerEventHandlers() {
     document.addEventListener('keydown', this.handlers.onKeyDown, { capture: true });
     document.addEventListener('keyup', this.handlers.onKeyUp, { capture: true });
+
+    return true;
   }
 
   /**
@@ -324,12 +329,12 @@ export default class SlubMediaPlayer {
     }
 
     // TODO: Remove
-    if (this.dlfPlayer.ui instanceof ShakaFrontend) {
+    if (this.ui instanceof ShakaFrontend) {
       if (e.key === 'F2') {
-        this.dlfPlayer.ui.updatePlayerProperties({ mode: 'audio' });
+        this.ui.updatePlayerProperties({ mode: 'audio' });
         this.modals?.resize();
       } else if (e.key === 'F4') {
-        this.dlfPlayer.ui.updatePlayerProperties({ mode: 'video' });
+        this.ui.updatePlayerProperties({ mode: 'video' });
         this.modals?.resize();
       }
     }
@@ -350,7 +355,7 @@ export default class SlubMediaPlayer {
     e.stopImmediatePropagation();
 
     this.handleKey(e, 'up');
-    this.dlfPlayer.cancelTrickPlay();
+    this.cancelTrickPlay();
   }
 
   /**
@@ -391,8 +396,8 @@ export default class SlubMediaPlayer {
     // been attached.
     const target = /** @type {ChapterLink} */(e.currentTarget);
 
-    this.dlfPlayer.media.play();
-    this.dlfPlayer.seekTo(target.dlfTimecode);
+    this.media.play();
+    this.seekTo(target.dlfTimecode);
   }
 
   /**
@@ -400,9 +405,12 @@ export default class SlubMediaPlayer {
    * @param {ValueOf<AppModals>} modal
    */
   onCloseModal(modal) {
-    this.dlfPlayer.resumeOn(modal);
+    this.resumeOn(modal);
   }
 
+  /**
+   * @override
+   */
   async toggleFullScreen() {
     // We use this instead of Shaka's toggleFullScreen so that we don't need to
     // append the app elements (modals) to the player container.
@@ -413,13 +421,13 @@ export default class SlubMediaPlayer {
   showBookmarkUrl() {
     // Don't show modal if we can't expect the current time to be properly
     // initialized
-    if (!this.dlfPlayer.hasCurrentData) {
+    if (!this.hasCurrentData) {
       return;
     }
 
     const modal = this.modals?.bookmark
-      .setTimecode(this.dlfPlayer.displayTime)
-      .setFps(this.dlfPlayer.getFps() ?? 0);
+      .setTimecode(this.displayTime)
+      .setFps(this.getFps() ?? 0);
 
     this.openModal(modal, /* pause= */ true);
   }
@@ -429,16 +437,16 @@ export default class SlubMediaPlayer {
    */
   prepareScreenshot() {
     // Don't do screenshot if there isn't yet an image to be displayed
-    if (!this.dlfPlayer.hasCurrentData) {
+    if (!this.hasCurrentData) {
       return;
     }
 
     return (
       this.modals?.screenshot
-        .setVideo(this.dlfPlayer.media)
+        .setVideo(this.video)
         .setMetadata(this.videoInfo.metadata)
-        .setFps(this.dlfPlayer.getFps())
-        .setTimecode(this.dlfPlayer.displayTime)
+        .setFps(this.getFps())
+        .setTimecode(this.displayTime)
     );
   }
 
@@ -463,10 +471,10 @@ export default class SlubMediaPlayer {
     }
 
     if (pause) {
-      this.dlfPlayer.pauseOn(modal);
+      this.pauseOn(modal);
     }
 
-    this.dlfPlayer.ui.seekBar?.endSeek();
+    this.ui.seekBar?.endSeek();
     modal.open();
   }
 }
