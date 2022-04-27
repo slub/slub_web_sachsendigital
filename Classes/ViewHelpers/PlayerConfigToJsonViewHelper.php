@@ -16,21 +16,28 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * This view helper serializes share button configuration to JSON while also
- * resolving 'EXT:' paths.
+ * This view helper serializes player button configuration to JSON. For share
+ * buttons, it resolves 'EXT:' paths.
  */
-class ShareButtonsToJsonViewHelper extends AbstractViewHelper
+class PlayerConfigToJsonViewHelper extends AbstractViewHelper
 {
     protected $escapeOutput = false;
+
+    public function initializeArguments()
+    {
+        $this->registerArgument('settings', 'array', 'the settings array that is converted to JSON', true);
+    }
 
     public static function renderStatic(
         array $arguments,
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-        $buttons = $renderChildrenClosure();
+        // Whitelist keys to keep out stuff such as playerTranslationsFile
+        $allowedKeys = ['shareButtons', 'screenshotCaptions', 'constants'];
+        $settings = array_intersect_key($arguments['settings'], array_flip($allowedKeys));
 
-        foreach ($buttons as &$button) {
+        foreach ($settings['shareButtons'] as &$button) {
             if ($button['type'] === 'image') {
                 $filePath = GeneralUtility::getFileAbsFileName($button['src']);
                 $webPath = PathUtility::getAbsoluteWebPath($filePath);
@@ -39,6 +46,6 @@ class ShareButtonsToJsonViewHelper extends AbstractViewHelper
             }
         }
 
-        return json_encode($buttons);
+        return json_encode($settings);
     }
 }

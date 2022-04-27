@@ -7,17 +7,10 @@
         window.addEventListener('DOMContentLoaded', function () {
             var container = document.querySelector('.media-viewport');
             var videoConfig = {sxnd:videoToJson(settings: settings)};
-            var lang = {sxnd:translations(baseFile: settings.playerTranslations.baseFile) -> f:format.json() -> f:format.raw()};
-            var shareButtons = {settings.shareButtons -> sxnd:shareButtonsToJson()};
-            var screenshotCaptions = {settings.screenshotCaptions -> f:format.json() -> f:format.raw()};
-            var constants = {settings.constants -> f:format.json() -> f:format.raw()};
+            var playerConfig = {sxnd:playerConfigToJson(settings: settings)};
+            playerConfig.lang = {sxnd:translations(baseFile: settings.playerTranslations.baseFile) -> f:format.json() -> f:format.raw()};
 
-            var app = new SxndPlayerApp(container, videoConfig, {
-                lang: lang,
-                shareButtons: shareButtons,
-                screenshotCaptions: screenshotCaptions,
-                constants: constants
-            });
+            var app = new SxndPlayerApp(container, videoConfig, playerConfig);
         });
     </script>
 </f:section>
