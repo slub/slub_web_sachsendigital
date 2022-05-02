@@ -43,9 +43,6 @@ export default class DlfMediaPlayer {
       },
     };
 
-    /** @private @type {HTMLElement | null} */
-    this.mountPoint = null;
-
     /** @protected @readonly @type {HTMLVideoElement} */
     this.video = e('video', {
       id: this.env.mkid(),
@@ -327,39 +324,6 @@ export default class DlfMediaPlayer {
 
       default:
         return this.env.supportsVideoMime(mimeType);
-    }
-  }
-
-  /**
-   * Configures the Shaka player UI and mounts it into {@link mount}. The mount
-   * point is being replaced with the player until {@link unmount} is called.
-   *
-   * @param {HTMLElement} mount
-   */
-  mount(mount) {
-    if (this.mountPoint !== null) {
-      console.warn("Player already mounted");
-      return false;
-    }
-
-    mount.replaceWith(this.frontend.domElement);
-
-    this.mountPoint = mount;
-
-    return true;
-  }
-
-  /**
-   * @returns {boolean}
-   */
-  get isMounted() {
-    return this.mountPoint !== null;
-  }
-
-  unmount() {
-    if (this.mountPoint !== null) {
-      this.frontend.domElement.replaceWith(this.mountPoint);
-      this.mountPoint = null;
     }
   }
 

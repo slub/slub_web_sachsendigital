@@ -50,9 +50,6 @@ export default class SlubMediaPlayer extends DlfMediaPlayer {
     /** @private */
     this.fullscreenElement = fullscreenElement;
     /** @private */
-    this.playerMount = e('div');
-    this.container.append(this.playerMount);
-    /** @private */
     this.videoInfo = videoInfo;
     /** @private */
     this.config = config;
@@ -283,7 +280,7 @@ export default class SlubMediaPlayer extends DlfMediaPlayer {
     this.setChapters(chapters);
     this.setStartTime(startTime ?? null);
     this.setSources(this.videoInfo.sources);
-    this.mount(this.playerMount);
+    this.container.append(this.ui.domElement);
 
     const hasLoadedVideo = await super.load();
     if (!hasLoadedVideo) {
