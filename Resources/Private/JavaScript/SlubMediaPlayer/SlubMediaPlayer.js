@@ -79,29 +79,12 @@ export default class SlubMediaPlayer {
     this.chapterLinks = [];
 
     /** @private */
-    this.modals = Modals({
-      help: new HelpModal(this.container, this.env, {
-        constants: {
-          ...this.constants,
-          // TODO: Refactor
-          forceLandscapeOnFullscreen: Number(this.constants.forceLandscapeOnFullscreen),
-        },
-        keybindings: this.keybindings,
-      }),
-      bookmark: new BookmarkModal(this.container, this.env, {
-        shareButtons: this.config.shareButtons,
-      }),
-      screenshot: new ScreenshotModal(this.container, this.env, {
-        keybindings: this.keybindings,
-        screnshotCaptions: this.config.screenshotCaptions ?? [],
-        constants: this.constants,
-      }),
-    });
+    this.modals = null;
 
     /** @private */
     this.actions = {
       'cancel': () => {
-        if (this.modals.hasOpen()) {
+        if (this.modals?.hasOpen()) {
           this.modals.closeNext();
         } else if (this.dlfPlayer.seekBar?.isThumbnailPreviewOpen() ?? false) {
           this.dlfPlayer.seekBar?.endSeek();
@@ -110,11 +93,13 @@ export default class SlubMediaPlayer {
         }
       },
       'modal.help.open': () => {
-        this.openModal(this.modals.help);
+        this.openModal(this.modals?.help);
       },
       'modal.help.toggle': () => {
-        this.dlfPlayer.seekBar?.endSeek();
-        this.modals.toggleExclusive(this.modals.help);
+        if (this.modals !== null) {
+          this.dlfPlayer.seekBar?.endSeek();
+          this.modals.toggleExclusive(this.modals.help);
+        }
       },
       'modal.bookmark.open': () => {
         this.showBookmarkUrl();
@@ -208,9 +193,32 @@ export default class SlubMediaPlayer {
       },
     };
 
-    this.modals.on('closed', this.handlers.onCloseModal);
-
+    this.createModals();
     this.load();
+  }
+
+  createModals() {
+    /** @private */
+    this.modals = Modals({
+      help: new HelpModal(this.container, this.env, {
+        constants: {
+          ...this.constants,
+          // TODO: Refactor
+          forceLandscapeOnFullscreen: Number(this.constants.forceLandscapeOnFullscreen),
+        },
+        keybindings: this.keybindings,
+      }),
+      bookmark: new BookmarkModal(this.container, this.env, {
+        shareButtons: this.config.shareButtons,
+      }),
+      screenshot: new ScreenshotModal(this.container, this.env, {
+        keybindings: this.keybindings,
+        screnshotCaptions: this.config.screenshotCaptions ?? [],
+        constants: this.constants,
+      }),
+    });
+
+    this.modals.on('closed', this.handlers.onCloseModal);
   }
 
   /**
@@ -317,7 +325,7 @@ export default class SlubMediaPlayer {
       return;
     }
 
-    this.modals.resize();
+    this.modals?.resize();
 
     this.registerEventHandlers();
   }
@@ -396,7 +404,7 @@ export default class SlubMediaPlayer {
    * @returns {KeyboardScope}
    */
   getKeyboardScope() {
-    if (this.modals.hasOpen()) {
+    if (this.modals?.hasOpen()) {
       return 'modal';
     }
 
@@ -525,7 +533,7 @@ export default class SlubMediaPlayer {
       return;
     }
 
-    const modal = this.modals.bookmark
+    const modal = this.modals?.bookmark
       .setTimecode(this.dlfPlayer.displayTime)
       .setFps(this.dlfPlayer.getFps() ?? 0);
 
@@ -533,16 +541,16 @@ export default class SlubMediaPlayer {
   }
 
   /**
-   * @returns {ScreenshotModal | null}
+   * @returns {ScreenshotModal | undefined}
    */
   prepareScreenshot() {
     // Don't do screenshot if there isn't yet an image to be displayed
     if (!this.dlfPlayer.hasCurrentData) {
-      return null;
+      return;
     }
 
     return (
-      this.modals.screenshot
+      this.modals?.screenshot
         .setVideo(this.dlfPlayer.getVideo())
         .setMetadata(this.videoInfo.metadata)
         .setFps(this.dlfPlayer.getFps())
@@ -552,26 +560,24 @@ export default class SlubMediaPlayer {
 
   showScreenshot() {
     const modal = this.prepareScreenshot();
-
-    if (modal !== null) {
-      this.openModal(modal, /* pause= */ true);
-    }
+    this.openModal(modal, /* pause= */ true);
   }
 
   snapScreenshot() {
     const modal = this.prepareScreenshot();
-
-    if (modal !== null) {
-      modal.snap();
-    }
+    modal?.snap();
   }
 
   /**
    * @private
-   * @param {ValueOf<AppModals>} modal
+   * @param {ValueOf<AppModals>=} modal
    * @param {boolean} pause
    */
   openModal(modal, pause = false) {
+    if (modal == null) {
+      return;
+    }
+
     if (pause) {
       this.dlfPlayer.pauseOn(modal);
     }
