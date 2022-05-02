@@ -460,6 +460,10 @@ export default class DlfMediaPlayer {
     this.startTime = startTime;
   }
 
+  get hasVideo() {
+    return this.currentSource !== null;
+  }
+
   /**
    *
    * @returns {dlf.media.Chapter | undefined}

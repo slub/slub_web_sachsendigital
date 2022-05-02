@@ -319,6 +319,10 @@ export default class SlubMediaPlayer extends DlfMediaPlayer {
    * @param {KeyboardEvent} e
    */
   onKeyDown(e) {
+    if (!this.hasVideo) {
+      return;
+    }
+
     // Hack against Shaka reacting to Escape key to close overflow menu;
     // we do this ourselves. (TODO: Find a better solution)
     if (e.key === 'Escape') {
@@ -348,6 +352,9 @@ export default class SlubMediaPlayer extends DlfMediaPlayer {
     // `slub_digitalcollections`, which adds/removes a `fullscreen` CSS
     // class when releasing `f`/`Esc`.
     // TODO: Find better solutions for this.
+    if (!this.hasVideo) {
+      return;
+    }
 
     e.stopImmediatePropagation();
 
