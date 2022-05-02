@@ -59,8 +59,8 @@ export default class DlfMediaPlayer {
      */
     this.videoPausedOn = null;
 
-    /** @private @type {dlf.media.Source[]} */
-    this.sources_ = [];
+    /** @private @type {dlf.media.Source | null} */
+    this.currentSource = null;
 
     /** @private @type {number | null} */
     this.startTime = null;
@@ -79,6 +79,9 @@ export default class DlfMediaPlayer {
 
     /** @private @type {dlf.media.PlayerFrontend} */
     this.frontend = new ShakaFrontend(this.env, this.player, this.video);
+    this.frontend.updatePlayerProperties({
+      error: 'error.no-media-source',
+    });
 
     /** @private @type {dlf.media.PlayerMode | 'auto'} */
     this.mode = 'auto';
@@ -327,23 +330,35 @@ export default class DlfMediaPlayer {
     }
   }
 
-  async load() {
-    if (this.sources_.length === 0) {
+  /**
+   *
+   * @param {dlf.media.Source[]} sources
+   */
+  async loadOneOf(sources) {
+    if (sources.length === 0) {
       this.frontend.updatePlayerProperties({
-        error: 'error.playback-not-supported',
+        error: 'error.no-media-source',
       });
       return false;
     }
 
+    let sawUnsupportedMime = false;
+
     // Try loading video until one of the sources works.
-    for (const source of this.sources_) {
+    for (const source of sources) {
+      if (!this.supportsMimeType(source.mimeType)) {
+        sawUnsupportedMime = true;
+        continue;
+      }
+
       try {
         await this.loadManifest(source);
-        if (this.mode === 'auto') {
-          this.frontend.updatePlayerProperties({
-            mode: this.player.isAudioOnly() ? 'audio' : 'video',
-          });
-        }
+        this.frontend.updatePlayerProperties({
+          error: null,
+          mode: this.mode === 'auto'
+            ? (this.player.isAudioOnly() ? 'audio' : 'video')
+            : undefined,
+        });
         return true;
       } catch (e) {
         console.error(e);
@@ -351,7 +366,9 @@ export default class DlfMediaPlayer {
     }
 
     this.frontend.updatePlayerProperties({
-      error: 'error.load-failed',
+      error: sawUnsupportedMime
+        ? 'error.playback-not-supported'
+        : 'error.load-failed',
     });
     return false;
   }
@@ -363,6 +380,7 @@ export default class DlfMediaPlayer {
    */
   async loadManifest(videoSource) {
     await this.player.load(videoSource.url, this.startTime, videoSource.mimeType);
+    this.currentSource = videoSource;
 
     this.variantGroups = new VariantGroups(this.player);
 
@@ -440,20 +458,6 @@ export default class DlfMediaPlayer {
    */
   setStartTime(startTime) {
     this.startTime = startTime;
-  }
-
-  get sources() {
-    return this.sources_;
-  }
-
-  /**
-   *
-   * @param {dlf.media.Source[]} sources
-   */
-  setSources(sources) {
-    this.sources_ = sources.filter(
-      source => this.supportsMimeType(source.mimeType)
-    );
   }
 
   /**

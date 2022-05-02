@@ -77,6 +77,7 @@ export default class SlubMediaPlayer extends DlfMediaPlayer {
     this.modals = null;
 
     this.createModals();
+    this.setupSlubPlayer();
   }
 
   createModals() {
@@ -222,10 +223,9 @@ export default class SlubMediaPlayer extends DlfMediaPlayer {
   }
 
   /**
-   * @override
    * @returns {Promise<boolean>}
    */
-  async load() {
+  async setupSlubPlayer() {
     document.querySelectorAll("a[data-timecode], .tx-dlf-tableofcontents a").forEach(el => {
       const link = /** @type {HTMLAnchorElement} */(el);
       const timecode = this.getLinkTimecode(link);
@@ -279,11 +279,11 @@ export default class SlubMediaPlayer extends DlfMediaPlayer {
     });
     this.setChapters(chapters);
     this.setStartTime(startTime ?? null);
-    this.setSources(this.videoInfo.sources);
     this.container.append(this.ui.domElement);
 
-    const hasLoadedVideo = await super.load();
-    if (!hasLoadedVideo) {
+    try {
+      await this.loadOneOf(this.videoInfo.sources);
+    } catch (e) {
       return false;
     }
 

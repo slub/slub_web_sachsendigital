@@ -153,6 +153,14 @@
 				<source><![CDATA[Video Track]]></source>
 				<target><![CDATA[Videospur]]></target>
 			</trans-unit>
+			<trans-unit id="error.no-media-source" approved="yes">
+				<source><![CDATA[No media source given]]></source>
+				<target><![CDATA[Kein A/V-Dokument angegeben]]></target>
+			</trans-unit>
+			<trans-unit id="error.loading" approved="yes">
+				<source><![CDATA[Loading media file]]></source>
+				<target><![CDATA[A/V-Dokument wird geladen]]></target>
+			</trans-unit>
 			<trans-unit id="error.load-failed" approved="yes">
 				<source><![CDATA[The media file could not be loaded.]]></source>
 				<target><![CDATA[Das A/V-Dokument konnte nicht geladen werden.]]></target>

@@ -116,6 +116,12 @@
 			<trans-unit id="control.video-track.title">
 				<source><![CDATA[Video Track]]></source>
 			</trans-unit>
+			<trans-unit id="error.no-media-source">
+				<source><![CDATA[No media source given]]></source>
+			</trans-unit>
+			<trans-unit id="error.loading">
+				<source><![CDATA[Loading media file]]></source>
+			</trans-unit>
 			<trans-unit id="error.load-failed">
 				<source><![CDATA[The media file could not be loaded.]]></source>
 			</trans-unit>
