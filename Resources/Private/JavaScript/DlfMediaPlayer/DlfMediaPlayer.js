@@ -438,10 +438,6 @@ export default class DlfMediaPlayer {
     this.controls.hideSettingsMenus();
   }
 
-  toggleFullScreen() {
-    this.controls.toggleFullScreen();
-  }
-
   /**
    *
    * @param {string} locale

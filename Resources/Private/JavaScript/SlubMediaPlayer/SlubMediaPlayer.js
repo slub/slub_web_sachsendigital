@@ -8,6 +8,7 @@ import {
   Chapters,
   ControlPanelButton,
   DlfMediaPlayer,
+  FullScreenButton,
 } from '../DlfMediaPlayer';
 
 import Modals from './lib/Modals';
@@ -33,12 +34,15 @@ export default class SlubMediaPlayer {
   /**
    *
    * @param {HTMLElement} container
+   * @param {HTMLElement} fullscreenElement
    * @param {VideoInfo} videoInfo
    * @param {AppConfig} config
    */
-  constructor(container, videoInfo, config) {
+  constructor(container, fullscreenElement, videoInfo, config) {
     /** @private */
     this.container = container;
+    /** @private */
+    this.fullscreenElement = fullscreenElement;
     /** @private */
     this.playerMount = e('div');
     this.container.append(this.playerMount);
@@ -200,7 +204,7 @@ export default class SlubMediaPlayer {
   createModals() {
     /** @private */
     this.modals = Modals({
-      help: new HelpModal(this.container, this.env, {
+      help: new HelpModal(this.fullscreenElement, this.env, {
         constants: {
           ...this.constants,
           // TODO: Refactor
@@ -208,10 +212,10 @@ export default class SlubMediaPlayer {
         },
         keybindings: this.keybindings,
       }),
-      bookmark: new BookmarkModal(this.container, this.env, {
+      bookmark: new BookmarkModal(this.fullscreenElement, this.env, {
         shareButtons: this.config.shareButtons,
       }),
-      screenshot: new ScreenshotModal(this.container, this.env, {
+      screenshot: new ScreenshotModal(this.fullscreenElement, this.env, {
         keybindings: this.keybindings,
         screnshotCaptions: this.config.screenshotCaptions ?? [],
         constants: this.constants,
@@ -302,7 +306,9 @@ export default class SlubMediaPlayer {
         title: this.env.t('control.bookmark.tooltip'),
         onClick: this.actions['modal.bookmark.open'],
       }),
-      'fullscreen',
+      FullScreenButton.register(this.env, {
+        onClick: this.actions['fullscreen.toggle'],
+      }),
       ControlPanelButton.register(this.env, {
         className: "sxnd-help-button",
         material_icon: 'info_outline',
@@ -490,40 +496,11 @@ export default class SlubMediaPlayer {
     this.dlfPlayer.resumeOn(modal);
   }
 
-  /**
-   * Mostly taken from Shaka player (shaka.ui.Controls).
-   *
-   * We put this here so that we don't need to append the app elements (modals)
-   * to the player container.
-   */
   async toggleFullScreen() {
-    if (document.fullscreenElement) {
-      if (screen.orientation) {
-        screen.orientation.unlock();
-      }
-      await document.exitFullscreen();
-    } else {
-      // If we are in PiP mode, leave PiP mode first.
-      try {
-        if (document.pictureInPictureElement) {
-          await document.exitPictureInPicture();
-        }
-        await this.container.requestFullscreen({ navigationUI: 'hide' });
-        if (this.constants.forceLandscapeOnFullscreen && screen.orientation) {
-          try {
-            // Locking to 'landscape' should let it be either
-            // 'landscape-primary' or 'landscape-secondary' as appropriate.
-            await screen.orientation.lock('landscape');
-          } catch (error) {
-            // If screen.orientation.lock does not work on a device, it will
-            // be rejected with an error. Suppress that error.
-          }
-        }
-      } catch (e) {
-        // TODO: Error handling
-        console.log(e);
-      }
-    }
+    // We use this instead of Shaka's toggleFullScreen so that we don't need to
+    // append the app elements (modals) to the player container.
+    this.env.toggleFullScreen(this.fullscreenElement,
+      this.constants.forceLandscapeOnFullscreen);
   }
 
   showBookmarkUrl() {

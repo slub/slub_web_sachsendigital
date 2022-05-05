@@ -3,7 +3,12 @@
 
 interface Window {
   SlubMediaPlayer: {
-    new (container: HTMLElement, videoInfo: VideoInfo, config: AppConfig);
+    new (
+      container: HTMLElement,
+      fullscreenElement: HTMLElement,
+      videoInfo: VideoInfo,
+      config: AppConfig
+    );
   };
 }
 
