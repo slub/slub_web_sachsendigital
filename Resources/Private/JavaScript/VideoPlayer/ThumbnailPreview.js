@@ -54,6 +54,7 @@ import sanitizeThumbnail from './lib/thumbnails/sanitizeThumbnail';
 
 const DISPLAY_WIDTH = 160;
 const INITIAL_ASPECT_RATIO = 16 / 9;
+const OPEN_DISPLAY_DELAY = 100;
 
 /**
  * Amount of the available video height allotted to thumbnail preview. If the
@@ -107,6 +108,8 @@ export default class ThumbnailPreview {
     this.current = null;
     /** @private @type {number | null} */
     this.renderAnimationFrame = null;
+    /** @private */
+    this.openDisplayTimeout = null;
 
     /** @private */
     this.handlers = {
@@ -248,6 +251,7 @@ export default class ThumbnailPreview {
       thumbs = await this.getThumbnails(position, maximumBandwidth);
     }
 
+    const isOpening = this.current === null;
     this.current = { rawSeekPosition, seekPosition, thumbs };
 
     // Check primary button
@@ -255,7 +259,7 @@ export default class ThumbnailPreview {
       this.interaction?.onChange?.(seekPosition);
     }
 
-    this.currentRenderBest();
+    this.currentRenderBest(isOpening);
   }
 
   /**
@@ -327,7 +331,13 @@ export default class ThumbnailPreview {
           return;
         }
 
-        const { top } = this.$container.getBoundingClientRect();
+        let { top } = this.$container.getBoundingClientRect();
+        // We don't want the thumbnail preview to be opened accidentally. If the
+        // user is hovering quickly from below to above the seek bar, shrink the
+        // area above the seek bar that would keep the thumbnail preview open.
+        if (this.openDisplayTimeout !== null) {
+          top += (bottom - top) / 2;
+        }
         if (!(top <= e.clientY)) {
           return;
         }
@@ -404,9 +414,21 @@ export default class ThumbnailPreview {
    * Renders best available thumbnail at current position.
    *
    * @private
+   * @param {boolean} isOpening
    */
-  currentRenderBest() {
-    if (this.renderAnimationFrame !== null) {
+  currentRenderBest(isOpening = false) {
+    // We don't wan't the thumbnail preview to be opened when the user is just
+    // moving the mouse through the seekbar, so add a short timeout.
+    if (isOpening && this.openDisplayTimeout === null && OPEN_DISPLAY_DELAY > 0) {
+      this.openDisplayTimeout = setTimeout(() => {
+        this.openDisplayTimeout = null;
+        this.currentRenderBest();
+      }, OPEN_DISPLAY_DELAY);
+
+      return;
+    }
+
+    if (this.openDisplayTimeout !== null || this.renderAnimationFrame !== null) {
       return;
     }
 
