@@ -23,6 +23,31 @@ namespace dlf {
       url: string;
     };
 
+    type PlayerConstants = {
+      /**
+       * Number of seconds in which to still rewind to previous chapter.
+       */
+      prevChapterTolerance: number;
+
+      /**
+       * Volume increase/decrease in relevant keybinding.
+       */
+      volumeStep: number;
+
+      /**
+       * Number of seconds to seek or rewind in relevant keybinding.
+       */
+      seekStep: number;
+
+      /**
+       * Trick play factor for continuous rewind/seek.
+       * TODO: Check if this should be input as setting or retrieved from current manifest
+       */
+      trickPlayFactor: number;
+
+      minBottomControlsReadyState: number;
+    };
+
     /**
      * Signals chapters available in current video.
      *

@@ -5,6 +5,7 @@ import 'shaka-player/ui/controls.less';
 
 import VideoFrame from './vendor/VideoFrame';
 
+import typoConstants from '../lib/typoConstants';
 import { clamp, e, setElementClass } from '../lib/util';
 import Chapters from './Chapters';
 import {
@@ -13,13 +14,6 @@ import {
   VideoTrackSelection,
 } from './controls';
 import VariantGroups from './VariantGroups';
-
-/**
- * @typedef {{
- *  prevChapterTolerance: number;
- *  minBottomControlsReadyState: number;
- * }} Constants
- */
 
 export default class DlfMediaPlayer {
   /** @private */
@@ -38,9 +32,12 @@ export default class DlfMediaPlayer {
     /** @private */
     this.env = env;
 
-    /** @private @type {Constants} @see {setConstants} */
+    /** @private @type {dlf.media.PlayerConstants} @see {parseConstants} */
     this.constants = {
       prevChapterTolerance: 5,
+      volumeStep: 0.05,
+      seekStep: 5,
+      trickPlayFactor: 4,
       minBottomControlsReadyState: 2, // Enough data for current position
     };
 
@@ -172,10 +169,18 @@ export default class DlfMediaPlayer {
 
   /**
    *
-   * @param {Partial<Constants>} constants
+   * @returns {Readonly<dlf.media.PlayerConstants>}
    */
-  setConstants(constants) {
-    Object.assign(this.constants, constants);
+  getConstants() {
+    return this.constants;
+  }
+
+  /**
+   *
+   * @param {import('../lib/typoConstants').TypoConstants<dlf.media.PlayerConstants>} constants
+   */
+  parseConstants(constants) {
+    this.constants = typoConstants(constants, this.constants);
   }
 
   /**

@@ -55,12 +55,6 @@ export default class SlubMediaPlayer {
 
     /** @private @type {AppConstants} */
     this.constants = typoConstants(config.constants ?? {}, {
-      screenshotFilenameTemplate: 'Screenshot',
-      screenshotCommentTemplate: '',
-      prevChapterTolerance: 5,
-      volumeStep: 0.05,
-      seekStep: 5,
-      trickPlayFactor: 4,
       forceLandscapeOnFullscreen: true,
     });
 
@@ -78,6 +72,9 @@ export default class SlubMediaPlayer {
 
     /** @private */
     this.dlfPlayer = new DlfMediaPlayer(this.env);
+    this.dlfPlayer.parseConstants(config.constants ?? {});
+
+    const playerConstants = this.dlfPlayer.getConstants();
 
     /** @private @type {ChapterLink[]} */
     this.chapterLinks = [];
@@ -143,25 +140,25 @@ export default class SlubMediaPlayer {
         this.dlfPlayer.muted = !this.dlfPlayer.muted;
       },
       'playback.volume.inc': () => {
-        this.dlfPlayer.volume = this.dlfPlayer.volume + this.constants.volumeStep;
+        this.dlfPlayer.volume = this.dlfPlayer.volume + playerConstants.volumeStep;
       },
       'playback.volume.dec': () => {
-        this.dlfPlayer.volume = this.dlfPlayer.volume - this.constants.volumeStep;
+        this.dlfPlayer.volume = this.dlfPlayer.volume - playerConstants.volumeStep;
       },
       'playback.captions.toggle': () => {
         this.dlfPlayer.showCaptions = !this.dlfPlayer.showCaptions;
       },
       'navigate.rewind': () => {
-        this.dlfPlayer.skipSeconds(-this.constants.seekStep);
+        this.dlfPlayer.skipSeconds(-playerConstants.seekStep);
       },
       'navigate.seek': () => {
-        this.dlfPlayer.skipSeconds(+this.constants.seekStep);
+        this.dlfPlayer.skipSeconds(+playerConstants.seekStep);
       },
       'navigate.continuous-rewind': () => {
-        this.dlfPlayer.ensureTrickPlay(-this.constants.trickPlayFactor);
+        this.dlfPlayer.ensureTrickPlay(-playerConstants.trickPlayFactor);
       },
       'navigate.continuous-seek': () => {
-        this.dlfPlayer.ensureTrickPlay(this.constants.trickPlayFactor);
+        this.dlfPlayer.ensureTrickPlay(playerConstants.trickPlayFactor);
       },
       'navigate.chapter.prev': () => {
         this.dlfPlayer.prevChapter();
@@ -207,6 +204,7 @@ export default class SlubMediaPlayer {
       help: new HelpModal(this.fullscreenElement, this.env, {
         constants: {
           ...this.constants,
+          ...this.dlfPlayer.getConstants(),
           // TODO: Refactor
           forceLandscapeOnFullscreen: Number(this.constants.forceLandscapeOnFullscreen),
         },
@@ -218,7 +216,7 @@ export default class SlubMediaPlayer {
       screenshot: new ScreenshotModal(this.fullscreenElement, this.env, {
         keybindings: this.keybindings,
         screnshotCaptions: this.config.screenshotCaptions ?? [],
-        constants: this.constants,
+        constants: this.config.constants ?? {},
       }),
     });
 
@@ -316,7 +314,6 @@ export default class SlubMediaPlayer {
         onClick: this.actions['modal.help.open'],
       })
     );
-    this.dlfPlayer.setConstants(this.constants);
     this.dlfPlayer.setLocale(this.config.lang.twoLetterIsoCode);
     if (this.videoInfo.url.poster !== undefined) {
       this.dlfPlayer.setPoster(this.videoInfo.url.poster);
