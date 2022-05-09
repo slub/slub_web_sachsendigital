@@ -6,6 +6,7 @@
 
 import { describe, expect, test } from '@jest/globals';
 import Environment from '../../SlubMediaPlayer/Environment';
+import { action } from '../lib/action';
 import ControlPanelButton from './ControlPanelButton';
 import { createShakaPlayer } from './test-util';
 
@@ -19,9 +20,11 @@ describe('ControlPanelButton', () => {
     const button = new ControlPanelButton(buttonContainer, shk.controls, env, {
       material_icon: 'info',
       title: "Do it now",
-      onClick: () => {
-        clicked++;
-      },
+      onClickAction: action({
+        execute: () => {
+          clicked++;
+        },
+      }),
     });
     const domButton = buttonContainer.querySelector('button');
     expect(domButton?.ariaLabel).toBe("Do it now");

@@ -105,6 +105,10 @@
 				<source><![CDATA[Toggle theater mode]]></source>
 				<target><![CDATA[Theater-Modus an / aus]]></target>
 			</trans-unit>
+			<trans-unit id="action.unavailable" approved="yes">
+				<source><![CDATA[Action unavailable]]></source>
+				<target><![CDATA[Aktion nicht anwendbar]]></target>
+			</trans-unit>
 			<trans-unit id="control.back" approved="yes">
 				<source><![CDATA[Back]]></source>
 				<target><![CDATA[Zurück]]></target>

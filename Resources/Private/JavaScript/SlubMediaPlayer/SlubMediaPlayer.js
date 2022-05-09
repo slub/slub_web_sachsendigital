@@ -4,6 +4,7 @@ import { e } from '../lib/util';
 import { Keybindings$find } from '../lib/Keyboard';
 import typoConstants from '../lib/typoConstants';
 import {
+  action,
   Chapters,
   ControlPanelButton,
   DlfMediaPlayer,
@@ -81,37 +82,47 @@ export default class SlubMediaPlayer {
     this.modals = null;
 
     /** @private */
-    this.dlfPlayer.actions['fullscreen.toggle'] = () => {
+    this.dlfPlayer.actions['fullscreen.toggle'].execute = () => {
       this.dlfPlayer.ui.seekBar?.endSeek();
       this.toggleFullScreen();
     };
     this.actions = Object.assign({}, this.dlfPlayer.actions, {
-      'cancel': () => {
+      'cancel': action(() => {
         if (this.modals?.hasOpen()) {
           this.modals.closeNext();
         } else {
           this.dlfPlayer.ui.handleEscape();
         }
-      },
-      'modal.help.open': () => {
+      }),
+      'modal.help.open': action(() => {
         this.openModal(this.modals?.help);
-      },
-      'modal.help.toggle': () => {
+      }),
+      'modal.help.toggle': action(() => {
         if (this.modals !== null) {
           this.dlfPlayer.ui.seekBar?.endSeek();
           this.modals.toggleExclusive(this.modals.help);
         }
-      },
-      'modal.bookmark.open': () => {
+      }),
+      'modal.bookmark.open': action(() => {
         this.showBookmarkUrl();
-      },
-      'modal.screenshot.open': () => {
-        this.showScreenshot();
-      },
-      'modal.screenshot.snap': () => {
-        this.snapScreenshot();
-      },
-      'theater.toggle': () => {
+      }),
+      'modal.screenshot.open': action({
+        isAvailable: () => {
+          return !this.dlfPlayer.isAudioOnly();
+        },
+        execute: () => {
+          this.showScreenshot();
+        },
+      }),
+      'modal.screenshot.snap': action({
+        isAvailable: () => {
+          return !this.dlfPlayer.isAudioOnly();
+        },
+        execute: () => {
+          this.snapScreenshot();
+        },
+      }),
+      'theater.toggle': action(() => {
         this.dlfPlayer.ui.seekBar?.endSeek();
 
         // @see DigitalcollectionsScripts.js
@@ -124,7 +135,7 @@ export default class SlubMediaPlayer {
           },
         });
         window.dispatchEvent(ev);
-      },
+      }),
     });
 
     this.createModals();
@@ -142,6 +153,11 @@ export default class SlubMediaPlayer {
           forceLandscapeOnFullscreen: Number(this.constants.forceLandscapeOnFullscreen),
         },
         keybindings: this.keybindings,
+        actionIsAvailable: (actionKey) => {
+          // @ts-expect-error
+          const action = this.actions[actionKey];
+          return action !== undefined && action.isAvailable();
+        },
       }),
       bookmark: new BookmarkModal(this.fullscreenElement, this.env, {
         shareButtons: this.config.shareButtons,
@@ -231,22 +247,22 @@ export default class SlubMediaPlayer {
           className: "sxnd-screenshot-button",
           material_icon: 'photo_camera',
           title: this.env.t('control.screenshot.tooltip'),
-          onClick: this.actions['modal.screenshot.open'],
+          onClickAction: this.actions['modal.screenshot.open'],
         }),
         ControlPanelButton.register(this.env, {
           className: "sxnd-bookmark-button",
           material_icon: 'bookmark_border',
           title: this.env.t('control.bookmark.tooltip'),
-          onClick: this.actions['modal.bookmark.open'],
+          onClickAction: this.actions['modal.bookmark.open'],
         }),
         FullScreenButton.register(this.env, {
-          onClick: this.actions['fullscreen.toggle'],
+          onClickAction: this.actions['fullscreen.toggle'],
         }),
         ControlPanelButton.register(this.env, {
           className: "sxnd-help-button",
           material_icon: 'info_outline',
           title: this.env.t('control.help.tooltip'),
-          onClick: this.actions['modal.help.open'],
+          onClickAction: this.actions['modal.help.open'],
         })
       );
     }
@@ -355,8 +371,10 @@ export default class SlubMediaPlayer {
         || (mode === 'up' && (keybinding.keyup ?? false))
       );
 
-      if (shouldHandle) {
-        this.actions[keybinding.action]?.(keybinding, keyIndex, mode);
+      const action = this.actions[keybinding.action];
+
+      if (shouldHandle && action !== undefined && action.isAvailable()) {
+        action.execute(keybinding, keyIndex, mode);
       }
     }
   }

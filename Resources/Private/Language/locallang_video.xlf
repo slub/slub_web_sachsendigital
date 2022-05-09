@@ -80,6 +80,9 @@
 			<trans-unit id="action.theater.toggle">
 				<source><![CDATA[Toggle theater mode]]></source>
 			</trans-unit>
+			<trans-unit id="action.unavailable">
+				<source><![CDATA[Action unavailable]]></source>
+			</trans-unit>
 			<trans-unit id="control.back">
 				<source><![CDATA[Back]]></source>
 			</trans-unit>

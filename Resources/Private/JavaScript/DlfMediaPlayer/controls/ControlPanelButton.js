@@ -9,7 +9,7 @@ import { e, setElementClass } from '../../lib/util';
  * @property {string} className
  * @property {string} material_icon Key of button icon
  * @property {string} title Text of button tooltip
- * @property {() => void} onClick
+ * @property {dlf.media.PlayerAction} onClickAction
  */
 
 /**
@@ -58,8 +58,17 @@ export default class ControlPanelButton extends shaka.ui.Element {
     /** @protected Avoid naming conflicts with parent class */
     this.dlf = { config, button };
 
-    if (this.eventManager && config.onClick) {
-      this.eventManager.listen(button, 'click', config.onClick);
+    const { onClickAction } = config;
+    if (this.eventManager && onClickAction) {
+      this.eventManager.listen(button, 'click', () => {
+        if (onClickAction.isAvailable()) {
+          onClickAction.execute();
+        }
+      });
+
+      this.eventManager.listen(this.player, 'loaded', () => {
+        this.updateControlPanelButton();
+      });
     }
 
     this.updateControlPanelButton();
@@ -72,5 +81,10 @@ export default class ControlPanelButton extends shaka.ui.Element {
     let tooltip = this.dlf.config.title ?? "";
     this.dlf.button.ariaLabel = tooltip;
     setElementClass(this.dlf.button, 'shaka-tooltip', tooltip !== "");
+
+    const { onClickAction } = this.dlf.config;
+    if (onClickAction) {
+      setElementClass(this.dlf.button, 'shaka-hidden', !onClickAction.isAvailable());
+    }
   }
 }

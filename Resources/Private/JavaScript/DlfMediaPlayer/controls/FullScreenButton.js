@@ -5,7 +5,7 @@ import ControlPanelButton from './ControlPanelButton';
 
 /**
  * @typedef Config
- * @property {() => void} onClick
+ * @property {dlf.media.PlayerAction} onClickAction
  */
 
 /**

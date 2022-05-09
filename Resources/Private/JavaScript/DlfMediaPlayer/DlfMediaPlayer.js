@@ -5,6 +5,7 @@ import shaka from 'shaka-player/dist/shaka-player.ui';
 import VideoFrame from './vendor/VideoFrame';
 
 import typoConstants from '../lib/typoConstants';
+import { action } from './lib/action';
 import { clamp, e } from '../lib/util';
 import ShakaFrontend from './frontend/ShakaFrontend';
 import Chapters from './Chapters';
@@ -86,58 +87,79 @@ export default class DlfMediaPlayer {
 
     /** @readonly */
     this.actions = {
-      'fullscreen.toggle': () => {
-        // Override in application
-      },
-      'playback.toggle': () => {
+      'fullscreen.toggle': action({
+        isAvailable: () => {
+          return document.fullscreenEnabled;
+        },
+        execute: () => {
+          // Override in application
+        },
+      }),
+      'playback.toggle': action(() => {
         if (this.video.paused) {
           this.video.play();
         } else {
           this.video.pause();
         }
-      },
-      'playback.volume.mute.toggle': () => {
+      }),
+      'playback.volume.mute.toggle': action(() => {
         this.video.muted = !this.video.muted;
-      },
-      'playback.volume.inc': () => {
+      }),
+      'playback.volume.inc': action(() => {
         this.volume = this.volume + this.constants.volumeStep;
-      },
-      'playback.volume.dec': () => {
+      }),
+      'playback.volume.dec': action(() => {
         this.volume = this.volume - this.constants.volumeStep;
-      },
-      'playback.captions.toggle': () => {
-        this.showCaptions = !this.showCaptions;
-      },
-      'navigate.rewind': () => {
+      }),
+      'playback.captions.toggle': action({
+        isAvailable: () => {
+          return this.player.getTextTracks().length > 0;
+        },
+        execute: () => {
+          this.showCaptions = !this.showCaptions;
+        },
+      }),
+      'navigate.rewind': action(() => {
         this.skipSeconds(-this.constants.seekStep);
-      },
-      'navigate.seek': () => {
+      }),
+      'navigate.seek': action(() => {
         this.skipSeconds(+this.constants.seekStep);
-      },
-      'navigate.continuous-rewind': () => {
+      }),
+      'navigate.continuous-rewind': action(() => {
         this.ensureTrickPlay(-this.constants.trickPlayFactor);
-      },
-      'navigate.continuous-seek': () => {
+      }),
+      'navigate.continuous-seek': action(() => {
         this.ensureTrickPlay(this.constants.trickPlayFactor);
-      },
-      'navigate.chapter.prev': () => {
+      }),
+      'navigate.chapter.prev': action(() => {
         this.prevChapter();
-      },
-      'navigate.chapter.next': () => {
+      }),
+      'navigate.chapter.next': action(() => {
         this.nextChapter();
-      },
-      'navigate.frame.prev': () => {
-        this.fps?.vifa.seekBackward(1);
-        this.frontend.afterManualSeek();
-      },
-      'navigate.frame.next': () => {
-        this.fps?.vifa.seekForward(1);
-        this.frontend.afterManualSeek();
-      },
-      'navigate.position.percental': (
-        /** @type {Keybinding<any, any>} */ kb,
-        /** @type {number} */ keyIndex
-      ) => {
+      }),
+      'navigate.frame.prev': action({
+        isAvailable: () => {
+          return this.fps !== null;
+        },
+        execute: () => {
+          this.fps?.vifa.seekBackward(1);
+          this.frontend.afterManualSeek();
+        },
+      }),
+      'navigate.frame.next': action(({
+        isAvailable: () => {
+          return this.fps !== null;
+        },
+        execute: () => {
+          this.fps?.vifa.seekForward(1);
+          this.frontend.afterManualSeek();
+        },
+      })),
+      'navigate.position.percental': action((kb, keyIndex) => {
+        if (kb === undefined || keyIndex === undefined) {
+          return;
+        }
+
         if (0 <= keyIndex && keyIndex < kb.keys.length) {
           // Implies kb.keys.length > 0
 
@@ -146,14 +168,18 @@ export default class DlfMediaPlayer {
 
           this.seekTo(absolute);
         }
-      },
-      'navigate.thumbnails.snap': (
-        /** @type {Keybinding<any, any>} */ _kb,
-        /** @type {number} */ _keyIndex,
-        /** @type {KeyEventMode} */ mode
-      ) => {
-        this.frontend.seekBar?.setThumbnailSnap(mode === 'down');
-      },
+      }),
+      'navigate.thumbnails.snap': action({
+        isAvailable: () => {
+          return (
+            this.variantGroups !== null
+            && this.variantGroups.findThumbnailTracks().length > 0
+          );
+        },
+        execute: (_kb, _keyIndex, mode) => {
+          this.frontend.seekBar?.setThumbnailSnap(mode === 'down');
+        },
+      }),
     }
   }
 
@@ -184,19 +210,19 @@ export default class DlfMediaPlayer {
         case 'tapup':
           if (e.event.pointerType === 'mouse') {
             if (e.tapCount <= 2) {
-              this.actions['playback.toggle']();
+              this.actions['playback.toggle'].execute();
             }
 
             if (e.tapCount === 2) {
-              this.actions['fullscreen.toggle']();
+              this.actions['fullscreen.toggle'].execute();
             }
           } else if (e.tapCount >= 2) {
             if (e.position.x < 1 / 3) {
-              this.actions['navigate.rewind']();
+              this.actions['navigate.rewind'].execute();
             } else if (e.position.x > 2 / 3) {
-              this.actions['navigate.seek']();
+              this.actions['navigate.seek'].execute();
             } else if (e.tapCount === 2 && !this.env.isInFullScreen()) {
-              this.actions['fullscreen.toggle']();
+              this.actions['fullscreen.toggle'].execute();
             }
           }
           break;
@@ -207,9 +233,9 @@ export default class DlfMediaPlayer {
             this.frontend.seekBar?.thumbnailPreview?.beginChange(e.event.clientX);
           } else if (e.tapCount >= 2) {
             if (e.position.x < 1 / 3) {
-              this.actions['navigate.continuous-rewind']();
+              this.actions['navigate.continuous-rewind'].execute();
             } else if (e.position.x > 2 / 3) {
-              this.actions['navigate.continuous-seek']();
+              this.actions['navigate.continuous-seek'].execute();
             }
           }
           break;
@@ -217,9 +243,9 @@ export default class DlfMediaPlayer {
         case 'swipe':
           // "Natural" swiping
           if (e.direction === 'east') {
-            this.actions['navigate.rewind']();
+            this.actions['navigate.rewind'].execute();
           } else if (e.direction === 'west') {
-            this.actions['navigate.seek']();
+            this.actions['navigate.seek'].execute();
           }
           break;
       }
@@ -457,6 +483,10 @@ export default class DlfMediaPlayer {
 
   set showCaptions(value) {
     this.player.setTextTrackVisibility(value);
+  }
+
+  isAudioOnly() {
+    return this.player.isAudioOnly();
   }
 
   /**

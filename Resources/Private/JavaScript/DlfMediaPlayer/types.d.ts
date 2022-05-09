@@ -48,6 +48,16 @@ namespace dlf {
       trickPlayFactor: number;
     };
 
+    type PlayerAction = {
+      isAvailable: () => boolean;
+      // TODO: Make action more independent of keybindings; could also be triggered in gesture
+      execute: (
+        kb?: Keybinding<any, any>,
+        keyIndex?: number,
+        mode?: KeyEventMode
+      ) => void;
+    };
+
     type Fps = {
       rate: number;
       vifa: import("./vendor/VideoFrame").default;
