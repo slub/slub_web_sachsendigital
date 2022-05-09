@@ -372,7 +372,7 @@ export default class SlubMediaPlayer {
     // been attached.
     const target = /** @type {ChapterLink} */(e.currentTarget);
 
-    this.dlfPlayer.play();
+    this.dlfPlayer.media.play();
     this.dlfPlayer.seekTo(target.dlfTimecode);
   }
 
@@ -416,7 +416,7 @@ export default class SlubMediaPlayer {
 
     return (
       this.modals?.screenshot
-        .setVideo(this.dlfPlayer.getVideo())
+        .setVideo(this.dlfPlayer.media)
         .setMetadata(this.videoInfo.metadata)
         .setFps(this.dlfPlayer.getFps())
         .setTimecode(this.dlfPlayer.displayTime)

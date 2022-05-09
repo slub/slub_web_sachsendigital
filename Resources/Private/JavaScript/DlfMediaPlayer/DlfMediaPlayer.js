@@ -90,14 +90,14 @@ export default class DlfMediaPlayer {
         // Override in application
       },
       'playback.toggle': () => {
-        if (this.paused) {
-          this.play();
+        if (this.video.paused) {
+          this.video.play();
         } else {
-          this.pause();
+          this.video.pause();
         }
       },
       'playback.volume.mute.toggle': () => {
-        this.muted = !this.muted;
+        this.video.muted = !this.video.muted;
       },
       'playback.volume.inc': () => {
         this.volume = this.volume + this.constants.volumeStep;
@@ -422,7 +422,7 @@ export default class DlfMediaPlayer {
    * @returns {dlf.media.Chapter | undefined}
    */
   getCurrentChapter() {
-    return this.timeToChapter(this.currentTime);
+    return this.timeToChapter(this.video.currentTime);
   }
 
   /**
@@ -435,10 +435,9 @@ export default class DlfMediaPlayer {
   }
 
   /**
-   *
    * @returns {HTMLVideoElement}
    */
-  getVideo() {
+  get media() {
     return this.video;
   }
 
@@ -476,52 +475,9 @@ export default class DlfMediaPlayer {
   /**
    * @type {number}
    */
-  get currentTime() {
-    return this.video.currentTime;
-  }
-
-  /**
-   * @type {number}
-   */
   get displayTime() {
     // Adopted from "getDisplayTime" in "shaka.ui.Controls"
     return this.frontend.seekBar?.getValue() ?? this.video.currentTime;
-  }
-
-  /**
-   * Whether or not the video is muted.
-   *
-   * @type {boolean}
-   */
-  get muted() {
-    return this.video.muted;
-  }
-
-  set muted(value) {
-    this.video.muted = value;
-  }
-
-  /**
-   * Whether or not the video is paused.
-   *
-   * @type {boolean}
-   */
-  get paused() {
-    return this.video.paused;
-  }
-
-  /**
-   * Start playback.
-   */
-  play() {
-    this.video.play();
-  }
-
-  /**
-   * Pause playback.
-   */
-  pause() {
-    this.video.pause();
   }
 
   /**
@@ -533,9 +489,9 @@ export default class DlfMediaPlayer {
    * @param {any} obj
    */
   pauseOn(obj) {
-    if (this.videoPausedOn === null && !this.paused) {
+    if (this.videoPausedOn === null && !this.video.paused) {
       this.videoPausedOn = obj;
-      this.pause();
+      this.video.pause();
     }
   }
 
@@ -547,7 +503,7 @@ export default class DlfMediaPlayer {
    */
   resumeOn(obj) {
     if (this.videoPausedOn === obj) {
-      this.play();
+      this.video.play();
     }
   }
 
@@ -560,6 +516,7 @@ export default class DlfMediaPlayer {
   }
 
   /**
+   * Seek to the specified {@link position} and mark this as a manual seek.
    *
    * @param {number | dlf.media.Chapter} position Timecode (in seconds) or chapter
    */
@@ -589,7 +546,7 @@ export default class DlfMediaPlayer {
    */
   prevChapter() {
     const tolerance = this.constants.prevChapterTolerance;
-    const prev = this.chapters.timeToChapter(this.currentTime - tolerance);
+    const prev = this.chapters.timeToChapter(this.video.currentTime - tolerance);
     this.seekTo(prev ?? 0);
   }
 
