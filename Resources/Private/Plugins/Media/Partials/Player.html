@@ -7,15 +7,10 @@
         window.addEventListener('DOMContentLoaded', function () {
             var container = document.querySelector('.media-viewport');
             var videoConfig = {sxnd:videoToJson(settings: settings)};
-            var lang = {sxnd:translations(baseFile: settings.playerTranslations.baseFile) -> f:format.json() -> f:format.raw()};
-            var shareButtons = {settings.shareButtons -> sxnd:shareButtonsToJson()};
-            var screenshotFilenameTemplate = {settings.screenshotFilenameTemplate -> f:format.json() -> f:format.raw()};
+            var playerConfig = {sxnd:playerConfigToJson(settings: settings)};
+            playerConfig.lang = {sxnd:translations(baseFile: settings.playerTranslations.baseFile) -> f:format.json() -> f:format.raw()};
 
-            var app = new SxndPlayerApp(container, videoConfig, {
-                lang: lang,
-                shareButtons: shareButtons,
-                screenshotFilenameTemplate: screenshotFilenameTemplate
-            });
+            var app = new SlubMediaPlayer(container, videoConfig, playerConfig);
         });
     </script>
 </f:section>

@@ -35,20 +35,14 @@ class VideoToJsonViewHelper extends AbstractViewHelper
         $movieDir = $settings['movieDir'];
         $chapters = $settings['chapters'] ?? [];
 
-        // @see `VideoInfo` in VideoPlayerApp.d.ts
+        // @see `VideoInfo` in SlubMediaPlayer/types.d.ts
         $result = [
             'chapters' => array_map(function ($item) {
                 return $item['chapter'];
             }, array_values($chapters)),
 
             'metadata' => [
-                'metadata' => [
-                    'title' => [$settings['media']],
-                ],
-
-                'screenshotFields' => [
-                    'title',
-                ],
+                'title' => [$settings['media']],
             ],
 
             // NOTE: If one of these doesn't exist (in particular, HLS), the

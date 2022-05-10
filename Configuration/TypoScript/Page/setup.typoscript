@@ -156,8 +156,9 @@ page {
     includeCSS {
         sxndKitodoViewerCss = EXT:slub_web_sachsendigital/Resources/Public/Css/SxndKitodoViewer.css
         sxndCss >
-        videoplayer = EXT:slub_web_sachsendigital/Resources/Public/Css/SxndPlayerApp.css
+        sxnd-mediaplayer-css = EXT:slub_web_sachsendigital/Resources/Public/Css/SxndMediaPlayer.css
         shaka-css = EXT:slub_web_sachsendigital/Resources/Public/Css/SxndPlayerVendor.css
+        shaka-css.excludeFromConcatenation = 1
     }
     includeJSFooterlibs {
         # must be included here as slub_digitalcollections doesn't know pagets_media
@@ -166,6 +167,7 @@ page {
         kitodo = EXT:slub_digitalcollections/Resources/Public/JavaScript/DigitalcollectionsScripts.js
         sxndScripts >
         x0-shaka = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/SxndPlayerVendor.js
+        x0-shaka.excludeFromConcatenation = 1
         x0-sachsen = EXT:slub_web_sachsendigital/Resources/Public/JavaScript/SxndPlayerApp.js
     }
     10 {

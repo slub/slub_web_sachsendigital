@@ -20,6 +20,25 @@ export function clamp(value, [min, max]) {
 }
 
 /**
+ *
+ * @private
+ * @param {string} template
+ * @param {Record<string, string | undefined>} values
+ * @returns {string}
+ */
+export function fillPlaceholders(template, values) {
+  let result = template;
+
+  for (const [key, value] of Object.entries(values)) {
+    if (value !== undefined) {
+      result = result.split(`{${key}}`).join(value);
+    }
+  }
+
+  return result;
+}
+
+/**
  * Zero-pad {@link value} to at least {@link length} digits.
  *
  * @param {number} value

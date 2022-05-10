@@ -23,6 +23,14 @@ available in the bookmarks modal:
   - The placeholder `{url}` will be replaced by the URL to be shared.
   - The special value `dlf:qr_code` may be used to generate a QR code.
 
+`constants` may be used to configure the video player:
+
+- `prevChapterTolerance`: Number of seconds in which to still rewind to previous chapter
+- `volumeStep`: Fractional value of volume increase/decrease when pressing up/down arrow keys
+- `seekStep`: Number of seconds for seek/rewind
+- `trickPlayFactor`: Trick play factor for continuous rewind/seek
+- `forceLandscapeOnFullscreen`: Whether or not to switch to landscape in fullscreen mode
+
 ## Frontend Development
 
 Anything related to building the JavaScript and Less code is located in `Build/`, which is the working directory for all commands listed in this section.

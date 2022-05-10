@@ -62,6 +62,11 @@ interface Browser {
    * natively.
    */
   supportsVideoMime(mimeType: string): boolean;
+
+  /**
+   * Checks whether the browser is in full screen.
+   */
+  isInFullScreen(): boolean;
 }
 
 /**
