@@ -7,6 +7,16 @@ This extension needs to reside in a folder called `slub_web_sachsendigital` in T
 
 After activate the extension in the TYPO3 extension manager you need to include a static template called `SLUB: Portal Sachsen.Digital` in the template settings of the source page of the SACHSEN.digtal branch.
 
+## Upgrade to Kitodo.Presentation 4
+
+To upgrade an existing installation:
+
+- Follow the steps described in the upgrade guide of Kitodo.Presentation, in particular:
+  - Set storage PID in template
+  - Run the upgrade wizards and database update
+  - Update CSP
+  - In the List View plugin of the search page, set the target PID
+
 ## Configuration
 
 The player is configured in [media.typoscript](Configuration/TypoScript/Plugins/media.typoscript).

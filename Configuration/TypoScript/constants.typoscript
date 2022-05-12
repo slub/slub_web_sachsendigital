@@ -37,21 +37,6 @@ config {
     # cat=plugin.tx_slub_web_sachsendigital/matomo/030; type=string; label=Matomo Domains
     piwik_domains =
 
-    # cat=plugin.tx_slub_web_sachsendigital/file/100; type=file[html,htm,tmpl]; label=Metadata template file
-    templateFileMeta = EXT:slub_web_sachsendigital/Resources/Private/Plugins/Kitodo/metadata.tmpl
-
-    # cat=plugin.tx_slub_web_sachsendigital/file/100; type=file[html,htm,tmpl]; label=Page View template file
-    templateFilePage = EXT:slub_web_sachsendigital/Resources/Private/Plugins/Kitodo/pageview.tmpl
-
-    # cat=plugin.tx_slub_web_sachsendigital/file/100; type=file[html,htm,tmpl]; label=Page Grid template file
-    templateFileGrid = EXT:slub_web_sachsendigital/Resources/Private/Plugins/Kitodo/pagegrid.tmpl
-
-    # cat=plugin.tx_slub_web_sachsendigital/file/100; type=file[html,htm,tmpl]; label=Table of Contents template file
-    templateFileToc = EXT:slub_web_sachsendigital/Resources/Private/Plugins/Kitodo/toc.tmpl
-
-    # cat=plugin.tx_slub_web_sachsendigital/file/100; type=file[html,htm,tmpl]; label=Fulltext Tool template file
-    templateFileToolFulltext = EXT:slub_web_sachsendigital/Resources/Private/Plugins/Kitodo/fulltext.tmpl
-
     # cat=plugin.tx_slub_web_sachsendigital/page; type=string; label=Meta description
     meta_description = Sachsen.digital präsentiert Ihnen digitalisiertes Kulturgut aus wissenschaftlichen und öffentlichen Bibliotheken sowie aus weiteren Kultur- und Wissenschaftseinrichtungen des Freistaats Sachsen.
 
