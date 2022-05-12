@@ -1,0 +1,31 @@
+<f:comment>
+<!--
+ * (c) Kitodo. Key to digital objects e.V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo and TYPO3 projects.
+ *
+ * @license GNU General Public License version 3 or later.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+-->
+
+Based on Kitodo.Presentation 4. Changes:
+- Remove header (`tx-dlf-listview-label`)
+
+</f:comment>
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+    <div class="tx-dlf-listview">
+
+        <f:render partial="ListView/SearchHits" arguments="{_all}" />
+
+        <f:variable name="action" value="main" />
+        <f:variable name="controller" value="ListView" />
+        <f:render partial="ListView/SortingForm" arguments="{_all}" />
+
+        <f:render partial="ListView/Results" arguments="{_all}" />
+
+    </div>
+
+</html>

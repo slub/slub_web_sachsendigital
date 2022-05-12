@@ -1,32 +1,48 @@
+plugin.tx_dlf {
+  view {
+    templateRootPaths {
+      // 10 = slub_digitalcollections
+			20 = EXT:slub_web_sachsendigital/Resources/Private/Plugins/Kitodo/Templates
+		}
+  }
+
+  persistence {
+    storagePid = {$config.storagePid}
+  }
+
+  settings {
+    storagePid = {$config.storagePid}
+    solrcore = {$config.solrCore}
+  }
+}
+
 plugin.tx_dlf.useragent = {$config.useragent}
 
-plugin.tx_dlf_search {
-	templateFile = EXT:slub_web_sachsendigital/Resources/Private/Plugins/Kitodo/search.tmpl
-}
-
 plugin.tx_dlf_metadata {
-	pages = {$config.storagePid}
-	linkTitle = 0
-	getTitle = 0
-	showFull = 1
-	rootline = 1
-	separator = #
-	templateFile = {$config.templateFileMeta}
+	settings {
+    linkTitle = 0
+    getTitle = 0
+    showFull = 1
+    rootline = 1
+    separator = #
+  }
 }
-
 
 plugin.tx_dlf_pagegrid {
-	pages = {$config.storagePid}
-	limit = 24
-	placeholder = EXT:slub_web_sachsendigital/Resources/Public/Images/GridPlaceHolder.jpg
-	targetPid = #
-	templateFile = {$config.templateFileGrid}
+  settings {
+    paginate {
+      itemsPerPage = 24
+    }
+    placeholder = EXT:slub_web_sachsendigital/Resources/Public/Images/GridPlaceHolder.jpg
+	  targetPid = {$config.kitodoPageView}
+  }
 }
 
-# Toolbox tools
-
-plugin.tx_dlf_searchindocumenttool {
-    pages = {$config.storagePid}
-    // UID of dlfCore0
-    solrcore = {$config.solrCore}
+lib.kitodo.fulltext.search {
+  view {
+		templateRootPaths {
+      // 10 = slub_digitalcollections
+			20 = EXT:slub_web_sachsendigital/Resources/Private/Plugins/Kitodo/Templates/Fulltext
+		}
+	}
 }
