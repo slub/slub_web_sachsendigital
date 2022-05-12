@@ -130,9 +130,10 @@ export default class ShakaFrontend {
     this.controls.addEventListener('dlf-media-seek-bar', (e) => {
       const detail = /** @type {dlf.media.SeekBarEvent} */(e).detail;
       this.seekBar_ = detail.seekBar;
+      this.autosetSeekMode();
     });
-    this.controls.addEventListener('timeandseekrangeupdated', this.handlers.onTimeUpdate);
     this.controls.addEventListener('dlf-media-manual-seek', this.handlers.afterManualSeek);
+    this.controls.addEventListener('timeandseekrangeupdated', this.handlers.onTimeUpdate);
 
     this.media.addEventListener('play', this.handlers.onPlay);
 
@@ -280,6 +281,8 @@ export default class ShakaFrontend {
     this.ui.configure(this.getShakaConfiguration());
     this.isConfigured = true;
 
+    this.autosetSeekMode();
+
     // Fade in controls, especially when switching from video to audio (TODO: Refactor)
     this.$videoBox.dispatchEvent(new MouseEvent('mousemove'));
 
@@ -288,6 +291,11 @@ export default class ShakaFrontend {
       this.$videoBox.querySelector('.shaka-bottom-controls');
 
     this.notifyMediaProperties();
+  }
+
+  autosetSeekMode() {
+    const seekMode = this.playerProperties.mode === 'audio' ? 'narrow' : 'wide';
+    this.seekBar_?.thumbnailPreview?.setSeekMode(seekMode);
   }
 
   /**
