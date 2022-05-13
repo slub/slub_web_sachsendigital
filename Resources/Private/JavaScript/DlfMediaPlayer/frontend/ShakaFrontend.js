@@ -4,7 +4,7 @@ import shaka from 'shaka-player/dist/shaka-player.ui';
 import 'shaka-player/ui/controls.less';
 
 import Gestures from '../../lib/Gestures';
-import { e } from '../../lib/util';
+import { e, setElementClass } from '../../lib/util';
 import {
   FlatSeekBar,
   PresentationTimeTracker,
@@ -15,6 +15,9 @@ import {
  * Listens to the following custom events:
  * - {@link dlf.media.SeekBarEvent}
  * - {@link dlf.media.ManualSeekEvent}
+ *
+ * Emits the following custom events:
+ * - {@link dlf.media.MediaPropertiesEvent}
  *
  * @implements {dlf.media.PlayerFrontend}
  */
@@ -34,6 +37,14 @@ export default class ShakaFrontend {
 
     /** @private */
     this.media = media;
+
+    /** @private @type {dlf.media.MediaProperties} */
+    this.mediaProperties = {
+      poster: null,
+      chapters: null,
+      fps: null,
+      variantGroups: null,
+    };
 
     /** @private @type {string[]} */
     this.controlPanelButtons = [];
@@ -107,6 +118,38 @@ export default class ShakaFrontend {
 
   get gestures() {
     return this.gestures_;
+  }
+
+  /**
+   *
+   * @param {Partial<dlf.media.MediaProperties>} props
+   */
+  updateMediaProperties(props) {
+    Object.assign(this.mediaProperties, props);
+    this.notifyMediaProperties(/* full= */this.mediaProperties, props);
+  }
+
+  /**
+   * @private
+   * @param {dlf.media.MediaProperties} fullProps
+   * @param {Partial<dlf.media.MediaProperties>} updateProps
+   */
+  notifyMediaProperties(
+    fullProps = this.mediaProperties,
+    updateProps = fullProps
+  ) {
+    if (updateProps.poster !== undefined) {
+      this.renderPoster();
+    }
+
+    /** @type {dlf.media.MediaPropertiesEvent} */
+    const event = new CustomEvent('dlf-media-properties', {
+      detail: {
+        updateProps,
+        fullProps,
+      },
+    });
+    this.controls.dispatchEvent(event);
   }
 
   handleEscape() {
@@ -187,10 +230,21 @@ export default class ShakaFrontend {
     // DOM is (re-)created in `ui.configure()`, so query container afterwards
     this.shakaBottomControls =
       this.$videoBox.querySelector('.shaka-bottom-controls');
+
+    this.notifyMediaProperties();
   }
 
   hidePoster() {
     this.$poster.classList.remove('dlf-visible');
+  }
+
+  /**
+   * @private
+   */
+  renderPoster() {
+    if (this.mediaProperties.poster !== null) {
+      this.$poster.src = this.mediaProperties.poster;
+    }
   }
 
   /**

@@ -67,9 +67,6 @@ export default class DlfMediaPlayer {
     /** @private */
     this.lastReadyState = 0;
 
-    /** @private @type {Event[]} */
-    this.controlEventQueue = [];
-
     /** @private @type {dlf.media.Fps | null} */
     this.fps = null;
 
@@ -81,7 +78,6 @@ export default class DlfMediaPlayer {
 
     /** @private */
     this.frontend = new ShakaFrontend(this.env, this.player, this.video);
-    this.poster = this.frontend.$poster;
     this.videoBox = this.frontend.$videoBox;
     this.errorBox = this.frontend.$errorBox;
 
@@ -300,14 +296,6 @@ export default class DlfMediaPlayer {
   }
 
   /**
-   *
-   * @param {string} posterUrl
-   */
-  setPoster(posterUrl) {
-    this.poster.src = posterUrl;
-  }
-
-  /**
    * Configures the Shaka player UI and mounts it into {@link mount}. The mount
    * point is being replaced with the player until {@link unmount} is called.
    *
@@ -386,7 +374,7 @@ export default class DlfMediaPlayer {
       || this.variantGroups.selectGroupByRole("main")
       || this.variantGroups.selectGroupByIndex(0);
 
-    this.emitControlEvent('dlf-media-variant-groups', {
+    this.frontend.updateMediaProperties({
       variantGroups: this.variantGroups,
     });
 
@@ -412,7 +400,9 @@ export default class DlfMediaPlayer {
       };
     }
 
-    this.emitControlEvent('dlf-media-fps', { fps: this.fps });
+    this.frontend.updateMediaProperties({
+      fps: this.fps,
+    });
   }
 
   onTimeUpdate() {
@@ -461,7 +451,7 @@ export default class DlfMediaPlayer {
    */
   setChapters(chapters) {
     this.chapters = chapters;
-    this.emitControlEvent('dlf-media-chapters', { chapters });
+    this.frontend.updateMediaProperties({ chapters });
   }
 
   /**
@@ -697,31 +687,6 @@ export default class DlfMediaPlayer {
       return true;
     } catch (e) {
       return false;
-    }
-  }
-
-  /**
-   *
-   * @private
-   * @template {keyof dlf.media.EventDetail} K
-   * @param {K} key
-   * @param {dlf.media.EventDetail[K]} detail
-   */
-  emitControlEvent(key, detail) {
-    this.controlEventQueue.push(new CustomEvent(key, { detail }));
-    this.dispatchControlEvents();
-  }
-
-  /**
-   * @private
-   */
-  dispatchControlEvents() {
-    if (this.isMounted) {
-      for (const event of this.controlEventQueue) {
-        this.controls.dispatchEvent(event);
-      }
-
-      this.controlEventQueue = [];
     }
   }
 

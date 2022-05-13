@@ -6,7 +6,6 @@ import { e } from '../../lib/util';
 import Chapters from '../Chapters';
 import ImageFetcher from '../ImageFetcher';
 import ThumbnailPreview from '../ThumbnailPreview';
-import VariantGroups from '../VariantGroups';
 
 /**
  * Seek bar that is not based on an input range element. This provides more
@@ -17,9 +16,7 @@ import VariantGroups from '../VariantGroups';
  * mostly taken from Shaka.
  *
  * Listens to the following custom events:
- * - {@link dlf.media.VariantGroupsEvent}
- * - {@link dlf.media.ChaptersEvent}
- * - {@link dlf.media.FpsEvent}
+ * - {@link dlf.media.MediaPropertiesEvent}
  *
  * Emits the following custom events:
  * - {@link dlf.media.SeekBarEvent}
@@ -53,12 +50,15 @@ export default class FlatSeekBar extends shaka.ui.Element {
 
     /** @private Avoid naming conflicts with parent class */
     this.dlf = {
-      /** @type {Chapters | null} */
-      chapters: null,
+      /** @type {dlf.media.MediaProperties} */
+      mediaProperties: {
+        poster: null,
+        chapters: null,
+        fps: null,
+        variantGroups: null,
+      },
       /** @type {boolean} */
       hasRenderedChapters: false,
-      /** @type {VariantGroups | null} */
-      variantGroups: null,
       /** @type {number} */
       value: 0,
       /** @type {shaka.extern.UIConfiguration} */
@@ -122,24 +122,20 @@ export default class FlatSeekBar extends shaka.ui.Element {
         this.updatePreviewImageTracks();
       });
 
-      this.eventManager.listen(this.controls, 'dlf-media-variant-groups', (e) => {
-        const detail = /** @type {dlf.media.VariantGroupsEvent} */(e).detail;
-        this.dlf.variantGroups = detail.variantGroups;
-        this.updatePreviewImageTracks();
-      });
-
-      this.eventManager.listen(this.controls, 'dlf-media-chapters', (e) => {
-        const detail = /** @type {dlf.media.ChaptersEvent} */(e).detail;
-        this.dlf.chapters = detail.chapters;
-        this.dlf.hasRenderedChapters = false;
-        this.dlf.thumbnailPreview?.setChapters(detail.chapters);
-        this.update();
-      });
-
-      this.eventManager.listen(this.controls, 'dlf-media-fps', (e) => {
-        const detail = /** @type {dlf.media.FpsEvent} */(e).detail;
-        if (detail.fps) {
-          this.dlf.thumbnailPreview?.setFps(detail.fps?.rate);
+      this.eventManager.listen(this.controls, 'dlf-media-properties', (e) => {
+        const detail = /** @type {dlf.media.MediaPropertiesEvent} */(e).detail;
+        this.dlf.mediaProperties = detail.fullProps;
+        const { chapters, fps, variantGroups } = detail.updateProps;
+        if (chapters !== undefined) {
+          this.dlf.hasRenderedChapters = false;
+          this.dlf.thumbnailPreview?.setChapters(chapters);
+          this.update();
+        }
+        if (fps !== undefined) {
+          this.dlf.thumbnailPreview?.setFps(fps?.rate ?? null);
+        }
+        if (variantGroups) {
+          this.updatePreviewImageTracks();
         }
       });
 
@@ -238,11 +234,12 @@ export default class FlatSeekBar extends shaka.ui.Element {
       return;
     }
 
-    if (this.dlf.variantGroups === null) {
+    const { variantGroups } = this.dlf.mediaProperties;
+    if (variantGroups === null) {
       return;
     }
 
-    const thumbTracks = this.dlf.variantGroups.findThumbnailTracks();
+    const thumbTracks = variantGroups.findThumbnailTracks();
     this.dlf.thumbnailPreview.setThumbnailTracks(thumbTracks);
   }
 
@@ -296,8 +293,9 @@ export default class FlatSeekBar extends shaka.ui.Element {
       return;
     }
 
-    if (this.dlf.chapters !== null && !this.dlf.hasRenderedChapters) {
-      this.renderChapterMarkers(this.dlf.chapters, duration);
+    const { chapters } = this.dlf.mediaProperties;
+    if (chapters != null && !this.dlf.hasRenderedChapters) {
+      this.renderChapterMarkers(chapters, duration);
       this.dlf.hasRenderedChapters = true;
     }
 

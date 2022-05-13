@@ -253,9 +253,9 @@ export default class SlubMediaPlayer {
       this.dlfPlayer.ui.configure();
     }
     this.dlfPlayer.setLocale(this.config.lang.twoLetterIsoCode);
-    if (this.videoInfo.url.poster !== undefined) {
-      this.dlfPlayer.setPoster(this.videoInfo.url.poster);
-    }
+    this.dlfPlayer.ui.updateMediaProperties({
+      poster: this.videoInfo.url.poster,
+    });
     this.dlfPlayer.setChapters(chapters);
     this.dlfPlayer.setStartTime(startTime ?? null);
     this.dlfPlayer.setSources(this.videoInfo.sources);

@@ -1,11 +1,9 @@
 // @ts-check
 
 import shaka from 'shaka-player/dist/shaka-player.ui';
-import VideoFrame from '../vendor/VideoFrame';
 
 import { clamp, e } from '../../lib/util';
 import buildTimeString from '../lib/buildTimeString';
-import Chapters from '../Chapters';
 
 /**
  * @typedef {'current-time' | 'remaining-time' | 'current-frame'} TimeModeKey
@@ -28,8 +26,7 @@ const TimeMode = {
  *  activeMode: number;
  *  duration: number;
  *  totalSeconds: number;
- *  fps: dlf.media.Fps | null;
- *  chapters: Chapters | null;
+ *  mediaProperties: Pick<dlf.media.MediaProperties, 'chapters' | 'fps'>;
  * }} State
  */
 
@@ -39,8 +36,7 @@ const TimeMode = {
  * Originally based upon Shaka's PresentationTimeTracker.
  *
  * Listens to the following custom events:
- * - {@link dlf.media.ChaptersEvent}
- * - {@link dlf.media.FpsEvent}
+ * - {@link dlf.media.MediaPropertiesEvent}
  */
 export default class PresentationTimeTracker extends shaka.ui.Element {
   /**
@@ -87,8 +83,10 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
       activeMode: TimeMode.CurrentTime,
       totalSeconds: 0,
       duration: 0,
-      fps: null,
-      chapters: null,
+      mediaProperties: {
+        chapters: null,
+        fps: null,
+      },
     };
 
     if (this.eventManager) {
@@ -101,17 +99,10 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
       const updateTime = this.updateTime.bind(this);
       this.eventManager.listen(this.controls, 'timeandseekrangeupdated', updateTime);
 
-      this.eventManager.listen(this.controls, 'dlf-media-chapters', (e) => {
-        const detail = /** @type {dlf.media.ChaptersEvent} */(e).detail;
+      this.eventManager.listen(this.controls, 'dlf-media-properties', (e) => {
+        const detail = /** @type {dlf.media.MediaPropertiesEvent} */(e).detail;
         this.render({
-          chapters: detail.chapters,
-        });
-      });
-
-      this.eventManager.listen(this.controls, 'dlf-media-fps', (e) => {
-        const detail = /** @type {dlf.media.FpsEvent} */(e).detail;
-        this.render({
-          fps: detail.fps,
+          mediaProperties: detail.fullProps,
         });
       });
     }
@@ -162,15 +153,16 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
   /**
    *
    * @param {TimeModeKey} tKey
-   * @param {Pick<State, 'isReady' | 'totalSeconds' | 'duration' | 'fps' | 'chapters'>} state
+   * @param {Pick<State, 'isReady' | 'totalSeconds' | 'duration' | 'mediaProperties'>} state
    * @returns {string}
    */
-  getTimecodeText(tKey, { isReady, totalSeconds, duration, fps, chapters }) {
+  getTimecodeText(tKey, { isReady, totalSeconds, duration, mediaProperties }) {
     // Don't show incomplete info when duration is not yet available
     if (!isReady || duration === 0) {
       return this.dlf.env.t('player.loading');
     } else {
       const showHour = duration >= 3600;
+      const { chapters, fps } = mediaProperties;
       const fpsRate = fps?.rate ?? null;
 
       const textValues = {
