@@ -82,15 +82,15 @@ export default class SlubMediaPlayer {
 
     /** @private */
     this.dlfPlayer.actions['fullscreen.toggle'] = () => {
-      this.dlfPlayer.seekBar?.endSeek();
+      this.dlfPlayer.ui.seekBar?.endSeek();
       this.toggleFullScreen();
     };
     this.actions = Object.assign({}, this.dlfPlayer.actions, {
       'cancel': () => {
         if (this.modals?.hasOpen()) {
           this.modals.closeNext();
-        } else if (this.dlfPlayer.seekBar?.isThumbnailPreviewOpen() ?? false) {
-          this.dlfPlayer.seekBar?.endSeek();
+        } else if (this.dlfPlayer.ui.seekBar?.isThumbnailPreviewOpen() ?? false) {
+          this.dlfPlayer.ui.seekBar?.endSeek();
         } else if (this.dlfPlayer.anySettingsMenusAreOpen()) {
           this.dlfPlayer.hideSettingsMenus();
         }
@@ -100,7 +100,7 @@ export default class SlubMediaPlayer {
       },
       'modal.help.toggle': () => {
         if (this.modals !== null) {
-          this.dlfPlayer.seekBar?.endSeek();
+          this.dlfPlayer.ui.seekBar?.endSeek();
           this.modals.toggleExclusive(this.modals.help);
         }
       },
@@ -114,7 +114,7 @@ export default class SlubMediaPlayer {
         this.snapScreenshot();
       },
       'theater.toggle': () => {
-        this.dlfPlayer.seekBar?.endSeek();
+        this.dlfPlayer.ui.seekBar?.endSeek();
 
         // @see DigitalcollectionsScripts.js
         // TODO: Make sure the theater mode isn't activated on startup; then stop persisting
@@ -432,7 +432,7 @@ export default class SlubMediaPlayer {
       this.dlfPlayer.pauseOn(modal);
     }
 
-    this.dlfPlayer.seekBar?.endSeek();
+    this.dlfPlayer.ui.seekBar?.endSeek();
     modal.open();
   }
 }

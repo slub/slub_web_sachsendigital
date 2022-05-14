@@ -58,6 +58,10 @@ namespace dlf {
        * Main DOM element / container of the frontend.
        */
       get domElement(): HTMLElement;
+
+      get seekBar():
+        | import("../VideoPlayer/controls/FlatSeekBar").default
+        | null;
     }
 
     /**

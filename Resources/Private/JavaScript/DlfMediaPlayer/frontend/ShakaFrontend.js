@@ -11,6 +11,9 @@ import {
 } from '../controls';
 
 /**
+ * Listens to the following custom events:
+ * - {@link dlf.media.SeekBarEvent}
+ *
  * @implements {dlf.media.PlayerFrontend}
  */
 export default class ShakaFrontend {
@@ -39,6 +42,9 @@ export default class ShakaFrontend {
     /** @type {HTMLElement | null} */
     this.shakaBottomControls = null;
 
+    /** @private @type {FlatSeekBar | null} */
+    this.seekBar_ = null;
+
     /** @private */
     this.$container = e('div', {
       className: "dlf-media-player dlf-media-frontend-shaka"
@@ -61,10 +67,27 @@ export default class ShakaFrontend {
     this.ui = new shaka.ui.Overlay(this.player, this.$videoBox, this.media);
 
     this.controls = /** @type {shaka.ui.Controls} */(this.ui.getControls());
+
+    this.registerEventHandlers();
+  }
+
+  /**
+   * @private
+   */
+  registerEventHandlers() {
+    // TODO: Figure out a good flow of events
+    this.controls.addEventListener('dlf-media-seek-bar', (e) => {
+      const detail = /** @type {dlf.media.SeekBarEvent} */(e).detail;
+      this.seekBar_ = detail.seekBar;
+    });
   }
 
   get domElement() {
     return this.$container;
+  }
+
+  get seekBar() {
+    return this.seekBar_;
   }
 
   /**

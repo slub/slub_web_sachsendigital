@@ -9,7 +9,6 @@ import typoConstants from '../lib/typoConstants';
 import { clamp, e, setElementClass } from '../lib/util';
 import ShakaFrontend from './frontend/ShakaFrontend';
 import Chapters from './Chapters';
-import { FlatSeekBar } from './controls';
 import VariantGroups from './VariantGroups';
 
 export default class DlfMediaPlayer {
@@ -71,9 +70,6 @@ export default class DlfMediaPlayer {
 
     /** @private @type {Event[]} */
     this.controlEventQueue = [];
-
-    /** @private @type {FlatSeekBar | null} */
-    this.seekBar_ = null;
 
     /** @private @type {dlf.media.Fps | null} */
     this.fps = null;
@@ -168,7 +164,7 @@ export default class DlfMediaPlayer {
         /** @type {number} */ _keyIndex,
         /** @type {KeyEventMode} */ mode
       ) => {
-        this.seekBar?.setThumbnailSnap(mode === 'down');
+        this.frontend.seekBar?.setThumbnailSnap(mode === 'down');
       },
     }
   }
@@ -190,12 +186,6 @@ export default class DlfMediaPlayer {
 
     this.player.addEventListener('adaptation', this.handlers.onTrackChange);
     this.player.addEventListener('variantchanged', this.handlers.onTrackChange);
-
-    // TODO: Figure out a good flow of events
-    this.controls.addEventListener('dlf-media-seek-bar', (e) => {
-      const detail = /** @type {dlf.media.SeekBarEvent} */(e).detail;
-      this.seekBar_ = detail.seekBar;
-    });
 
     this.controls.addEventListener('dlf-media-manual-seek', this.handlers.onManualSeek);
 
@@ -240,7 +230,7 @@ export default class DlfMediaPlayer {
         case 'hold':
           if (e.tapCount === 1) {
             // TODO: Somehow extract an action "navigate.relative-seek"? How to pass clientX?
-            this.seekBar?.thumbnailPreview?.beginChange(e.event.clientX);
+            this.frontend.seekBar?.thumbnailPreview?.beginChange(e.event.clientX);
           } else if (e.tapCount >= 2) {
             if (e.position.x < 1 / 3) {
               this.actions['navigate.continuous-rewind']();
@@ -262,7 +252,7 @@ export default class DlfMediaPlayer {
     });
 
     g.on('release', () => {
-      this.seekBar?.endSeek();
+      this.frontend.seekBar?.endSeek();
       this.cancelTrickPlay();
     });
   }
@@ -332,14 +322,6 @@ export default class DlfMediaPlayer {
    */
   parseConstants(constants) {
     this.constants = typoConstants(constants, this.constants);
-  }
-
-  /**
-   *
-   * @returns {FlatSeekBar | null}
-   */
-  get seekBar() {
-    return this.seekBar_;
   }
 
   /**
