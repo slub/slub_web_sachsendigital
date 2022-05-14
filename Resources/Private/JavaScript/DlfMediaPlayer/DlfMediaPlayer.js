@@ -1,7 +1,6 @@
 // @ts-check
 
 import shaka from 'shaka-player/dist/shaka-player.ui';
-import 'shaka-player/ui/controls.less';
 
 import VideoFrame from './vendor/VideoFrame';
 
@@ -10,11 +9,7 @@ import typoConstants from '../lib/typoConstants';
 import { clamp, e, setElementClass } from '../lib/util';
 import ShakaFrontend from './frontend/ShakaFrontend';
 import Chapters from './Chapters';
-import {
-  FlatSeekBar,
-  PresentationTimeTracker,
-  VideoTrackSelection,
-} from './controls';
+import { FlatSeekBar } from './controls';
 import VariantGroups from './VariantGroups';
 
 export default class DlfMediaPlayer {
@@ -52,12 +47,6 @@ export default class DlfMediaPlayer {
       className: "dlf-media",
     });
 
-    /** @private */
-    this.frontend = new ShakaFrontend(this.video);
-    this.poster = this.frontend.$poster;
-    this.videoBox = this.frontend.$videoBox;
-    this.errorBox = this.frontend.$errorBox;
-
     /**
      * The object that has caused current pause state, if any.
      *
@@ -74,26 +63,11 @@ export default class DlfMediaPlayer {
     /** @private @type {number | null} */
     this.startTime = null;
 
-    /** @private @type {string[]} */
-    this.controlPanelButtons = [];
-
-    /** @private @type {string[]} */
-    this.overflowMenuButtons = [];
-
     /** @private @type {shaka.Player} */
     this.player = new shaka.Player(this.video);
 
-    /** @private @type {shaka.ui.Overlay} */
-    this.ui = new shaka.ui.Overlay(this.player, this.videoBox, this.video);
-
-    /** @private @type {shaka.ui.Controls} */
-    this.controls = /** @type {shaka.ui.Controls} */(this.ui.getControls());
-
     /** @private */
     this.lastReadyState = 0;
-
-    /** @private @type {HTMLElement | null} */
-    this.shakaBottomControls = null;
 
     /** @private @type {Event[]} */
     this.controlEventQueue = [];
@@ -109,6 +83,12 @@ export default class DlfMediaPlayer {
 
     /** @private @type {Chapters} */
     this.chapters = new Chapters([]);
+
+    /** @private */
+    this.frontend = new ShakaFrontend(this.env, this.player, this.video);
+    this.poster = this.frontend.$poster;
+    this.videoBox = this.frontend.$videoBox;
+    this.errorBox = this.frontend.$errorBox;
 
     this.handlers = {
       onErrorEvent: this.onErrorEvent.bind(this),
@@ -191,6 +171,14 @@ export default class DlfMediaPlayer {
         this.seekBar?.setThumbnailSnap(mode === 'down');
       },
     }
+  }
+
+  get controls() {
+    return this.frontend.controls;
+  }
+
+  get shakaBottomControls() {
+    return this.frontend.shakaBottomControls;
   }
 
   /**
@@ -301,6 +289,13 @@ export default class DlfMediaPlayer {
   }
 
   /**
+   * @returns {dlf.media.PlayerFrontend}
+   */
+  get ui() {
+    return this.frontend;
+  }
+
+  /**
    * Determines whether or not the player supports playback of videos in the
    * given mime type.
    *
@@ -356,22 +351,6 @@ export default class DlfMediaPlayer {
   }
 
   /**
-   *
-   * @param {string[]} elementKey
-   */
-  addControlElement(...elementKey) {
-    this.controlPanelButtons.push(...elementKey);
-  }
-
-  /**
-   *
-   * @param {string[]} elementKey
-   */
-  addOverflowButton(...elementKey) {
-    this.overflowMenuButtons.push(...elementKey);
-  }
-
-  /**
    * Configures the Shaka player UI and mounts it into {@link mount}. The mount
    * point is being replaced with the player until {@link unmount} is called.
    *
@@ -382,48 +361,6 @@ export default class DlfMediaPlayer {
       console.warn("Player already mounted");
       return false;
     }
-
-    // TODO: Somehow avoid overriding the SeekBar globally?
-    FlatSeekBar.register();
-
-    // TODO: Refactor insertion at custom position (left or right of fullscreen)
-    this.ui.configure({
-      addSeekBar: true,
-      enableTooltips: true,
-      controlPanelElements: [
-        'play_pause',
-        PresentationTimeTracker.register(this.env),
-        'spacer',
-        'volume',
-        'mute',
-        ...this.controlPanelButtons,
-        'overflow_menu',
-      ],
-      overflowMenuButtons: [
-        'language',
-        VideoTrackSelection.register(this.env),
-        'playback_rate',
-        'loop',
-        'quality',
-        'picture_in_picture',
-        'captions',
-        ...this.overflowMenuButtons,
-      ],
-      addBigPlayButton: true,
-      seekBarColors: {
-        base: 'rgba(255, 255, 255, 0.3)',
-        buffered: 'rgba(255, 255, 255, 0.54)',
-        played: 'rgb(255, 255, 255)',
-        adBreaks: 'rgb(255, 204, 0)',
-      },
-      enableKeyboardPlaybackControls: false,
-      doubleClickForFullscreen: false,
-      singleClickForPlayAndPause: false,
-    });
-
-    // Set again after `ui.configure()`
-    this.shakaBottomControls =
-      this.videoBox.querySelector('.shaka-bottom-controls');
 
     mount.replaceWith(this.frontend.domElement);
 

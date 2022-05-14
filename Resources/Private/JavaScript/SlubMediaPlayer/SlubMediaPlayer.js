@@ -9,6 +9,7 @@ import {
   DlfMediaPlayer,
   FullScreenButton,
 } from '../DlfMediaPlayer';
+import ShakaFrontend from '../DlfMediaPlayer/frontend/ShakaFrontend';
 
 import Modals from './lib/Modals';
 import { BookmarkModal, HelpModal, ScreenshotModal } from './modals';
@@ -225,29 +226,34 @@ export default class SlubMediaPlayer {
 
     const startTime = this.getStartTime(chapters);
 
-    this.dlfPlayer.addControlElement(
-      ControlPanelButton.register(this.env, {
-        className: "sxnd-screenshot-button",
-        material_icon: 'photo_camera',
-        title: this.env.t('control.screenshot.tooltip'),
-        onClick: this.actions['modal.screenshot.open'],
-      }),
-      ControlPanelButton.register(this.env, {
-        className: "sxnd-bookmark-button",
-        material_icon: 'bookmark_border',
-        title: this.env.t('control.bookmark.tooltip'),
-        onClick: this.actions['modal.bookmark.open'],
-      }),
-      FullScreenButton.register(this.env, {
-        onClick: this.actions['fullscreen.toggle'],
-      }),
-      ControlPanelButton.register(this.env, {
-        className: "sxnd-help-button",
-        material_icon: 'info_outline',
-        title: this.env.t('control.help.tooltip'),
-        onClick: this.actions['modal.help.open'],
-      })
-    );
+    // TODO: How to deal with this check?
+    if (this.dlfPlayer.ui instanceof ShakaFrontend) {
+      this.dlfPlayer.ui.addControlElement(
+        ControlPanelButton.register(this.env, {
+          className: "sxnd-screenshot-button",
+          material_icon: 'photo_camera',
+          title: this.env.t('control.screenshot.tooltip'),
+          onClick: this.actions['modal.screenshot.open'],
+        }),
+        ControlPanelButton.register(this.env, {
+          className: "sxnd-bookmark-button",
+          material_icon: 'bookmark_border',
+          title: this.env.t('control.bookmark.tooltip'),
+          onClick: this.actions['modal.bookmark.open'],
+        }),
+        FullScreenButton.register(this.env, {
+          onClick: this.actions['fullscreen.toggle'],
+        }),
+        ControlPanelButton.register(this.env, {
+          className: "sxnd-help-button",
+          material_icon: 'info_outline',
+          title: this.env.t('control.help.tooltip'),
+          onClick: this.actions['modal.help.open'],
+        })
+      );
+
+      this.dlfPlayer.ui.configure();
+    }
     this.dlfPlayer.setLocale(this.config.lang.twoLetterIsoCode);
     if (this.videoInfo.url.poster !== undefined) {
       this.dlfPlayer.setPoster(this.videoInfo.url.poster);
