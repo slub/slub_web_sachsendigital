@@ -8,6 +8,7 @@ import VideoFrame from './vendor/VideoFrame';
 import Gestures from '../lib/Gestures';
 import typoConstants from '../lib/typoConstants';
 import { clamp, e, setElementClass } from '../lib/util';
+import ShakaFrontend from './frontend/ShakaFrontend';
 import Chapters from './Chapters';
 import {
   FlatSeekBar,
@@ -45,23 +46,17 @@ export default class DlfMediaPlayer {
     /** @private @type {HTMLElement | null} */
     this.mountPoint = null;
 
-    /** @private @type {HTMLElement} */
-    this.container = e('div', { className: "dlf-media-player" });
-
     /** @private @type {HTMLVideoElement} */
     this.video = e('video', {
       id: this.env.mkid(),
       className: "dlf-media",
     });
-    this.poster = e('img', {
-      className: "dlf-media-poster dlf-visible",
-      $error: () => {
-        this.hidePoster();
-      },
-    });
-    this.videoBox = e('div', { className: "dlf-media-shaka-box" }, [this.video, this.poster]);
-    this.errorBox = e('div', { className: "dlf-media-shaka-box dlf-media-error" });
-    this.container.append(this.videoBox, this.errorBox);
+
+    /** @private */
+    this.frontend = new ShakaFrontend(this.video);
+    this.poster = this.frontend.$poster;
+    this.videoBox = this.frontend.$videoBox;
+    this.errorBox = this.frontend.$errorBox;
 
     /**
      * The object that has caused current pause state, if any.
@@ -230,7 +225,7 @@ export default class DlfMediaPlayer {
     const g = new Gestures({
       allowGesture: this.allowGesture.bind(this),
     });
-    g.register(this.container);
+    g.register(this.frontend.domElement);
 
     g.on('gesture', (e) => {
       switch (e.type) {
@@ -430,7 +425,7 @@ export default class DlfMediaPlayer {
     this.shakaBottomControls =
       this.videoBox.querySelector('.shaka-bottom-controls');
 
-    mount.replaceWith(this.container);
+    mount.replaceWith(this.frontend.domElement);
 
     this.mountPoint = mount;
 
@@ -446,7 +441,7 @@ export default class DlfMediaPlayer {
 
   unmount() {
     if (this.mountPoint !== null) {
-      this.container.replaceWith(this.mountPoint);
+      this.frontend.domElement.replaceWith(this.mountPoint);
       this.mountPoint = null;
     }
   }
@@ -539,17 +534,13 @@ export default class DlfMediaPlayer {
 
     // Hide poster once playback has started the first time
     // This is necessary because "onTimeUpdate" may be fired with a delay
-    this.hidePoster();
+    this.frontend.hidePoster();
   }
 
   onManualSeek() {
     // Hide poster when seeking in pause mode before playback has started
     // We don't want to hide the poster when initial timecode is used
-    this.hidePoster();
-  }
-
-  hidePoster() {
-    this.poster.classList.remove('dlf-visible');
+    this.frontend.hidePoster();
   }
 
   /**
@@ -772,7 +763,7 @@ export default class DlfMediaPlayer {
       this.video.currentTime = position.timecode;
     }
 
-    this.hidePoster();
+    this.frontend.hidePoster();
   }
 
   /**

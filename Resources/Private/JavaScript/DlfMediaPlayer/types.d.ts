@@ -53,6 +53,13 @@ namespace dlf {
       vifa: import("./vendor/VideoFrame").default;
     };
 
+    interface PlayerFrontend {
+      /**
+       * Main DOM element / container of the frontend.
+       */
+      get domElement(): HTMLElement;
+    }
+
     /**
      * Signals chapters available in current video.
      *
