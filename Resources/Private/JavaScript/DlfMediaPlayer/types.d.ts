@@ -62,6 +62,27 @@ namespace dlf {
       get seekBar():
         | import("../VideoPlayer/controls/FlatSeekBar").default
         | null;
+
+      /**
+       * ``Gestures`` object that is configured to only dispatch gestures that
+       * are admissible on the player.
+       */
+      get gestures(): import("../lib/Gestures").default | null;
+
+      /**
+       * Handle `Esc` key press, e.g., to close open tooltips or popups.
+       *
+       * @returns Whether or not the UI has changed. This can be used to execute
+       * only one `Esc` action at a time.
+       */
+      handleEscape(): boolean;
+
+      /**
+       * React to a manual seek by the user (e.g., by using a keybinding), as
+       * opposed to automatic seeks such as seeking to the initial timecode.
+       * This may be used, for example, to hide the poster after a user action.
+       */
+      afterManualSeek();
     }
 
     /**

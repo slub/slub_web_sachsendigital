@@ -4,7 +4,6 @@ import shaka from 'shaka-player/dist/shaka-player.ui';
 
 import VideoFrame from './vendor/VideoFrame';
 
-import Gestures from '../lib/Gestures';
 import typoConstants from '../lib/typoConstants';
 import { clamp, e, setElementClass } from '../lib/util';
 import ShakaFrontend from './frontend/ShakaFrontend';
@@ -91,7 +90,6 @@ export default class DlfMediaPlayer {
       onTrackChange: this.onTrackChange.bind(this),
       onTimeUpdate: this.onTimeUpdate.bind(this),
       onPlay: this.onPlay.bind(this),
-      onManualSeek: this.onManualSeek.bind(this),
     };
 
     this.registerEventHandlers();
@@ -140,11 +138,11 @@ export default class DlfMediaPlayer {
       },
       'navigate.frame.prev': () => {
         this.fps?.vifa.seekBackward(1);
-        this.emitControlEvent('dlf-media-manual-seek', {});
+        this.frontend.afterManualSeek();
       },
       'navigate.frame.next': () => {
         this.fps?.vifa.seekForward(1);
-        this.emitControlEvent('dlf-media-manual-seek', {});
+        this.frontend.afterManualSeek();
       },
       'navigate.position.percental': (
         /** @type {Keybinding<any, any>} */ kb,
@@ -187,8 +185,6 @@ export default class DlfMediaPlayer {
     this.player.addEventListener('adaptation', this.handlers.onTrackChange);
     this.player.addEventListener('variantchanged', this.handlers.onTrackChange);
 
-    this.controls.addEventListener('dlf-media-manual-seek', this.handlers.onManualSeek);
-
     this.controls.addEventListener('timeandseekrangeupdated', this.handlers.onTimeUpdate);
 
     this.video.addEventListener('play', this.handlers.onPlay);
@@ -200,10 +196,10 @@ export default class DlfMediaPlayer {
    * @private
    */
   registerGestures() {
-    const g = new Gestures({
-      allowGesture: this.allowGesture.bind(this),
-    });
-    g.register(this.frontend.domElement);
+    const g = this.frontend.gestures;
+    if (g === null) {
+      return;
+    }
 
     g.on('gesture', (e) => {
       switch (e.type) {
@@ -255,27 +251,6 @@ export default class DlfMediaPlayer {
       this.frontend.seekBar?.endSeek();
       this.cancelTrickPlay();
     });
-  }
-
-  /**
-   *
-   * @param {PointerEvent} event
-   */
-  allowGesture(event) {
-    // Don't allow gestures over Shaka bottom controls
-    const bounding = this.videoBox.getBoundingClientRect();
-    const controlsHeight = this.shakaBottomControls?.getBoundingClientRect().height ?? 0;
-    const userAreaBottom = bounding.bottom - controlsHeight - 20;
-    if (event.clientY >= userAreaBottom) {
-      return false;
-    }
-
-    // Check that the pointer interacts with the container, so isn't over the button
-    if (event.target !== this.videoBox.querySelector('.shaka-play-button-container')) {
-      return false;
-    }
-
-    return true;
   }
 
   /**
@@ -456,12 +431,6 @@ export default class DlfMediaPlayer {
     this.frontend.hidePoster();
   }
 
-  onManualSeek() {
-    // Hide poster when seeking in pause mode before playback has started
-    // We don't want to hide the poster when initial timecode is used
-    this.frontend.hidePoster();
-  }
-
   /**
    * @private
    * @param {number} readyState
@@ -476,18 +445,6 @@ export default class DlfMediaPlayer {
     } else if (readyState >= this.constants.minBottomControlsReadyState) {
       this.shakaBottomControls?.classList.add('dlf-visible');
     }
-  }
-
-  /**
-   *
-   * @returns {boolean}
-   */
-  anySettingsMenusAreOpen() {
-    return this.controls.anySettingsMenusAreOpen();
-  }
-
-  hideSettingsMenus() {
-    this.controls.hideSettingsMenus();
   }
 
   /**
@@ -682,7 +639,7 @@ export default class DlfMediaPlayer {
       this.video.currentTime = position.timecode;
     }
 
-    this.frontend.hidePoster();
+    this.frontend.afterManualSeek();
   }
 
   /**

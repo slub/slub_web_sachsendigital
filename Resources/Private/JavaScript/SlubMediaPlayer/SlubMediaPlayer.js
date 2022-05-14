@@ -89,10 +89,8 @@ export default class SlubMediaPlayer {
       'cancel': () => {
         if (this.modals?.hasOpen()) {
           this.modals.closeNext();
-        } else if (this.dlfPlayer.ui.seekBar?.isThumbnailPreviewOpen() ?? false) {
-          this.dlfPlayer.ui.seekBar?.endSeek();
-        } else if (this.dlfPlayer.anySettingsMenusAreOpen()) {
-          this.dlfPlayer.hideSettingsMenus();
+        } else {
+          this.dlfPlayer.ui.handleEscape();
         }
       },
       'modal.help.open': () => {

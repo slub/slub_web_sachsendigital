@@ -3,6 +3,7 @@
 import shaka from 'shaka-player/dist/shaka-player.ui';
 import 'shaka-player/ui/controls.less';
 
+import Gestures from '../../lib/Gestures';
 import { e } from '../../lib/util';
 import {
   FlatSeekBar,
@@ -13,6 +14,7 @@ import {
 /**
  * Listens to the following custom events:
  * - {@link dlf.media.SeekBarEvent}
+ * - {@link dlf.media.ManualSeekEvent}
  *
  * @implements {dlf.media.PlayerFrontend}
  */
@@ -68,6 +70,16 @@ export default class ShakaFrontend {
 
     this.controls = /** @type {shaka.ui.Controls} */(this.ui.getControls());
 
+    /** @private */
+    this.gestures_ = new Gestures({
+      allowGesture: this.allowGesture.bind(this),
+    });
+
+    /** @private */
+    this.handlers = {
+      afterManualSeek: this.afterManualSeek.bind(this),
+    };
+
     this.registerEventHandlers();
   }
 
@@ -80,6 +92,9 @@ export default class ShakaFrontend {
       const detail = /** @type {dlf.media.SeekBarEvent} */(e).detail;
       this.seekBar_ = detail.seekBar;
     });
+    this.controls.addEventListener('dlf-media-manual-seek', this.handlers.afterManualSeek);
+
+    this.gestures_.register(this.$videoBox);
   }
 
   get domElement() {
@@ -88,6 +103,31 @@ export default class ShakaFrontend {
 
   get seekBar() {
     return this.seekBar_;
+  }
+
+  get gestures() {
+    return this.gestures_;
+  }
+
+  handleEscape() {
+    if (this.seekBar?.isThumbnailPreviewOpen()) {
+      this.seekBar?.endSeek();
+      return true;
+    }
+
+    if (this.controls.anySettingsMenusAreOpen()) {
+      this.controls.hideSettingsMenus();
+      return true;
+    }
+
+    return false;
+  }
+
+  afterManualSeek() {
+    // Hide poster when seeking in pause mode before playback has started
+    // We don't want to hide the poster when initial timecode is used
+    // TODO: Move this back to DlfMediaPlayer?
+    this.hidePoster();
   }
 
   /**
@@ -151,5 +191,26 @@ export default class ShakaFrontend {
 
   hidePoster() {
     this.$poster.classList.remove('dlf-visible');
+  }
+
+  /**
+   * @private
+   * @param {PointerEvent} event
+   */
+  allowGesture(event) {
+    // Don't allow gestures over Shaka bottom controls
+    const bounding = this.$videoBox.getBoundingClientRect();
+    const controlsHeight = this.shakaBottomControls?.getBoundingClientRect().height ?? 0;
+    const userAreaBottom = bounding.bottom - controlsHeight - 20;
+    if (event.clientY >= userAreaBottom) {
+      return false;
+    }
+
+    // Check that the pointer interacts with the container, so isn't over the button
+    if (event.target !== this.$videoBox.querySelector('.shaka-play-button-container')) {
+      return false;
+    }
+
+    return true;
   }
 }
