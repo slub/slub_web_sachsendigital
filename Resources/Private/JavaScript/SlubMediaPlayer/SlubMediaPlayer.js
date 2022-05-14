@@ -274,7 +274,7 @@ export default class SlubMediaPlayer {
   }
 
   registerEventHandlers() {
-    document.addEventListener('keydown', this.handlers.onKeyDown);
+    document.addEventListener('keydown', this.handlers.onKeyDown, { capture: true });
     document.addEventListener('keyup', this.handlers.onKeyUp, { capture: true });
   }
 
@@ -302,6 +302,12 @@ export default class SlubMediaPlayer {
    * @param {KeyboardEvent} e
    */
   onKeyDown(e) {
+    // Hack against Shaka reacting to Escape key to close overflow menu;
+    // we do this ourselves. (TODO: Find a better solution)
+    if (e.key === 'Escape') {
+      e.stopImmediatePropagation();
+    }
+
     this.handleKey(e, 'down');
   }
 
