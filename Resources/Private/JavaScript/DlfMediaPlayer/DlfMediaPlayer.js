@@ -5,7 +5,7 @@ import shaka from 'shaka-player/dist/shaka-player.ui';
 import VideoFrame from './vendor/VideoFrame';
 
 import typoConstants from '../lib/typoConstants';
-import { clamp, e, setElementClass } from '../lib/util';
+import { clamp, e } from '../lib/util';
 import ShakaFrontend from './frontend/ShakaFrontend';
 import Chapters from './Chapters';
 import VariantGroups from './VariantGroups';
@@ -328,21 +328,11 @@ export default class DlfMediaPlayer {
     }
   }
 
-  /**
-   *
-   * @param {string | null} langKey
-   */
-  showError(langKey) {
-    if (langKey !== null) {
-      this.errorBox.innerText = this.env.t(langKey);
-    }
-
-    setElementClass(this.errorBox, 'dlf-visible', langKey !== null);
-  }
-
   async load() {
     if (this.sources_.length === 0) {
-      this.showError('error.playback-not-supported');
+      this.frontend.updatePlayerProperties({
+        error: 'error.playback-not-supported',
+      });
       return false;
     }
 
@@ -356,7 +346,9 @@ export default class DlfMediaPlayer {
       }
     }
 
-    this.showError('error.load-failed');
+    this.frontend.updatePlayerProperties({
+      error: 'error.load-failed',
+    });
     return false;
   }
 
@@ -435,14 +427,6 @@ export default class DlfMediaPlayer {
     } else if (readyState >= this.constants.minBottomControlsReadyState) {
       this.shakaBottomControls?.classList.add('dlf-visible');
     }
-  }
-
-  /**
-   *
-   * @param {string} locale
-   */
-  setLocale(locale) {
-    this.controls.getLocalization()?.changeLocale([locale]);
   }
 
   /**

@@ -252,7 +252,9 @@ export default class SlubMediaPlayer {
 
       this.dlfPlayer.ui.configure();
     }
-    this.dlfPlayer.setLocale(this.config.lang.twoLetterIsoCode);
+    this.dlfPlayer.ui.updatePlayerProperties({
+      locale: this.config.lang.twoLetterIsoCode,
+    });
     this.dlfPlayer.ui.updateMediaProperties({
       poster: this.videoInfo.url.poster,
     });

@@ -60,7 +60,15 @@ namespace dlf {
       fps: Fps | null;
     };
 
-    interface PlayerFrontend {
+    type PlayerProperties = {
+      locale: string;
+      state: "poster" | "media";
+      error: string | null;
+    };
+
+    interface PlayerFrontend<
+      PlayerT extends PlayerProperties = PlayerProperties
+    > {
       /**
        * Main DOM element / container of the frontend.
        */
@@ -77,6 +85,7 @@ namespace dlf {
       get gestures(): import("../lib/Gestures").default | null;
 
       updateMediaProperties(props: Partial<MediaProperties>);
+      updatePlayerProperties(props: Partial<PlayerProperties>);
 
       /**
        * Handle `Esc` key press, e.g., to close open tooltips or popups.

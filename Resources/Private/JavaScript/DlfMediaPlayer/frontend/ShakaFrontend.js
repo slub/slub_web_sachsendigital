@@ -46,6 +46,13 @@ export default class ShakaFrontend {
       variantGroups: null,
     };
 
+    /** @private @type {dlf.media.PlayerProperties} */
+    this.playerProperties = {
+      locale: '',
+      state: 'poster',
+      error: null,
+    };
+
     /** @private @type {string[]} */
     this.controlPanelButtons = [];
 
@@ -152,6 +159,26 @@ export default class ShakaFrontend {
     this.controls.dispatchEvent(event);
   }
 
+  /**
+   *
+   * @param {Partial<dlf.media.PlayerProperties>} props
+   */
+  updatePlayerProperties(props) {
+    Object.assign(this.playerProperties, props);
+
+    if (props.locale !== undefined) {
+      this.controls.getLocalization()?.changeLocale([props.locale]);
+    }
+
+    if (props.state !== undefined) {
+      this.renderPoster();
+    }
+
+    if (props.error !== undefined) {
+      this.renderError();
+    }
+  }
+
   handleEscape() {
     if (this.seekBar?.isThumbnailPreviewOpen()) {
       this.seekBar?.endSeek();
@@ -242,8 +269,28 @@ export default class ShakaFrontend {
    * @private
    */
   renderPoster() {
-    if (this.mediaProperties.poster !== null) {
+    const showPoster = (
+      this.mediaProperties.poster !== null
+      && this.playerProperties.state === 'poster'
+    );
+
+    if (showPoster) {
+      // @ts-expect-error
       this.$poster.src = this.mediaProperties.poster;
+    }
+
+    setElementClass(this.$poster, 'dlf-visible', showPoster);
+  }
+
+  /**
+   * @private
+   */
+  renderError() {
+    if (this.playerProperties.error === null) {
+      setElementClass(this.$errorBox, 'dlf-visible', false);
+    } else {
+      setElementClass(this.$errorBox, 'dlf-visible', true);
+      this.$errorBox.textContent = this.env.t(this.playerProperties.error);
     }
   }
 
