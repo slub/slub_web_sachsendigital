@@ -138,7 +138,9 @@ export default class FlatSeekBar extends shaka.ui.Element {
 
       this.eventManager.listen(this.controls, 'dlf-media-fps', (e) => {
         const detail = /** @type {dlf.media.FpsEvent} */(e).detail;
-        this.dlf.thumbnailPreview?.setFps(detail.fps);
+        if (detail.fps) {
+          this.dlf.thumbnailPreview?.setFps(detail.fps?.rate);
+        }
       });
 
       this.controls?.dispatchEvent(/** @type {dlf.media.SeekBarEvent} */(

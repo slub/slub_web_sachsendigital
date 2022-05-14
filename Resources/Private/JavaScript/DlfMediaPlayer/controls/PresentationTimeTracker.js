@@ -28,8 +28,7 @@ const TimeMode = {
  *  activeMode: number;
  *  duration: number;
  *  totalSeconds: number;
- *  vifa: VideoFrame | null;
- *  fps: number | null;
+ *  fps: dlf.media.Fps | null;
  *  chapters: Chapters | null;
  * }} State
  */
@@ -88,7 +87,6 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
       activeMode: TimeMode.CurrentTime,
       totalSeconds: 0,
       duration: 0,
-      vifa: null,
       fps: null,
       chapters: null,
     };
@@ -113,7 +111,6 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
       this.eventManager.listen(this.controls, 'dlf-media-fps', (e) => {
         const detail = /** @type {dlf.media.FpsEvent} */(e).detail;
         this.render({
-          vifa: detail.vifa,
           fps: detail.fps,
         });
       });
@@ -165,32 +162,32 @@ export default class PresentationTimeTracker extends shaka.ui.Element {
   /**
    *
    * @param {TimeModeKey} tKey
-   * @param {Pick<State, 'isReady' | 'totalSeconds' | 'duration' | 'vifa' | 'fps'
-   * | 'chapters'>} state
+   * @param {Pick<State, 'isReady' | 'totalSeconds' | 'duration' | 'fps' | 'chapters'>} state
    * @returns {string}
    */
-  getTimecodeText(tKey, { isReady, totalSeconds, duration, vifa, fps, chapters }) {
+  getTimecodeText(tKey, { isReady, totalSeconds, duration, fps, chapters }) {
     // Don't show incomplete info when duration is not yet available
     if (!isReady || duration === 0) {
       return this.dlf.env.t('player.loading');
     } else {
       const showHour = duration >= 3600;
+      const fpsRate = fps?.rate ?? null;
 
       const textValues = {
         get chapterTitle() {
           return chapters?.timeToChapter(totalSeconds)?.title ?? "_";
         },
         get currentTime() {
-          return buildTimeString(totalSeconds, showHour, fps);
+          return buildTimeString(totalSeconds, showHour, fpsRate);
         },
         get totalTime() {
-          return buildTimeString(duration, showHour, fps);
+          return buildTimeString(duration, showHour, fpsRate);
         },
         get remainingTime() {
-          return buildTimeString(duration - totalSeconds, showHour, fps);
+          return buildTimeString(duration - totalSeconds, showHour, fpsRate);
         },
         get currentFrame() {
-          return vifa?.get() ?? -1;
+          return fps?.vifa.get() ?? -1;
         },
       };
 

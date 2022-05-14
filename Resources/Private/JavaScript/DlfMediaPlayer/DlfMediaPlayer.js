@@ -106,10 +106,7 @@ export default class DlfMediaPlayer {
     /** @private @type {FlatSeekBar | null} */
     this.seekBar_ = null;
 
-    /** @private @type {VideoFrame | null} */
-    this.vifa = null;
-
-    /** @private @type {number | null} */
+    /** @private @type {dlf.media.Fps | null} */
     this.fps = null;
 
     /** @private @type {VariantGroups | null} */
@@ -171,11 +168,11 @@ export default class DlfMediaPlayer {
         this.nextChapter();
       },
       'navigate.frame.prev': () => {
-        this.getVifa()?.seekBackward(1);
+        this.fps?.vifa.seekBackward(1);
         this.emitControlEvent('dlf-media-manual-seek', {});
       },
       'navigate.frame.next': () => {
-        this.getVifa()?.seekForward(1);
+        this.fps?.vifa.seekForward(1);
         this.emitControlEvent('dlf-media-manual-seek', {});
       },
       'navigate.position.percental': (
@@ -522,16 +519,17 @@ export default class DlfMediaPlayer {
 
     if (fps === null) {
       this.fps = null;
-      this.vifa = null;
-    } else if (fps !== this.fps) {
-      this.fps = fps;
-      this.vifa = new VideoFrame({
-        id: this.video.id,
-        frameRate: fps,
-      });
+    } else if (this.fps === null || fps !== this.fps.rate) {
+      this.fps = {
+        rate: fps,
+        vifa: new VideoFrame({
+          id: this.video.id,
+          frameRate: fps,
+        }),
+      };
     }
 
-    this.emitControlEvent('dlf-media-fps', { vifa: this.vifa, fps: this.fps });
+    this.emitControlEvent('dlf-media-fps', { fps: this.fps });
   }
 
   onTimeUpdate() {
@@ -766,15 +764,7 @@ export default class DlfMediaPlayer {
    * @returns {number | null}
    */
   getFps() {
-    return this.fps;
-  }
-
-  /**
-   *
-   * @returns {VideoFrame | null}
-   */
-  getVifa() {
-    return this.vifa;
+    return this.fps?.rate ?? null;
   }
 
   /**

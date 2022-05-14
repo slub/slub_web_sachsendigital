@@ -48,6 +48,11 @@ namespace dlf {
       minBottomControlsReadyState: number;
     };
 
+    type Fps = {
+      rate: number;
+      vifa: import("./vendor/VideoFrame").default;
+    };
+
     /**
      * Signals chapters available in current video.
      *
@@ -92,8 +97,7 @@ namespace dlf {
         chapters: import("./Chapters").default;
       };
       "dlf-media-fps": {
-        vifa: import("./vendor/VideoFrame").default | null;
-        fps: number | null;
+        fps: Fps | null;
       };
       "dlf-media-seek-bar": {
         seekBar: import("./controls/FlatSeekBar").default;
