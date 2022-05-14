@@ -172,9 +172,11 @@ export default class DlfMediaPlayer {
       },
       'navigate.frame.prev': () => {
         this.getVifa()?.seekBackward(1);
+        this.emitControlEvent('dlf-media-manual-seek', {});
       },
       'navigate.frame.next': () => {
         this.getVifa()?.seekForward(1);
+        this.emitControlEvent('dlf-media-manual-seek', {});
       },
       'navigate.position.percental': (
         /** @type {Keybinding<any, any>} */ kb,
