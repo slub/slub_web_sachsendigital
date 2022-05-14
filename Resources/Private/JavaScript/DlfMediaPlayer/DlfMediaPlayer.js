@@ -227,18 +227,12 @@ export default class DlfMediaPlayer {
    * @private
    */
   registerGestures() {
-    const g = new Gestures();
+    const g = new Gestures({
+      allowGesture: this.allowGesture.bind(this),
+    });
     g.register(this.container);
 
     g.on('gesture', (e) => {
-      if (e.event.clientY >= this.userArea.bottom) {
-        return;
-      }
-
-      if (!this.isUserAreaEvent(e.event)) {
-        return;
-      }
-
       switch (e.type) {
         case 'tapup':
           if (e.event.pointerType === 'mouse') {
@@ -288,6 +282,27 @@ export default class DlfMediaPlayer {
       this.seekBar?.endSeek();
       this.cancelTrickPlay();
     });
+  }
+
+  /**
+   *
+   * @param {PointerEvent} event
+   */
+  allowGesture(event) {
+    // Don't allow gestures over Shaka bottom controls
+    const bounding = this.videoBox.getBoundingClientRect();
+    const controlsHeight = this.shakaBottomControls?.getBoundingClientRect().height ?? 0;
+    const userAreaBottom = bounding.bottom - controlsHeight - 20;
+    if (event.clientY >= userAreaBottom) {
+      return false;
+    }
+
+    // Check that the pointer interacts with the container, so isn't over the button
+    if (event.target !== this.videoBox.querySelector('.shaka-play-button-container')) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -446,27 +461,6 @@ export default class DlfMediaPlayer {
     }
 
     setElementClass(this.errorBox, 'dlf-visible', langKey !== null);
-  }
-
-  /**
-   * Check if the event {@link e} interacts with user area (e.g., isn't clicking
-   * the big play button).
-   *
-   * @param {PointerEvent} e
-   */
-  isUserAreaEvent(e) {
-    return e.target === this.videoBox.querySelector('.shaka-play-button-container');
-  }
-
-  /**
-   * Area of the player that may be used for user interaction.
-   *
-   * @type {DOMRect}
-   */
-  get userArea() {
-    const bounding = this.videoBox.getBoundingClientRect();
-    const controlsHeight = this.shakaBottomControls?.getBoundingClientRect().height ?? 0;
-    return new DOMRect(bounding.x, bounding.y, bounding.width, bounding.height - controlsHeight - 20);
   }
 
   async load() {
