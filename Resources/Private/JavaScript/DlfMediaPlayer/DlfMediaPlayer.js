@@ -76,6 +76,9 @@ export default class DlfMediaPlayer {
     /** @private @type {dlf.media.PlayerFrontend} */
     this.frontend = new ShakaFrontend(this.env, this.player, this.video);
 
+    /** @private @type {dlf.media.PlayerMode | 'auto'} */
+    this.mode = 'auto';
+
     /** @private */
     this.handlers = {
       onPlayerErrorEvent: this.onPlayerErrorEvent.bind(this),
@@ -348,9 +351,11 @@ export default class DlfMediaPlayer {
     for (const source of this.sources_) {
       try {
         await this.loadManifest(source);
-        this.ui.updatePlayerProperties({
-          mode: this.player.isAudioOnly() ? 'audio' : 'video',
-        });
+        if (this.mode === 'auto') {
+          this.frontend.updatePlayerProperties({
+            mode: this.player.isAudioOnly() ? 'audio' : 'video',
+          });
+        }
         return true;
       } catch (e) {
         console.error(e);
@@ -410,6 +415,19 @@ export default class DlfMediaPlayer {
 
   onPlay() {
     this.videoPausedOn = null;
+  }
+
+  /**
+   *
+   * @param {dlf.media.PlayerMode | 'auto'} mode
+   * @param {dlf.media.PlayerMode} fallbackMode
+   */
+  setPlayerMode(mode, fallbackMode = 'audio') {
+    this.frontend.updatePlayerProperties({
+      mode: mode === 'auto' ? fallbackMode : mode,
+    });
+
+    this.mode = mode;
   }
 
   /**

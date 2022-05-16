@@ -65,6 +65,8 @@ class VideoToJsonViewHelper extends AbstractViewHelper
             'url' => [
                 'poster' => "https://media.sachsen.digital/$movieDir/$movieDir.jpg",
             ],
+
+            'mode' => 'video',
         ];
 
         return json_encode($result);

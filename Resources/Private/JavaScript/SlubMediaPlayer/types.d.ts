@@ -37,6 +37,8 @@ type VideoInfo = {
   url: {
     poster?: string;
   };
+  mode?: dlf.media.PlayerMode | 'auto';
+  fallbackMode?: dlf.media.PlayerMode;
 };
 
 type MetadataArray = Record<string, string[]>;

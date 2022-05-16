@@ -74,6 +74,7 @@ export default class SlubMediaPlayer {
     /** @private */
     this.dlfPlayer = new DlfMediaPlayer(this.env);
     this.dlfPlayer.parseConstants(config.constants ?? {});
+    this.dlfPlayer.setPlayerMode(videoInfo.mode ?? 'auto', videoInfo.fallbackMode ?? 'audio');
 
     /** @private @type {ChapterLink[]} */
     this.chapterLinks = [];
