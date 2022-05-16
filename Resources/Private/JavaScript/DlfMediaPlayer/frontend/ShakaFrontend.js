@@ -97,6 +97,9 @@ export default class ShakaFrontend {
     /** @private */
     this.controls = /** @type {shaka.ui.Controls} */(this.ui.getControls());
 
+    /** @private @type {ReturnType<setTimeout> | null} */
+    this.configureTimeout = null;
+
     /** @private */
     this.gestures_ = new Gestures({
       allowGesture: this.allowGesture.bind(this),
@@ -111,6 +114,7 @@ export default class ShakaFrontend {
     };
 
     this.registerEventHandlers();
+    this.scheduleConfigure();
   }
 
   /**
@@ -222,6 +226,7 @@ export default class ShakaFrontend {
    */
   addControlElement(...elementKey) {
     this.controlPanelButtons.push(...elementKey);
+    this.scheduleConfigure();
   }
 
   /**
@@ -230,8 +235,28 @@ export default class ShakaFrontend {
    */
   addOverflowButton(...elementKey) {
     this.overflowMenuButtons.push(...elementKey);
+    this.scheduleConfigure();
   }
 
+  /**
+   * Set timeout to (re-)configure the UI.
+   *
+   * This is used to reconfigure only once for multiple successive changes.
+   *
+   * @private
+   */
+  scheduleConfigure() {
+    if (this.configureTimeout === null) {
+      this.configureTimeout = setTimeout(() => {
+        this.configureTimeout = null;
+        this.configure();
+      });
+    }
+  }
+
+  /**
+   * @private
+   */
   configure() {
     // TODO: Somehow avoid overriding the SeekBar globally?
     FlatSeekBar.register();

@@ -249,8 +249,6 @@ export default class SlubMediaPlayer {
           onClick: this.actions['modal.help.open'],
         })
       );
-
-      this.dlfPlayer.ui.configure();
     }
     this.dlfPlayer.ui.updatePlayerProperties({
       locale: this.config.lang.twoLetterIsoCode,
