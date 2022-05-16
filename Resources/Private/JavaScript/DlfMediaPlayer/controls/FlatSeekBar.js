@@ -299,7 +299,13 @@ export default class FlatSeekBar extends shaka.ui.Element {
       this.dlf.hasRenderedChapters = true;
     }
 
-    const colors = this.dlf.uiConfig.seekBarColors;
+    const style = getComputedStyle(this.$container);
+    const colors = {
+      base: style.getPropertyValue('--base-color') || 'rgba(255, 255, 255, 0.3)',
+      buffered: style.getPropertyValue('--buffered-color') || 'rgba(255, 255, 255, 0.54)',
+      played: style.getPropertyValue('--played-color') || 'rgb(255, 255, 255)',
+    };
+
     const currentTime = this.getValue();
     const bufferedLength = this.video.buffered.length;
     const bufferedStart = bufferedLength ? this.video.buffered.start(0) : 0;

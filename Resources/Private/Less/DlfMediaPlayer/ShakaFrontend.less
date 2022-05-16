@@ -1,6 +1,34 @@
-@audio-controls-color: #2a2b2c;
-
 .dlf-shaka {
+    &[data-mode="video"] {
+        --controls-color: white;
+
+        --volume-base-color: rgba(255, 255, 255, 0.54);
+        --volume-level-color: rgba(255, 255, 255);
+
+        .dlf-media-flat-seek-bar {
+            --base-color: rgba(255, 255, 255, 0.3);
+            --buffered-color: rgba(255, 255, 255, 0.54);
+            --played-color: rgb(255, 255, 255);
+        }
+    }
+
+    &[data-mode="audio"] {
+        --controls-color: #2a2b2c;
+
+        --volume-base-color: rgba(0, 0, 0, 0.4);
+        --volume-level-color: rgba(0, 0, 0, 0.8);
+
+        .dlf-media-flat-seek-bar {
+            --base-color: rgba(0, 0, 0, 0.3);
+            --buffered-color: rgba(0, 0, 0, 0.54);
+            --played-color: #2a2b2c;
+
+            .dlf-media-chapter-marker {
+                background-color: lighten(rgb(79, 179, 199), 30%);
+            }
+        }
+    }
+
     .dlf-media-shaka-box {
         background-color: black;
         position: absolute;
@@ -30,6 +58,21 @@
         display: none;
     }
 
+    .dlf-media-error {
+        color: var(--controls-color);
+    }
+
+    .shaka-controls-button-panel > * {
+        color: var(--controls-color) !important;
+    }
+
+    .shaka-volume-bar {
+        &::-webkit-slider-thumb,
+        &::-moz-range-thumb {
+            background: var(--volume-level-color);
+        }
+    }
+
     &[data-mode="audio"] {
         height: 3.5em;
         position: absolute;
@@ -37,10 +80,6 @@
         width: 100%;
 
         background-color: rgba(79, 179, 199, 0.6);
-
-        .dlf-media-error {
-            color: @audio-controls-color;
-        }
 
         video {
             display: none;
@@ -59,24 +98,9 @@
             display: none;
         }
 
-        .shaka-controls-button-panel > * {
-            color: @audio-controls-color;
-        }
-
         .shaka-bottom-controls {
             width: 100%;
             padding-bottom: 0.4em;
-        }
-
-        .shaka-volume-bar {
-            &::-webkit-slider-thumb,
-            &::-moz-range-thumb {
-                background: @audio-controls-color;
-            }
-        }
-
-        .dlf-media-chapter-marker {
-            background-color: lighten(rgb(79, 179, 199), 30%);
         }
     }
 }

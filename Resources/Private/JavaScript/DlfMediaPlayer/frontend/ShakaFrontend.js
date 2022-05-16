@@ -304,6 +304,8 @@ export default class ShakaFrontend {
   getShakaConfiguration() {
     const playerMode = this.playerProperties.mode;
 
+    const style = getComputedStyle(this.$container);
+
     /** @type {any} */
     const result = {
       addSeekBar: true,
@@ -331,25 +333,10 @@ export default class ShakaFrontend {
       fadeDelay: playerMode === 'audio'
         ? 100_000_000  // Just some large value
         : undefined,  // Use default
-      seekBarColors: playerMode === 'video'
-        ? {
-          base: 'rgba(255, 255, 255, 0.3)',
-          buffered: 'rgba(255, 255, 255, 0.54)',
-          played: 'rgb(255, 255, 255)',
-          adBreaks: 'rgb(255, 204, 0)',
-        }
-        : {
-          base: 'rgba(0, 0, 0, 0.3)',
-          buffered: 'rgba(0, 0, 0, 0.54)',
-          played: '#2a2b2c',
-          adBreaks: 'rgb(255, 204, 0)',
-        },
-      volumeBarColors: playerMode === 'audio'
-        ? {
-          base: 'rgba(0, 0, 0, 40%)',
-          level: 'rgb(0, 0, 0, 80%)',
-        }
-        : undefined,  // Use default
+      volumeBarColors: {
+        base: style.getPropertyValue('--volume-base-color') || 'rgba(255, 255, 255, 0.54)',
+        level: style.getPropertyValue('--volume-level-color') || 'rgb(255, 255, 255)',
+      },
       enableKeyboardPlaybackControls: false,
       doubleClickForFullscreen: false,
       singleClickForPlayAndPause: false,
