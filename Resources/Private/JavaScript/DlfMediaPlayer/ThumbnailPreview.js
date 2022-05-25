@@ -168,7 +168,7 @@ export default class ThumbnailPreview {
   }
 
   /**
-   * @param {Chapters} chapters
+   * @param {Chapters | null} chapters
    */
   setChapters(chapters) {
     this.chapters = chapters;

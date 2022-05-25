@@ -97,6 +97,43 @@ export default class Environment {
   }
 
   /**
+   * Mostly taken from Shaka player (shaka.ui.Controls).
+   *
+   * @inheritdoc
+   * @param {HTMLElement} fullscreenElement
+   * @param {boolean} forceLandscape
+   */
+  async toggleFullScreen(fullscreenElement, forceLandscape) {
+    if (document.fullscreenElement) {
+      if (screen.orientation) {
+        screen.orientation.unlock();
+      }
+      await document.exitFullscreen();
+    } else {
+      // If we are in PiP mode, leave PiP mode first.
+      try {
+        if (document.pictureInPictureElement) {
+          await document.exitPictureInPicture();
+        }
+        await fullscreenElement.requestFullscreen({ navigationUI: 'hide' });
+        if (forceLandscape && screen.orientation) {
+          try {
+            // Locking to 'landscape' should let it be either
+            // 'landscape-primary' or 'landscape-secondary' as appropriate.
+            await screen.orientation.lock('landscape');
+          } catch (error) {
+            // If screen.orientation.lock does not work on a device, it will
+            // be rejected with an error. Suppress that error.
+          }
+        }
+      } catch (e) {
+        // TODO: Error handling
+        console.log(e);
+      }
+    }
+  }
+
+  /**
    * @inheritdoc
    * @returns {string}
    */

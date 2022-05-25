@@ -52,6 +52,7 @@ import EventEmitter from 'events';
  *  tapMaxDistance: number;
  *  swipeMinDistance: number;
  *  holdMinDelay: number;
+ *  allowGesture: (event: PointerEvent) => boolean;
  * }} Config
  */
 
@@ -69,6 +70,7 @@ export default class Gestures {
       tapMaxDistance: 20,
       swipeMinDistance: 100,
       holdMinDelay: 200, // TODO: Use something more dynamic, such as difference to double click?
+      allowGesture: () => true,
       ...config
     };
 
@@ -144,7 +146,8 @@ export default class Gestures {
    */
   handlePointerDown(e) {
     // Release if non-left mouse button is clicked
-    if (e.button !== 0) {
+    // (or gesture is not allowed for this event)
+    if (e.button !== 0 || !this.config.allowGesture(e)) {
       this.release();
       return;
     }
@@ -178,7 +181,7 @@ export default class Gestures {
    * @param {PointerEvent} e
    */
   handlePointerUp(e) {
-    if (e.button !== 0) {
+    if (e.button !== 0 || !this.config.allowGesture(e)) {
       return;
     }
 
