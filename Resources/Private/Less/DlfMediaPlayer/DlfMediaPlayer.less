@@ -1,7 +1,23 @@
 @import (reference) "shaka-player/ui/controls.less";
 
+@import "ShakaFrontend.less";
+
 .dlf-media-player {
     .noselect();
+}
+
+.dlf-media-base() {
+    &:not(:defined) {
+        display: none;
+    }
+
+    dlf-chapter {
+        display: none;
+    }
+}
+
+dlf-media {
+    .dlf-media-base();
 }
 
 .dlf-media {

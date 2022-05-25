@@ -1,67 +1,57 @@
 // @ts-check
 
 import shaka from 'shaka-player/dist/shaka-player.ui';
-import 'shaka-player/ui/controls.less';
 
 import VideoFrame from './vendor/VideoFrame';
 
+import { action } from './lib/action';
+import Environment from '../lib/Environment';
 import { clamp, e } from '../lib/util';
+import ShakaFrontend from './frontend/ShakaFrontend';
 import Chapters from './Chapters';
-import {
-  FlatSeekBar,
-  PresentationTimeTracker,
-  VideoTrackSelection,
-} from './controls';
 import VariantGroups from './VariantGroups';
+import { isPlayerMode } from './lib/util';
 
-/**
- * @typedef {{
- *  prevChapterTolerance: number;
- *  minBottomControlsReadyState: number;
- * }} Constants
- */
-
-export default class DlfMediaPlayer {
+export default class DlfMediaPlayer extends HTMLElement {
   /** @private */
   static hasInstalledPolyfills = false;
 
-  /**
-   *
-   * @param {Translator & Identifier & Browser} env
-   */
-  constructor(env) {
+  constructor() {
+    super();
+
     if (!DlfMediaPlayer.hasInstalledPolyfills) {
       shaka.polyfill.installAll();
       DlfMediaPlayer.hasInstalledPolyfills = true;
     }
 
-    /** @private */
-    this.env = env;
+    /** @protected @type {dlf.media.PlayerConfig | null} */
+    this.config = null;
 
-    /** @private @type {Constants} @see {setConstants} */
-    this.constants = {
-      prevChapterTolerance: 5,
-      minBottomControlsReadyState: 2, // Enough data for current position
+    /** @protected */
+    this.env = new Environment();
+
+    /**
+     * @protected
+     * @type {ReturnType<this['constantDefaults']>}
+     */
+    // @ts-expect-error
+    this.constants = this.constantDefaults();
+
+    /** @private Avoid naming conflicts with child classes */
+    this.dlf = {
+      handlers: {
+        onDomContentLoaded: this.onDomContentLoaded.bind(this),
+        onPlayerErrorEvent: this.onPlayerErrorEvent.bind(this),
+        onTrackChange: this.onTrackChange.bind(this),
+        onPlay: this.onPlay.bind(this),
+      },
     };
 
-    /** @private @type {HTMLElement | null} */
-    this.mountPoint = null;
-
-    /** @private @type {HTMLElement} */
-    this.container = e('div', { className: "dlf-media-player" });
-
-    /** @private @type {HTMLVideoElement} */
+    /** @protected @readonly @type {HTMLVideoElement} */
     this.video = e('video', {
       id: this.env.mkid(),
       className: "dlf-media",
     });
-    this.poster = e('img', {
-      className: "dlf-media-poster dlf-visible",
-      $error: () => {
-        this.hidePoster();
-      },
-    });
-    this.container.append(this.video, this.poster);
 
     /**
      * The object that has caused current pause state, if any.
@@ -73,37 +63,16 @@ export default class DlfMediaPlayer {
      */
     this.videoPausedOn = null;
 
-    /** @private @type {string[]} */
-    this.controlPanelButtons = [];
+    /** @private @type {dlf.media.Source | null} */
+    this.currentSource = null;
 
-    /** @private @type {string[]} */
-    this.overflowMenuButtons = [];
+    /** @protected @type {number | null} */
+    this.startTime = null;
 
     /** @private @type {shaka.Player} */
     this.player = new shaka.Player(this.video);
 
-    /** @private @type {shaka.ui.Overlay} */
-    this.ui = new shaka.ui.Overlay(this.player, this.container, this.video);
-
-    /** @private @type {shaka.ui.Controls} */
-    this.controls = /** @type {shaka.ui.Controls} */(this.ui.getControls());
-
-    /** @private */
-    this.lastReadyState = 0;
-
-    /** @private @type {HTMLElement | null} */
-    this.shakaBottomControls = null;
-
-    /** @private @type {Event[]} */
-    this.controlEventQueue = [];
-
-    /** @private @type {FlatSeekBar | null} */
-    this.seekBar = null;
-
-    /** @private @type {VideoFrame | null} */
-    this.vifa = null;
-
-    /** @private @type {number | null} */
+    /** @private @type {dlf.media.Fps | null} */
     this.fps = null;
 
     /** @private @type {VariantGroups | null} */
@@ -112,37 +81,338 @@ export default class DlfMediaPlayer {
     /** @private @type {Chapters} */
     this.chapters = new Chapters([]);
 
-    this.handlers = {
-      onErrorEvent: this.onErrorEvent.bind(this),
-      onTrackChange: this.onTrackChange.bind(this),
-      onTimeUpdate: this.onTimeUpdate.bind(this),
-      onPlay: this.onPlay.bind(this),
-      onManualSeek: this.onManualSeek.bind(this),
-    };
+    /** @private @type {dlf.media.PlayerFrontend} */
+    this.frontend = new ShakaFrontend(this.env, this.player, this.video);
 
-    this.player.addEventListener('error', this.handlers.onErrorEvent);
-    this.controls.addEventListener('error', this.handlers.onErrorEvent);
+    /** @private @type {dlf.media.PlayerMode | 'auto'} */
+    this.mode = 'auto';
 
-    this.player.addEventListener('adaptation', this.handlers.onTrackChange);
-    this.player.addEventListener('variantchanged', this.handlers.onTrackChange);
+    this.__dlfRegisterEvents();
 
-    // TODO: Figure out a good flow of events
-    this.controls.addEventListener('dlf-media-seek-bar', (e) => {
-      const detail = /** @type {dlf.media.SeekBarEvent} */(e).detail;
-      this.seekBar = detail.seekBar;
+    /**
+     * The actions of the player. This is typed in a way that includes additions
+     * made by overriding {@link getActions}.
+     *
+     * @protected
+     * @type {Readonly<ReturnType<this['getActions']>>}
+     */
+    // @ts-expect-error
+    this.actions = this.getActions();
+  }
+
+  /**
+   * @protected
+   */
+  connectedCallback() {
+    const config = this.getConfig();
+    this.env.setLang(config.lang);
+
+    this.startTime = this.getStartTime();
+
+    this.configureFrontend(config);
+
+    // In `connectedCallback`, the DOM children may not yet be available.
+    // Wait for DOM being parsed before loading sources.
+    setTimeout(() => {
+      this.loadSources();
+      this.loadChapters();
     });
 
-    this.controls.addEventListener('dlf-media-manual-seek', this.handlers.onManualSeek);
+    this.appendChild(this.frontend.domElement);
+    this.frontend.domElement.className += ` ${this.className}`;
+  }
 
-    this.controls.addEventListener('timeandseekrangeupdated', this.handlers.onTimeUpdate);
+  /**
+   * @protected
+   * @param {dlf.media.PlayerConfig} config
+   */
+  configureFrontend(config) {
+    const mode = this.getAttribute('mode');
+    let initialMode = undefined;
+    if (mode === 'auto') {
+      const fallbackMode = this.getAttribute('mode-fallback');
+      if (isPlayerMode(fallbackMode)) {
+        initialMode = fallbackMode;
+      }
+      this.mode = mode;
+    } else if (isPlayerMode(mode)) {
+      this.mode = initialMode = mode;
+    }
 
-    this.video.addEventListener('play', this.handlers.onPlay);
+    this.frontend.updatePlayerProperties({
+      locale: config.lang.twoLetterIsoCode,
+      mode: initialMode,
+    });
+
+    const posterUrl = this.getAttribute('poster');
+    if (posterUrl !== null) {
+      this.frontend.updateMediaProperties({
+        poster: posterUrl,
+      });
+    }
+  }
+
+  /**
+   * @protected
+   * @returns {dlf.media.PlayerConfig}
+   */
+  getConfig() {
+    let config = this.config;
+
+    if (config === null) {
+      const configVar = this.getAttribute('config');
+
+      if (configVar) {
+        config = /** @type {any} */(window[/** @type {any} */(configVar)]);
+      } else {
+        config = {
+          lang: {
+            locale: 'en_US.UTF8',
+            twoLetterIsoCode: 'en',
+            phrases: {},
+          },
+        };
+      }
+
+      this.config = config;
+    }
+
+    // @ts-expect-error TODO: Why doesn't TypeScript recognize this?
+    return config;
+  }
+
+  /**
+   * Get default constant/configuration values for the player. This may be
+   * extended in a child class.
+   */
+  constantDefaults() {
+    return {
+      prevChapterTolerance: 5,
+      volumeStep: 0.05,
+      seekStep: 5,
+      trickPlayFactor: 4,
+    };
+  }
+
+  /**
+   * Get actions of the player that can be used in keybindings.
+   *
+   * To add actions in a child class, override this method and return an object
+   * that extends the result of this method:
+   *
+   * ```js
+   * getActions() {
+   *   return {
+   *     ...super.getActions(),
+   *     // your actions here
+   *   };
+   * }
+   * ```
+   */
+  getActions() {
+    return {
+      'fullscreen.toggle': action({
+        isAvailable: () => {
+          return document.fullscreenEnabled;
+        },
+        execute: () => {
+          this.frontend.seekBar?.endSeek();
+          this.toggleFullScreen();
+        },
+      }),
+      'playback.toggle': action(() => {
+        if (this.video.paused) {
+          this.video.play();
+        } else {
+          this.video.pause();
+        }
+      }),
+      'playback.volume.mute.toggle': action(() => {
+        this.video.muted = !this.video.muted;
+      }),
+      'playback.volume.inc': action(() => {
+        this.volume = this.volume + this.constants.volumeStep;
+      }),
+      'playback.volume.dec': action(() => {
+        this.volume = this.volume - this.constants.volumeStep;
+      }),
+      'playback.captions.toggle': action({
+        isAvailable: () => {
+          return this.player.getTextTracks().length > 0;
+        },
+        execute: () => {
+          this.showCaptions = !this.showCaptions;
+        },
+      }),
+      'navigate.rewind': action(() => {
+        this.skipSeconds(-this.constants.seekStep);
+      }),
+      'navigate.seek': action(() => {
+        this.skipSeconds(+this.constants.seekStep);
+      }),
+      'navigate.continuous-rewind': action(() => {
+        this.ensureTrickPlay(-this.constants.trickPlayFactor);
+      }),
+      'navigate.continuous-seek': action(() => {
+        this.ensureTrickPlay(this.constants.trickPlayFactor);
+      }),
+      'navigate.chapter.prev': action(() => {
+        this.prevChapter();
+      }),
+      'navigate.chapter.next': action(() => {
+        this.nextChapter();
+      }),
+      'navigate.frame.prev': action({
+        isAvailable: () => {
+          return this.fps !== null;
+        },
+        execute: () => {
+          this.fps?.vifa.seekBackward(1);
+          this.frontend.afterManualSeek();
+        },
+      }),
+      'navigate.frame.next': action(({
+        isAvailable: () => {
+          return this.fps !== null;
+        },
+        execute: () => {
+          this.fps?.vifa.seekForward(1);
+          this.frontend.afterManualSeek();
+        },
+      })),
+      'navigate.position.percental': action((kb, keyIndex) => {
+        if (kb === undefined || keyIndex === undefined) {
+          return;
+        }
+
+        if (0 <= keyIndex && keyIndex < kb.keys.length) {
+          // Implies kb.keys.length > 0
+
+          const relative = keyIndex / kb.keys.length;
+          const absolute = relative * this.video.duration;
+
+          this.seekTo(absolute);
+        }
+      }),
+      'navigate.thumbnails.snap': action({
+        isAvailable: () => {
+          return (
+            this.variantGroups !== null
+            && this.variantGroups.findThumbnailTracks().length > 0
+          );
+        },
+        execute: (_kb, _keyIndex, mode) => {
+          this.frontend.seekBar?.setThumbnailSnap(mode === 'down');
+        },
+      }),
+    };
+  }
+
+  /**
+   * Determines start time from user settings. Returns `null` if no such setting
+   * is made, which a child class may take as a hint to use another value.
+   *
+   * @protected
+   * @return {number | null}
+   */
+  getStartTime() {
+    // Also ignore empty start value to simplify HTML template
+    const start = this.getAttribute('start');
+    if (start === null || start === '') {
+      return null;
+    }
+
+    return Number(start);
+  }
+
+  /**
+   * @private
+   */
+  __dlfRegisterEvents() {
+    window.addEventListener('DOMContentLoaded', this.dlf.handlers.onDomContentLoaded);
+
+    this.player.addEventListener('error', this.dlf.handlers.onPlayerErrorEvent);
+    this.player.addEventListener('adaptation', this.dlf.handlers.onTrackChange);
+    this.player.addEventListener('variantchanged', this.dlf.handlers.onTrackChange);
+
+    this.video.addEventListener('play', this.dlf.handlers.onPlay);
+
+    this.registerGestures();
+  }
+
+  /**
+   * @private
+   */
+  registerGestures() {
+    const g = this.frontend.gestures;
+    if (g === null) {
+      return;
+    }
+
+    g.on('gesture', (e) => {
+      switch (e.type) {
+        case 'tapup':
+          if (e.event.pointerType === 'mouse') {
+            if (e.tapCount <= 2) {
+              this.actions['playback.toggle'].execute();
+            }
+
+            if (e.tapCount === 2) {
+              this.actions['fullscreen.toggle'].execute();
+            }
+          } else if (e.tapCount >= 2) {
+            if (e.position.x < 1 / 3) {
+              this.actions['navigate.rewind'].execute();
+            } else if (e.position.x > 2 / 3) {
+              this.actions['navigate.seek'].execute();
+            } else if (e.tapCount === 2 && !this.env.isInFullScreen()) {
+              this.actions['fullscreen.toggle'].execute();
+            }
+          }
+          break;
+
+        case 'hold':
+          if (e.tapCount === 1) {
+            // TODO: Somehow extract an action "navigate.relative-seek"? How to pass clientX?
+            this.frontend.seekBar?.thumbnailPreview?.beginChange(e.event.clientX);
+          } else if (e.tapCount >= 2) {
+            if (e.position.x < 1 / 3) {
+              this.actions['navigate.continuous-rewind'].execute();
+            } else if (e.position.x > 2 / 3) {
+              this.actions['navigate.continuous-seek'].execute();
+            }
+          }
+          break;
+
+        case 'swipe':
+          // "Natural" swiping
+          if (e.direction === 'east') {
+            this.actions['navigate.rewind'].execute();
+          } else if (e.direction === 'west') {
+            this.actions['navigate.seek'].execute();
+          }
+          break;
+      }
+    });
+
+    g.on('release', () => {
+      this.frontend.seekBar?.endSeek();
+      this.cancelTrickPlay();
+    });
+  }
+
+  /**
+   * @returns {dlf.media.PlayerFrontend}
+   */
+  get ui() {
+    return this.frontend;
   }
 
   /**
    * Determines whether or not the player supports playback of videos in the
    * given mime type.
    *
+   * @private
    * @param {string} mimeType
    * @returns {boolean}
    */
@@ -161,145 +431,77 @@ export default class DlfMediaPlayer {
     }
   }
 
-  /**
-   *
-   * @param {Partial<Constants>} constants
-   */
-  setConstants(constants) {
-    Object.assign(this.constants, constants);
+  loadSources() {
+    /** @type {dlf.media.Source[]} */
+    const sources = [];
+
+    this.querySelectorAll('source').forEach((el) => {
+      const url = el.getAttribute("src");
+      const mimeType = el.getAttribute("type");
+
+      if (!url || !mimeType) {
+        console.warn('Ignoring <source> that does not specify URL or MIME type');
+        return;
+      }
+
+      sources.push({ url, mimeType });
+    });
+
+    this.loadOneOf(sources);
   }
 
   /**
    *
-   * @param {string} posterUrl
+   * @param {dlf.media.Source[]} sources
    */
-  setPoster(posterUrl) {
-    this.poster.src = posterUrl;
-  }
-
-  /**
-   *
-   * @param {string[]} elementKey
-   */
-  addControlElement(...elementKey) {
-    this.controlPanelButtons.push(...elementKey);
-  }
-
-  /**
-   *
-   * @param {string[]} elementKey
-   */
-  addOverflowButton(...elementKey) {
-    this.overflowMenuButtons.push(...elementKey);
-  }
-
-  /**
-   * Configures the Shaka player UI and mounts it into {@link mount}. The mount
-   * point is being replaced with the player until {@link unmount} is called.
-   *
-   * @param {HTMLElement} mount
-   */
-  mount(mount) {
-    if (this.mountPoint !== null) {
-      console.warn("Player already mounted");
+  async loadOneOf(sources) {
+    if (sources.length === 0) {
+      this.frontend.updatePlayerProperties({
+        error: 'error.no-media-source',
+      });
       return false;
     }
 
-    // TODO: Somehow avoid overriding the SeekBar globally?
-    FlatSeekBar.register();
+    let sawUnsupportedMime = false;
 
-    // TODO: Refactor insertion at custom position (left or right of fullscreen)
-    this.ui.configure({
-      addSeekBar: true,
-      enableTooltips: true,
-      controlPanelElements: [
-        'play_pause',
-        PresentationTimeTracker.register(this.env),
-        'spacer',
-        'volume',
-        'mute',
-        ...this.controlPanelButtons,
-        'overflow_menu',
-      ],
-      overflowMenuButtons: [
-        'language',
-        VideoTrackSelection.register(this.env),
-        'playback_rate',
-        'loop',
-        'quality',
-        'picture_in_picture',
-        'captions',
-        ...this.overflowMenuButtons,
-      ],
-      addBigPlayButton: true,
-      seekBarColors: {
-        base: 'rgba(255, 255, 255, 0.3)',
-        buffered: 'rgba(255, 255, 255, 0.54)',
-        played: 'rgb(255, 255, 255)',
-        adBreaks: 'rgb(255, 204, 0)',
-      },
-      enableKeyboardPlaybackControls: false,
-      doubleClickForFullscreen: false,
-      singleClickForPlayAndPause: false,
-    });
+    // Try loading video until one of the sources works.
+    for (const source of sources) {
+      if (!this.supportsMimeType(source.mimeType)) {
+        sawUnsupportedMime = true;
+        continue;
+      }
 
-    // Set again after `ui.configure()`
-    this.shakaBottomControls =
-      this.container.querySelector('.shaka-bottom-controls');
-
-    mount.replaceWith(this.container);
-
-    this.mountPoint = mount;
-
-    return true;
-  }
-
-  /**
-   * @returns {boolean}
-   */
-  get isMounted() {
-    return this.mountPoint !== null;
-  }
-
-  unmount() {
-    if (this.mountPoint !== null) {
-      this.container.replaceWith(this.mountPoint);
-      this.mountPoint = null;
+      try {
+        await this.loadManifest(source);
+        this.frontend.updatePlayerProperties({
+          error: null,
+          mode: this.mode === 'auto'
+            ? (this.player.isAudioOnly() ? 'audio' : 'video')
+            : undefined,
+        });
+        this.loaded();
+        return true;
+      } catch (e) {
+        console.error(e);
+      }
     }
-  }
 
-  getContainer() {
-    return this.container;
-  }
-
-  /**
-   * Check if the event {@link e} interacts with user area (e.g., isn't clicking
-   * the big play button).
-   *
-   * @param {PointerEvent} e
-   */
-  isUserAreaEvent(e) {
-    return e.target === this.container.querySelector('.shaka-play-button-container');
-  }
-
-  /**
-   * Area of the player that may be used for user interaction.
-   *
-   * @type {DOMRect}
-   */
-  get userArea() {
-    const bounding = this.container.getBoundingClientRect();
-    const controlsHeight = this.shakaBottomControls?.getBoundingClientRect().height ?? 0;
-    return new DOMRect(bounding.x, bounding.y, bounding.width, bounding.height - controlsHeight - 20);
+    this.frontend.updatePlayerProperties({
+      error: sawUnsupportedMime
+        ? 'error.playback-not-supported'
+        : 'error.load-failed',
+    });
+    return false;
   }
 
   /**
    *
+   * @private
    * @param {dlf.media.Source} videoSource
-   * @param {number | null} startTime
    */
-  async loadManifest(videoSource, startTime = null) {
-    await this.player.load(videoSource.url, startTime, videoSource.mimeType);
+  async loadManifest(videoSource) {
+    await this.player.load(videoSource.url, this.startTime, videoSource.mimeType);
+    this.currentSource = videoSource;
 
     this.variantGroups = new VariantGroups(this.player);
 
@@ -307,11 +509,18 @@ export default class DlfMediaPlayer {
       || this.variantGroups.selectGroupByRole("main")
       || this.variantGroups.selectGroupByIndex(0);
 
-    this.emitControlEvent('dlf-media-variant-groups', {
+    this.frontend.updateMediaProperties({
       variantGroups: this.variantGroups,
     });
 
     this.updateFrameRate();
+  }
+
+  /**
+   * @protected
+   */
+  onDomContentLoaded() {
+    // Override in child
   }
 
   onTrackChange() {
@@ -323,112 +532,52 @@ export default class DlfMediaPlayer {
 
     if (fps === null) {
       this.fps = null;
-      this.vifa = null;
-    } else if (fps !== this.fps) {
-      this.fps = fps;
-      this.vifa = new VideoFrame({
-        id: this.video.id,
-        frameRate: fps,
-      });
+    } else if (this.fps === null || fps !== this.fps.rate) {
+      this.fps = {
+        rate: fps,
+        vifa: new VideoFrame({
+          id: this.video.id,
+          frameRate: fps,
+        }),
+      };
     }
 
-    this.emitControlEvent('dlf-media-fps', { vifa: this.vifa, fps: this.fps });
-  }
-
-  onTimeUpdate() {
-    const readyState = this.video.readyState;
-
-    if (readyState !== this.lastReadyState) {
-      this.updateBottomControlsVisibility(readyState);
-    }
+    this.frontend.updateMediaProperties({
+      fps: this.fps,
+    });
   }
 
   onPlay() {
     this.videoPausedOn = null;
-
-    // Hide poster once playback has started the first time
-    // This is necessary because "onTimeUpdate" may be fired with a delay
-    this.hidePoster();
   }
 
-  onManualSeek() {
-    // Hide poster when seeking in pause mode before playback has started
-    // We don't want to hide the poster when initial timecode is used
-    this.hidePoster();
-  }
-
-  hidePoster() {
-    this.poster.classList.remove('dlf-visible');
+  /**
+   * Override in child class.
+   */
+  async toggleFullScreen() {
+    this.env.toggleFullScreen(this.frontend.domElement, true);
   }
 
   /**
    * @private
-   * @param {number} readyState
    */
-  updateBottomControlsVisibility(readyState) {
-    // When readyState is strictly between 0 and minBottomControlsReadyState,
-    // don't change whether controls are shown. Thus, on first load the controls
-    // may remain hidden, and on seeking the controls remain visible.
+  loadChapters() {
+    /** @type {dlf.media.Chapter[]} */
+    const chapters = [];
 
-    if (readyState === 0) {
-      this.shakaBottomControls?.classList.remove('dlf-visible');
-    } else if (readyState >= this.constants.minBottomControlsReadyState) {
-      this.shakaBottomControls?.classList.add('dlf-visible');
-    }
-  }
+    this.querySelectorAll('dlf-chapter').forEach((el) => {
+      const title = el.getAttribute('title');
+      const timecode = Number(el.getAttribute('timecode'));
 
-  /**
-   * @returns {boolean}
-   */
-  isThumbnailPreviewOpen() {
-    return this.seekBar?.isThumbnailPreviewOpen() ?? false;
-  }
+      if (!title || !(timecode >= 0)) {
+        console.warn('Ignoring invalid <dlf-chapter>');
+        return;
+      }
 
-  /**
-   * Stop any active seeking/scrubbing and close thumbnail preview.
-   */
-  endSeek() {
-    this.seekBar?.endSeek();
-  }
+      chapters.push({ title, timecode });
+    });
 
-  /**
-   *
-   * @param {boolean} value
-   */
-  setThumbnailSnap(value) {
-    this.seekBar?.setThumbnailSnap(value);
-  }
-
-  /**
-   *
-   * @param {number} clientX
-   */
-  beginRelativeSeek(clientX) {
-    this.seekBar?.thumbnailPreview?.beginChange(clientX);
-  }
-
-  /**
-   *
-   * @returns {boolean}
-   */
-  anySettingsMenusAreOpen() {
-    return this.controls.anySettingsMenusAreOpen();
-  }
-
-  hideSettingsMenus() {
-    this.controls.hideSettingsMenus();
-  }
-
-  toggleFullScreen() {
-    this.controls.toggleFullScreen();
-  }
-
-  /**
-   *
-   * @param {string} locale
-   */
-  setLocale(locale) {
-    this.controls.getLocalization()?.changeLocale([locale]);
+    this.setChapters(new Chapters(chapters));
   }
 
   /**
@@ -437,7 +586,15 @@ export default class DlfMediaPlayer {
    */
   setChapters(chapters) {
     this.chapters = chapters;
-    this.emitControlEvent('dlf-media-chapters', { chapters });
+    this.frontend.updateMediaProperties({ chapters });
+  }
+
+  loaded() {
+    //
+  }
+
+  get hasVideo() {
+    return this.currentSource !== null;
   }
 
   /**
@@ -445,7 +602,7 @@ export default class DlfMediaPlayer {
    * @returns {dlf.media.Chapter | undefined}
    */
   getCurrentChapter() {
-    return this.timeToChapter(this.currentTime);
+    return this.timeToChapter(this.video.currentTime);
   }
 
   /**
@@ -458,10 +615,9 @@ export default class DlfMediaPlayer {
   }
 
   /**
-   *
    * @returns {HTMLVideoElement}
    */
-  getVideo() {
+  get media() {
     return this.video;
   }
 
@@ -483,6 +639,10 @@ export default class DlfMediaPlayer {
     this.player.setTextTrackVisibility(value);
   }
 
+  isAudioOnly() {
+    return this.player.isAudioOnly();
+  }
+
   /**
    * Volume in range [0, 1]. Out-of-bounds values are clamped when set.
    *
@@ -499,52 +659,9 @@ export default class DlfMediaPlayer {
   /**
    * @type {number}
    */
-  get currentTime() {
-    return this.video.currentTime;
-  }
-
-  /**
-   * @type {number}
-   */
   get displayTime() {
-    return this.controls.getDisplayTime();
-  }
-
-  /**
-   * Whether or not the video is muted.
-   *
-   * @type {boolean}
-   */
-  get muted() {
-    return this.video.muted;
-  }
-
-  set muted(value) {
-    this.video.muted = value;
-  }
-
-  /**
-   * Whether or not the video is paused.
-   *
-   * @type {boolean}
-   */
-  get paused() {
-    return this.video.paused;
-  }
-
-  /**
-   * Start playback.
-   */
-  play() {
-    this.video.play();
-    this.videoPausedOn = null;
-  }
-
-  /**
-   * Pause playback.
-   */
-  pause() {
-    this.video.pause();
+    // Adopted from "getDisplayTime" in "shaka.ui.Controls"
+    return this.frontend.seekBar?.getValue() ?? this.video.currentTime;
   }
 
   /**
@@ -556,9 +673,9 @@ export default class DlfMediaPlayer {
    * @param {any} obj
    */
   pauseOn(obj) {
-    if (this.videoPausedOn === null && !this.paused) {
+    if (this.videoPausedOn === null && !this.video.paused) {
       this.videoPausedOn = obj;
-      this.pause();
+      this.video.pause();
     }
   }
 
@@ -570,7 +687,7 @@ export default class DlfMediaPlayer {
    */
   resumeOn(obj) {
     if (this.videoPausedOn === obj) {
-      this.play();
+      this.video.play();
     }
   }
 
@@ -579,18 +696,11 @@ export default class DlfMediaPlayer {
    * @returns {number | null}
    */
   getFps() {
-    return this.fps;
+    return this.fps?.rate ?? null;
   }
 
   /**
-   *
-   * @returns {VideoFrame | null}
-   */
-  getVifa() {
-    return this.vifa;
-  }
-
-  /**
+   * Seek to the specified {@link position} and mark this as a manual seek.
    *
    * @param {number | dlf.media.Chapter} position Timecode (in seconds) or chapter
    */
@@ -601,7 +711,7 @@ export default class DlfMediaPlayer {
       this.video.currentTime = position.timecode;
     }
 
-    this.hidePoster();
+    this.frontend.afterManualSeek();
   }
 
   /**
@@ -620,7 +730,7 @@ export default class DlfMediaPlayer {
    */
   prevChapter() {
     const tolerance = this.constants.prevChapterTolerance;
-    const prev = this.chapters.timeToChapter(this.currentTime - tolerance);
+    const prev = this.chapters.timeToChapter(this.video.currentTime - tolerance);
     this.seekTo(prev ?? 0);
   }
 
@@ -664,38 +774,15 @@ export default class DlfMediaPlayer {
 
   /**
    *
-   * @private
-   * @template {keyof dlf.media.EventDetail} K
-   * @param {K} key
-   * @param {dlf.media.EventDetail[K]} detail
-   */
-  emitControlEvent(key, detail) {
-    this.controlEventQueue.push(new CustomEvent(key, { detail }));
-    this.dispatchControlEvents();
-  }
-
-  /**
-   * @private
-   */
-  dispatchControlEvents() {
-    if (this.isMounted) {
-      for (const event of this.controlEventQueue) {
-        this.controls.dispatchEvent(event);
-      }
-
-      this.controlEventQueue = [];
-    }
-  }
-
-  /**
-   *
    * @param {Event} event
    */
-  onErrorEvent(event) {
+  onPlayerErrorEvent(event) {
     if (event instanceof CustomEvent) {
       // TODO: Propagate to user
       const error = event.detail;
-      console.error('Error code', error.code, 'object', error);
+      console.error('Error from Shaka player', error.code, error);
     }
   }
 }
+
+customElements.define('dlf-media', DlfMediaPlayer);

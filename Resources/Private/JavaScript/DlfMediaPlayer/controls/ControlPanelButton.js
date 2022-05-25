@@ -9,7 +9,7 @@ import { e, setElementClass } from '../../lib/util';
  * @property {string} className
  * @property {string} material_icon Key of button icon
  * @property {string} title Text of button tooltip
- * @property {() => void} onClick
+ * @property {dlf.media.PlayerAction} onClickAction
  */
 
 /**
@@ -20,7 +20,7 @@ export default class ControlPanelButton extends shaka.ui.Element {
    * Registers a factory with specified configuration. The returned key may
    * be added to `controlPanelElements` in shaka-player config.
    *
-   * @param {Identifier} env
+   * @param {Translator & Identifier} env
    * @param {Partial<Config>} config
    * @returns {string} Key of the registered element factory
    */
@@ -28,8 +28,9 @@ export default class ControlPanelButton extends shaka.ui.Element {
     const key = env.mkid();
 
     shaka.ui.Controls.registerElement(key, {
-      create(rootElement, controls) {
-        return new ControlPanelButton(rootElement, controls, config);
+      create: (rootElement, controls) => {
+        // "new this": Allow registering instance of derived classes
+        return new this(rootElement, controls, env, config);
       },
     });
 
@@ -39,10 +40,14 @@ export default class ControlPanelButton extends shaka.ui.Element {
   /**
    * @param {HTMLElement} parent
    * @param {shaka.ui.Controls} controls
+   * @param {Translator} env
    * @param {Partial<Config>} config
    */
-  constructor(parent, controls, config = {}) {
+  constructor(parent, controls, env, config = {}) {
     super(parent, controls);
+
+    /** @protected */
+    this.env = env;
 
     const button = e("button", {
       className: `material-icons-round ${config.className ?? ""}`,
@@ -53,16 +58,33 @@ export default class ControlPanelButton extends shaka.ui.Element {
     /** @protected Avoid naming conflicts with parent class */
     this.dlf = { config, button };
 
-    if (this.eventManager && config.onClick) {
-      this.eventManager.listen(button, 'click', config.onClick);
+    const { onClickAction } = config;
+    if (this.eventManager && onClickAction) {
+      this.eventManager.listen(button, 'click', () => {
+        if (onClickAction.isAvailable()) {
+          onClickAction.execute();
+        }
+      });
+
+      this.eventManager.listen(this.player, 'loaded', () => {
+        this.updateControlPanelButton();
+      });
     }
 
-    this.updateStrings();
+    this.updateControlPanelButton();
   }
 
-  updateStrings() {
+  /**
+   * @protected
+   */
+  updateControlPanelButton() {
     let tooltip = this.dlf.config.title ?? "";
     this.dlf.button.ariaLabel = tooltip;
     setElementClass(this.dlf.button, 'shaka-tooltip', tooltip !== "");
+
+    const { onClickAction } = this.dlf.config;
+    if (onClickAction) {
+      setElementClass(this.dlf.button, 'shaka-hidden', !onClickAction.isAvailable());
+    }
   }
 }

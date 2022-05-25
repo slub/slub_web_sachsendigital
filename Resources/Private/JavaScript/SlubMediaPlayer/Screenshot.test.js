@@ -5,9 +5,9 @@
 // @ts-check
 
 import { beforeEach, expect, test } from '@jest/globals';
+import Environment from '../lib/Environment';
 import { fillMetadata } from './lib/metadata';
 import ScreenshotModal from './modals/ScreenshotModal';
-import Environment from './Environment';
 import { drawScreenshot } from './Screenshot';
 
 beforeEach(() => {

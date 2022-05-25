@@ -5,6 +5,14 @@
 @zIndexModalCover: 100000;
 @zIndexModal: 999999;
 
+slub-media {
+    .dlf-media-base();
+
+    dlf-meta {
+        display: none;
+    }
+}
+
 .control-bar {
     // Avoid white border/separator between TOC and video
     border-right: none !important;
@@ -19,8 +27,6 @@
 }
 
 .document-view {
-    background-color: black;
-
     @media screen and (max-width: (@tabletLandscapeViewportWidth - 1px)) {
         top: 50px;
     }
@@ -36,12 +42,9 @@
     }
 }
 
-.sxnd-player-fatal-error {
-    position: absolute;
-    text-align: left;
-    padding-left: 1em;
-    padding-top: 1em;
-    color: white;
+.dlf-media-player {
+    width: 100%;
+    height: 100%;
 }
 
 .inline-icon {

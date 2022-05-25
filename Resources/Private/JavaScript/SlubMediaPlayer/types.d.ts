@@ -3,7 +3,7 @@
 
 interface Window {
   SlubMediaPlayer: {
-    new (container: HTMLElement, videoInfo: VideoInfo, config: AppConfig);
+    new ();
   };
 }
 
@@ -18,22 +18,6 @@ interface DlfTheaterMode
     persist: boolean;
   }> {}
 
-type VideoInfo = {
-  pageNo: number | undefined;
-  chapters: {
-    title: string;
-    timecode: string;
-  }[];
-  metadata: MetadataArray;
-  /**
-   * Sources of available manifest or raw video files, ordered by preference.
-   */
-  sources: dlf.media.Source[];
-  url: {
-    poster?: string;
-  };
-};
-
 type MetadataArray = Record<string, string[]>;
 
 type PhrasesDict = Record<string, string>;
@@ -43,7 +27,7 @@ type LangDef = {
   phrases: PhrasesDict;
 };
 
-type AppConstants = {
+type ScreenshotModalConstants = {
   /**
    * Template for filename when downloading screenshot (without extension).
    */
@@ -53,35 +37,18 @@ type AppConstants = {
    * Template for comment added to metadata of screenshot image file.
    */
   screenshotCommentTemplate: string;
+};
 
-  /**
-   * Number of seconds in which to still rewind to previous chapter.
-   */
-  prevChapterTolerance: number;
-
-  /**
-   * Volume increase/decrease in relevant keybinding.
-   */
-  volumeStep: number;
-
-  /**
-   * Number of seconds to seek or rewind in relevant keybinding.
-   */
-  seekStep: number;
-
-  /**
-   * Trick play factor for continuous rewind/seek.
-   * TODO: Check if this should be input as setting or retrieved from current manifest
-   */
-  trickPlayFactor: number,
-
+type AppConstants = {
   /**
    * Whether or not to switch to landscape in fullscreen mode.
    */
   forceLandscapeOnFullscreen: boolean;
 };
 
-type AppConstantsConfig = import('../lib/typoConstants').TypoConstants<AppConstants>;
+type AppConstantsConfig = import("../lib/typoConstants").TypoConstants<
+  dlf.media.PlayerConstants & ScreenshotModalConstants & AppConstants
+>;
 
 type AppConfig = {
   shareButtons: import("./modals/BookmarkModal").ShareButtonInfo[];

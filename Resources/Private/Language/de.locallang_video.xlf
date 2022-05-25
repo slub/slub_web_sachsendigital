@@ -105,6 +105,10 @@
 				<source><![CDATA[Toggle theater mode]]></source>
 				<target><![CDATA[Theater-Modus an / aus]]></target>
 			</trans-unit>
+			<trans-unit id="action.unavailable" approved="yes">
+				<source><![CDATA[Action unavailable]]></source>
+				<target><![CDATA[Aktion nicht anwendbar]]></target>
+			</trans-unit>
 			<trans-unit id="control.back" approved="yes">
 				<source><![CDATA[Back]]></source>
 				<target><![CDATA[Zurück]]></target>
@@ -112,6 +116,14 @@
 			<trans-unit id="control.bookmark.tooltip" approved="yes">
 				<source><![CDATA[Bookmark]]></source>
 				<target><![CDATA[Bookmark]]></target>
+			</trans-unit>
+			<trans-unit id="control.fullscreen.tooltip" approved="yes">
+				<source><![CDATA[Full screen]]></source>
+				<target><![CDATA[Vollbildmodus]]></target>
+			</trans-unit>
+			<trans-unit id="control.fullscreen_exit.tooltip" approved="yes">
+				<source><![CDATA[Exit full screen]]></source>
+				<target><![CDATA[Vollbildmodus beenden]]></target>
 			</trans-unit>
 			<trans-unit id="control.help.tooltip" approved="yes">
 				<source><![CDATA[Show help]]></source>
@@ -141,13 +153,21 @@
 				<source><![CDATA[Video Track]]></source>
 				<target><![CDATA[Videospur]]></target>
 			</trans-unit>
+			<trans-unit id="error.no-media-source" approved="yes">
+				<source><![CDATA[No media source given]]></source>
+				<target><![CDATA[Kein A/V-Dokument angegeben]]></target>
+			</trans-unit>
+			<trans-unit id="error.loading" approved="yes">
+				<source><![CDATA[Loading media file]]></source>
+				<target><![CDATA[A/V-Dokument wird geladen]]></target>
+			</trans-unit>
 			<trans-unit id="error.load-failed" approved="yes">
-				<source><![CDATA[The video could not be loaded.]]></source>
-				<target><![CDATA[Das Video konnte nicht geladen werden.]]></target>
+				<source><![CDATA[The media file could not be loaded.]]></source>
+				<target><![CDATA[Das A/V-Dokument konnte nicht geladen werden.]]></target>
 			</trans-unit>
 			<trans-unit id="error.playback-not-supported" approved="yes">
-				<source><![CDATA[This video cannot be played back in your browser.]]></source>
-				<target><![CDATA[Dieses Video kann in Ihrem Browser nicht wiedergegeben werden.]]></target>
+				<source><![CDATA[This media file cannot be played back in your browser.]]></source>
+				<target><![CDATA[Dieses A/V-Dokument kann in Ihrem Browser nicht wiedergegeben werden.]]></target>
 			</trans-unit>
 			<trans-unit id="key.generic">
 				<source><![CDATA[{key}]]></source>
