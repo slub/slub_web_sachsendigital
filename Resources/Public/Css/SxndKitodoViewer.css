@@ -8,8 +8,7 @@
  * The complete LESS bindings for the
  * Sachsen.digital specialized document viewer
  *
- * Author: Thomas Jung <thomas@tjwd.de>
- * License: All rights reserved
+ * Author: Thomas Jung <thomas@jung.digital>
  *
  */
 /*
@@ -19,8 +18,7 @@
  * Value settings for type, breakpoints and
  * base settings for calculations
  *
- * Author: Thomas Jung <thomas@tjwd.de>
- * License: All rights reserved
+ * Author: Thomas Jung <thomas@jung.digital>
  *
  */
 /* open-sans-300italic - latin */
@@ -60,8 +58,7 @@
  * Own mixins for clearfixes, text removal,
  * gradients and some other minor stuff
  *
- * Author: Thomas Jung <thomas@tjwd.de>
- * License: All rights reserved
+ * Author: Thomas Jung <thomas@jung.digital>
  *
  */
 /*
@@ -3580,7 +3577,7 @@ body.calendar .tx-dlf-toolsFulltextsearch form {
 }
 /*
  *
- * SLUB Styles
+ * Sachsen.digital Styles
  * ================================================
  * Color typography and adjustments
  * for custom styling
@@ -3610,8 +3607,6 @@ body:before {
   background-image: -o-linear-gradient(top, rgba(71, 90, 90, 0.3) 0, rgba(145, 196, 44, 0.6) 100%);
   background-image: linear-gradient(to bottom, rgba(71, 90, 90, 0.3) 0, rgba(145, 196, 44, 0.6) 100%);
   background-repeat: repeat-x;
-  -webkit-transition: all 0.3s ease-out;
-  -o-transition: all 0.3s ease-out;
   transition: all 0.3s ease-out;
 }
 .control-bar .header-bar:before {
@@ -3632,7 +3627,6 @@ body:before {
   height: 45px;
 }
 .control-bar .header-bar .brand a {
-  background-size: auto 50px;
   background-position: 0 0;
   line-height: 24px;
   color: #fff;
@@ -3800,14 +3794,9 @@ body:before {
     line-height: 60px;
   }
   .no-touchevents .tx-dlf-calendar-years ul li a {
-    -webkit-transition: all 0.3s ease-out;
-    -o-transition: all 0.3s ease-out;
     transition: all 0.3s ease-out;
   }
   .no-touchevents .tx-dlf-calendar-years ul li a:hover {
-    -webkit-transform: scale(1.2);
-    -moz-transform: scale(1.2);
-    -ms-transform: scale(1.2);
     transform: scale(1.2);
   }
 }
@@ -3820,14 +3809,9 @@ body:before {
   max-height: 250px;
 }
 .no-touchevents .tx-dlf-pagegrid-list li {
-  -webkit-transition: all 0.3s ease-out;
-  -o-transition: all 0.3s ease-out;
   transition: all 0.3s ease-out;
 }
 .no-touchevents .tx-dlf-pagegrid-list li:hover {
-  -webkit-transform: scale(2);
-  -moz-transform: scale(2);
-  -ms-transform: scale(2);
   transform: scale(2);
   z-index: 10;
 }
@@ -3852,22 +3836,22 @@ body:before {
   .tx-dlf-toc ul.toc ul li a .meta-type-icon,
   .tx-dlf-toc ul.toc ul li span.a .meta-type-icon,
   .tx-dlf-toc ul.toc ul li > span.title .meta-type-icon {
-    background-position: -90px 0px;
+    background-position: -90px 0;
   }
   .tx-dlf-toc ul.toc ul li a .meta-type-icon.meta-type-Abbildung,
   .tx-dlf-toc ul.toc ul li span.a .meta-type-icon.meta-type-Abbildung,
   .tx-dlf-toc ul.toc ul li > span.title .meta-type-icon.meta-type-Abbildung {
-    background-position: 0 0px;
+    background-position: 0 0;
   }
   .tx-dlf-toc ul.toc ul li a .meta-type-icon.meta-type-Werbung,
   .tx-dlf-toc ul.toc ul li span.a .meta-type-icon.meta-type-Werbung,
   .tx-dlf-toc ul.toc ul li > span.title .meta-type-icon.meta-type-Werbung {
-    background-position: -30px 0px;
+    background-position: -30px 0;
   }
   .tx-dlf-toc ul.toc ul li a .meta-type-icon.meta-type-Artikel,
   .tx-dlf-toc ul.toc ul li span.a .meta-type-icon.meta-type-Artikel,
   .tx-dlf-toc ul.toc ul li > span.title .meta-type-icon.meta-type-Artikel {
-    background-position: -60px 0px;
+    background-position: -60px 0;
   }
   .tx-dlf-toc ul.toc ul li.placeholder {
     color: white;

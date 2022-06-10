@@ -5,26 +5,25 @@
  * Definition for header image, logo, page titles
  * (for breadcrumb eg. look in Navigation.less)
  *
- * Author: Thomas Jung <thomas@tjwd.de>
- * License: All rights reserved
+ * Author: Thomas Jung <thomas@jung.digital>
  *
  */
- 
+
 .header {
     position: relative;
     height: 80px;
     margin: 0;
     border: 0 none;
     background: @brand-secondary;
-    .vertgrad(fade(@brand-secondary,30%), fade(@brand-primary,60%), 0, 100%);
-    .transition();
+    .vertgrad(fade(@brand-secondary, 30%), fade(@brand-primary, 60%), 0, 100%);
+    transition: @transition;
     &:before {
         position: absolute;
         top: 0;
         right: 0;
         bottom: 0;
         left: 0;
-        background: url(../Images/noise.png) repeat  0 0;
+        background: url(../Images/noise.png) repeat 0 0;
         background-size: 90px 45px;
         content: " ";
         opacity: 0.1;
@@ -85,5 +84,3 @@
     }
 }
 
-
-// EOF

@@ -5,8 +5,7 @@
  * Style definitions for galleries and all
  * image related items
  *
- * Author: Thomas Jung <thomas@tjwd.de>
- * License: All rights reserved
+ * Author: Thomas Jung <thomas@jung.digital>
  *
  */
 
@@ -72,7 +71,7 @@ figure {
                 opacity: 0.4;
             }
             .ce-row {
-                display:none;
+                display: none;
                 &:first-child {
                     display: block;
                 }
@@ -80,7 +79,7 @@ figure {
             figure {
                 position: absolute;
                 top: 50%;
-                .transform(translateY(-50%));
+                transform: translateY(-50%);
                 margin: 0;
                 line-height: 0;
                 max-height: 100%;
@@ -104,8 +103,8 @@ figure {
                     bottom: 0;
                     left: 0;
                     max-width: 80%;
-                    background: rgba(255,255,255,1);
-                    border: 6px solid fade(@brand-secondary,10%);
+                    background: rgba(255, 255, 255, 1);
+                    border: solid fade(@brand-secondary, 10%);
                     border-width: 0 0 6px 6px;
                     padding: 7px 10px;
                     margin: 0;
@@ -117,7 +116,7 @@ figure {
                     right: -6px;
                     bottom: -6px;
                     left: 6px;
-                    border: 3px solid @brand-secondary;
+                    border: solid @brand-secondary;
                     border-width: 0 3px 3px 0;
                     content: " ";
                     opacity: 0.2;
@@ -196,7 +195,7 @@ figure {
         flex-wrap: wrap;
         align-items: center;
         justify-content: center;
-        background: lighten(@brand-secondary-light,10%);
+        background: lighten(@brand-secondary-light, 10%);
         .ce-row {
             margin: 0;
             padding: 10px;
@@ -227,7 +226,7 @@ figure {
         font-style: normal;
     }
     .ce-gallery {
-        border-top: 1px solid lighten(@brand-primary,35%);
+        border-top: 1px solid lighten(@brand-primary, 35%);
         background: transparent;
         display: block;
         padding: 0;
@@ -255,7 +254,7 @@ figure {
                 width: 100px;
                 height: auto;
                 max-height: 80px;
-                .transform(translateY(-50%));
+                transform: translateY(-50%);
                 &:after {
                     content: none;
                     display: none;
@@ -264,7 +263,7 @@ figure {
             figcaption {
                 position: absolute;
                 top: 50%;
-                .transform(translateY(-50%));
+                transform: translateY(-50%);
                 .text-hide();
                 margin: 0;
                 h4 {

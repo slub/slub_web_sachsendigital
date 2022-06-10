@@ -5,14 +5,13 @@
  * Design assets for collection overview and
  * the details page
  *
- * Author: Thomas Jung <thomas@tjwd.de>
- * License: All rights reserved
+ * Author: Thomas Jung <thomas@jung.digital>
  *
  */
 
 /* the overview menu  ================================================================================================== */
 .collection-menu {
-    border: 1px solid @brand-secondary-light;
+    border: solid @brand-secondary-light;
     border-width: 1px 0;
     margin: 30px 0;
     padding: 15px 0;
@@ -30,7 +29,7 @@
                 right: -6px;
                 bottom: -6px;
                 left: 6px;
-                border: 3px solid #4e6666;
+                border: solid #4e6666;
                 border-width: 0 3px 3px 0;
                 content: " ";
                 opacity: .2;
@@ -147,13 +146,13 @@
     }
     .no-touchevents & {
         .collection-element {
-            .transition(all .15s ease-out);
-            .transform(scale(1));
+            transition: all .15s ease-out;
+            transform: scale(1);
             &:after {
-                .transition(all .15s ease-out);
+                transition: all .15s ease-out;
             }
             &:hover {
-                .transform(scale(1.1));
+                transform: scale(1.1);
                 &:after {
                     top: 12px;
                     right: -12px;
@@ -218,4 +217,4 @@
         }
     }
 }
-// EOF
+

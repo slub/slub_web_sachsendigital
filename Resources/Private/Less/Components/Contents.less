@@ -5,8 +5,7 @@
  * Style definitions for content and
  * structure elements inside the content area
  *
- * Author: Thomas Jung <thomas@tjwd.de>
- * License: All rights reserved
+ * Author: Thomas Jung <thomas@jung.digital>
  *
  */
 
@@ -46,12 +45,12 @@ a {
                 height: 200px;
                 content: " ";
                 background: fade(@brand-primary-dark,15%);
-                .transition(all 0.15s ease-out);
-                .transform(scaleX(0));
+                transition: all 0.15s ease-out;
+                transform: scaleX(0);
             }
             &:hover {
                 &:before {
-                    .transform(scaleX(1));
+                    transform: scaleX(1);
                 }
             }
         }
@@ -94,7 +93,7 @@ a {
             line-height: 1;
             display: inline-block;
             margin: 0 auto;
-            border: 10px solid #fff;
+            border: solid #fff;
             border-width: 0 10px;
             &:before {
                 position: absolute;
@@ -277,7 +276,7 @@ a {
         font-size: 14px;
         td, th {
             text-align: left;
-            border: 0px solid @brand-secondary-light;
+            border: solid @brand-secondary-light;
             border-width: 0 1px 1px 0;
             padding: 6px 10px;
             line-height: 1.4;
@@ -431,5 +430,3 @@ a {
         }
     }
 }
-
- //EOF

@@ -5,8 +5,7 @@
  * Designs for breadcrumb, the fancy main
  * navigation with some fallbacks and burger button
  *
- * Author: Thomas Jung <thomas@tjwd.de>
- * License: All rights reserved
+ * Author: Thomas Jung <thomas@jung.digital>
  *
  */
 
@@ -21,8 +20,8 @@
     padding: 10px;
     background: transparent;
     overflow: hidden;
-    .transition();
-    .transform(scale(1));
+    transition: @transition;
+    transform: scale(1);
     opacity: 1;
     .nav-button-bar {
         position: relative;
@@ -32,13 +31,13 @@
         width: 24px;
         height: 2px;
         display: block;
-        &+.nav-button-bar {
+        & + .nav-button-bar {
             margin-top: 6px;
         }
     }
     .menu-open & {
         outline: 0 none;
-        .transform(scale(2));
+        transform: scale(2);
         opacity: 0;
     }
     @media screen and (min-width: @phoneLandscapeViewportWidth) {
@@ -70,10 +69,10 @@ nav.main-navigation {
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
     border-left: 1px solid #fff;
-    .transition();
-    .transform(translateX(260px));
+    transition: @transition;
+    transform: translateX(260px);
     .menu-open & {
-        .transform(translateX(0));
+        transform: translateX(0);
     }
     .nav-close {
         position: absolute;
@@ -87,8 +86,8 @@ nav.main-navigation {
         padding: 10px;
         background: transparent;
         overflow: hidden;
-        .transition();
-        .transform(scale(1));
+        transition: @transition;
+        transform: scale(1);
         opacity: 1;
         z-index: 100;
         .nav-button-bar {
@@ -100,9 +99,9 @@ nav.main-navigation {
             width: 18px;
             height: 2px;
             display: block;
-                .transform(rotate(45deg));
+            transform: rotate(45deg);
             &:nth-child(2) {
-                .transform(rotate(-45deg));
+                transform: rotate(-45deg);
             }
         }
     }
@@ -122,9 +121,9 @@ nav.main-navigation {
                 font-size: 18px;
                 padding-left: 30px;
                 text-transform: uppercase;
-        .parentpage-link {
-            display: none;
-        }
+                .parentpage-link {
+                    display: none;
+                }
             }
             > ul {
                 list-style: none;
@@ -145,7 +144,7 @@ nav.main-navigation {
     }
     @media screen and (min-width: @tabletViewportWidth) {
         width: 320px;
-        .transform(translatex(320px));
+        transform: translatex(320px);
     }
     @media screen and (min-width: @tabletLandscapeViewportWidth) {
         position: relative;
@@ -155,7 +154,7 @@ nav.main-navigation {
         width: 900px;
         margin: 0 auto;
         border: 0 none;
-        .transform(translateX(0));
+        transform: translateX(0);
         z-index: 120;
         overflow: visible;
         .nav-close {
@@ -170,7 +169,7 @@ nav.main-navigation {
                 position: relative;
                 display: inline-block;
                 padding: 0 10px 5px 10px;
-                .transition(all .2s ease-out);
+                transition: all .2s ease-out;
                 > a {
                     position: relative;
                     font-size: 14px;
@@ -179,18 +178,18 @@ nav.main-navigation {
                 &.active {
                     > a {
                         font-weight: 700;
-                &:before {
-                    position: absolute;
-                    bottom: -12px;
-                    left: 50%;
-                    width: 4px;
-                    height: 4px;
-                    margin-left: -2px;
-                    border-radius: 4px;
-                    background: #fff;
-                    content: " ";
-                    .transition();
-                }
+                        &:before {
+                            position: absolute;
+                            bottom: -12px;
+                            left: 50%;
+                            width: 4px;
+                            height: 4px;
+                            margin-left: -2px;
+                            border-radius: 4px;
+                            background: #fff;
+                            content: " ";
+                            transition: @transition;
+                        }
                     }
                 }
                 ul {
@@ -199,11 +198,11 @@ nav.main-navigation {
                     left: 0;
                     width: auto;
                     padding: 0 10px 10px 10px;
-                    background: fade(@brand-secondary,90%);
-                    box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+                    background: fade(@brand-secondary, 90%);
+                    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
                     opacity: 0;
-                    .transform(scaleY(0));
-                    .transition(all .2s ease-out);
+                    transform: scaleY(0);
+                    transition: all .2s ease-out;
                     transform-origin: center top;
                     li {
                         a {
@@ -214,7 +213,7 @@ nav.main-navigation {
                             &.parentpage-link {
                                 .touchevents & {
                                     font-size: 12px;
-                                    border-bottom: 1px solid rgba(255,255,255,0.3);
+                                    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
                                     opacity: .5;
                                     margin: 0 -10px;
                                     padding: 5px 25px;
@@ -232,9 +231,9 @@ nav.main-navigation {
                     }
                 }
                 &.open {
-                    background: fade(@brand-secondary,90%);
+                    background: fade(@brand-secondary, 90%);
                     > a:before {
-                        .transform(translateY(-50px));
+                        transform: translateY(-50px);
                         opacity: 0;
                     }
                     ul {
@@ -251,7 +250,7 @@ nav.main-navigation {
             }
         }
         .no-touchevents & {
-            >ul > li {
+            > ul > li {
                 a {
                     &:hover {
                         text-decoration: underline;
@@ -260,11 +259,11 @@ nav.main-navigation {
                 &:hover {
                     > a {
                         &:before {
-                            .transform(translateY(-50px));
+                            transform: translateY(-50px);
                             opacity: 0;
                         }
                     }
-                    background: fade(@brand-secondary,90%);
+                    background: fade(@brand-secondary, 90%);
                     ul {
                         transform: scaleY(1);
                         opacity: 1;
@@ -336,15 +335,15 @@ a.totop {
     height: 40px;
     display: block;
     .text-hide();
-    background: fade(@brand-secondary,70%);
+    background: fade(@brand-secondary, 70%);
     border-radius: 4px;
     opacity: 0;
     z-index: 200;
-    .transition();
-    .transform(translateY(65px));
+    transition: @transition;
+    transform: translateY(65px);
     &.active {
         opacity: 1;
-        .transform(translateY(0));
+        transform: translateY(0);
     }
     &:after {
         position: absolute;
@@ -368,4 +367,3 @@ a.totop {
     }
 }
 
-// EOF

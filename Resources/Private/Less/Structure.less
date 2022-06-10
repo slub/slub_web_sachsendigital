@@ -5,8 +5,7 @@
  * Basic definition of body, cotainers and other
  * structural elements
  *
- * Author: Thomas Jung <thomas@tjwd.de>
- * License: All rights reserved
+ * Author: Thomas Jung <thomas@jung.digital>
  *
  */
 
@@ -18,18 +17,17 @@
 }
 
 html {
-  position: relative;
-  font-size: @base-calc;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
-  -webkit-tap-highlight-color: transparent;
+    position: relative;
+    font-size: @base-calc;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
 html, body, .main-wrapper, .perspective, .content-wrapper {
@@ -38,14 +36,37 @@ html, body, .main-wrapper, .perspective, .content-wrapper {
 }
 
 /* generic usable color classes  ======================================================================================= */
-.green { color: @brand-primary; }
-.green-bg { background-color: @brand-primary; }
-.green-light-bg { background-color: @brand-primary-light; }
-.petrol { color: @brand-secondary; }
-.petrol-bg { background-color: @brand-secondary; }
-.petrol-light-bg { background-color: @brand-secondary-light; }
-.warning { color: @ui-warning; }
-.warning-bg { background-color: @ui-warning; }
+.green {
+    color: @brand-primary;
+}
+
+.green-bg {
+    background-color: @brand-primary;
+}
+
+.green-light-bg {
+    background-color: @brand-primary-light;
+}
+
+.petrol {
+    color: @brand-secondary;
+}
+
+.petrol-bg {
+    background-color: @brand-secondary;
+}
+
+.petrol-light-bg {
+    background-color: @brand-secondary-light;
+}
+
+.warning {
+    color: @ui-warning;
+}
+
+.warning-bg {
+    background-color: @ui-warning;
+}
 
 /* 12 column gridsystem  =============================================================================================== */
 .container {
@@ -66,6 +87,7 @@ html, body, .main-wrapper, .perspective, .content-wrapper {
         width: 1110px;
     }
 }
+
 .row {
     position: relative;
     @media screen and (min-width: @tabletLandscapeViewportWidth) {
@@ -76,32 +98,57 @@ html, body, .main-wrapper, .perspective, .content-wrapper {
             float: left;
             padding: 0 15px;
         }
-        .col-1 { width: 8.33333333%; }
-        .col-2 { width: 16.66666667%; }
-        .col-3 { width: 25%; }
-        .col-4 { width: 33.33333333%; }
-        .col-5 { width: 41.66666667%; }
-        .col-6 { width: 50%; }
-        .col-7 { width: 58.33333333%; }
-        .col-8 { width: 66.66666667%; }
-        .col-9 { width: 75%; }
-        .col-10 { width: 83.33333333%; }
-        .col-11 { width: 91.66666667%; }
-        .col-12 { width: 100%; }
+        .col-1 {
+            width: 8.33333333%;
+        }
+        .col-2 {
+            width: 16.66666667%;
+        }
+        .col-3 {
+            width: 25%;
+        }
+        .col-4 {
+            width: 33.33333333%;
+        }
+        .col-5 {
+            width: 41.66666667%;
+        }
+        .col-6 {
+            width: 50%;
+        }
+        .col-7 {
+            width: 58.33333333%;
+        }
+        .col-8 {
+            width: 66.66666667%;
+        }
+        .col-9 {
+            width: 75%;
+        }
+        .col-10 {
+            width: 83.33333333%;
+        }
+        .col-11 {
+            width: 91.66666667%;
+        }
+        .col-12 {
+            width: 100%;
+        }
     }
 }
+
 /* basic frame design  ================================================================================================= */
 .perspective {
-    .transition();
+    transition: @transition;
     .menu-open & {
-        .transform(translateX(-260px));
+        transform: translateX(-260px);
     }
     @media screen and (min-width: @phoneLandscapeViewportWidth) {
         padding-bottom: 250px;
     }
     @media screen and (min-width: @tabletViewportWidth) {
         .menu-open & {
-            .transform(translateX(-320px));
+            transform: translateX(-320px);
         }
     }
 }
@@ -112,7 +159,7 @@ html, body, .main-wrapper, .perspective, .content-wrapper {
     bottom: 0;
     left: 0;
     right: 0;
-    background: fade(@brand-primary,90%);
+    background: fade(@brand-primary, 90%);
     z-index: 1000;
     padding: 15px 10px;
     text-align: center;
@@ -151,4 +198,3 @@ html, body, .main-wrapper, .perspective, .content-wrapper {
     }
 }
 
-// EOF
