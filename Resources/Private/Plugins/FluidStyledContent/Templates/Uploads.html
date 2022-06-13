@@ -1,55 +1,28 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
-<f:layout name="Default" />
+<html data-namespace-typo3-fluid="true" lang="en" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
 
-<f:comment>
-     <!-- HEADS UP! We mimic old CSS styled content classes with 'csc-*' at the beginning to get the LESS declarations working -->
- </f:comment>
+<f:layout name="Default"/>
 
 <f:section name="Main">
-	<f:if condition="{files}">
-		<ul class="csc-uploads">
-			<f:for each="{files}" as="file" iteration="fileIterator">
-				<li {f:if(condition:'{data.uploads_type} == 1',then: 'class="csc-uploads-element-{file.extension}"')}>
-
-					<f:if condition="{data.uploads_type} == 2">
-						<f:if condition="{f:uri.image(src: 'file:{f:if(condition: file.originalFile, then: \'file:{file.originalFile.uid}\', else: \'file:{file.uid}\')}')} != '/'">
-							<f:then>
-								<a href="{file.publicUrl}"{f:if(condition:data.target,then:' target="{data.target}"')}>
-									<f:media file="{file}" width="150" alt="{file.properties.alternative}" />
-								</a>
-							</f:then>
-							<f:else>
-								<img src="{f:uri.resource(path: 'Icons/FileIcons/{file.extension}.gif', extensionName: 'frontend')}" alt="">
-							</f:else>
-						</f:if>
-					</f:if>
-
-					<div>
-						<f:if condition="{file.name}">
-							<a href="{file.publicUrl}"{f:if(condition:data.target,then:' target="{data.target}"')}>
-								<span class="csc-uploads-fileName">
-									{file.name}
-								</span>
-							</a>
-						</f:if>
-
-						<f:if condition="{file.properties.description}">
-							<f:if condition="{data.uploads_description}">
-								<span class="csc-uploads-description">
-									{file.properties.description}
-								</span>
-							</f:if>
-						</f:if>
-
-						<f:if condition="{data.filelink_size}">
-							<span class="csc-uploads-fileSize">
-								<f:format.bytes value="{file.properties.size}" />
-							</span>
-						</f:if>
-					</div>
-				</li>
-			</f:for>
-		</ul>
-	</f:if>
+    <f:if condition="{files}">
+        <ul class="uploads">
+            <f:for as="file" each="{files}" iteration="fileIterator">
+                <li class="{f:if(condition:'{data.uploads_type} == 1',then: 'uploads-element-{file.extension}')}">
+                    <f:if condition="{file.name}">
+                        <a href="{file.publicUrl}" target="{f:if(condition:data.target,then:' {data.target}',else: '_self')}">
+                            <span class="uploads-fileName">{file.name} {f:if(condition: '{file.type} == 5', then: '(PDF-Download)')}</span>
+                        </a>
+                    </f:if>
+                    <f:if condition="{file.properties.description}">
+                        <f:if condition="{data.uploads_description}">
+                            <span class="uploads-description">{file.properties.description}</span>
+                        </f:if>
+                    </f:if>
+                    <f:if condition="{data.filelink_size}">
+                        <span class="uploads-fileSize"><f:format.bytes value="{file.properties.size}"/></span>
+                    </f:if>
+                </li>
+            </f:for>
+        </ul>
+    </f:if>
 </f:section>
 </html>

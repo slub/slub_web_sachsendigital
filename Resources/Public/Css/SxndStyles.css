@@ -245,17 +245,14 @@ figure figcaption {
   color: #475a5a;
 }
 /* Styles for images and galeries which floats in text ================================================================= */
-.textpic-container .csc-textpic-text,
-.ce-textpic .csc-textpic-text {
+.ce-textpic .ce-bodytext {
   margin: 0 !important;
   min-height: 200px;
 }
 @media screen and (min-width: 768px) {
-  .textpic-container,
   .ce-textpic {
     position: relative;
   }
-  .textpic-container .ce-gallery,
   .ce-textpic .ce-gallery {
     position: absolute;
     top: -4px;
@@ -263,7 +260,6 @@ figure figcaption {
     width: 260px;
     height: 100%;
   }
-  .textpic-container .ce-gallery:before,
   .ce-textpic .ce-gallery:before {
     position: absolute;
     left: 50%;
@@ -274,15 +270,6 @@ figure figcaption {
     content: " ";
     opacity: 0.4;
   }
-  .textpic-container .ce-gallery .ce-row,
-  .ce-textpic .ce-gallery .ce-row {
-    display: none;
-  }
-  .textpic-container .ce-gallery .ce-row:first-child,
-  .ce-textpic .ce-gallery .ce-row:first-child {
-    display: block;
-  }
-  .textpic-container .ce-gallery figure,
   .ce-textpic .ce-gallery figure {
     position: absolute;
     top: 50%;
@@ -292,24 +279,24 @@ figure figcaption {
     max-height: 100%;
     height: 175px;
     width: 260px;
+    display: none;
   }
-  .textpic-container .ce-gallery figure.portrait,
+  .ce-textpic .ce-gallery figure:first-child {
+    display: block;
+  }
   .ce-textpic .ce-gallery figure.portrait {
     height: 347px;
   }
-  .textpic-container .ce-gallery figure a,
   .ce-textpic .ce-gallery figure a {
     display: block;
     height: 100%;
     overflow: hidden;
   }
-  .textpic-container .ce-gallery figure img,
   .ce-textpic .ce-gallery figure img {
     object-fit: cover;
     width: 100%;
     height: 100%;
   }
-  .textpic-container .ce-gallery figure figcaption,
   .ce-textpic .ce-gallery figure figcaption {
     position: absolute;
     bottom: 0;
@@ -322,7 +309,6 @@ figure figcaption {
     margin: 0;
     text-align: left;
   }
-  .textpic-container .ce-gallery figure:after,
   .ce-textpic .ce-gallery figure:after {
     position: absolute;
     top: 6px;
@@ -335,7 +321,6 @@ figure figcaption {
     opacity: 0.2;
     pointer-events: none;
   }
-  .textpic-container .ce-gallery figure:before,
   .ce-textpic .ce-gallery figure:before {
     position: absolute;
     top: -6px;
@@ -345,59 +330,48 @@ figure figcaption {
     background: #fff;
     content: " ";
   }
-  .textpic-container.ce-right,
   .ce-textpic.ce-right {
     padding-right: 300px;
     padding-left: 0;
     left: auto;
   }
-  .textpic-container.ce-right .ce-gallery,
   .ce-textpic.ce-right .ce-gallery {
     right: 0;
     left: auto;
   }
-  .textpic-container.ce-left,
   .ce-textpic.ce-left {
     padding-left: 300px;
   }
 }
 @media screen and (min-width: 1024px) {
-  .textpic-container .ce-gallery,
   .ce-textpic .ce-gallery {
     width: 360px;
     left: -100px;
   }
-  .textpic-container .ce-gallery figure,
   .ce-textpic .ce-gallery figure {
     width: 360px;
     height: 270px;
   }
-  .textpic-container .ce-gallery figure.portrait,
   .ce-textpic .ce-gallery figure.portrait {
     height: 480px;
   }
-  .textpic-container.ce-right .ce-gallery,
   .ce-textpic.ce-right .ce-gallery {
     left: auto;
     right: -100px;
   }
 }
 @media screen and (min-width: 1200px) {
-  .textpic-container .ce-gallery,
   .ce-textpic .ce-gallery {
     width: 460px;
     left: -200px;
   }
-  .textpic-container .ce-gallery figure,
   .ce-textpic .ce-gallery figure {
     width: 460px;
     height: 345px;
   }
-  .textpic-container .ce-gallery figure.portrait,
   .ce-textpic .ce-gallery figure.portrait {
     height: 613px;
   }
-  .textpic-container.ce-right .ce-gallery,
   .ce-textpic.ce-right .ce-gallery {
     right: -200px;
     left: auto;
@@ -413,22 +387,36 @@ figure figcaption {
   justify-content: center;
   background: #e7ecec;
 }
-.ce-image .ce-gallery .ce-row {
+.ce-image .ce-gallery figure {
   margin: 0;
   padding: 10px;
   flex: 0 1 50%;
 }
-.ce-image .ce-gallery .ce-row a {
+.ce-image .ce-gallery figure a {
   display: block;
 }
+.ce-image .ce-gallery figure a img {
+  width: 100%;
+}
 @media screen and (min-width: 480px) {
-  .ce-image .ce-gallery .ce-row {
+  .ce-image .ce-gallery figure {
     flex: 0 1 33.33333%;
   }
 }
 @media screen and (min-width: 1024px) {
-  .ce-image .ce-gallery .ce-row {
+  .ce-image .ce-gallery {
+    margin: 30px -100px;
+  }
+  .ce-image .ce-gallery figure {
     flex: 0 1 25%;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .ce-image .ce-gallery {
+    margin: 30px -200px;
+  }
+  .ce-image .ce-gallery figure {
+    flex: 0 1 20%;
   }
 }
 /* Setup for members listing  ========================================================================================== */
@@ -974,7 +962,7 @@ img.mfp-img {
  *
  */
 a {
-  color: #729a23;
+  color: #5a791b;
   text-decoration: underline;
 }
 a[target="_blank"]:after {
@@ -982,13 +970,13 @@ a[target="_blank"]:after {
   text-decoration: none;
 }
 a.btn {
-  background: #91c42c;
-  color: #fff;
+  background: #5d7d1c;
+  color: white;
   padding: 6px 40px;
   border-radius: 4px;
   font-weight: 700;
   text-decoration: none;
-  border-bottom: 2px solid #729a23;
+  border-bottom: 2px solid #25320b;
 }
 a.btn[target="_blank"]:after {
   margin-left: 5px;
@@ -1028,7 +1016,7 @@ a.btn[target="_blank"]:after {
   font-weight: 100;
   font-style: italic;
   line-height: 1.1;
-  color: #91c42c;
+  color: #729a23;
 }
 .content-wrapper .pageresource-image {
   position: relative;
@@ -1075,10 +1063,10 @@ a.btn[target="_blank"]:after {
 }
 .content-wrapper h3 {
   font-size: 24px;
-  font-weight: 500;
+  font-weight: 600;
   font-style: italic;
   margin-top: 60px;
-  color: #91c42c;
+  color: #729a23;
 }
 .content-wrapper h4 {
   font-size: 18px;
@@ -1090,7 +1078,7 @@ a.btn[target="_blank"]:after {
   margin: 30px 0;
 }
 .content-wrapper p.warning {
-  border-left: 1px solid #ff3333;
+  border-left: 1px solid #cc0000;
   padding-left: 15px;
 }
 .content-wrapper p.hint {
@@ -1118,96 +1106,96 @@ a.btn[target="_blank"]:after {
   background: #91c42c;
   content: " ";
 }
-.content-wrapper ul.csc-uploads li {
+.content-wrapper ul.uploads li {
   position: relative;
   padding: 10px 10px 10px 30px;
   line-height: 1.2;
   background: transparent no-repeat left 10px;
   background-size: 24px 24px;
 }
-.content-wrapper ul.csc-uploads li:before {
+.content-wrapper ul.uploads li:before {
   content: none;
 }
-.content-wrapper ul.csc-uploads li a {
+.content-wrapper ul.uploads li a {
   margin-right: 5px;
 }
-.content-wrapper ul.csc-uploads li a:after {
+.content-wrapper ul.uploads li a:after {
   content: none;
 }
-.content-wrapper ul.csc-uploads li span {
+.content-wrapper ul.uploads li span {
   display: inline;
 }
-.content-wrapper ul.csc-uploads li span.csc-uploads-description {
-  color: #96a4a4;
+.content-wrapper ul.uploads li span.uploads-description {
+  color: #637171;
   display: block;
   margin: 5px 0;
   font-size: 12px;
 }
-.content-wrapper ul.csc-uploads li span.csc-uploads-fileSize {
-  color: #96a4a4;
+.content-wrapper ul.uploads li span.uploads-fileSize {
+  color: #637171;
 }
-.content-wrapper ul.csc-uploads li span.csc-uploads-fileSize:after {
+.content-wrapper ul.uploads li span.uploads-fileSize:after {
   content: "]";
 }
-.content-wrapper ul.csc-uploads li span.csc-uploads-fileSize:before {
+.content-wrapper ul.uploads li span.uploads-fileSize:before {
   content: "[";
 }
-.content-wrapper ul.csc-uploads li.csc-uploads-element-html,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-js,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-css,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-php {
+.content-wrapper ul.uploads li.uploads-element-html,
+.content-wrapper ul.uploads li.uploads-element-js,
+.content-wrapper ul.uploads li.uploads-element-css,
+.content-wrapper ul.uploads li.uploads-element-php {
   background-image: url('../Images/Fileicons/fileCode.svg');
 }
-.content-wrapper ul.csc-uploads li.csc-uploads-element-mov,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-mp4,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-aiff,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-flv,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-avi,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-qt,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-m4v,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-mpg {
+.content-wrapper ul.uploads li.uploads-element-mov,
+.content-wrapper ul.uploads li.uploads-element-mp4,
+.content-wrapper ul.uploads li.uploads-element-aiff,
+.content-wrapper ul.uploads li.uploads-element-flv,
+.content-wrapper ul.uploads li.uploads-element-avi,
+.content-wrapper ul.uploads li.uploads-element-qt,
+.content-wrapper ul.uploads li.uploads-element-m4v,
+.content-wrapper ul.uploads li.uploads-element-mpg {
   background-image: url('../Images/Fileicons/fileMovie.svg');
 }
-.content-wrapper ul.csc-uploads li.csc-uploads-element-mp3,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-wav,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-audio,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-aac,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-mid,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-aif {
+.content-wrapper ul.uploads li.uploads-element-mp3,
+.content-wrapper ul.uploads li.uploads-element-wav,
+.content-wrapper ul.uploads li.uploads-element-audio,
+.content-wrapper ul.uploads li.uploads-element-aac,
+.content-wrapper ul.uploads li.uploads-element-mid,
+.content-wrapper ul.uploads li.uploads-element-aif {
   background-image: url('../Images/Fileicons/fileMusic.svg');
 }
-.content-wrapper ul.csc-uploads li.csc-uploads-element-pdf,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-eps,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-ps {
+.content-wrapper ul.uploads li.uploads-element-pdf,
+.content-wrapper ul.uploads li.uploads-element-eps,
+.content-wrapper ul.uploads li.uploads-element-ps {
   background-image: url('../Images/Fileicons/filePDF.svg');
 }
-.content-wrapper ul.csc-uploads li.csc-uploads-element-ppt,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-pps {
+.content-wrapper ul.uploads li.uploads-element-ppt,
+.content-wrapper ul.uploads li.uploads-element-pps {
   background-image: url('../Images/Fileicons/filePPT.svg');
 }
-.content-wrapper ul.csc-uploads li.csc-uploads-element-xls,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-xlsx,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-xlsm,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-xlt,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-xml {
+.content-wrapper ul.uploads li.uploads-element-xls,
+.content-wrapper ul.uploads li.uploads-element-xlsx,
+.content-wrapper ul.uploads li.uploads-element-xlsm,
+.content-wrapper ul.uploads li.uploads-element-xlt,
+.content-wrapper ul.uploads li.uploads-element-xml {
   background-image: url('../Images/Fileicons/fileTable.svg');
 }
-.content-wrapper ul.csc-uploads li.csc-uploads-element-doc,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-docx,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-txt,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-md {
+.content-wrapper ul.uploads li.uploads-element-doc,
+.content-wrapper ul.uploads li.uploads-element-docx,
+.content-wrapper ul.uploads li.uploads-element-txt,
+.content-wrapper ul.uploads li.uploads-element-md {
   background-image: url('../Images/Fileicons/fileWord.svg');
 }
-.content-wrapper ul.csc-uploads li.csc-uploads-element-zip,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-tar {
+.content-wrapper ul.uploads li.uploads-element-zip,
+.content-wrapper ul.uploads li.uploads-element-tar {
   background-image: url('../Images/Fileicons/fileZIP.svg');
 }
-.content-wrapper ul.csc-uploads li.csc-uploads-element-jpg,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-jpeg,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-png,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-gif,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-bmp,
-.content-wrapper ul.csc-uploads li.csc-uploads-element-svg {
+.content-wrapper ul.uploads li.uploads-element-jpg,
+.content-wrapper ul.uploads li.uploads-element-jpeg,
+.content-wrapper ul.uploads li.uploads-element-png,
+.content-wrapper ul.uploads li.uploads-element-gif,
+.content-wrapper ul.uploads li.uploads-element-bmp,
+.content-wrapper ul.uploads li.uploads-element-svg {
   background-image: url('../Images/Fileicons/fileImage.svg');
 }
 .content-wrapper .menu-section > ul > li {
@@ -1231,14 +1219,14 @@ a.btn[target="_blank"]:after {
   font-weight: 600;
 }
 .content-wrapper blockquote {
-  margin: 0;
+  margin: 30px 0;
   padding: 0 15px;
   border-left: 1px solid #91c42c;
 }
 .content-wrapper blockquote p {
   margin: 15px 0;
   font-size: 22px;
-  color: #91c42c;
+  color: #729a23;
   font-weight: 100;
   font-style: italic;
 }
@@ -1363,16 +1351,15 @@ a.btn[target="_blank"]:after {
   .content-wrapper ul li:before {
     left: 20px;
   }
-  .content-wrapper ul.csc-uploads li {
+  .content-wrapper ul.uploads li {
     background-position: left center;
   }
-  .content-wrapper ul.csc-uploads li span.csc-uploads-description {
-    color: #96a4a4;
+  .content-wrapper ul.uploads li span.uploads-description {
     display: inline;
     margin: 5px 0;
     font-size: 16px;
   }
-  .content-wrapper ul.csc-uploads li span.csc-uploads-fileSize {
+  .content-wrapper ul.uploads li span.uploads-fileSize {
     margin-left: 5px;
   }
   .content-wrapper ol li {
@@ -1401,10 +1388,23 @@ a.btn[target="_blank"]:after {
   .content-wrapper .videoWrapper iframe {
     border: 10px solid #fff;
   }
+  .content-wrapper .table-responsive {
+    margin: 30px -100px;
+    width: auto;
+  }
+  .content-wrapper blockquote {
+    margin: 30px -100px;
+  }
 }
 @media screen and (min-width: 1200px) {
   .content-wrapper.container {
     padding: 0 200px 100px 200px;
+  }
+  .content-wrapper .table-responsive {
+    margin: 30px -200px;
+  }
+  .content-wrapper blockquote {
+    margin: 30px -200px;
   }
 }
 /*
@@ -1963,7 +1963,6 @@ a.btn[target="_blank"]:after {
 }
 .content-wrapper ul.f3-widget-paginator li a {
   text-decoration: none;
-  color: #5a791b;
 }
 .content-wrapper ul.f3-widget-paginator li.first {
   display: none;
@@ -2050,10 +2049,10 @@ body,
   background-color: #cad6d6;
 }
 .warning {
-  color: #ff3333;
+  color: #cc0000;
 }
 .warning-bg {
-  background-color: #ff3333;
+  background-color: #cc0000;
 }
 /* 12 column gridsystem  =============================================================================================== */
 .container {

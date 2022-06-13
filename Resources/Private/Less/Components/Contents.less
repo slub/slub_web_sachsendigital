@@ -11,7 +11,7 @@
 
 
 a {
-    color: @brand-primary-dark;
+    color: darken(@brand-primary-dark, 8%);
     text-decoration: underline;
     &[target="_blank"] {
         &:after {
@@ -20,13 +20,13 @@ a {
         }
     }
     &.btn {
-        background: @brand-primary;
-        color: #fff;
+        background: darken(@brand-primary-dark, 7%);
+        color: white;
         padding: 6px 40px;
         border-radius: 4px;
         font-weight: 700;
         text-decoration: none;
-        border-bottom: 2px solid @brand-primary-dark;
+        border-bottom: 2px solid darken(@brand-primary-dark, 25%);
         &[target="_blank"] {
             &:after {
                 margin-left: 5px;
@@ -44,7 +44,7 @@ a {
                 left: 0;
                 height: 200px;
                 content: " ";
-                background: fade(@brand-primary-dark,15%);
+                background: fade(@brand-primary-dark, 15%);
                 transition: all 0.15s ease-out;
                 transform: scaleX(0);
             }
@@ -72,7 +72,7 @@ a {
             font-weight: 100;
             font-style: italic;
             line-height: 1.1;
-            color: @brand-primary;
+            color: @brand-primary-dark;
         }
     }
     .pageresource-image {
@@ -122,10 +122,10 @@ a {
     }
     h3 {
         font-size: 24px;
-        font-weight: 500;
+        font-weight: 600;
         font-style: italic;
         margin-top: 60px;
-        color: @brand-primary;
+        color: @brand-primary-dark;
     }
     h4 {
         font-size: 18px;
@@ -164,7 +164,7 @@ a {
                 content: " ";
             }
         }
-        &.csc-uploads {
+        &.uploads {
             li {
                 position: relative;
                 padding: 10px 10px 10px 30px;
@@ -182,14 +182,14 @@ a {
                 }
                 span {
                     display: inline;
-                    &.csc-uploads-description {
-                        color: @brand-secondary-mid;
+                    &.uploads-description {
+                        color: darken(@brand-secondary-mid, 20%);
                         display: block;
                         margin: 5px 0;
                         font-size: 12px;
                     }
-                    &.csc-uploads-fileSize {
-                        color: @brand-secondary-mid;
+                    &.uploads-fileSize {
+                        color: darken(@brand-secondary-mid, 20%);
                         &:after {
                             content: "]";
                         }
@@ -198,21 +198,39 @@ a {
                         }
                     }
                 }
-                &.csc-uploads-element-html, &.csc-uploads-element-js, &.csc-uploads-element-css, &.csc-uploads-element-php { background-image: url('../Images/Fileicons/fileCode.svg'); }
-                &.csc-uploads-element-mov, &.csc-uploads-element-mp4, &.csc-uploads-element-aiff, &.csc-uploads-element-flv, &.csc-uploads-element-avi, &.csc-uploads-element-qt, &.csc-uploads-element-m4v, &.csc-uploads-element-mpg { background-image: url('../Images/Fileicons/fileMovie.svg'); }
-                &.csc-uploads-element-mp3, &.csc-uploads-element-wav, &.csc-uploads-element-audio, &.csc-uploads-element-aac, &.csc-uploads-element-mid, &.csc-uploads-element-aif { background-image: url('../Images/Fileicons/fileMusic.svg'); }
-                &.csc-uploads-element-pdf, &.csc-uploads-element-eps, &.csc-uploads-element-ps { background-image: url('../Images/Fileicons/filePDF.svg'); }
-                &.csc-uploads-element-ppt, &.csc-uploads-element-pps { background-image: url('../Images/Fileicons/filePPT.svg'); }
-                &.csc-uploads-element-xls, &.csc-uploads-element-xlsx, &.csc-uploads-element-xlsm, &.csc-uploads-element-xlt, &.csc-uploads-element-xml { background-image: url('../Images/Fileicons/fileTable.svg'); }
-                &.csc-uploads-element-doc, &.csc-uploads-element-docx, &.csc-uploads-element-txt, &.csc-uploads-element-md { background-image: url('../Images/Fileicons/fileWord.svg'); }
-                &.csc-uploads-element-zip, &.csc-uploads-element-tar { background-image: url('../Images/Fileicons/fileZIP.svg'); }
-                &.csc-uploads-element-jpg, &.csc-uploads-element-jpeg, &.csc-uploads-element-png, &.csc-uploads-element-gif, &.csc-uploads-element-bmp, &.csc-uploads-element-svg { background-image: url('../Images/Fileicons/fileImage.svg'); }
+                &.uploads-element-html, &.uploads-element-js, &.uploads-element-css, &.uploads-element-php {
+                    background-image: url('../Images/Fileicons/fileCode.svg');
+                }
+                &.uploads-element-mov, &.uploads-element-mp4, &.uploads-element-aiff, &.uploads-element-flv, &.uploads-element-avi, &.uploads-element-qt, &.uploads-element-m4v, &.uploads-element-mpg {
+                    background-image: url('../Images/Fileicons/fileMovie.svg');
+                }
+                &.uploads-element-mp3, &.uploads-element-wav, &.uploads-element-audio, &.uploads-element-aac, &.uploads-element-mid, &.uploads-element-aif {
+                    background-image: url('../Images/Fileicons/fileMusic.svg');
+                }
+                &.uploads-element-pdf, &.uploads-element-eps, &.uploads-element-ps {
+                    background-image: url('../Images/Fileicons/filePDF.svg');
+                }
+                &.uploads-element-ppt, &.uploads-element-pps {
+                    background-image: url('../Images/Fileicons/filePPT.svg');
+                }
+                &.uploads-element-xls, &.uploads-element-xlsx, &.uploads-element-xlsm, &.uploads-element-xlt, &.uploads-element-xml {
+                    background-image: url('../Images/Fileicons/fileTable.svg');
+                }
+                &.uploads-element-doc, &.uploads-element-docx, &.uploads-element-txt, &.uploads-element-md {
+                    background-image: url('../Images/Fileicons/fileWord.svg');
+                }
+                &.uploads-element-zip, &.uploads-element-tar {
+                    background-image: url('../Images/Fileicons/fileZIP.svg');
+                }
+                &.uploads-element-jpg, &.uploads-element-jpeg, &.uploads-element-png, &.uploads-element-gif, &.uploads-element-bmp, &.uploads-element-svg {
+                    background-image: url('../Images/Fileicons/fileImage.svg');
+                }
             }
         }
     }
     .menu-section {
-        >ul {
-            >li {
+        > ul {
+            > li {
                 padding-left: 0;
                 &:before {
                     content: none;
@@ -221,27 +239,27 @@ a {
         }
     }
     ol {
-      margin: 30px 0;
-      padding: 0;
-      text-decoration: none;
-      list-style: decimal;
-      li {
-          position: relative;
-          padding-left: 15px;
-      }
+        margin: 30px 0;
+        padding: 0;
+        text-decoration: none;
+        list-style: decimal;
+        li {
+            position: relative;
+            padding-left: 15px;
+        }
     }
     em {
         font-style: italic;
         font-weight: 600;
     }
     blockquote {
-        margin: 0;
+        margin: 30px 0;
         padding: 0 15px;
         border-left: 1px solid @brand-primary;
         p {
             margin: 15px 0;
             font-size: 22px;
-            color: @brand-primary;
+            color: @brand-primary-dark;
             font-weight: 100;
             font-style: italic;
             &.cited {
@@ -292,7 +310,7 @@ a {
         tr.tr-even,
         tr:nth-child(even) {
             td {
-                background: lighten(@brand-secondary-light,12%);
+                background: lighten(@brand-secondary-light, 12%);
             }
         }
         tr:last-child {
@@ -376,17 +394,16 @@ a {
                     left: 20px;
                 }
             }
-            &.csc-uploads {
+            &.uploads {
                 li {
                     background-position: left center;
                     span {
-                        &.csc-uploads-description {
-                            color: @brand-secondary-mid;
+                        &.uploads-description {
                             display: inline;
                             margin: 5px 0;
                             font-size: 16px;
                         }
-                        &.csc-uploads-fileSize {
+                        &.uploads-fileSize {
                             margin-left: 5px;
                         }
                     }
@@ -423,10 +440,23 @@ a {
                 border: 10px solid #fff;
             }
         }
+        .table-responsive {
+            margin: 30px -100px;
+            width: auto;
+        }
+        blockquote {
+            margin: 30px -100px;
+        }
     }
     @media screen and (min-width: @desktopViewportWidth) {
         &.container {
             padding: 0 200px 100px 200px;
+        }
+        .table-responsive {
+            margin: 30px -200px;
+        }
+        blockquote {
+            margin: 30px -200px;
         }
     }
 }

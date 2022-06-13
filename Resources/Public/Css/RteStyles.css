@@ -57,7 +57,7 @@ body {
   color: #333;
 }
 p.warning {
-  border-left: 1px solid #ff3333;
+  border-left: 1px solid #cc0000;
   padding-left: 15px;
 }
 p.hint {
