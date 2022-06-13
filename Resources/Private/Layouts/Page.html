@@ -1,20 +1,24 @@
+<html data-namespace-typo3-fluid="true" lang="en" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
 <div class="main-wrapper" id="top">
-    <nav class="main-navigation">
-        <f:cObject typoscriptObjectPath="lib.menu.main" />
-        <button type="button" class="nav-close" aria-label="<f:translate key='nav.close' extensionName='slubWebSachsendigital' />">
+    <nav class="main-navigation" id="main-navigation">
+        <f:cObject typoscriptObjectPath="lib.menu.main"/>
+        <button aria-label="<f:translate key='nav.close' extensionName='slubWebSachsendigital' />" class="nav-close" type="button">
             <span></span>
             <span class="nav-button-bar"></span>
             <span class="nav-button-bar"></span>
         </button>
     </nav>
     <div class="perspective">
-		<f:render section="Header" partial="Header" arguments="{_all}" />
+        <f:render arguments="{_all}" partial="Header" section="Header"/>
         <!--TYPO3SEARCH_begin-->
-        <f:render section="Content" />
+        <f:render section="Content"/>
         <!--TYPO3SEARCH_end-->
-        <f:render section="Footer" partial="Footer" arguments="{_all}" />
+        <f:render arguments="{_all}" partial="Footer" section="Footer"/>
     </div>
 </div>
 <f:if condition="{piwik_idsite}">
-	<f:render section="Matomo" partial="PageMatomo" arguments="{_all}" />
+    <f:render arguments="{_all}" partial="PageMatomo" section="Matomo"/>
 </f:if>
+
+</html>

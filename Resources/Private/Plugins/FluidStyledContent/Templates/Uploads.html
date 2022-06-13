@@ -8,7 +8,7 @@
             <f:for as="file" each="{files}" iteration="fileIterator">
                 <li class="{f:if(condition:'{data.uploads_type} == 1',then: 'uploads-element-{file.extension}')}">
                     <f:if condition="{file.name}">
-                        <a href="{file.publicUrl}" target="{f:if(condition:data.target,then:' {data.target}',else: '_self')}">
+                        <a href="{file.publicUrl}" target="{f:if(condition:data.target,then:'{data.target}',else: '_self')}">
                             <span class="uploads-fileName">{file.name} {f:if(condition: '{file.type} == 5', then: '(PDF-Download)')}</span>
                         </a>
                     </f:if>

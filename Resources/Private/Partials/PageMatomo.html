@@ -1,16 +1,25 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
 <f:section name="Matomo">
-<script type="text/javascript">
-  var _paq = _paq || [];
-  _paq.push(["setDomains", ["{piwik_domains}"]]);
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
-  (function() {
-    var u="//{piwik_hostname}/";
-    _paq.push(['setTrackerUrl', u+'matomo.php']);
-    _paq.push(['setSiteId', '{piwik_idsite}']);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-  })();
-</script>
-<noscript><p><img src="//{piwik_hostname}/matomo.php?idsite={piwik_idsite}" style="border:0;" alt="" /></p></noscript>
+
+    <script type="text/javascript">
+        var _paq = _paq || [];
+        _paq.push(["setDomains", ["{piwik_domains}"]]);
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function () {
+            var u = "//{piwik_hostname}/";
+            _paq.push(['setTrackerUrl', u + 'matomo.php']);
+            _paq.push(['setSiteId', '{piwik_idsite}']);
+            var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+            g.type = 'text/javascript';
+            g.async = true;
+            g.defer = true;
+            g.src = u + 'matomo.js';
+            s.parentNode.insertBefore(g, s);
+        })();
+    </script>
+    <noscript><p><img alt="" src="//{piwik_hostname}/matomo.php?idsite={piwik_idsite}" style="border:0;"/></p></noscript>
 </f:section>
+
+</html>

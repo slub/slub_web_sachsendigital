@@ -1,16 +1,20 @@
-<f:for each="{institutions}" as="institution" >
-    <f:for each="{institution.files}" as="file" >
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
+<f:for as="institution" each="{institutions}">
+    <f:for as="file" each="{institution.files}">
         <div class="institute-logo">
             <f:if condition="{file.link}">
                 <f:then>
-                    <f:link.external uri="{file.link}" target="_blank">
-                        <f:image image="{file}" width="150" crop="FALSE" title="{file.title}" alt="Logo {file.title}" />
+                    <f:link.external target="_blank" uri="{file.link}">
+                        <f:image alt="Logo {file.title}" crop="FALSE" image="{file}" title="{file.title}" width="150"/>
                     </f:link.external>
                 </f:then>
                 <f:else>
-                    <f:image image="{file}" width="150" crop="FALSE" title="{file.title}" alt="Logo {file.title}" />
+                    <f:image alt="Logo {file.title}" crop="FALSE" image="{file}" title="{file.title}" width="150"/>
                 </f:else>
             </f:if>
         </div>
     </f:for>
 </f:for>
+
+</html>

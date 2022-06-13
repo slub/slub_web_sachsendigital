@@ -1,19 +1,25 @@
+<html data-namespace-typo3-fluid="true" lang="en" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
 <f:section name="Footer">
     <div class="footer">
         <div class="footernav-wrapper">
             <div class="container">
-                <f:cObject typoscriptObjectPath="lib.menu.secondary" />
+                <f:cObject typoscriptObjectPath="lib.menu.secondary"/>
             </div>
         </div>
         <div class="footercontent-wrapper">
             <div class="container">
                 <div class="partnerlogo-bar">
-                    <f:link.external uri="https://www.sachsen.de" target="_blank" class="partner-sxn">Freistaat Sachsen</f:link.external>
-                    <f:link.external uri="https://www.slub-dresden.de" target="_blank" class="partner-slub">SLUB Sachsen</f:link.external>
+                    <f:link.external class="partner-sxn" target="_blank" uri="https://www.sachsen.de">Freistaat Sachsen</f:link.external>
+                    <f:link.external class="partner-slub" target="_blank" uri="https://www.slub-dresden.de">SLUB Sachsen</f:link.external>
                 </div>
-                <f:cObject typoscriptObjectPath="lib.dynamicContentSlide" data="5" />
+                <f:cObject data="5" typoscriptObjectPath="lib.dynamicContentSlide"/>
             </div>
         </div>
-        <a href="#top" class="totop"><f:translate key='footer.totop' extensionName='SlubWebSachsendigital' /></a>
+        <a class="totop" href="#top">
+            <f:translate extensionName='SlubWebSachsendigital' key='footer.totop'/>
+        </a>
     </div>
 </f:section>
+
+</html>

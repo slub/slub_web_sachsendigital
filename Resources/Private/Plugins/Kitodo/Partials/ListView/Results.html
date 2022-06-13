@@ -60,9 +60,7 @@
                         </dd>
                     </dl>
                 </f:link.page>
-
                 <f:render arguments="{result: document}" partial="Basket/AddToBasket"/>
-
                 <f:if condition="{document.children} || {document.searchResults}">
                     <button class="tx-dlf-morevolumes" aria-controls="tx-dlf-volume-{document.uid}">
                         <f:translate key="listview.moredetails.toggle"/>
@@ -128,7 +126,6 @@
                         </f:for>
                     </ol>
                 </f:if>
-
                 <f:if condition="{document.searchResults}">
                     <ol class="tx-dlf-volume" id="tx-dlf-volume-{document.uid}">
                         <f:for as="result" each="{document.searchResults}" iteration="resultIterator">
@@ -183,9 +180,7 @@
                                         </f:if>
                                     </div>
                                 </f:link.page>
-
                                 <f:render arguments="{result: {uid:document.uid, page: result.page}}" partial="Basket/AddToBasket"/>
-
                             </li>
                         </f:for>
                     </ol>
@@ -193,7 +188,6 @@
             </li>
         </f:for>
     </ol>
-
 </f:widget.paginate>
 
 </html>
