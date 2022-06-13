@@ -1962,13 +1962,8 @@ a.btn[target="_blank"]:after {
   display: none;
 }
 .content-wrapper ul.f3-widget-paginator li a {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: block;
   text-decoration: none;
+  color: #5a791b;
 }
 .content-wrapper ul.f3-widget-paginator li.first {
   display: none;
@@ -2206,6 +2201,18 @@ body,
   #cookie-bar a {
     margin-top: 3px;
   }
+}
+/* Helper classes  ===================================================================================================== */
+.visually-hidden {
+  border: 0;
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  white-space: nowrap;
 }
 /*
  *
@@ -3539,6 +3546,7 @@ a.totop:after {
 .tx-dlf-listview .tx-dlf-abstracts li .tx-dlf-volume li {
   border-bottom: 1px solid white;
   padding: 15px;
+  margin: 0;
 }
 .tx-dlf-listview .tx-dlf-abstracts li .tx-dlf-volume li .tx-dlf-listview-thumbnail img {
   margin-left: 15px;
