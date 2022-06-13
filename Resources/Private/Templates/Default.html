@@ -5,7 +5,7 @@
 <f:section name="Content">
     <div class="content-wrapper container">
         <div class="page-header">
-            <f:cObject typoscriptObjectPath="lib.menu.breadCrumbNavigation"/>
+            <f:render partial="Navigation" section="Rootline" arguments="{_all}"/>
             <f:if condition="{data.subtitle}">
                 <f:then>
                     <h2>{data.subtitle}</h2>

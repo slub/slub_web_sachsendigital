@@ -2575,7 +2575,7 @@ nav.main-navigation > ul > li a.current {
   }
 }
 /* breadcrumb navigation styles  ============================================================================================= */
-ol.breadcrumb {
+ol.rootline {
   position: relative;
   list-style: none;
   background: transparent;
@@ -2585,7 +2585,7 @@ ol.breadcrumb {
   margin: 0;
   padding: 0;
 }
-ol.breadcrumb li {
+ol.rootline li {
   display: inline-block;
   max-width: 50%;
   overflow: hidden;
@@ -2594,16 +2594,16 @@ ol.breadcrumb li {
   padding: 0;
   margin: 0;
 }
-ol.breadcrumb li a {
+ol.rootline li a {
   text-transform: uppercase;
   text-decoration: none;
   color: #475a5a;
   font-weight: 700;
 }
-ol.breadcrumb li a.current {
+ol.rootline li.active a {
   font-weight: 500;
 }
-ol.breadcrumb li + li:before {
+ol.rootline li + li:before {
   position: relative;
   height: 0;
   width: 0;

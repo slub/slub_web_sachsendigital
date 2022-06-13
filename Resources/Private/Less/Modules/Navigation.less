@@ -286,7 +286,7 @@ nav.main-navigation {
 }
 
 /* breadcrumb navigation styles  ============================================================================================= */
-ol.breadcrumb {
+ol.rootline {
     position: relative;
     list-style: none;
     background: transparent;
@@ -308,7 +308,9 @@ ol.breadcrumb {
             text-decoration: none;
             color: @brand-secondary;
             font-weight: 700;
-            &.current {
+        }
+        &.active {
+            a {
                 font-weight: 500;
             }
         }

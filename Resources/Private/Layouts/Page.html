@@ -2,7 +2,7 @@
 
 <div class="main-wrapper" id="top">
     <nav class="main-navigation" id="main-navigation">
-        <f:cObject typoscriptObjectPath="lib.menu.main"/>
+        <f:render partial="Navigation" section="Main" arguments="{_all}"/>
         <button aria-label="<f:translate key='nav.close' extensionName='slubWebSachsendigital' />" class="nav-close" type="button">
             <span></span>
             <span class="nav-button-bar"></span>
