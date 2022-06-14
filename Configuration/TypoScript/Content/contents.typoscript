@@ -104,7 +104,7 @@ lib.contentElement {
   partialRootPaths.55 = EXT:slub_web_sachsendigital/Resources/Private/Plugins/FluidStyledContent/Partials/
   layoutRootPaths.55 = EXT:slub_web_sachsendigital/Resources/Private/Plugins/FluidStyledContent/Layouts/
   settings {
-    defaultHeaderType = 3
+    defaultHeaderType = 2
     media.popup {
       JSwindow = 0
       directImageLink = 1
