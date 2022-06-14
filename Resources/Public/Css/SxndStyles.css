@@ -1241,7 +1241,7 @@ a.btn[target="_blank"]:after {
   font-weight: 700;
   font-style: normal;
   font-size: 12px;
-  color: #96a4a4;
+  color: #637171;
 }
 .content-wrapper .table-responsive {
   width: 100%;
@@ -2145,19 +2145,25 @@ body,
   }
 }
 /* basic frame design  ================================================================================================= */
-.perspective {
+body .perspective {
   transition: all 0.3s ease-out;
 }
-.menu-open .perspective {
+body.menu-open {
+  overflow: hidden;
+}
+body.menu-open .main-wrapper {
+  overflow: hidden;
+}
+body.menu-open .perspective {
   transform: translateX(-260px);
 }
 @media screen and (min-width: 480px) {
-  .perspective {
+  body .perspective {
     padding-bottom: 250px;
   }
 }
 @media screen and (min-width: 768px) {
-  .menu-open .perspective {
+  body.menu-open .perspective {
     transform: translateX(-320px);
   }
 }
@@ -2259,11 +2265,13 @@ body,
   right: 100px;
   height: 50px;
   margin: 0;
-  display: block;
-  overflow: hidden;
-  text-indent: 200%;
-  white-space: nowrap;
   padding: 0;
+  display: block;
+  font: 0/0 'Open Sans', Helvetica, Arial, sans-serif;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
   background: url('../Images/sxndLogo.svg') no-repeat left center;
   background-size: 100% 100%;
 }
@@ -2361,8 +2369,8 @@ nav.main-navigation {
   position: fixed;
   top: 0;
   right: 0;
-  bottom: 0;
   width: 260px;
+  height: 100vh;
   background: #475a5a;
   margin: 0;
   padding: 0;
@@ -2375,9 +2383,6 @@ nav.main-navigation {
   border-left: 1px solid #fff;
   transition: all 0.3s ease-out;
   transform: translateX(260px);
-}
-.menu-open nav.main-navigation {
-  transform: translateX(0);
 }
 nav.main-navigation .nav-close {
   position: absolute;
@@ -2458,8 +2463,8 @@ nav.main-navigation > ul > li a.current {
     position: relative;
     top: auto;
     right: auto;
-    bottom: auto;
     width: 900px;
+    height: auto;
     margin: 0 auto;
     border: 0 none;
     transform: translateX(0);

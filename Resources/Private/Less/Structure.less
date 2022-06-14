@@ -138,17 +138,26 @@ html, body, .main-wrapper, .perspective, .content-wrapper {
 }
 
 /* basic frame design  ================================================================================================= */
-.perspective {
-    transition: @transition;
-    .menu-open & {
-        transform: translateX(-260px);
+body {
+    .perspective {
+        transition: @transition;
+    }
+    &.menu-open {overflow: hidden;
+        .main-wrapper {overflow: hidden; }
+        .perspective {
+            transform: translateX(-260px);
+        }
     }
     @media screen and (min-width: @phoneLandscapeViewportWidth) {
-        padding-bottom: 250px;
+        .perspective {
+            padding-bottom: 250px;
+        }
     }
     @media screen and (min-width: @tabletViewportWidth) {
-        .menu-open & {
-            transform: translateX(-320px);
+        &.menu-open {
+            .perspective {
+                transform: translateX(-320px);
+            }
         }
     }
 }

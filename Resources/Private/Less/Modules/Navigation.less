@@ -57,8 +57,8 @@ nav.main-navigation {
     position: fixed;
     top: 0;
     right: 0;
-    bottom: 0;
     width: 260px;
+    height: 100vh;
     background: @brand-secondary;
     margin: 0;
     padding: 0;
@@ -71,9 +71,6 @@ nav.main-navigation {
     border-left: 1px solid #fff;
     transition: @transition;
     transform: translateX(260px);
-    .menu-open & {
-        transform: translateX(0);
-    }
     .nav-close {
         position: absolute;
         top: 20px;
@@ -150,8 +147,8 @@ nav.main-navigation {
         position: relative;
         top: auto;
         right: auto;
-        bottom: auto;
         width: 900px;
+        height: auto;
         margin: 0 auto;
         border: 0 none;
         transform: translateX(0);
