@@ -3645,6 +3645,16 @@ body:before {
   .control-bar {
     background: #475a5a;
   }
+  .control-bar *::-webkit-scrollbar {
+    width: 7px;
+  }
+  .control-bar *::-webkit-scrollbar-track {
+    background: transparent linear-gradient(90deg, transparent 2px, rgba(255, 255, 255, 0.2) 3px, rgba(255, 255, 255, 0.2) 4px, transparent 5px, transparent);
+  }
+  .control-bar *::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+  }
   .control-bar:before {
     position: absolute;
     top: 0;
@@ -3707,6 +3717,16 @@ body:before {
   .control-bar .metadata-wrapper .metadata-toggle:before {
     background: transparent url('../Icons/viewerControlIcons.svg') no-repeat -564px -84px;
   }
+  .control-bar .metadata-wrapper dl dd.tx-dlf-metadata-collection {
+    background: transparent;
+    margin: 0;
+    display: inline;
+    color: white;
+    padding: 0;
+  }
+  .control-bar .metadata-wrapper dl dd.tx-dlf-metadata-collection:after {
+    content: ";";
+  }
 }
 .document-view .document-functions .provider {
   border-bottom: none;
@@ -3750,25 +3770,41 @@ body:before {
     overflow: hidden;
     text-overflow: ellipsis;
     display: inline-block;
-    width: 80%;
-    line-height: 16px;
-    vertical-align: middle;
+    max-width: 80%;
+    line-height: 20px;
+    vertical-align: text-top;
   }
   .tx-dlf-metadata dl dd a[href*="digital.slub"] {
-    vertical-align: middle;
+    line-height: 20px;
+    vertical-align: text-top;
+    max-width: 80%;
   }
 }
-.tx-dlf-calendar .year-anchor {
-  padding: 0 0 10px 60px;
-  font-weight: bold;
+@media screen and (min-width: 1024px) {
+  .tx-dlf-calendar .year-anchor {
+    padding: 5px 280px 10px 0;
+    font-weight: bold;
+    border-bottom: 0;
+  }
+  .tx-dlf-calendar .meta-header .year a {
+    color: #729a23;
+  }
+  .tx-dlf-calendar .calendar-list-selection {
+    top: 20px;
+  }
+  .tx-dlf-calendar .calendar-view .year caption,
+  .tx-dlf-calendar .calendar-view table caption {
+    font-weight: bold;
+  }
+  .tx-dlf-calendar .calendar-view .year tr td.open ul li,
+  .tx-dlf-calendar .calendar-view table tr td.open ul li {
+    color: white;
+  }
 }
-.tx-dlf-calendar .calendar-view .year caption,
-.tx-dlf-calendar .calendar-view table caption {
-  font-weight: bold;
-}
-.tx-dlf-calendar .calendar-view .year tr td.open ul li,
-.tx-dlf-calendar .calendar-view table tr td.open ul li {
-  color: white;
+@media screen and (min-width: 1024px) {
+  .tx-dlf-toolsFulltextsearch .fulltext-search-toggle {
+    top: 10px;
+  }
 }
 /* ==============[ all issues of this newspapers (boxy year navigation) ]================= */
 .tx-dlf-calendar-years ul li {
@@ -3827,37 +3863,43 @@ body:before {
     height: 250px;
   }
 }
+.tx-dlf-toc .tx-dlf-wincontent > ul.toc > li > a .meta-type-icon {
+  font-size: 12px;
+  font-weight: bold;
+  opacity: 1;
+  margin: 10px 0 0 0;
+  display: block;
+}
 .tx-dlf-toc ul.toc ul li a,
 .tx-dlf-toc ul.toc ul li span.a,
 .tx-dlf-toc ul.toc ul li > span.title {
   color: white;
 }
 @media screen and (min-width: 1024px) {
-  .tx-dlf-toc ul.toc ul li a .meta-type-icon,
-  .tx-dlf-toc ul.toc ul li span.a .meta-type-icon,
-  .tx-dlf-toc ul.toc ul li > span.title .meta-type-icon {
+  .tx-dlf-toc ul.toc ul li a {
+    display: flex;
+    justify-content: space-between;
+  }
+  .tx-dlf-toc ul.toc ul li a .meta-type-icon {
     background-position: -90px 0;
-  }
-  .tx-dlf-toc ul.toc ul li a .meta-type-icon.meta-type-Abbildung,
-  .tx-dlf-toc ul.toc ul li span.a .meta-type-icon.meta-type-Abbildung,
-  .tx-dlf-toc ul.toc ul li > span.title .meta-type-icon.meta-type-Abbildung {
-    background-position: 0 0;
-  }
-  .tx-dlf-toc ul.toc ul li a .meta-type-icon.meta-type-Werbung,
-  .tx-dlf-toc ul.toc ul li span.a .meta-type-icon.meta-type-Werbung,
-  .tx-dlf-toc ul.toc ul li > span.title .meta-type-icon.meta-type-Werbung {
-    background-position: -30px 0;
-  }
-  .tx-dlf-toc ul.toc ul li a .meta-type-icon.meta-type-Artikel,
-  .tx-dlf-toc ul.toc ul li span.a .meta-type-icon.meta-type-Artikel,
-  .tx-dlf-toc ul.toc ul li > span.title .meta-type-icon.meta-type-Artikel {
-    background-position: -60px 0;
   }
   .tx-dlf-toc ul.toc ul li.placeholder {
     color: white;
   }
   .tx-dlf-toc ul.toc ul li.placeholder:after {
     background: transparent;
+  }
+  .tx-dlf-toc ul.toc ul li.current {
+    background: white;
+  }
+  .tx-dlf-toc ul.toc ul li.current a {
+    color: #537119;
+  }
+  .tx-dlf-toc ul.toc ul li.current a .meta-type-icon {
+    background-position-y: -30px !important;
+  }
+  .tx-dlf-toc ul.toc ul li.submenu:before {
+    border-top-color: white;
   }
 }
 .tx-dlf-toc ul.toc ul li:nth-child(even) {

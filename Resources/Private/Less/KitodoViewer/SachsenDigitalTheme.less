@@ -78,6 +78,17 @@ body {
 
     @media screen and (min-width: @tabletLandscapeViewportWidth) {
         background: @brand-secondary;
+        *::-webkit-scrollbar {
+            width: 7px;
+        }
+        *::-webkit-scrollbar-track {
+            background: transparent linear-gradient(90deg, transparent 2px, rgba(white, .2) 3px, rgba(white, .2) 4px, transparent 5px, transparent);
+        }
+        *::-webkit-scrollbar-thumb {
+            background-color: rgba(white, .5);
+            border-radius: 20px;
+        }
+
         &:before {
             position: absolute;
             top: 0;
@@ -143,6 +154,16 @@ body {
                     background: transparent url('@{control-icons}') no-repeat -564px -84px;
                 }
             }
+            dl dd.tx-dlf-metadata-collection {
+                background: transparent;
+                margin: 0;
+                display: inline;
+                color: white;
+                padding: 0;
+                &:after {
+                    content: ";";
+                }
+            }
         }
     }
 
@@ -205,11 +226,13 @@ body {
                     overflow: hidden;
                     text-overflow: ellipsis;
                     display: inline-block;
-                    width: 80%;
-                    line-height: 16px;
-                    vertical-align: middle;
+                    max-width: 80%;
+                    line-height: 20px;
+                    vertical-align: text-top;
                     &[href*="digital.slub"] {
-                        vertical-align: middle;
+                        line-height: 20px;
+                        vertical-align: text-top;
+                        max-width: 80%;
                     }
                 }
             }
@@ -220,28 +243,44 @@ body {
 }
 
 .tx-dlf-calendar {
-    .year-anchor {
-        padding: 0 0 10px 60px;
-        font-weight: bold;
-    }
-    .calendar-view {
-        .year,
-        table {
-            caption {
-                font-weight: bold;
-            }
-            tr {
-                td {
-                    &.open {
-                        ul {
-                            li {
-                                color: white;
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        .year-anchor {
+            padding: 5px 280px 10px 0;
+            font-weight: bold;
+            border-bottom: 0;
+        }
+        .meta-header .year a {
+            color: @brand-primary-dark;
+        }
+        .calendar-list-selection {
+            top: 20px;
+        }
+        .calendar-view {
+            .year,
+            table {
+                caption {
+                    font-weight: bold;
+                }
+                tr {
+                    td {
+                        &.open {
+                            ul {
+                                li {
+                                    color: white;
+                                }
                             }
                         }
                     }
                 }
             }
         }
+    }
+}
+
+
+.tx-dlf-toolsFulltextsearch .fulltext-search-toggle {
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        top: 10px;
     }
 }
 
@@ -312,6 +351,13 @@ body {
 }
 
 .tx-dlf-toc {
+    .tx-dlf-wincontent > ul.toc > li > a .meta-type-icon {
+        font-size: 12px;
+        font-weight: bold;
+        opacity: 1;
+        margin: 10px 0 0 0;
+        display: block;
+    }
     ul.toc {
         ul {
             li {
@@ -319,24 +365,31 @@ body {
                     color: white;
                 }
                 @media screen and (min-width: @tabletLandscapeViewportWidth) {
-                    a, span.a, > span.title {
+                    a {
+                        display: flex;
+                        justify-content: space-between;
                         .meta-type-icon {
                             background-position: -90px 0;
-                            &.meta-type-Abbildung {
-                                background-position: 0 0;
-                            }
-                            &.meta-type-Werbung {
-                                background-position: -30px 0;
-                            }
-                            &.meta-type-Artikel {
-                                background-position: -60px 0;
-                            }
                         }
                     }
                     &.placeholder {
                         color: white;
                         &:after {
                             background: transparent;
+                        }
+                    }
+                    &.current {
+                        background: white;
+                        a {
+                            color: darken(@brand-primary-dark, 10%);
+                            .meta-type-icon {
+                                background-position-y: -30px !important;
+                            }
+                        }
+                    }
+                    &.submenu {
+                        &:before {
+                            border-top-color: white;
                         }
                     }
                 }
