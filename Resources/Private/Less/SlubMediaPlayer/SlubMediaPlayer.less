@@ -10,11 +10,12 @@
     border-right: none !important;
 
     // These buttons are used to toggle TOC and metadata on mobile (see
-    // @slub_digitalcollections). Put them to the top so they won't overlap
+    // @slub_digitalcollections). Put them to the middle so they won't overlap
     // with video controls.
-    .offcanvas-toggle {
-        bottom: unset;
-        top: 5px;
+    .metadata-wrapper .offcanvas-toggle,
+    .toc-wrapper .offcanvas-toggle {
+        bottom: 50%;
+        margin-bottom: -25px;
     }
 }
 
@@ -33,6 +34,14 @@
 
     .media-viewport {
         height: 100%;
+        .dlf-media-player {
+            @media screen and (min-width: @tabletLandscapeViewportWidth) {
+                border: 15px solid white;
+            }
+            @media screen and (min-width: @desktopViewportWidth) {
+                border-width: 25px;
+            }
+        }
     }
 }
 
@@ -52,6 +61,38 @@
 .sxnd-bookmark-button,
 .sxnd-help-button {
     font-size: 22px !important;
+}
+
+.shaka-play-button {
+    background-color: rgba(71, 90, 90, 0.95);
+    background-size: 50% auto;
+    border: 1px solid rgba(white, .5);
+    &[icon="play"] {
+        background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDI0IDI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48ZyBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2U9IiNGRkYiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTEuOTk4IiByPSIxMS4yNSI+PC9jaXJjbGU+PHBhdGggZD0iTTkgMTUuNjEzbDEuNzM1ODZlLTA4IDIuMDY3NzJlLTA1Yy4wMDA3NjQyMzIuOTAzNTM4LjczMzg0NiAxLjYzNTM4IDEuNjM3MzggMS42MzQ2MiAuMzk1MjA3LS4wMDAzMzQyNzUuNzc2OTM1LS4xNDM3MTcgMS4wNzQ2My0uNDAzNjVsNS41Mzc5OC00Ljg0Mzk5IC01LjUzOC00Ljg0NyA2LjQwODc0ZS0xMCA1LjYxMDgyZS0xMGMtLjY3OTM5OS0uNTk0ODExLTEuNzEyMzUtLjUyNjIzOC0yLjMwNzE2LjE1MzE2MSAtLjI2MTE2OS4yOTgzMS0uNDA1MDQzLjY4MTM1OC0uNDA0ODM5IDEuMDc3ODRaIj48L3BhdGg+PC9nPjwvc3ZnPg==");
+    }
+    &[icon="pause"] {
+        background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDI0IDI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48ZyBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2U9IiNGRkYiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxsaW5lIHgxPSI5Ljc1IiB4Mj0iOS43NSIgeTE9IjguMjUiIHkyPSIxNS43NSI+PC9saW5lPjxsaW5lIHgxPSIxNC4yNSIgeDI9IjE0LjI1IiB5MT0iOC4yNSIgeTI9IjE1Ljc1Ij48L2xpbmU+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMS45OTgiIHI9IjExLjI1Ij48L2NpcmNsZT48L2c+PC9zdmc+");
+    }
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        padding: 3.5%;
+    }
+}
+
+.shaka-overflow-menu {
+    background-color: rgba(71, 90, 90, 0.95);
+    max-height: 300px;
+    button {
+        color: white;
+        border-bottom: 1px solid rgba(white, .15);
+        padding: 6px;
+        .shaka-current-selection-span {
+            color: rgba(white, .6);
+            font-size: 12px;
+        }
+        &:hover {
+            background-color: rgba(white, .1);
+        }
+    }
 }
 
 @media all and (max-width: @tabletViewportWidth) {
