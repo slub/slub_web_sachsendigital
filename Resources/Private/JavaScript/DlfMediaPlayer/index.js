@@ -1,6 +1,7 @@
 // @ts-check
 
 export { default as Chapters } from './Chapters';
-export { ControlPanelButton, OverflowMenuButton } from './controls';
+export { ControlPanelButton, FullScreenButton, OverflowMenuButton } from './controls';
+export { action } from './lib/action';
 export { default as buildTimeString, timeStringFromTemplate } from './lib/buildTimeString';
 export { default as DlfMediaPlayer } from './DlfMediaPlayer';

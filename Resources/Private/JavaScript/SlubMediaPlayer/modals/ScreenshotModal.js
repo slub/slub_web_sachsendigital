@@ -29,14 +29,9 @@ import typoConstants from '../../lib/typoConstants';
  * }} State
  *
  * @typedef {{
- *  screenshotFilenameTemplate: string;
- *  screenshotCommentTemplate: string;
- * }} Constants
- *
- * @typedef {{
  *  keybindings: Keybinding<any, any>[];
  *  screnshotCaptions: import('../Screenshot').ScreenshotCaption[];
- *  constants: import('../../lib/typoConstants').TypoConstants<Constants>;
+ *  constants: import('../../lib/typoConstants').TypoConstants<ScreenshotModalConstants>;
  * }} Config
  */
 

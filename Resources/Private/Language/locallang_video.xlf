@@ -80,11 +80,20 @@
 			<trans-unit id="action.theater.toggle">
 				<source><![CDATA[Toggle theater mode]]></source>
 			</trans-unit>
+			<trans-unit id="action.unavailable">
+				<source><![CDATA[Action unavailable]]></source>
+			</trans-unit>
 			<trans-unit id="control.back">
 				<source><![CDATA[Back]]></source>
 			</trans-unit>
 			<trans-unit id="control.bookmark.tooltip">
 				<source><![CDATA[Bookmark]]></source>
+			</trans-unit>
+			<trans-unit id="control.fullscreen.tooltip">
+				<source><![CDATA[Full screen]]></source>
+			</trans-unit>
+			<trans-unit id="control.fullscreen_exit.tooltip">
+				<source><![CDATA[Exit full screen]]></source>
 			</trans-unit>
 			<trans-unit id="control.help.tooltip">
 				<source><![CDATA[Show help]]></source>
@@ -108,10 +117,10 @@
 				<source><![CDATA[Video Track]]></source>
 			</trans-unit>
 			<trans-unit id="error.load-failed">
-				<source><![CDATA[The video could not be loaded.]]></source>
+				<source><![CDATA[The media file could not be loaded.]]></source>
 			</trans-unit>
 			<trans-unit id="error.playback-not-supported">
-				<source><![CDATA[This video cannot be played back in your browser.]]></source>
+				<source><![CDATA[This media file cannot be played back in your browser.]]></source>
 			</trans-unit>
 			<trans-unit id="key.generic">
 				<source><![CDATA[{key}]]></source>

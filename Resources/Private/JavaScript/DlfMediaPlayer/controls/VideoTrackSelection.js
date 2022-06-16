@@ -9,7 +9,7 @@ import VariantGroups from '../VariantGroups';
  * Control panel element to show current playback time.
  *
  * Listens to the following custom events:
- * - {@link dlf.media.VariantGroupsEvent}
+ * - {@link dlf.media.MediaPropertiesEvent}
  */
 export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
   /**
@@ -53,33 +53,16 @@ export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
     this.menuButtons = {};
 
     if (this.eventManager) {
-      this.eventManager.listen(this.controls, 'dlf-media-variant-groups', (ev) => {
-        const detail = /** @type {dlf.media.VariantGroupsEvent} */(ev).detail;
-        const variantGroups =
-          this.dlf.variantGroups = detail.variantGroups;
-
-        this.clearMenu();
-        this.updateVisibility();
-
-        try {
-          for (const group of variantGroups) {
-            const button = e("button", {
-              $click: () => {
-                this.dlf.variantGroups?.selectGroupByKey(group.key);
-              },
-            }, [
-              e("span", {}, [group.key]),
-            ]);
-
-            this.menu.appendChild(button);
-
-            this.menuButtons[group.key] = button;
+      this.eventManager.listen(this.controls, 'dlf-media-properties', (ev) => {
+        const detail = /** @type {dlf.media.MediaPropertiesEvent} */(ev).detail;
+        const { variantGroups } = detail.updateProps;
+        if (variantGroups !== undefined) {
+          try {
+            this.setVariantGroups(variantGroups);
+          } catch (err) {
+            // TODO: Shaka seems to handle exceptions occurring in listeners
+            console.error(err);
           }
-
-          this.markActiveGroup();
-        } catch (err) {
-          // TODO: Shaka seems to handle exceptions occurring in listeners
-          console.error(err);
         }
       });
 
@@ -87,6 +70,38 @@ export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
         this.markActiveGroup();
       });
     }
+  }
+
+  /**
+   * @private
+   *
+   * @param {VariantGroups | null} variantGroups
+   */
+  setVariantGroups(variantGroups) {
+    this.dlf.variantGroups = variantGroups;
+
+    this.clearMenu();
+    this.updateVisibility();
+
+    if (variantGroups === null) {
+      return;
+    }
+
+    for (const group of variantGroups) {
+      const button = e("button", {
+        $click: () => {
+          this.dlf.variantGroups?.selectGroupByKey(group.key);
+        },
+      }, [
+        e("span", {}, [group.key]),
+      ]);
+
+      this.menu.appendChild(button);
+
+      this.menuButtons[group.key] = button;
+    }
+
+    this.markActiveGroup();
   }
 
   /**
@@ -101,6 +116,8 @@ export default class VideoTrackSelection extends shaka.ui.SettingsMenu {
 
   /**
    * Updates UI to show which group is active
+   *
+   * @private
    */
   markActiveGroup() {
     const activeGroup = this.dlf.variantGroups?.findActiveGroup();

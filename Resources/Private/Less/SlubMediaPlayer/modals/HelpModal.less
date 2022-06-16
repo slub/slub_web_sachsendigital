@@ -30,6 +30,12 @@
             font-weight: bold;
         }
 
+        thead, tbody, tbody tr {
+            [aria-disabled="true"] {
+               opacity: 0.4;
+            }
+        }
+
         tbody tr {
             &:first-child {
                 border-top: 1px solid @light-color;
