@@ -3755,9 +3755,6 @@ body:before {
 .tx-dlf-metadata dl dd {
   color: white;
 }
-.tx-dlf-metadata dl dd.tx-dlf-metadata-collection {
-  color: #000000;
-}
 .tx-dlf-metadata dl dd a {
   color: white;
 }
@@ -3787,7 +3784,7 @@ body:before {
     border-bottom: 0;
   }
   .tx-dlf-calendar .meta-header .year a {
-    color: #729a23;
+    color: #60811d;
   }
   .tx-dlf-calendar .calendar-list-selection {
     top: 20px;
@@ -3893,7 +3890,7 @@ body:before {
     background: white;
   }
   .tx-dlf-toc ul.toc ul li.current a {
-    color: #537119;
+    color: #60811d;
   }
   .tx-dlf-toc ul.toc ul li.current a .meta-type-icon {
     background-position-y: -30px !important;
