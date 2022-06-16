@@ -74,6 +74,11 @@ body {
                 display: block;
             }
         }
+        nav .nav-toggle {
+            .nav-button-bar:last-of-type {
+                display: none;
+            }
+        }
     }
 
     @media screen and (min-width: @tabletLandscapeViewportWidth) {
@@ -110,7 +115,7 @@ body {
                 background: transparent;
             }
             .brand {
-                top: 12px;
+                top: 22px;
                 left: 30px;
                 max-width: 60%;
                 a {
@@ -129,8 +134,6 @@ body {
     @media screen and (min-width: @desktopViewportWidth) {
         .header-bar {
             .brand {
-                top: 12px;
-                left: 30px;
                 a {
                     font-size: 11px;
                     line-height: 1px;

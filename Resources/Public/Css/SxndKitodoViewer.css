@@ -3641,6 +3641,9 @@ body:before {
 .control-bar .header-bar .brand a:before {
   content: '';
 }
+.control-bar .header-bar nav .nav-toggle .nav-button-bar:last-of-type {
+  display: none;
+}
 @media screen and (min-width: 1024px) {
   .control-bar {
     background: #475a5a;
@@ -3680,7 +3683,7 @@ body:before {
     background: transparent;
   }
   .control-bar .header-bar .brand {
-    top: 12px;
+    top: 22px;
     left: 30px;
     max-width: 60%;
   }
@@ -3693,10 +3696,6 @@ body:before {
   }
 }
 @media screen and (min-width: 1200px) {
-  .control-bar .header-bar .brand {
-    top: 12px;
-    left: 30px;
-  }
   .control-bar .header-bar .brand a {
     font-size: 11px;
     line-height: 1px;
