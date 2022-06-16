@@ -421,10 +421,11 @@ figure figcaption {
 }
 /* Setup for members listing  ========================================================================================== */
 .content-wrapper .frame-type-image_ldp_institutions h3 {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 800;
   text-transform: uppercase;
   font-style: normal;
+  color: #475a5a;
 }
 .content-wrapper .frame-type-image_ldp_institutions .ce-gallery {
   border-top: 1px solid #dbeeb4;
@@ -433,92 +434,85 @@ figure figcaption {
   padding: 0;
 }
 .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure {
-  display: block;
-  flex: none;
-  text-align: left;
-  padding: 0 0 0 120px;
-  height: 70px;
-  vertical-align: middle;
   margin: 20px 0;
+  display: flex;
+  text-align: left;
+  align-items: center;
+  justify-items: flex-start;
 }
-.content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure:before {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 110px;
-  width: 1px;
-  background: #cad6d6;
-  content: " ";
-}
-.content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure > a,
-.content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure > img {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 100px;
+.content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure > a {
+  flex: 0 0 110px;
   height: auto;
-  max-height: 80px;
-  transform: translateY(-50%);
+  margin: 0 10px 0 0;
+  padding-right: 10px;
+  border-right: 1px solid #cad6d6;
 }
-.content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure > a:after,
-.content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure > img:after {
-  content: none;
+.content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure > a:after {
   display: none;
 }
+.content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure > a img {
+  width: 100px;
+}
 .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure figcaption {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font: 0/0 'Open Sans', Helvetica, Arial, sans-serif;
-  color: transparent;
-  text-shadow: none;
-  background-color: transparent;
-  border: 0;
   margin: 0;
 }
 .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure figcaption h4 {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.4;
 }
 .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure figcaption h4 a {
-  color: #475a5a;
+  color: #60811d;
+  text-decoration: none;
+}
+.content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure figcaption h4 a:after {
+  display: none;
+}
+.content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure figcaption p {
+  display: none;
 }
 @media screen and (min-width: 480px) {
   .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure {
-    padding-left: 180px;
-    height: 90px;
+    margin: 30px 0;
   }
-  .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure:before {
-    left: 160px;
+  .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure > a {
+    flex: 0 0 160px;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    padding: 10px 20px 10px 0;
   }
-  .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure > a,
-  .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure > img {
+  .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure > a img {
     width: 140px;
-    max-height: 100px;
-  }
-  .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure figcaption {
-    font-size: 12px;
-    line-height: 1.4;
-    color: #839d9d;
+    max-height: none;
   }
   .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure figcaption h4 {
-    font-size: 16px;
+    font-size: 22px;
+    font-weight: normal;
+    margin-bottom: 10px;
+  }
+  .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure figcaption h4 a {
+    text-decoration: none;
+  }
+  .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure figcaption p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.4;
+    display: block;
   }
 }
 @media screen and (min-width: 1024px) {
   .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure {
-    height: 110px;
-    padding-left: 220px;
-    margin: 40px 0;
+    margin: 60px 0;
   }
-  .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure:before {
-    left: 200px;
+  .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure > a {
+    flex: 0 0 220px;
   }
-  .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure > a,
-  .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure > img {
-    width: 180px;
+  .content-wrapper .frame-type-image_ldp_institutions .ce-gallery figure > a img {
+    width: 200px;
     max-height: 120px;
+    object-fit: contain;
   }
 }
 /* Magnific Popup CSS */
@@ -2609,7 +2603,7 @@ ol.rootline {
   background: transparent;
   border: 0 none;
   font-size: 12px;
-  opacity: 0.7;
+  opacity: 0.85;
   margin: 0;
   padding: 0;
 }
