@@ -8,7 +8,9 @@
         <!--TYPO3SEARCH_end-->
         <f:render arguments="{_all}" partial="Footer" section="Footer"/>
     </div>
+    <f:render arguments="{_all}" partial="Navigation" section="Main"/>
 </div>
+
 <f:if condition="{piwik_idsite}">
     <f:render arguments="{_all}" partial="PageMatomo" section="Matomo"/>
 </f:if>

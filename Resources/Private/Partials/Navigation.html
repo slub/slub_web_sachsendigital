@@ -1,27 +1,29 @@
 <html data-namespace-typo3-fluid="true" lang="en" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
 
 <f:section name="Main">
-    <ul>
-        <f:for as="mainnavigationItem" each="{mainnavigation}">
-            <li class="{f:if(condition: mainnavigationItem.active, then:'active')}{f:if(condition: mainnavigationItem.children, then:' has-submenu')}">
-                <f:if condition="{mainnavigationItem.children}">
-                    <f:then>
-                        <a aria-controls="submenu-{mainnavigationItem.data.uid}" aria-expanded="false" aria-haspopup="true" class="submenu-toggle" href="{mainnavigationItem.link}">{mainnavigationItem.title}</a>
-                        <ul class="submenu" id="submenu-{mainnavigationItem.data.uid}">
-                            <f:for as="child" each="{mainnavigationItem.children}">
-                                <li class="{f:if(condition: child.active, then:'active')}">
-                                    <a href="{child.link}">{child.title}</a>
-                                </li>
-                            </f:for>
-                        </ul>
-                    </f:then>
-                    <f:else>
-                        <a href="{mainnavigationItem.link}">{mainnavigationItem.title}</a>
-                    </f:else>
-                </f:if>
-            </li>
-        </f:for>
-    </ul>
+    <nav class="main-navigation" id="main-navigation">
+        <ul>
+            <f:for as="mainnavigationItem" each="{mainnavigation}">
+                <li class="{f:if(condition: mainnavigationItem.active, then:'active')}{f:if(condition: mainnavigationItem.children, then:' has-submenu')}">
+                    <f:if condition="{mainnavigationItem.children}">
+                        <f:then>
+                            <a aria-controls="submenu-{mainnavigationItem.data.uid}" aria-expanded="false" aria-haspopup="true" class="submenu-toggle" href="{mainnavigationItem.link}">{mainnavigationItem.title}</a>
+                            <ul class="submenu" id="submenu-{mainnavigationItem.data.uid}">
+                                <f:for as="child" each="{mainnavigationItem.children}">
+                                    <li class="{f:if(condition: child.active, then:'active')}">
+                                        <a href="{child.link}">{child.title}</a>
+                                    </li>
+                                </f:for>
+                            </ul>
+                        </f:then>
+                        <f:else>
+                            <a href="{mainnavigationItem.link}">{mainnavigationItem.title}</a>
+                        </f:else>
+                    </f:if>
+                </li>
+            </f:for>
+        </ul>
+    </nav>
 </f:section>
 
 <f:section name="Rootline">
