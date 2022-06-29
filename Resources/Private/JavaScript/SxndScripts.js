@@ -22,13 +22,34 @@ $(function () {
     $(this).parent().toggleClass('tx-dlf-volumes-open').find('.tx-dlf-volume').slideToggle();
   });
 
+  // Toggles for main navigation
+  $('.perspective').append('<div class="perspective-curtain"/>');
   $('button.nav-open').on('click', function (event) {
-    setTimeout(function () {
-      $('body').addClass('menu-open');
-    }, 25);
+    $('body').addClass('menu-open menu-animation');
   });
-  $('.perspective, button.nav-close').on('click', function (event) {
-    $('body').removeClass('menu-open');
+  $('.perspective-curtain, .nav-close').on('click', function (event) {
+    $('body').removeClass('menu-animation');
+    $('.perspective').one('transitionend webkitTransitionEnd oTransitionEnd', function () {
+      $('body').removeClass('menu-open');
+    })
+  });
+
+  // Adding a additional link to the parent page
+  $('nav.main-navigation li.has-submenu').each(function () {
+    let linkTitle = $(this).find('> a').text();
+    let linkHref = $(this).find('> a').attr('href');
+    $(this).find('ul').prepend('<li><a href="' + linkHref + '" class="parentpage-link">Hauptseite <span class="parentpage-title">&raquo;' + linkTitle + '&laquo;</span> anzeigen</a></li>');
+  });
+
+  // Proper toggle function for aria attributes and open state in main navigation
+  $('nav.main-navigation a[aria-haspopup]').click(function () {
+    let subNavHeight = ($(this).attr('aria-expanded') === 'true') ? '' : $(this).next('ul')[0].scrollHeight + 'px';
+    $(this).attr('aria-expanded', function (i, attr) {
+      return attr === 'true' ? 'false' : 'true'
+    }).next('ul[aria-hidden]').attr('aria-hidden', function (i, attr) {
+      return attr === 'true' ? 'false' : 'true'
+    }).css({'maxHeight': subNavHeight}).parent().toggleClass('open');
+    return false;
   });
 
   // retrieve image aspect ratio and add class

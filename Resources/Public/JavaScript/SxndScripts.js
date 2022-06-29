@@ -2209,13 +2209,34 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(function () {
     jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).parent().toggleClass('tx-dlf-volumes-open').find('.tx-dlf-volume').slideToggle();
   });
 
+  // Toggles for main navigation
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.perspective').append('<div class="perspective-curtain"/>');
   jquery__WEBPACK_IMPORTED_MODULE_0___default()('button.nav-open').on('click', function (event) {
-    setTimeout(function () {
-      jquery__WEBPACK_IMPORTED_MODULE_0___default()('body').addClass('menu-open');
-    }, 25);
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()('body').addClass('menu-open menu-animation');
   });
-  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.perspective, button.nav-close').on('click', function (event) {
-    jquery__WEBPACK_IMPORTED_MODULE_0___default()('body').removeClass('menu-open');
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.perspective-curtain, .nav-close').on('click', function (event) {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()('body').removeClass('menu-animation');
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()('.perspective').one('transitionend webkitTransitionEnd oTransitionEnd', function () {
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()('body').removeClass('menu-open');
+    })
+  });
+
+  // Adding a additional link to the parent page
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('nav.main-navigation li.has-submenu').each(function () {
+    let linkTitle = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).find('> a').text();
+    let linkHref = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).find('> a').attr('href');
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).find('ul').prepend('<li><a href="' + linkHref + '" class="parentpage-link">Hauptseite <span class="parentpage-title">&raquo;' + linkTitle + '&laquo;</span> anzeigen</a></li>');
+  });
+
+  // Proper toggle function for aria attributes and open state in main navigation
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('nav.main-navigation a[aria-haspopup]').click(function () {
+    let subNavHeight = (jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).attr('aria-expanded') === 'true') ? '' : jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).next('ul')[0].scrollHeight + 'px';
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).attr('aria-expanded', function (i, attr) {
+      return attr === 'true' ? 'false' : 'true'
+    }).next('ul[aria-hidden]').attr('aria-hidden', function (i, attr) {
+      return attr === 'true' ? 'false' : 'true'
+    }).css({'maxHeight': subNavHeight}).parent().toggleClass('open');
+    return false;
   });
 
   // retrieve image aspect ratio and add class

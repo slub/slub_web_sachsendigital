@@ -139,24 +139,48 @@ html, body, .main-wrapper, .perspective, .content-wrapper {
 
 /* basic frame design  ================================================================================================= */
 body {
+    .main-wrapper {
+        background: @brand-secondary;
+    }
     .perspective {
         transition: @transition;
+        background: white;
+        transform-origin: 0 50%;
     }
-    &.menu-open {overflow: hidden;
-        .main-wrapper {overflow: hidden; }
+    &.menu-open {
+        overflow: hidden;
+        .main-wrapper {
+            position: fixed;
+            overflow: hidden;
+            perspective: 1500px;
+        }
         .perspective {
-            transform: translateX(-260px);
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            box-shadow: 8px 8px 20px rgba(black, .2);
+        }
+        &.menu-animation {
+            .perspective-curtain {
+                position: absolute;
+                inset: 0;
+            }
+            .perspective {
+                transform: translateX(-50%) rotateY(45deg) translateZ(-50px);
+            }
         }
     }
     @media screen and (min-width: @phoneLandscapeViewportWidth) {
         .perspective {
-            padding-bottom: 250px;
+            padding-bottom: 260px;
         }
     }
     @media screen and (min-width: @tabletViewportWidth) {
         &.menu-open {
-            .perspective {
-                transform: translateX(-320px);
+            &.menu-animation {
+                .perspective {
+                    transform: translateZ(-1800px) translateX(-50%) rotateY(45deg);
+                }
             }
         }
     }
