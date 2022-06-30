@@ -177,9 +177,24 @@ body {
     }
     @media screen and (min-width: @tabletViewportWidth) {
         &.menu-open {
+            .main-wrapper {
+                perspective: 2500px;
+            }
             &.menu-animation {
                 .perspective {
-                    transform: translateZ(-1800px) translateX(-50%) rotateY(45deg);
+                    transform: translateZ(-200px) translateX(-15%) rotateY(55deg);
+                }
+            }
+        }
+    }
+    @media screen and (min-width: @desktopViewportWidth) {
+        &.menu-open {
+            .main-wrapper {
+                perspective: 3200px;
+            }
+            &.menu-animation {
+                .perspective {
+                    transform: translateZ(0) translateX(-15%) rotateY(35deg)
                 }
             }
         }

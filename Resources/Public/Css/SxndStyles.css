@@ -2195,8 +2195,19 @@ body.menu-open.menu-animation .perspective {
   }
 }
 @media screen and (min-width: 768px) {
+  body.menu-open .main-wrapper {
+    perspective: 2500px;
+  }
   body.menu-open.menu-animation .perspective {
-    transform: translateZ(-1800px) translateX(-50%) rotateY(45deg);
+    transform: translateZ(-200px) translateX(-15%) rotateY(55deg);
+  }
+}
+@media screen and (min-width: 1200px) {
+  body.menu-open .main-wrapper {
+    perspective: 3200px;
+  }
+  body.menu-open.menu-animation .perspective {
+    transform: translateZ(0) translateX(-15%) rotateY(35deg);
   }
 }
 /* Cookie warning  ===================================================================================================== */
@@ -2400,7 +2411,26 @@ body.menu-open.menu-animation .perspective {
   .nav-open {
     top: 30px;
     right: 40px;
+    transform: scale(1.4);
   }
+}
+.no-touchevents .nav-open {
+  cursor: pointer;
+}
+.no-touchevents .nav-open .nav-button-bar {
+  transition: transform 0.2s ease-in-out;
+}
+.no-touchevents .nav-open:hover {
+  transform: scale(1.5);
+}
+.no-touchevents .nav-open:hover .nav-button-bar:nth-of-type(2) {
+  transform: translateY(-2px);
+}
+.no-touchevents .nav-open:hover .nav-button-bar:nth-of-type(3) {
+  transform: scale(0.85);
+}
+.no-touchevents .nav-open:hover .nav-button-bar:nth-of-type(4) {
+  transform: translateY(2px);
 }
 .nav-close {
   position: absolute;
@@ -2439,12 +2469,27 @@ body.menu-open.menu-animation .perspective {
   pointer-events: auto;
   transform: scale(1);
 }
+@media screen and (min-width: 768px) {
+  .nav-close {
+    top: 25px;
+    right: 25px;
+  }
+  .menu-animation .nav-close {
+    transform: scale(1.4);
+  }
+}
+.no-touchevents .nav-close {
+  cursor: pointer;
+}
+.no-touchevents .nav-close:hover {
+  transform: scale(1.7);
+}
 /* main navigation styles  ============================================================================================= */
 nav.main-navigation {
   position: fixed;
   top: 0;
   right: 0;
-  width: 320px;
+  width: 70%;
   height: 100vh;
   background: #475a5a;
   margin: 0;
@@ -2457,7 +2502,7 @@ nav.main-navigation {
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   transition: all 0.3s ease-out;
-  transform: translateX(320px);
+  transform: translateX(100%);
 }
 .menu-animation nav.main-navigation {
   transform: translateX(0);
@@ -2593,6 +2638,16 @@ nav.main-navigation > ul > li.open > ul {
   max-height: 350px;
   opacity: 1;
   pointer-events: auto;
+}
+@media screen and (min-width: 768px) {
+  nav.main-navigation {
+    width: 40%;
+  }
+}
+@media screen and (min-width: 1200px) {
+  nav.main-navigation {
+    width: 25%;
+  }
 }
 /* breadcrumb navigation styles  ============================================================================================= */
 ol.rootline {
@@ -2776,6 +2831,9 @@ a.totop:after {
     right: 0;
     bottom: 0;
     left: 0;
+  }
+  .menu-open .footer {
+    position: relative;
   }
 }
 @media screen and (min-width: 1024px) {

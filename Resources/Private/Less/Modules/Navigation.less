@@ -57,6 +57,25 @@
     @media screen and (min-width: @tabletViewportWidth) {
         top: 30px;
         right: 40px;
+        transform: scale(1.4);
+    }
+    .no-touchevents & {
+        cursor: pointer;
+        .nav-button-bar {
+            transition: transform .2s ease-in-out;
+        }
+        &:hover {
+            transform: scale(1.5);
+            .nav-button-bar:nth-of-type(2) {
+                transform: translateY(-2px);
+            }
+            .nav-button-bar:nth-of-type(3) {
+                transform: scale(.85);
+            }
+            .nav-button-bar:nth-of-type(4) {
+                transform: translateY(2px);
+            }
+        }
     }
 }
 
@@ -96,6 +115,19 @@
         pointer-events: auto;
         transform: scale(1);
     }
+    @media screen and (min-width: @tabletViewportWidth) {
+        top: 25px;
+        right: 25px;
+        .menu-animation & {
+            transform: scale(1.4);
+        }
+    }
+    .no-touchevents & {
+        cursor: pointer;
+        &:hover {
+            transform: scale(1.7);
+        }
+    }
 }
 
 /* main navigation styles  ============================================================================================= */
@@ -103,7 +135,7 @@ nav.main-navigation {
     position: fixed;
     top: 0;
     right: 0;
-    width: 320px;
+    width: 70%;
     height: 100vh;
     background: @brand-secondary;
     margin: 0;
@@ -116,7 +148,7 @@ nav.main-navigation {
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
     transition: @transition;
-    transform: translateX(320px);
+    transform: translateX(100%);
     .menu-animation & {
         transform: translateX(0);
     }
@@ -204,6 +236,12 @@ nav.main-navigation {
                 }
             }
         }
+    }
+    @media screen and (min-width: @tabletViewportWidth) {
+        width: 40%;
+    }
+    @media screen and (min-width: @desktopViewportWidth) {
+        width: 25%;
     }
 }
 
