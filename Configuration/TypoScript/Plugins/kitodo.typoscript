@@ -32,6 +32,8 @@ plugin.tx_dlf_pagegrid {
   settings {
     paginate {
       itemsPerPage = 24
+      addQueryString = 1
+      addQueryStringMethod = GET
     }
     placeholder = EXT:slub_web_sachsendigital/Resources/Public/Images/GridPlaceHolder.jpg
 	  targetPid = {$config.kitodoPageView}
