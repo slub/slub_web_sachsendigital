@@ -15,7 +15,7 @@
     margin: 0;
     border: 0 none;
     background: @brand-secondary;
-    .vertgrad(fade(@brand-secondary, 30%), fade(@brand-primary, 60%), 0, 100%);
+    .vertgrad(fade(@brand-secondary, 0%), fade(@brand-primary, 30%), 0, 100%);
     transition: @transition;
     &:before {
         position: absolute;
@@ -50,8 +50,6 @@
     }
     @media screen and (min-width: @tabletViewportWidth) {
         height: 100px;
-        background: @brand-secondary url(../Images/pageHeaderBg.jpg) no-repeat center bottom;
-        background-size: cover;
         a.header-brand {
             top: 25px;
             left: 50px;

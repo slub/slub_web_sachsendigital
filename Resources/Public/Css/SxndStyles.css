@@ -2284,9 +2284,9 @@ body.menu-open.menu-animation .perspective {
   margin: 0;
   border: 0 none;
   background: #475a5a;
-  background-image: -webkit-linear-gradient(top, rgba(71, 90, 90, 0.3) 0, rgba(145, 196, 44, 0.6) 100%);
-  background-image: -o-linear-gradient(top, rgba(71, 90, 90, 0.3) 0, rgba(145, 196, 44, 0.6) 100%);
-  background-image: linear-gradient(to bottom, rgba(71, 90, 90, 0.3) 0, rgba(145, 196, 44, 0.6) 100%);
+  background-image: -webkit-linear-gradient(top, rgba(71, 90, 90, 0) 0, rgba(145, 196, 44, 0.3) 100%);
+  background-image: -o-linear-gradient(top, rgba(71, 90, 90, 0) 0, rgba(145, 196, 44, 0.3) 100%);
+  background-image: linear-gradient(to bottom, rgba(71, 90, 90, 0) 0, rgba(145, 196, 44, 0.3) 100%);
   background-repeat: repeat-x;
   transition: all 0.3s ease-out;
 }
@@ -2328,8 +2328,6 @@ body.menu-open.menu-animation .perspective {
 @media screen and (min-width: 768px) {
   .header {
     height: 100px;
-    background: #475a5a url(../Images/pageHeaderBg.jpg) no-repeat center bottom;
-    background-size: cover;
   }
   .header a.header-brand {
     top: 25px;
@@ -2412,6 +2410,12 @@ body.menu-open.menu-animation .perspective {
     top: 30px;
     right: 40px;
     transform: scale(1.4);
+  }
+}
+@media screen and (min-width: 1200px) {
+  .nav-open {
+    top: 45px;
+    transform: scale(1.5);
   }
 }
 .no-touchevents .nav-open {
