@@ -1,3 +1,13 @@
+/*
+ *
+ * Page Navigator
+ * ================================================
+ * Styling for paging on collection views
+ *
+ * Author: Thomas Jung <thomas@jung.digital>
+ *
+ */
+
 .content-wrapper {
     ul.f3-widget-paginator {
         float: none;
@@ -29,12 +39,6 @@
                 display: none;
             }
             a {
-                position: absolute;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: 0;
-                display: block;
                 text-decoration: none;
             }
             &.first {
@@ -59,8 +63,14 @@
                     }
                 }
             }
-            &.previous a:before { content: "<"; margin-left: -3px; }
-            &.next  a:before { content: ">"; margin-right: -3px; }
+            &.previous a:before {
+                content: "<";
+                margin-left: -3px;
+            }
+            &.next a:before {
+                content: ">";
+                margin-right: -3px;
+            }
         }
     }
 }

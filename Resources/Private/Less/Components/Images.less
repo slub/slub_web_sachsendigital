@@ -5,8 +5,7 @@
  * Style definitions for galleries and all
  * image related items
  *
- * Author: Thomas Jung <thomas@tjwd.de>
- * License: All rights reserved
+ * Author: Thomas Jung <thomas@jung.digital>
  *
  */
 
@@ -47,9 +46,8 @@ figure {
 }
 
 /* Styles for images and galeries which floats in text ================================================================= */
-.textpic-container,
 .ce-textpic {
-    .csc-textpic-text {
+    .ce-bodytext {
         margin: 0 !important;
         min-height: 200px;
     }
@@ -71,21 +69,19 @@ figure {
                 content: " ";
                 opacity: 0.4;
             }
-            .ce-row {
-                display:none;
-                &:first-child {
-                    display: block;
-                }
-            }
             figure {
                 position: absolute;
                 top: 50%;
-                .transform(translateY(-50%));
+                transform: translateY(-50%);
                 margin: 0;
                 line-height: 0;
                 max-height: 100%;
                 height: 175px;
                 width: 260px;
+                display: none;
+                &:first-child {
+                    display: block;
+                }
                 &.portrait {
                     height: 347px;
                 }
@@ -104,8 +100,8 @@ figure {
                     bottom: 0;
                     left: 0;
                     max-width: 80%;
-                    background: rgba(255,255,255,1);
-                    border: 6px solid fade(@brand-secondary,10%);
+                    background: rgba(255, 255, 255, 1);
+                    border: solid fade(@brand-secondary, 10%);
                     border-width: 0 0 6px 6px;
                     padding: 7px 10px;
                     margin: 0;
@@ -117,7 +113,7 @@ figure {
                     right: -6px;
                     bottom: -6px;
                     left: 6px;
-                    border: 3px solid @brand-secondary;
+                    border: solid @brand-secondary;
                     border-width: 0 3px 3px 0;
                     content: " ";
                     opacity: 0.2;
@@ -196,23 +192,33 @@ figure {
         flex-wrap: wrap;
         align-items: center;
         justify-content: center;
-        background: lighten(@brand-secondary-light,10%);
-        .ce-row {
+        background: lighten(@brand-secondary-light, 10%);
+        figure {
             margin: 0;
             padding: 10px;
             flex: 0 1 50%;
             a {
                 display: block;
+                img {
+                    width: 100%;
+                }
             }
         }
         @media screen and (min-width: @phoneLandscapeViewportWidth) {
-            .ce-row {
+            figure {
                 flex: 0 1 33.33333%;
             }
         }
         @media screen and (min-width: @tabletLandscapeViewportWidth) {
-            .ce-row {
+            margin: 30px -100px;
+            figure {
                 flex: 0 1 25%;
+            }
+        }
+        @media screen and (min-width: @desktopViewportWidth) {
+            margin: 30px -200px;
+            figure {
+                flex: 0 1 20%;
             }
         }
     }
@@ -221,94 +227,98 @@ figure {
 /* Setup for members listing  ========================================================================================== */
 .content-wrapper .frame-type-image_ldp_institutions {
     h3 {
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 800;
         text-transform: uppercase;
         font-style: normal;
+        color: @brand-secondary;
     }
     .ce-gallery {
-        border-top: 1px solid lighten(@brand-primary,35%);
+        border-top: 1px solid lighten(@brand-primary, 35%);
         background: transparent;
         display: block;
         padding: 0;
         figure {
-            display: block;
-            flex: none;
-            text-align: left;
-            padding: 0 0 0 120px;
-            height: 70px;
-            vertical-align: middle;
             margin: 20px 0;
-            &:before {
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                left: 110px;
-                width: 1px;
-                background: @brand-secondary-light;
-                content: " ";
-            }
-            > a, > img {
-                position: absolute;
-                top: 50%;
-                left: 0;
-                width: 100px;
+            display: flex;
+            text-align: left;
+            align-items: center;
+            justify-items: flex-start;
+            > a {
+                flex: 0 0 110px;
                 height: auto;
-                max-height: 80px;
-                .transform(translateY(-50%));
+                margin: 0 10px 0 0;
+                padding-right: 10px;
+                border-right: 1px solid @brand-secondary-light;
                 &:after {
-                    content: none;
                     display: none;
+                }
+                img {
+                    width: 100px;
                 }
             }
             figcaption {
-                position: absolute;
-                top: 50%;
-                .transform(translateY(-50%));
-                .text-hide();
                 margin: 0;
                 h4 {
                     margin: 0;
-                    font-size: 14px;
+                    font-size: 16px;
                     line-height: 1.4;
                     a {
-                        color: @brand-secondary;
+                        color: @brand-primary-dark;
+                        text-decoration: none;
+                        &:after {
+                            display: none;
+                        }
                     }
+                }
+                p {
+                    display: none;
                 }
             }
         }
         @media screen and (min-width: @phoneLandscapeViewportWidth) {
             figure {
-                padding-left: 180px;
-                height: 90px;
-                &:before {
-                    left: 160px;
-                }
-                > a, > img {
-                    width: 140px;
-                    max-height: 100px;
+                margin: 30px 0;
+                > a {
+                    flex: 0 0 160px;
+                    align-self: stretch;
+                    display: flex;
+                    align-items: center;
+                    margin-right: 20px;
+                    padding: 10px 20px 10px 0;
+                    img {
+                        width: 140px;
+                        max-height: none;
+                    }
                 }
                 figcaption {
-                    font-size: 12px;
-                    line-height: 1.4;
-                    color: lighten(@brand-secondary, 25%);
                     h4 {
-                        font-size: 16px;
+                        font-size: 22px;
+                        font-weight: normal;
+                        margin-bottom: 10px;
+                        a {
+                            text-decoration: none;
+                        }
+                    }
+                    p {
+                        margin: 0;
+                        font-size: 14px;
+                        line-height: 1.4;
+                        display: block;
                     }
                 }
             }
         }
         @media screen and (min-width: @tabletLandscapeViewportWidth) {
             figure {
-                height: 110px;
-                padding-left: 220px;
-                margin: 40px 0;
-                &:before {
-                    left: 200px;
-                }
-                > a, > img {
-                    width: 180px;
-                    max-height: 120px;
+                margin: 60px 0;
+                > a {
+                    flex: 0 0 220px;
+                    img {
+                        width: 200px;
+                        max-height: 120px;
+                        object-fit: contain;
+                    }
                 }
             }
         }

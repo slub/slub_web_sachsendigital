@@ -5,8 +5,7 @@
  * Value settings for type, breakpoints and
  * base settings for calculations
  *
- * Author: Thomas Jung <thomas@tjwd.de>
- * License: All rights reserved
+ * Author: Thomas Jung <thomas@jung.digital>
  *
  */
 
@@ -22,11 +21,14 @@
 // Colors
 @brand-primary: rgb(145,196,44); // the lime green
 @brand-primary-light: lighten(@brand-primary, 20%); // a lighter shade of the above color
-@brand-primary-dark: darken(@brand-primary, 10%);
+@brand-primary-dark: darken(@brand-primary, 16%); // a dark green version of the primary color
 @brand-secondary: rgb(71, 90, 90); // the greyish pertrol blue
 @brand-secondary-mid: desaturate(lighten(@brand-secondary,30%),5%); // a lighter shade of the above color
 @brand-secondary-light: lighten(@brand-secondary, 50%); // a even lighter shade of the secondary
-@ui-warning: rgb(255,51,51); // red for warnings eg.
+@ui-warning: rgb(204, 0, 0); // red for warnings eg.
+
+// Animations
+@transition: all .3s ease-out;
 
 // Fonts
 /* open-sans-300italic - latin */
@@ -68,4 +70,3 @@
         url('../Fonts/open-sans-v18-latin-700.ttf') format('truetype'), /* Safari, Android, iOS */
         url('../Fonts/open-sans-v18-latin-700.svg#OpenSans') format('svg'); /* Legacy iOS */
 }
-// EOF
