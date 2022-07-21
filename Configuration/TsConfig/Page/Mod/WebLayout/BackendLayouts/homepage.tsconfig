@@ -14,7 +14,7 @@ mod {
                             1 {
                                 columns {
                                     1 {
-                                        name = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/backend.xlf:backend_layout.home.mission
+                                        name = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/backend.xlf:backend_layout.home.highlights
                                         colPos = 0
                                     }
                                 }
@@ -22,7 +22,7 @@ mod {
                             2 {
                                 columns {
                                     1 {
-                                        name = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/backend.xlf:backend_layout.home.highlights
+                                        name = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/backend.xlf:backend_layout.home.search
                                         colPos = 1
                                     }
                                 }
@@ -30,7 +30,7 @@ mod {
                             3 {
                                 columns {
                                     1 {
-                                        name = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/backend.xlf:backend_layout.home.video
+                                        name = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/backend.xlf:backend_layout.home.mission
                                         colPos = 11
                                     }
                                 }
@@ -38,7 +38,7 @@ mod {
                             4 {
                                 columns {
                                     1 {
-                                        name = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/backend.xlf:backend_layout.home.becomemember
+                                        name = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/backend.xlf:backend_layout.home.counter
                                         colPos = 3
                                     }
                                 }
@@ -46,7 +46,7 @@ mod {
                             5 {
                                 columns {
                                     1 {
-                                        name = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/backend.xlf:backend_layout.home.institutes
+                                        name = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/backend.xlf:backend_layout.home.collections
                                         colPos = 2
                                     }
                                 }
@@ -54,7 +54,7 @@ mod {
                             6 {
                                 columns {
                                     1 {
-                                        name = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/backend.xlf:backend_layout.home.technology
+                                        name = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/backend.xlf:backend_layout.home.becomemember
                                         colPos = 4
                                     }
                                 }

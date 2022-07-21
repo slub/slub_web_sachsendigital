@@ -18,17 +18,17 @@
             <trans-unit id="backend_layout.home.highlights">
                 <source>Highlights</source>
             </trans-unit>
-            <trans-unit id="backend_layout.home.video">
-                <source>Video</source>
+            <trans-unit id="backend_layout.home.search">
+                <source>Search</source>
             </trans-unit>
-            <trans-unit id="backend_layout.home.institutes">
-                <source>Institute</source>
+            <trans-unit id="backend_layout.home.counter">
+                <source>Counter</source>
             </trans-unit>
+			<trans-unit id="backend_layout.home.collections">
+				<source>Collections</source>
+			</trans-unit>
             <trans-unit id="backend_layout.home.becomemember">
                 <source>Teilnehmen</source>
-            </trans-unit>
-            <trans-unit id="backend_layout.home.technology">
-                <source>Technik</source>
             </trans-unit>
             <trans-unit id="backend_layout.home.footer">
                 <source>Fußbereich</source>
