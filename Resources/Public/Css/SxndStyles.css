@@ -2541,6 +2541,14 @@ nav.main-navigation a:focus-visible {
   outline: 1px solid rgba(255, 255, 255, 0.5);
   outline-offset: 2px;
 }
+.no-touchevents nav.main-navigation a {
+  transition: all 0.3s ease-out;
+  transform-origin: left center;
+  display: inline-block;
+}
+.no-touchevents nav.main-navigation a:hover {
+  transform: scale(1.1);
+}
 nav.main-navigation > ul {
   list-style: none;
   padding: 80px 0;

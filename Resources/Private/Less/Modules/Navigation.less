@@ -181,6 +181,14 @@ nav.main-navigation {
             outline: 1px solid rgba(white, .5);
             outline-offset: 2px;
         }
+        .no-touchevents & {
+            transition: @transition;
+            transform-origin: left center;
+            display: inline-block;
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
     }
     > ul {
         list-style: none;
