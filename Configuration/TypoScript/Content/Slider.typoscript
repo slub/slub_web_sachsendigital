@@ -1,0 +1,32 @@
+#
+# Slider for Homepage
+# CType: ldp_slider
+#
+
+tt_content.tx_sachsendigital_slider = COA
+tt_content.tx_sachsendigital_slider {
+  10 =< lib.stdheader
+  20 = FLUIDTEMPLATE
+  20 {
+    file = EXT:slub_web_sachsendigital/Resources/Private/Templates/Slider.html
+    dataProcessing.10 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
+    dataProcessing.10 {
+      table = tx_sachsendigital_slider
+      pidInList.data = TSFE:id
+      where.data = field:uid
+      where.wrap = tt_content = |
+      orderBy = sorting ASC
+      as = slides
+      dataProcessing {
+        10 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
+        10 {
+          references {
+            table = tx_sachsendigital_slider
+            fieldName = image
+          }
+          as = image
+        }
+      }
+    }
+  }
+}
