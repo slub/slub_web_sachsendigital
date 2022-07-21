@@ -2213,6 +2213,9 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(function () {
   jquery__WEBPACK_IMPORTED_MODULE_0___default()('.perspective').append('<div class="perspective-curtain"/>');
   jquery__WEBPACK_IMPORTED_MODULE_0___default()('button.nav-open').on('click', function (event) {
     jquery__WEBPACK_IMPORTED_MODULE_0___default()('body').addClass('menu-open menu-animation');
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()('.perspective').one('transitionend webkitTransitionEnd oTransitionEnd', function () {
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()('.main-navigation > ul > li:first-child > a').focus();
+    });
   });
   jquery__WEBPACK_IMPORTED_MODULE_0___default()('.perspective-curtain, .nav-close').on('click', function (event) {
     jquery__WEBPACK_IMPORTED_MODULE_0___default()('body').removeClass('menu-animation');
@@ -2233,7 +2236,7 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(function () {
     let subNavHeight = (jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).attr('aria-expanded') === 'true') ? '' : jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).next('ul')[0].scrollHeight + 'px';
     jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).attr('aria-expanded', function (i, attr) {
       return attr === 'true' ? 'false' : 'true'
-    }).next('ul[aria-hidden]').attr('aria-hidden', function (i, attr) {
+    }).next('ul[aria-expanded]').attr('aria-expanded', function (i, attr) {
       return attr === 'true' ? 'false' : 'true'
     }).css({'maxHeight': subNavHeight}).parent().toggleClass('open');
     return false;

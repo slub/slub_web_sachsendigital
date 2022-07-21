@@ -51,6 +51,10 @@
             opacity: 0;
         }
     }
+    &:focus-visible {
+        outline: 1px solid rgba(white, .5);
+        outline-offset: 2px;
+    }
     @media screen and (min-width: @phoneLandscapeViewportWidth) {
         right: 20px;
     }
@@ -119,6 +123,10 @@
         pointer-events: auto;
         transform: scale(1);
     }
+    &:focus-visible {
+        outline: 1px solid rgba(white, .5);
+        outline-offset: 2px;
+    }
     @media screen and (min-width: @tabletViewportWidth) {
         top: 25px;
         right: 25px;
@@ -143,7 +151,7 @@ nav.main-navigation {
     height: 100vh;
     background: @brand-secondary;
     margin: 0;
-    padding: 0;
+    padding: 0 3px;
     list-style: none;
     z-index: 100;
     display: flex;
@@ -158,7 +166,7 @@ nav.main-navigation {
     }
     a {
         position: relative;
-        padding: 6px 0;
+        padding: 4px;
         text-decoration: none;
         color: #fff;
         &.parentpage-link {
@@ -168,6 +176,10 @@ nav.main-navigation {
                 text-transform: uppercase;
                 font-weight: 700;
             }
+        }
+        &:focus-visible {
+            outline: 1px solid rgba(white, .5);
+            outline-offset: 2px;
         }
     }
     > ul {
@@ -198,7 +210,6 @@ nav.main-navigation {
                 > li {
                     > a {
                         font-size: 14px;
-                        padding: 10px 0;
                     }
                 }
             }
@@ -209,11 +220,11 @@ nav.main-navigation {
             });
             &.has-submenu {
                 > a {
-                    padding-right: 15px;
+                    padding-right: 20px;
                     &:after {
                         position: absolute;
                         top: 50%;
-                        right: 0;
+                        right: 4px;
                         width: 7px;
                         height: 7px;
                         margin-top: -5px;
@@ -224,6 +235,9 @@ nav.main-navigation {
                         content: " ";
                         transition: @transition;
                     }
+                }
+                > ul {
+                    visibility: hidden;
                 }
             }
             &.open {
@@ -236,13 +250,22 @@ nav.main-navigation {
                 > ul {
                     max-height: 350px;
                     opacity: 1;
+                    visibility: visible;
+                    overflow: visible;
                     pointer-events: auto;
                 }
             }
         }
     }
     @media screen and (min-width: @tabletViewportWidth) {
-        width: 40%;
+        width: 42%;
+        > ul {
+            > li {
+                > a {
+                    font-size: 22px;
+                }
+            }
+        }
     }
     @media screen and (min-width: @desktopViewportWidth) {
         width: 25%;

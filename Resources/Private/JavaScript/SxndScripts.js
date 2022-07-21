@@ -26,6 +26,9 @@ $(function () {
   $('.perspective').append('<div class="perspective-curtain"/>');
   $('button.nav-open').on('click', function (event) {
     $('body').addClass('menu-open menu-animation');
+    $('.perspective').one('transitionend webkitTransitionEnd oTransitionEnd', function () {
+      $('.main-navigation > ul > li:first-child > a').focus();
+    });
   });
   $('.perspective-curtain, .nav-close').on('click', function (event) {
     $('body').removeClass('menu-animation');
@@ -46,7 +49,7 @@ $(function () {
     let subNavHeight = ($(this).attr('aria-expanded') === 'true') ? '' : $(this).next('ul')[0].scrollHeight + 'px';
     $(this).attr('aria-expanded', function (i, attr) {
       return attr === 'true' ? 'false' : 'true'
-    }).next('ul[aria-hidden]').attr('aria-hidden', function (i, attr) {
+    }).next('ul[aria-expanded]').attr('aria-expanded', function (i, attr) {
       return attr === 'true' ? 'false' : 'true'
     }).css({'maxHeight': subNavHeight}).parent().toggleClass('open');
     return false;

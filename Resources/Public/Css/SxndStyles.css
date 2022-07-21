@@ -2318,6 +2318,10 @@ body.menu-open.menu-animation .perspective {
   background: url('../Images/sxndLogo.svg') no-repeat left center;
   background-size: 100% 100%;
 }
+.header a.header-brand:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
 @media screen and (min-width: 480px) {
   .header a.header-brand {
     left: 30px;
@@ -2400,6 +2404,10 @@ body.menu-open.menu-animation .perspective {
   transform: translateY(20px);
   opacity: 0;
 }
+.nav-open:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
 @media screen and (min-width: 480px) {
   .nav-open {
     right: 20px;
@@ -2473,6 +2481,10 @@ body.menu-open.menu-animation .perspective {
   pointer-events: auto;
   transform: scale(1);
 }
+.nav-close:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
 @media screen and (min-width: 768px) {
   .nav-close {
     top: 25px;
@@ -2497,7 +2509,7 @@ nav.main-navigation {
   height: 100vh;
   background: #475a5a;
   margin: 0;
-  padding: 0;
+  padding: 0 3px;
   list-style: none;
   z-index: 100;
   display: flex;
@@ -2513,7 +2525,7 @@ nav.main-navigation {
 }
 nav.main-navigation a {
   position: relative;
-  padding: 6px 0;
+  padding: 4px;
   text-decoration: none;
   color: #fff;
 }
@@ -2524,6 +2536,10 @@ nav.main-navigation a.parentpage-link span.parentpage-title {
   color: white;
   text-transform: uppercase;
   font-weight: 700;
+}
+nav.main-navigation a:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
 }
 nav.main-navigation > ul {
   list-style: none;
@@ -2555,7 +2571,6 @@ nav.main-navigation > ul > li > ul {
 }
 nav.main-navigation > ul > li > ul > li > a {
   font-size: 14px;
-  padding: 10px 0;
 }
 nav.main-navigation > ul > li:nth-child(1) {
   transition-delay: 50ms;
@@ -2618,12 +2633,12 @@ nav.main-navigation > ul > li:nth-child(20) {
   transition-delay: 1000ms;
 }
 nav.main-navigation > ul > li.has-submenu > a {
-  padding-right: 15px;
+  padding-right: 20px;
 }
 nav.main-navigation > ul > li.has-submenu > a:after {
   position: absolute;
   top: 50%;
-  right: 0;
+  right: 4px;
   width: 7px;
   height: 7px;
   margin-top: -5px;
@@ -2634,6 +2649,9 @@ nav.main-navigation > ul > li.has-submenu > a:after {
   content: " ";
   transition: all 0.3s ease-out;
 }
+nav.main-navigation > ul > li.has-submenu > ul {
+  visibility: hidden;
+}
 nav.main-navigation > ul > li.open > a:after {
   margin-top: -2px;
   transform: rotate(-135deg);
@@ -2641,11 +2659,16 @@ nav.main-navigation > ul > li.open > a:after {
 nav.main-navigation > ul > li.open > ul {
   max-height: 350px;
   opacity: 1;
+  visibility: visible;
+  overflow: visible;
   pointer-events: auto;
 }
 @media screen and (min-width: 768px) {
   nav.main-navigation {
-    width: 40%;
+    width: 42%;
+  }
+  nav.main-navigation > ul > li > a {
+    font-size: 22px;
   }
 }
 @media screen and (min-width: 1200px) {
