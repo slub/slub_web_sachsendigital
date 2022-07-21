@@ -9,6 +9,7 @@
  */
 
 .level-0 {
+
     section { // Basic design settings for homepage settings -----------------------------------------------------------
         position: relative;
         margin: 100px 0;
@@ -17,21 +18,223 @@
             margin: 140px 0;
         }
     }
+
     section.highlights { // The highlights slider up top ---------------------------------------------------------------
-        //TBD
+        margin-top: 5px;
+        .slick-slider {
+            height: 550px;
+            padding-bottom: 50px;
+            .slider-item {
+                position: relative;
+                height: 500px;
+                background: @brand-secondary;
+                .container {
+                    height: 100%;
+                }
+                .slide-background {
+                    position: absolute;
+                    inset: 0 0 auto 0;
+                    height: 350px;
+                    background-size: cover;
+                    background-position: center center;
+                }
+                .slider-item-header {
+                    position: absolute;
+                    inset: auto 0 0 0;
+                    height: 150px;
+                    text-align: center;
+                    background: @brand-secondary;
+                    padding: 15px;
+                    z-index: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    a {
+                        text-decoration: none;
+                        line-height: 1.2;
+                        h3 {
+                            font-size: 20px;
+                            font-weight: 700;
+                            margin-bottom: 5px;
+                            text-transform: uppercase;
+                            color: white;
+                            hyphens: none;
+                            display: inline-block;
+                        }
+                        .subline {
+                            position: relative;
+                            color: white;
+                            display: block;
+                            font-size: 14px;
+                        }
+                    }
+                }
+            }
+            .slick-arrow {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 60px;
+                border: 0;
+                appearance: none;
+                z-index: 1;
+                .text-hide();
+                &:before {
+                    position: absolute;
+                    top: 50%;
+                    left: 15px;
+                    margin-top: -15px;
+                    width: 30px;
+                    height: 30px;
+                    border: solid white;
+                    border-width: 5px 5px 0 0;
+                    content: " ";
+                    transform: rotate(45deg);
+                    display: none;
+                }
+                &.slick-prev {
+                    left: 0;
+                    &:before {
+                        left: auto;
+                        right: 15px;
+                        transform: rotate(-135deg);
+                    }
+                }
+                &.slick-next {
+                    right: 0;
+                }
+            }
+            .slick-dots {
+                position: absolute;
+                right: 15px;
+                bottom: 5px;
+                left: 15px;
+                z-index: 1;
+                list-style: none;
+                display: flex;
+                justify-content: center;
+                li {
+                    margin: 0;
+                    button {
+                        position: relative;
+                        width: 20px;
+                        height: 20px;
+                        appearance: none;
+                        .text-hide();
+
+                        &:after {
+                            position: absolute;
+                            top: 10px;
+                            left: 10px;
+                            margin: -4px 0 0 -4px;
+                            height: 8px;
+                            width: 8px;
+                            border-radius: 6px;
+                            background: @brand-primary;
+                            opacity: .6;
+                            content: " ";
+                            transition: @transition;
+                        }
+                    }
+                    &.slick-active {
+                        button {
+                            &:after {
+                                width: 12px;
+                                height: 12px;
+                                margin: -6px 0 0 -6px;
+                                opacity: 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        @media screen and (min-width: @tabletViewportWidth) {
+            .slick-slider {
+                .slider-item {
+                    .slide-background {
+                        height: 400px;
+                    }
+                    .slider-item-header {
+                        height: 100px;
+                    }
+                }
+            }
+        }
+        @media screen and (min-width: @tabletLandscapeViewportWidth) {
+            .slick-slider {
+                height: 650px;
+                .slider-item {
+                    height: 600px;
+                    .slide-background {
+                        height: 500px;
+                    }
+                }
+            }
+        }
+        .no-touchevents & {
+            .slick-slider {
+                .slick-arrow {
+                    bottom: 100px;
+                    width: 100px;
+                    cursor: pointer;
+                    transition: @transition;
+                    &:before {
+                        display: block;
+                        transition: @transition;
+                        opacity: 0;
+                    }
+                    &.slick-prev {
+                        &:hover {
+                            &:before {
+                                transform: rotate(-135deg) scale(1.5);
+                                opacity: 1;
+                            }
+                        }
+                    }
+                    &.slick-next {
+                        &:hover {
+                            &:before {
+                                transform: rotate(45deg) scale(1.5);
+                                opacity: 1;
+                            }
+                        }
+                    }
+                }
+                &:hover {
+                    figure {
+                        figcaption {
+                            opacity: .8;
+                            transform: translateY(0);
+                        }
+                    }
+                    .slick-arrow {
+                        &:before {
+                            opacity: .5;
+                        }
+                    }
+                }
+            }
+        }
     }
+
     section.search { // The homepages search container -----------------------------------------------------------------
         //TBD
     }
+
     section.mission { // The mission statement -------------------------------------------------------------------------
         //TBD
     }
+
     section.counter { // The counter element with large numbers --------------------------------------------------------
         //TBD
     }
+
     section.collections { // The masonry based collections element -----------------------------------------------------
         //TBD
     }
+
     section.becomemember { // The members section just before the footer -----------------------------------------------
         a.btn {
             margin: 40px 0;
@@ -56,5 +259,6 @@
             }
         }
     }
+
 }
 

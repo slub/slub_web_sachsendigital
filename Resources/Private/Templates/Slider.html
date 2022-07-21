@@ -8,16 +8,13 @@
     <div class="slider-wrapper" data-items="{slides -> f:count()}" id="slider-{data.uid}">
         <div class="slider-inner">
             <f:for as="slide" each="{slides}" iteration="iteration">
-                <div
-                    class="slider-item"
-                    data-background="{f:uri.image(image: '{slide.image.0.originalFile}') -> f:if(condition: '{slide.image.0}',else: 'false')}"
-                    id="slide-{slide.data.uid}"
-                >
+                <div class="slider-item" data-background="{f:uri.image(image: '{slide.image.0}')}" id="slide-{slide.data.uid}">
+                    <div class="slide-background"></div>
                     <div class="container">
                         <div class="slider-item-header">
                             <f:link.typolink parameter="{slide.data.url}" title="{slide.data.title}">
-                                <span class="topline">{slide.data.subtitle}</span>
                                 <h3>{slide.data.title}</h3>
+                                <span class="subline">{slide.data.subtitle}</span>
                             </f:link.typolink>
                         </div>
                     </div>

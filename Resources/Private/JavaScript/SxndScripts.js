@@ -2,6 +2,7 @@ import $ from 'jquery';
 
 import './vendor/modernizrCustom';
 import './vendor/jquery.cookiebar';
+import './vendor/jquery.slick';
 import 'magnific-popup';
 
 
@@ -142,5 +143,11 @@ $(function () {
       }
     });
   }
+
+  // Init homepage slider
+  $('.slider-item').each(function () {
+    ($(this).data('background')) && $(this).find('.slide-background').css({'background-image': 'url("' + $(this).data('background') + '")'});
+  });
+  $(".slider-wrapper > .slider-inner").slick({dots: true, speed: 500, /* autoplay: true */});
 
 });
