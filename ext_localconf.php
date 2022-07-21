@@ -31,8 +31,3 @@ foreach ($icons as $icon) {
         ['source' => 'EXT:slub_web_sachsendigital/Resources/Public/Icons/Backend/' . $icon . '.svg']
     );
 }
-
-/*
- * Allow custom content elements on all standard pages
- */
-TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_sachsendigital_slider');
