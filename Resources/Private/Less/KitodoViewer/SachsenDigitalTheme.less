@@ -368,8 +368,12 @@ body {
                     a {
                         display: flex;
                         justify-content: space-between;
-                        .meta-type-icon {
-                            background-position: -90px 0;
+                        .title {
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            .meta-type-icon {
+                                background-position: -90px 0;
+                            }
                         }
                     }
                     &.placeholder {
@@ -379,9 +383,10 @@ body {
                         }
                     }
                     &.current {
-                        background: white;
+                        background: transparent;
                         a {
                             color: @brand-primary-dark;
+                            background: white;
                             .meta-type-icon {
                                 background-position-y: -30px !important;
                             }
@@ -390,6 +395,14 @@ body {
                     &.submenu {
                         &:before {
                             border-top-color: white;
+                        }
+                    }
+                }
+                .no-touchevents & {
+                    &.current {
+                        a:hover {
+                            background: @brand-secondary-mid;
+                            color: white;
                         }
                     }
                 }

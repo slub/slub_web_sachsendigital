@@ -45,6 +45,9 @@ TCEFORM {
                 image_ldp_institutions {
                     disabled = 1
                 }
+                table {
+                    addItems.22 = Fullsize Table
+                }
             }
         }
         frame_class {
