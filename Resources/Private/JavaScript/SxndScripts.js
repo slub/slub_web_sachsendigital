@@ -3,6 +3,7 @@ import $ from 'jquery';
 import './vendor/modernizrCustom';
 import './vendor/jquery.cookiebar';
 import './vendor/jquery.slick';
+import Odometer from './vendor/odometer';
 import 'magnific-popup';
 
 
@@ -19,16 +20,16 @@ import 'magnific-popup';
 $(function () {
 
   // sub entry toggle in list views
-  $('.tx-dlf-morevolumes, .tx-dlf-hidevolumes').on('click', function (event) {
+  $('.tx-dlf-morevolumes, .tx-dlf-hidevolumes').on('click', function () {
     $(this).parent().toggleClass('tx-dlf-volumes-open').find('.tx-dlf-volume').slideToggle();
   });
 
-  $('button.nav-open').on('click', function (event) {
+  $('button.nav-open').on('click', function () {
     setTimeout(function () {
       $('body').addClass('menu-open');
     }, 25);
   });
-  $('.perspective, button.nav-close').on('click', function (event) {
+  $('.perspective, button.nav-close').on('click', function () {
     $('body').removeClass('menu-open');
   });
 
@@ -150,4 +151,41 @@ $(function () {
   });
   $(".slider-wrapper > .slider-inner").slick({dots: true, speed: 500, /* autoplay: true */});
 
+  // Init counters on homepage
+  $('.tx-dlf-statistics p').each(function () {
+    let paragraphContent = $(this).text().trim();
+    if (paragraphContent) {
+      $(this)
+        .addClass('odometer-container')
+        .html('<span class="odometer-intro"> ' + paragraphContent.replace(/(\d{1,6})/, '</span><span class="odometer" data-value="$1"></span><span class="odometer-type">') + ' </span>');
+      let odometer = new Odometer({
+        el: $(this).find('.odometer')[0],
+        format: '(.ddd)',
+      });
+    } else {
+      $(this).remove();
+    }
+  });
+
 });
+
+// Scrolling listener to fire up the homepage odometers
+if($('body.level-0')[0] && $('section.counter')[0]) {
+  $(window).on('scroll', function () {
+    if ($('section.counter').isInViewport()) {
+      $('.tx-dlf-statistics p span.odometer').each(function () {
+        $(this).html($(this).data('value'));
+      })
+    }
+  })
+}
+
+// Prototype function for checking if a given element is visible on screen
+$.fn.isInViewport = function () {
+  let elementTop = $(this).offset().top;
+  let elementBottom = elementTop + $(this).outerHeight();
+  let viewportTop = $(window).scrollTop();
+  let viewportBottom = viewportTop + $(window).height();
+  return elementBottom > viewportTop && elementTop < viewportBottom;
+};
+

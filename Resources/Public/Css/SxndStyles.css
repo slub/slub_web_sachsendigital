@@ -2141,6 +2141,117 @@ a.btn[target="_blank"]:after {
 }
 /*
  *
+ * Odometer
+ * =========================================================
+ * Base styling for count down component
+ * used on the homepage
+ *
+ * Based on https://github.com/HubSpot/odometer/
+ *
+ */
+.odometer.odometer-auto-theme,
+.odometer.odometer-theme-default {
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  *zoom: 1;
+  *display: inline;
+  position: relative;
+}
+.odometer.odometer-auto-theme .odometer-digit,
+.odometer.odometer-theme-default .odometer-digit {
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  *zoom: 1;
+  *display: inline;
+  position: relative;
+}
+.odometer.odometer-auto-theme .odometer-digit .odometer-digit-spacer,
+.odometer.odometer-theme-default .odometer-digit .odometer-digit-spacer {
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  *zoom: 1;
+  *display: inline;
+  visibility: hidden;
+}
+.odometer.odometer-auto-theme .odometer-digit .odometer-digit-inner,
+.odometer.odometer-theme-default .odometer-digit .odometer-digit-inner {
+  text-align: left;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+.odometer.odometer-auto-theme .odometer-digit .odometer-ribbon,
+.odometer.odometer-theme-default .odometer-digit .odometer-ribbon {
+  display: block;
+}
+.odometer.odometer-auto-theme .odometer-digit .odometer-ribbon-inner,
+.odometer.odometer-theme-default .odometer-digit .odometer-ribbon-inner {
+  display: block;
+  -webkit-backface-visibility: hidden;
+}
+.odometer.odometer-auto-theme .odometer-digit .odometer-value,
+.odometer.odometer-theme-default .odometer-digit .odometer-value {
+  display: block;
+  -webkit-transform: translateZ(0);
+}
+.odometer.odometer-auto-theme .odometer-digit .odometer-value.odometer-last-value,
+.odometer.odometer-theme-default .odometer-digit .odometer-value.odometer-last-value {
+  position: absolute;
+}
+.odometer.odometer-auto-theme.odometer-animating-up .odometer-ribbon-inner,
+.odometer.odometer-theme-default.odometer-animating-up .odometer-ribbon-inner {
+  -webkit-transition: -webkit-transform 2s;
+  -moz-transition: -moz-transform 2s;
+  -ms-transition: -ms-transform 2s;
+  -o-transition: -o-transform 2s;
+  transition: transform 2s;
+}
+.odometer.odometer-auto-theme.odometer-animating-up.odometer-animating .odometer-ribbon-inner,
+.odometer.odometer-theme-default.odometer-animating-up.odometer-animating .odometer-ribbon-inner {
+  -webkit-transform: translateY(-100%);
+  -moz-transform: translateY(-100%);
+  -ms-transform: translateY(-100%);
+  -o-transform: translateY(-100%);
+  transform: translateY(-100%);
+}
+.odometer.odometer-auto-theme.odometer-animating-down .odometer-ribbon-inner,
+.odometer.odometer-theme-default.odometer-animating-down .odometer-ribbon-inner {
+  -webkit-transform: translateY(-100%);
+  -moz-transform: translateY(-100%);
+  -ms-transform: translateY(-100%);
+  -o-transform: translateY(-100%);
+  transform: translateY(-100%);
+}
+.odometer.odometer-auto-theme.odometer-animating-down.odometer-animating .odometer-ribbon-inner,
+.odometer.odometer-theme-default.odometer-animating-down.odometer-animating .odometer-ribbon-inner {
+  -webkit-transition: -webkit-transform 2s;
+  -moz-transition: -moz-transform 2s;
+  -ms-transition: -ms-transform 2s;
+  -o-transition: -o-transform 2s;
+  transition: transform 2s;
+  -webkit-transform: translateY(0);
+  -moz-transform: translateY(0);
+  -ms-transform: translateY(0);
+  -o-transform: translateY(0);
+  transform: translateY(0);
+}
+.odometer.odometer-auto-theme,
+.odometer.odometer-theme-default {
+  line-height: 1.1em;
+}
+.odometer.odometer-auto-theme .odometer-value,
+.odometer.odometer-theme-default .odometer-value {
+  text-align: center;
+}
+/*
+ *
  * Structure
  * ================================================
  * Basic definition of body, cotainers and other
@@ -3237,6 +3348,79 @@ a.totop:after {
 @media screen and (min-width: 1024px) {
   .level-0 section.mission .container {
     padding: 50px;
+  }
+}
+.level-0 section.counter {
+  padding: 30px 0;
+}
+.level-0 section.counter h3 {
+  margin-top: 0;
+}
+.level-0 section.counter:after {
+  position: absolute;
+  inset: 0;
+  background-image: -webkit-linear-gradient(top, #475a5a 0%, #91c42c 100%);
+  background-image: -o-linear-gradient(top, #475a5a 0%, #91c42c 100%);
+  background-image: linear-gradient(to bottom, #475a5a 0%, #91c42c 100%);
+  background-repeat: repeat-x;
+  opacity: 0.15;
+  content: " ";
+  pointer-events: none;
+}
+.level-0 section.counter .tx-dlf-statistics .odometer-container {
+  position: relative;
+  margin: 30px 0;
+  font-size: 12px;
+  line-height: 1;
+}
+.level-0 section.counter .tx-dlf-statistics .odometer-container > span {
+  display: block;
+}
+.level-0 section.counter .tx-dlf-statistics .odometer-container > span.odometer {
+  font-size: 62px;
+  font-weight: bold;
+  line-height: 1;
+}
+.level-0 section.counter .tx-dlf-statistics .odometer-container > span.odometer span.odometer-formatting-mark {
+  position: relative;
+  top: 4px;
+}
+@media screen and (min-width: 768px) {
+  .level-0 section.counter .tx-dlf-statistics {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    margin: 50px 0 0 0;
+  }
+  .level-0 section.counter .tx-dlf-statistics .odometer-container {
+    margin: 0;
+    padding: 0 30px;
+    font-size: 13px;
+  }
+  .level-0 section.counter .tx-dlf-statistics .odometer-container > span {
+    margin: 10px 0;
+  }
+}
+@media screen and (min-width: 1024px) {
+  .level-0 section.counter {
+    padding: 50px 0;
+  }
+  .level-0 section.counter .tx-dlf-statistics {
+    justify-content: space-around;
+  }
+  .level-0 section.counter .tx-dlf-statistics .odometer-container > span {
+    margin: 0;
+  }
+  .level-0 section.counter .tx-dlf-statistics .odometer-container > span.odometer {
+    font-size: 84px;
+    color: #475a5a;
+  }
+  .level-0 section.counter .tx-dlf-statistics .odometer-container > span.odometer span.odometer-formatting-mark {
+    top: 6px;
+  }
+  .level-0 section.counter .tx-dlf-statistics .odometer-container > span.odometer-type {
+    font-weight: bold;
   }
 }
 .level-0 section.becomemember a.btn {
