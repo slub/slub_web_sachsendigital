@@ -2934,9 +2934,6 @@ a.totop:after {
   margin: 60px 0 15px;
 }
 @media screen and (min-width: 768px) {
-  .level-0 section {
-    margin: 140px 0;
-  }
   .level-0 section h3 {
     font-size: 22px;
   }
@@ -3227,6 +3224,19 @@ a.totop:after {
   .level-0 section.search .tx-dlf-search-form {
     max-width: 800px;
     margin: 0 auto;
+  }
+}
+.level-0 section.mission .container {
+  border: solid #cad6d6;
+  border-width: 1px 0;
+  padding: 30px;
+}
+.level-0 section.mission .container h3 {
+  margin-top: 0;
+}
+@media screen and (min-width: 1024px) {
+  .level-0 section.mission .container {
+    padding: 50px;
   }
 }
 .level-0 section.becomemember a.btn {

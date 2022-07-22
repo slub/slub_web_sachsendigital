@@ -22,7 +22,6 @@
             margin: 60px 0 15px;
         }
         @media screen and (min-width: @tabletViewportWidth) {
-            margin: 140px 0;
             h3 {
                 font-size: 22px;
             }
@@ -337,7 +336,22 @@
     }
 
     section.mission { // The mission statement -------------------------------------------------------------------------
-        //TBD
+        .container {
+            border: solid @brand-secondary-light;
+            border-width: 1px 0;
+            padding: 30px;
+            h3 {
+                margin-top: 0;
+            }
+        }
+        @media screen and (min-width: @tabletLandscapeViewportWidth) {
+            .container {
+                padding: 50px;
+            }
+        }
+        @media screen and (min-width: @desktopViewportWidth) {
+
+        }
     }
 
     section.counter { // The counter element with large numbers --------------------------------------------------------
