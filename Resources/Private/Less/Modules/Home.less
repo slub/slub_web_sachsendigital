@@ -22,26 +22,25 @@
     section.highlights { // The highlights slider up top ---------------------------------------------------------------
         margin-top: 5px;
         .slick-slider {
-            height: 550px;
+            height: 450px;
             padding-bottom: 50px;
             .slider-item {
                 position: relative;
-                height: 500px;
+                height: 400px;
                 background: @brand-secondary;
+                display: inline-flex !important;
+                flex-direction: column;
                 .container {
-                    height: 100%;
+                    flex: 1 1 1%;
                 }
                 .slide-background {
-                    position: absolute;
-                    inset: 0 0 auto 0;
-                    height: 350px;
+                    position: relative;
+                    flex: 1 1 100%;
                     background-size: cover;
                     background-position: center center;
                 }
                 .slider-item-header {
-                    position: absolute;
-                    inset: auto 0 0 0;
-                    height: 150px;
+                    position: relative;
                     text-align: center;
                     background: @brand-secondary;
                     padding: 15px;
@@ -52,10 +51,10 @@
 
                     a {
                         text-decoration: none;
-                        line-height: 1.2;
                         h3 {
-                            font-size: 20px;
+                            font-size: 18px;
                             font-weight: 700;
+                            line-height: 1.1;
                             margin-bottom: 5px;
                             text-transform: uppercase;
                             color: white;
@@ -66,7 +65,8 @@
                             position: relative;
                             color: white;
                             display: block;
-                            font-size: 14px;
+                            font-size: 13px;
+                            line-height: 1.3;
                         }
                     }
                 }
