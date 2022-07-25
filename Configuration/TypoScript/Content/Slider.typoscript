@@ -3,15 +3,15 @@
 # CType: ldp_slider
 #
 
-tt_content.tx_sachsendigital_slider = COA
-tt_content.tx_sachsendigital_slider {
+tt_content.tx_slubwebsachsendigital_slider = COA
+tt_content.tx_slubwebsachsendigital_slider {
   10 =< lib.stdheader
   20 = FLUIDTEMPLATE
   20 {
     file = EXT:slub_web_sachsendigital/Resources/Private/Templates/Slider.html
     dataProcessing.10 = TYPO3\CMS\Frontend\DataProcessing\DatabaseQueryProcessor
     dataProcessing.10 {
-      table = tx_sachsendigital_slider
+      table = tx_slubwebsachsendigital_slider
       pidInList.data = TSFE:id
       where.data = field:uid
       where.wrap = tt_content = |
@@ -21,7 +21,7 @@ tt_content.tx_sachsendigital_slider {
         10 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
         10 {
           references {
-            table = tx_sachsendigital_slider
+            table = tx_slubwebsachsendigital_slider
             fieldName = image
           }
           as = image

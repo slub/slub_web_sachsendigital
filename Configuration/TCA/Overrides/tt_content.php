@@ -49,7 +49,7 @@ $GLOBALS['TCA']['tt_content']['types']['menu_collections'] = $GLOBALS['TCA']['tt
     'CType',
     [
         'LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_slider',
-        'tx_sachsendigital_slider',
+        'tx_slubwebsachsendigital_slider',
         'SachsendigitalWebsiteSlider'
     ],
     'html',
@@ -70,10 +70,10 @@ $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['slubwebsachs
 $GLOBALS['TCA']['sys_file_metadata']['columns']['alternative']['config']['eval'] = 'required';
 
 // Register icon class and setup slider backend appearance
-$GLOBALS['TCA']['tt_content']['ctrl']['typeicon_classes']['tx_sachsendigital_slider'] = 'SachsendigitalWebsiteSlider';
-$GLOBALS['TCA']['tt_content']['types']['tx_sachsendigital_slider']['showitem'] = '
+$GLOBALS['TCA']['tt_content']['ctrl']['typeicon_classes']['tx_slubwebsachsendigital_slider'] = 'SachsendigitalWebsiteSlider';
+$GLOBALS['TCA']['tt_content']['types']['tx_slubwebsachsendigital_slider']['showitem'] = '
     --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general,--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.general;general,--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.headers;headers,
-    tx_sachsendigital_slider,
+    tx_slubwebsachsendigital_slider,
     --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.appearance,--palette--;;frames,--palette--;;appearanceLinks,
     --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:language,--palette--;;language,
     --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,--palette--;;hidden,--palette--;;access,
@@ -84,11 +84,11 @@ $GLOBALS['TCA']['tt_content']['types']['tx_sachsendigital_slider']['showitem'] =
 
 // Add new TCA column for the slider items
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('tt_content', [
-    'tx_sachsendigital_slider' => [
+    'tx_slubwebsachsendigital_slider' => [
         'label' => 'LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_slider.items',
         'config' => [
             'type' => 'inline',
-            'foreign_table' => 'tx_sachsendigital_slider',
+            'foreign_table' => 'tx_slubwebsachsendigital_slider',
             'foreign_field' => 'tt_content',
             'appearance' => [
                 'useSortable' => TRUE,

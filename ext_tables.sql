@@ -1,9 +1,9 @@
 
 CREATE TABLE tt_content (
-  tx_sachsendigital_slider varchar(255) DEFAULT '' NOT NULL,
+    tx_slubwebsachsendigital_slider varchar(255) DEFAULT '' NOT NULL,
 );
 
-CREATE TABLE tx_sachsendigital_slider (
+CREATE TABLE tx_slubwebsachsendigital_slider (
     tt_content int(11) unsigned DEFAULT '0',
     title varchar(255) DEFAULT '' NOT NULL,
     subtitle varchar(255) DEFAULT '' NOT NULL,
