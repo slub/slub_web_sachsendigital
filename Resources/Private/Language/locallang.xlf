@@ -90,6 +90,12 @@
 			<trans-unit id="tx_slubwebsachsendigital_media.menu_collections.description">
 				<source>This shows all Subpages as Collection Tiles.</source>
 			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital.menu_selected_collections">
+				<source>Menu Element for selected Collections</source>
+			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital.menu_selected_collections.description">
+				<source>This shows all selected collections as tiles.</source>
+			</trans-unit>
 			<trans-unit id="tx_slubwebsachsendigital_slider">
 				<source>Sachsen.digital Slider</source>
 			</trans-unit>

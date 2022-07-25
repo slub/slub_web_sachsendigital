@@ -43,6 +43,20 @@ $GLOBALS['TCA']['tt_content']['types']['image_ldp_curated'] = $GLOBALS['TCA']['t
 );
 $GLOBALS['TCA']['tt_content']['types']['menu_collections'] = $GLOBALS['TCA']['tt_content']['types']['menu_pages'];
 
+// CType menu_selected_collections
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTcaSelectItem(
+    'tt_content',
+    'CType',
+    [
+        'LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital.menu_selected_collections',
+        'menu_selected_collections',
+        'content-menu-pages'
+    ],
+    'menu_pages',
+    'after'
+);
+$GLOBALS['TCA']['tt_content']['types']['menu_selected_collections'] = $GLOBALS['TCA']['tt_content']['types']['menu_pages'];
+
 // CType tx_sachsendigital_slider
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTcaSelectItem(
     'tt_content',

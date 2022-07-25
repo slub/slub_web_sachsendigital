@@ -117,6 +117,14 @@
 				<source><![CDATA[This shows all Subpages as Collection Tiles.]]></source>
 				<target><![CDATA[Zeigt alle Unterseiten als Kollektionskacheln an.]]></target>
 			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital.menu_selected_collections">
+				<source>Menu Element for selected Collections</source>
+				<target>Menü-Element für ausgewählte Kollektionen</target>
+			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital.menu_selected_collections.description">
+				<source>This shows all selected collections as tiles.</source>
+				<target>Dieses Element zeigt alle ausgewählten Kollektionen als Kacheln an.</target>
+			</trans-unit>
 			<trans-unit id="tx_slubwebsachsendigital_slider">
 				<source>Sachsen.digital Slider</source>
 				<target>Sachsen.digital Slider</target>
