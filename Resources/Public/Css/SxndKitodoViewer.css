@@ -3603,22 +3603,11 @@ body:before {
 }
 .control-bar .header-bar {
   background: #475a5a;
-  background-image: -webkit-linear-gradient(top, rgba(71, 90, 90, 0.3) 0, rgba(145, 196, 44, 0.6) 100%);
-  background-image: -o-linear-gradient(top, rgba(71, 90, 90, 0.3) 0, rgba(145, 196, 44, 0.6) 100%);
-  background-image: linear-gradient(to bottom, rgba(71, 90, 90, 0.3) 0, rgba(145, 196, 44, 0.6) 100%);
+  background-image: -webkit-linear-gradient(top, #475a5a 0, rgba(145, 196, 44, 0.6) 100%);
+  background-image: -o-linear-gradient(top, #475a5a 0, rgba(145, 196, 44, 0.6) 100%);
+  background-image: linear-gradient(to bottom, #475a5a 0, rgba(145, 196, 44, 0.6) 100%);
   background-repeat: repeat-x;
   transition: all 0.3s ease-out;
-}
-.control-bar .header-bar:before {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: url(../Images/noise.png) repeat 0 0;
-  background-size: 90px 45px;
-  content: " ";
-  opacity: 0.1;
 }
 .control-bar .header-bar .brand {
   top: 5px;

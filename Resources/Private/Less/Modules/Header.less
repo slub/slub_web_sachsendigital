@@ -15,19 +15,8 @@
     margin: 0;
     border: 0 none;
     background: @brand-secondary;
-    .vertgrad(fade(@brand-secondary, 0%), fade(@brand-primary, 30%), 0, 100%);
+    .vertgrad(@brand-secondary, fade(@brand-primary, 60%), 0, 100%);
     transition: @transition;
-    &:before {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        background: url(../Images/noise.png) repeat 0 0;
-        background-size: 90px 45px;
-        content: " ";
-        opacity: 0.1;
-    }
     a.header-brand {
         position: absolute;
         top: 15px;
@@ -49,7 +38,7 @@
         a.header-brand {
             left: 30px;
             right: auto;
-            width: 300px;
+            width: 350px;
         }
     }
     @media screen and (min-width: @tabletViewportWidth) {
@@ -62,12 +51,6 @@
     @media screen and (min-width: @tabletLandscapeViewportWidth) {
         a.header-brand {
             left: 0;
-        }
-    }
-    @media screen and (min-width: @desktopViewportWidth) {
-        height: 140px;
-        a.header-brand {
-            top: 40px;
         }
     }
 }
