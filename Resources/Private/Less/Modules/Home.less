@@ -55,29 +55,31 @@
                     padding: 15px;
                     z-index: 1;
                     display: flex;
-                    align-items: center;
+                    align-content: center;
                     justify-content: center;
+                    flex-wrap: wrap;
 
                     a {
                         text-decoration: none;
-                        h3 {
-                            font-size: 18px;
-                            font-weight: 700;
-                            font-style: normal;
-                            line-height: 1.1;
-                            margin: 0 0 5px 0;
-                            text-transform: uppercase;
-                            color: white;
-                            hyphens: none;
-                            display: inline-block;
-                        }
-                        .subline {
-                            position: relative;
-                            color: white;
-                            display: block;
-                            font-size: 13px;
-                            line-height: 1.3;
-                        }
+                    }
+                    h3 {
+                        font-size: 18px;
+                        font-weight: 700;
+                        font-style: normal;
+                        line-height: 1.1;
+                        margin: 0 0 5px 0;
+                        text-transform: uppercase;
+                        color: white;
+                        hyphens: none;
+                        display: inline-block;
+                        flex: 1 0 100%;
+                    }
+                    .subline {
+                        position: relative;
+                        color: white;
+                        display: block;
+                        font-size: 13px;
+                        line-height: 1.3;
                     }
                 }
             }
@@ -426,12 +428,19 @@
     }
 
     section.collections { // The masonry based collections element -----------------------------------------------------
-        //TBD
+        .collection-menu {
+            @media screen and (min-width: @tabletLandscapeViewportWidth) {
+                .collection-row {
+                    margin: 0;
+                }
+            }
+        }
     }
 
     section.becomemember { // The members section just before the footer -----------------------------------------------
         a.btn {
             margin: 40px 0;
+            display: inline-block;
         }
         &:before {
             position: absolute;
@@ -453,4 +462,3 @@
     }
 
 }
-

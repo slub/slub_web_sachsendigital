@@ -1727,9 +1727,8 @@ a.btn[target="_blank"]:after {
 }
 .collection-menu .collection-entry {
   position: relative;
-  margin: 15px 0;
+  margin: 30px 0;
   width: 100%;
-  overflow: hidden;
   line-height: 1;
 }
 .collection-menu .collection-entry .collection-element {
@@ -3079,13 +3078,14 @@ a.totop:after {
   padding: 15px;
   z-index: 1;
   display: flex;
-  align-items: center;
+  align-content: center;
   justify-content: center;
+  flex-wrap: wrap;
 }
 .level-0 section.highlights .slick-slider .slider-item .slider-item-header a {
   text-decoration: none;
 }
-.level-0 section.highlights .slick-slider .slider-item .slider-item-header a h3 {
+.level-0 section.highlights .slick-slider .slider-item .slider-item-header h3 {
   font-size: 18px;
   font-weight: 700;
   font-style: normal;
@@ -3095,8 +3095,9 @@ a.totop:after {
   color: white;
   hyphens: none;
   display: inline-block;
+  flex: 1 0 100%;
 }
-.level-0 section.highlights .slick-slider .slider-item .slider-item-header a .subline {
+.level-0 section.highlights .slick-slider .slider-item .slider-item-header .subline {
   position: relative;
   color: white;
   display: block;
@@ -3423,8 +3424,14 @@ a.totop:after {
     font-weight: bold;
   }
 }
+@media screen and (min-width: 1024px) {
+  .level-0 section.collections .collection-menu .collection-row {
+    margin: 0;
+  }
+}
 .level-0 section.becomemember a.btn {
   margin: 40px 0;
+  display: inline-block;
 }
 .level-0 section.becomemember:before {
   position: absolute;
