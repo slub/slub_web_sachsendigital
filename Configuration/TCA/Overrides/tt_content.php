@@ -48,7 +48,7 @@ $GLOBALS['TCA']['tt_content']['types']['menu_collections'] = $GLOBALS['TCA']['tt
     'tt_content',
     'CType',
     [
-        'Sachsen.digital Slider',
+        'LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_slider',
         'tx_sachsendigital_slider',
         'SachsendigitalWebsiteSlider'
     ],
@@ -85,7 +85,7 @@ $GLOBALS['TCA']['tt_content']['types']['tx_sachsendigital_slider']['showitem'] =
 // Add new TCA column for the slider items
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('tt_content', [
     'tx_sachsendigital_slider' => [
-        'label' => 'Sachsen.digital Slider Items',
+        'label' => 'LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_slider.items',
         'config' => [
             'type' => 'inline',
             'foreign_table' => 'tx_sachsendigital_slider',

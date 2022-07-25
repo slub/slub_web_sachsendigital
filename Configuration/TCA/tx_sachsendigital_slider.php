@@ -9,8 +9,11 @@ return [
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
         'cruser_id' => 'cruser_id',
-        'title' => 'Slider Items',
-        'iconfile' => 'EXT:slub_web_sachsendigital/Resources/Public/Icons/Backend/Slider.svg',
+        'title' => 'LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_slider.items',
+        'typeicon_column' => 'CType',
+        'typeicon_classes' => [
+            'default' => 'SachsendigitalWebsiteSlider'
+        ],
         'delete' => 'deleted',
         'versioningWS' => true,
         'origUid' => 't3_origuid',
@@ -57,7 +60,7 @@ return [
     'columns' => [
         'tt_content' => [
             'exclude' => 0,
-            'label' => 'Sachsen.digital Slider',
+            'label' => 'LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_slider',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
@@ -111,7 +114,7 @@ return [
         ],
         'title' => [
             'exclude' => 0,
-            'label' => 'Slide Title',
+            'label' => 'LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_slider.slide.title',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -120,7 +123,7 @@ return [
         ],
         'subtitle' => [
             'exclude' => 0,
-            'label' => 'Subtitle',
+            'label' => 'LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_slider.slide.subtitle',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -129,7 +132,7 @@ return [
         ],
         'url' => [
             'exclude' => 0,
-            'label' => 'Slide Link',
+            'label' => 'LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_slider.slide.link',
             'config' => [
                 'type' => 'input',
                 'renderType' => 'inputLink',
@@ -137,7 +140,7 @@ return [
         ],
         'image' => [
             'exclude' => 0,
-            'label' => 'Image',
+            'label' => 'LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_slider.slide.image',
             'config' => TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
                 'image',
                 [

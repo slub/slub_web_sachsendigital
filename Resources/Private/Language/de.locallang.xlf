@@ -117,6 +117,34 @@
 				<source><![CDATA[This shows all Subpages as Collection Tiles.]]></source>
 				<target><![CDATA[Zeigt alle Unterseiten als Kollektionskacheln an.]]></target>
 			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital_slider">
+				<source>Sachsen.digital Slider</source>
+				<target>Sachsen.digital Slider</target>
+			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital_slider.description">
+				<source>This content element renders the large slider on the homepage</source>
+				<target>Dieses Inhaltselement stellt den großen Slider auf der Homepage dar</target>
+			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital_slider.items">
+				<source>Slider Items</source>
+				<target>Folien Einträge</target>
+			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital_slider.slide.title">
+				<source>Slide title</source>
+				<target>Folien-Titel</target>
+			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital_slider.slide.subtitle">
+				<source>Slide subtitle</source>
+				<target>Folien Sub-Titel</target>
+			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital_slider.slide.link">
+				<source>Slide Link</source>
+				<target>Verlinkung</target>
+			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital_slider.slide.image">
+				<source>Slide Image</source>
+				<target>Bild auf dieser Folie</target>
+			</trans-unit>
 			<trans-unit id="website.jump_totop" approved="yes">
 				<source><![CDATA[Jump to top of page]]></source>
 				<target><![CDATA[zum Seitenanfang springen]]></target>

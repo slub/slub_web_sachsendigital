@@ -46,6 +46,14 @@ mod.wizards.newContentElement.wizardItems {
           CType = menu_collections
         }
       }
+      slider {
+        iconIdentifier = SachsendigitalWebsiteSlider
+        title = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_slider
+        description = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_slider.description
+        tt_content_defValues {
+          CType = menu_collections
+        }
+      }
     }
     show = *
   }
