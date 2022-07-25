@@ -1,0 +1,18 @@
+#
+# Header Search Element
+#
+
+lib.header_search < plugin.tx_dlf_search
+lib.header_search {
+  settings {
+    solrcore = {$config.solrCore}
+    limit = 15
+    limitFacets = 15
+    fulltext = 1
+    suggest = 1
+    searchIn = none
+    targetPid = {$config.kitodoSearchListView}
+    extendedSlotCount = 1
+    showSingleResult = 0
+  }
+}

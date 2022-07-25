@@ -4,6 +4,22 @@
     <div class="header">
         <div class="container">
             <f:link.page class="header-brand" pageUid="{rootPageId}" title="Startseite von Sachsen.digital">Sachsen.digital</f:link.page>
+            <f:if condition="{data.uid} == {kitodoSearchListView} || {data.uid} == {rootPageId}">
+                <f:then>
+                    <button class="toggle-header-search disabled" disabled>
+                        <span class="toggle-header-search-icon"></span>
+                    </button>
+                </f:then>
+                <f:else>
+                    <button aria-controls="header-search" aria-label="{f:translate(key:'headersearch.open', extensionName:'slubWebSachsendigital')}" class="toggle-header-search" type="button">
+                        <span class="visually-hidden"><f:translate extensionName='slubWebSachsendigital' key='headersearch.open'/></span>
+                        <span class="toggle-header-search-icon"></span>
+                    </button>
+                    <div class="header-search-form" id="header-search">
+                        <f:cObject typoscriptObjectPath="lib.header_search"/>
+                    </div>
+                </f:else>
+            </f:if>
             <button aria-controls="main-navigation" aria-label="{f:translate(key:'nav.open', extensionName:'slubWebSachsendigital')}" class="nav-open" type="button">
                 <span class="visually-hidden"><f:translate extensionName='slubWebSachsendigital' key='nav.open'/></span>
                 <span class="nav-button-bar"></span>
