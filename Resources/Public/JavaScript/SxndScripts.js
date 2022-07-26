@@ -2242,6 +2242,16 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(function () {
     return false;
   });
 
+  // Toggle function for search form in the header bar
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.toggle-header-search').click(function () {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()('body').toggleClass('header-search-open');
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).attr('aria-expanded', function (i, attr) {
+      return attr === 'true' ? 'false' : 'true'
+    }).next('div.header-search-form').attr('aria-expanded', function (i, attr) {
+      return attr === 'true' ? 'false' : 'true'
+    });
+  })
+
   // retrieve image aspect ratio and add class
   jquery__WEBPACK_IMPORTED_MODULE_0___default()('figure').each(function () {
     const aspectRatioClass = (jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).find('img').attr('height') / jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).find('img').attr('width') < 1) ? 'landscape' : 'portrait';

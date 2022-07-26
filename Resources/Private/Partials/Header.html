@@ -11,11 +11,11 @@
                     </button>
                 </f:then>
                 <f:else>
-                    <button aria-controls="header-search" aria-label="{f:translate(key:'headersearch.open', extensionName:'slubWebSachsendigital')}" class="toggle-header-search" type="button">
+                    <button aria-controls="header-search" aria-expanded="false" aria-label="{f:translate(key:'headersearch.open', extensionName:'slubWebSachsendigital')}" class="toggle-header-search" type="button">
                         <span class="visually-hidden"><f:translate extensionName='slubWebSachsendigital' key='headersearch.open'/></span>
                         <span class="toggle-header-search-icon"></span>
                     </button>
-                    <div class="header-search-form" id="header-search">
+                    <div class="header-search-form" id="header-search" aria-expanded="false">
                         <f:cObject typoscriptObjectPath="lib.header_search"/>
                     </div>
                 </f:else>

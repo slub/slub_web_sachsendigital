@@ -55,6 +55,16 @@ $(function () {
     return false;
   });
 
+  // Toggle function for search form in the header bar
+  $('.toggle-header-search').click(function () {
+    $('body').toggleClass('header-search-open');
+    $(this).attr('aria-expanded', function (i, attr) {
+      return attr === 'true' ? 'false' : 'true'
+    }).next('div.header-search-form').attr('aria-expanded', function (i, attr) {
+      return attr === 'true' ? 'false' : 'true'
+    });
+  })
+
   // retrieve image aspect ratio and add class
   $('figure').each(function () {
     const aspectRatioClass = ($(this).find('img').attr('height') / $(this).find('img').attr('width') < 1) ? 'landscape' : 'portrait';
