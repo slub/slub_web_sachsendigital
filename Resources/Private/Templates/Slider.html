@@ -1,0 +1,27 @@
+<html data-namespace-typo3-fluid="true" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
+<f:if condition="{data.header}">
+    <h2>{data.header}</h2>
+</f:if>
+
+<f:if condition="{slides}">
+    <div class="slider-wrapper" data-items="{slides -> f:count()}" id="slider-{data.uid}">
+        <div class="slider-inner">
+            <f:for as="slide" each="{slides}" iteration="iteration">
+                <div class="slider-item" data-background="{f:uri.image(image: '{slide.image.0}')}" id="slide-{slide.data.uid}">
+                    <div class="slide-background"></div>
+                    <div class="container">
+                        <div class="slider-item-header">
+                            <f:link.typolink parameter="{slide.data.url}" title="{slide.data.title}">
+                                <h3>{slide.data.title}</h3>
+                                <span class="subline">{slide.data.subtitle}</span>
+                            </f:link.typolink>
+                        </div>
+                    </div>
+                </div>
+            </f:for>
+        </div>
+    </div>
+</f:if>
+
+</html>

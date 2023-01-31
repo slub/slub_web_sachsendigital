@@ -90,6 +90,33 @@
 			<trans-unit id="tx_slubwebsachsendigital_media.menu_collections.description">
 				<source>This shows all Subpages as Collection Tiles.</source>
 			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital.menu_selected_collections">
+				<source>Menu Element for selected Collections</source>
+			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital.menu_selected_collections.description">
+				<source>This shows all selected collections as tiles.</source>
+			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital_slider">
+				<source>Sachsen.digital Slider</source>
+			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital_slider.description">
+				<source>This content element renders the large slider on the homepage</source>
+			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital_slider.items">
+				<source>Slider Items</source>
+			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital_slider.slide.title">
+				<source>Slide title</source>
+			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital_slider.slide.subtitle">
+				<source>Slide subtitle</source>
+			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital_slider.slide.link">
+				<source>Slide Link</source>
+			</trans-unit>
+			<trans-unit id="tx_slubwebsachsendigital_slider.slide.image">
+				<source>Slide Image</source>
+			</trans-unit>
 			<trans-unit id="nav.open">
 				<source>Open page navigation</source>
 			</trans-unit>

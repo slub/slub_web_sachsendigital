@@ -1,11 +1,15 @@
-{namespace sxnd=Slub\SlubWebSachsendigital\ViewHelpers}
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
 
 <div class="control-bar">
     <div class="header-bar">
-        <div class="brand"><f:link.page pageUid="{pageSettings.rootPage.pid}" title="{pageSettings.rootPage.title}" class="{pageSettings.rootPage.cssClass}">{pageSettings.rootPage.title}</f:link.page></div>
+        <div class="brand">
+            <f:link.page class="{pageSettings.rootPage.cssClass}" pageUid="{pageSettings.rootPage.pid}" title="{pageSettings.rootPage.title}">{pageSettings.rootPage.title}</f:link.page>
+        </div>
         <nav>
-            <ul class="secondary-nav"><f:cObject typoscriptObjectPath="lib.navigation.kitodo" /></ul>
-            <button type="button" class="nav-toggle" aria-label="<f:translate key='nav.open' extensionName='slubWebSachsendigital' />">
+            <ul class="secondary-nav">
+                <f:cObject typoscriptObjectPath="lib.navigation.kitodo"/>
+            </ul>
+            <button aria-label="<f:translate key='nav.open' extensionName='slubWebSachsendigital' />" class="nav-toggle" type="button">
                 <span></span>
                 <span class="nav-button-bar"></span>
                 <span class="nav-button-bar"></span>
@@ -21,8 +25,8 @@
                     <h1>{settings.media}</h1>
                 </f:if>
                 <dl class="tx-dlf-metadata-titledata">
-                    <f:for each="{settings.metadata}" as="singleMeta">
-                        <f:for each="{singleMeta}" as="item">
+                    <f:for as="singleMeta" each="{settings.metadata}">
+                        <f:for as="item" each="{singleMeta}">
                             <dt>{item.key}</dt>
                             <dd>
                                 <f:if condition="{item.link}">
@@ -47,12 +51,12 @@
                     <div class="tx-dlf-wincontent tx-dlf-scrollbar">
                         <ul class="toc">
                             <li>
-                                <a title="{settings.media}" data-title="{settings.media}">{settings.media}</a>
+                                <a data-title="{settings.media}" title="{settings.media}">{settings.media}</a>
                                 <ul class="toc">
-                                    <f:for each="{settings.chapters}" as="chapter" >
-                                        <f:for each="{chapter}" as="item" >
+                                    <f:for as="chapter" each="{settings.chapters}">
+                                        <f:for as="item" each="{chapter}">
                                             <li>
-                                                <a title="{item.title}" class="chapter" data-timecode="{item.timecode}" data-title="{item.title}">
+                                                <a class="chapter" data-timecode="{item.timecode}" data-title="{item.title}" title="{item.title}">
                                                     <span class="title">
                                                         <span class="meta-type-icon meta-type-Video">Video</span>
                                                         {item.title}
@@ -73,5 +77,7 @@
 </div>
 
 <div class="document-view">
-    <f:render section="Player" partial="Player" arguments="{_all}" />
+    <f:render arguments="{_all}" partial="Player" section="Player"/>
 </div>
+
+</html>

@@ -1,7 +1,11 @@
-<f:layout name="KitodoPage" />
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
+<f:layout name="KitodoPage"/>
 
 <f:section name="MainContent">
     <!--TYPO3SEARCH_begin-->
-    <f:render section="Content" partial="MediaContent" arguments="{_all}" />
+    <f:render arguments="{_all}" partial="MediaContent" section="Content"/>
     <!--TYPO3SEARCH_end-->
 </f:section>
+
+</html>

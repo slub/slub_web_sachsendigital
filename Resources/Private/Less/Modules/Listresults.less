@@ -60,6 +60,7 @@
         ul.f3-widget-paginator {
             padding: 10px 0 0 0;
             border-top: 1px solid @brand-secondary-light;
+
         }
         @media screen and (min-width: @phoneLandscapeViewportWidth) {
             h2 {
@@ -101,7 +102,7 @@
                         line-height: 1;
                         box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
                         color: @brand-secondary;
-                        .transition();
+                        transition: @transition;
                         &:hover {
                             background-position: right -47px;
                             border-color: @brand-secondary;
@@ -202,8 +203,8 @@
                     height: 40px;
                     .text-hide();
                     display: inline-block;
-                    .transform(rotate(90deg));
-                    .transition();
+                    transform: rotate(90deg);
+                    transition: @transition;
                     transform-origin: center center;
                     cursor: pointer;
                     &:before {
@@ -225,7 +226,7 @@
                 }
                 &.tx-dlf-volumes-open {
                     .tx-dlf-morevolumes {
-                        .transform(rotate(-90deg));
+                        transform: rotate(-90deg);
                     }
                 }
                 .tx-dlf-volume {
@@ -236,6 +237,7 @@
                     li {
                         border-bottom: 1px solid white;
                         padding: 15px;
+                        margin: 0;
                         .tx-dlf-listview-thumbnail img {
                             margin-left: 15px;
                         }
@@ -325,10 +327,10 @@
                                 content: " ";
                             }
                             &:before {
-                                .transform(rotate(-45deg));
+                                transform: rotate(-45deg);
                             }
                             &:after {
-                                .transform(rotate(45deg));
+                                transform: rotate(45deg);
                             }
                         }
                     }
@@ -375,4 +377,3 @@
     }
 }
 
-// EOF

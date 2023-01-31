@@ -46,6 +46,22 @@ mod.wizards.newContentElement.wizardItems {
           CType = menu_collections
         }
       }
+      menu_selected_collections {
+        iconIdentifier = content-menu-pages
+        title = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital.menu_selected_collections
+        description = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital.menu_selected_collections.description
+        tt_content_defValues {
+          CType = menu_selected_collections
+        }
+      }
+      tx_slubwebsachsendigital_slider {
+        iconIdentifier = SachsendigitalWebsiteSlider
+        title = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_slider
+        description = LLL:EXT:slub_web_sachsendigital/Resources/Private/Language/locallang.xlf:tx_slubwebsachsendigital_slider.description
+        tt_content_defValues {
+          CType = tx_slubwebsachsendigital_slider
+        }
+      }
     }
     show = *
   }

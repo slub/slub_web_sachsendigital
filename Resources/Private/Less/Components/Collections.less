@@ -5,32 +5,44 @@
  * Design assets for collection overview and
  * the details page
  *
- * Author: Thomas Jung <thomas@tjwd.de>
- * License: All rights reserved
+ * Author: Thomas Jung <thomas@jung.digital>
  *
  */
 
 /* the overview menu  ================================================================================================== */
 .collection-menu {
-    border: 1px solid @brand-secondary-light;
+    border: solid @brand-secondary-light;
     border-width: 1px 0;
     margin: 30px 0;
     padding: 15px 0;
     .collection-entry {
         position: relative;
-        margin: 15px 0;
+        margin: 30px 0;
         width: 100%;
-        overflow: hidden;
         line-height: 1;
         .collection-element {
             position: relative;
+            &:before {
+                position: absolute;
+                top: -10px;
+                left: -10px;
+                width: 40px;
+                height: 40px;
+                background: white;
+                content: " ";
+                z-index: 200;
+                border: 2px solid white;
+                background-size: 20px auto;
+                background-repeat: no-repeat;
+                background-position: center center;
+            }
             &:after {
                 position: absolute;
                 top: 6px;
                 right: -6px;
                 bottom: -6px;
                 left: 6px;
-                border: 3px solid #4e6666;
+                border: solid #4e6666;
                 border-width: 0 3px 3px 0;
                 content: " ";
                 opacity: .2;
@@ -62,8 +74,7 @@
                     bottom: 0;
                     left: 0;
                     padding: 10px;
-                    line-height: 1.4;
-                    text-transform: uppercase;
+                    line-height: 1.3;
                     font-size: 14px;
                     font-style: normal;
                     z-index: 3;
@@ -73,16 +84,24 @@
                 }
             }
             &.ldp {
+                &:before {
+                    background-color: fade(darken(@brand-secondary-mid, 20%), 92%);
+                    background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDI0IDI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48ZyBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2U9IiNGRkYiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMi41IDIxLjc0OHYwYzAgLjgyODQyNy0uNjcxNTczIDEuNS0xLjUgMS41aC0xOCAtNi41NTY3MWUtMDhjLS44Mjg0MjctMy42MjExN2UtMDgtMS41LS42NzE1NzMtMS41LTEuNSAwIDAgMCAwIDAgMHYtMTkuNWwxLjc3NjM2ZS0xNCAyLjI2NDk0ZS0wN2MtMS4yNTA4OWUtMDctLjgyODQyNy42NzE1NzMtMS41IDEuNS0xLjVoMTVsOC4zNTg0OGUtMDggNi41NTA3NmUtMTFjLjM5MTMzOS4wMDAzMDY3MTUuNzY3MDYzLjE1MzUzOSAxLjA0Ny40MjdsMyAyLjg4MiAzLjI1NTcxZS0wOCAzLjE3MzQzZS0wOGMuMjg5NjExLjI4MjI5Mi40NTI5Ni42Njk1Ny40NTMgMS4wNzRaIj48L3BhdGg+PGxpbmUgeDE9IjkiIHgyPSI5IiB5MT0iMTEuMjUiIHkyPSI1LjI1Ij48L2xpbmU+PHBvbHlsaW5lIHBvaW50cz0iNiw2Ljc0OCA2LDUuMjQ4IDEyLDUuMjQ4IDEyLDYuNzQ4Ij48L3BvbHlsaW5lPjxsaW5lIHgxPSIxNS43NSIgeDI9IjE4IiB5MT0iOS43NSIgeTI9IjkuNzUiPjwvbGluZT48bGluZSB4MT0iMTUuNzUiIHgyPSIxOCIgeTE9IjUuMjUiIHkyPSI1LjI1Ij48L2xpbmU+PGxpbmUgeDE9IjYiIHgyPSIxOCIgeTE9IjE0LjI1IiB5Mj0iMTQuMjUiPjwvbGluZT48bGluZSB4MT0iNiIgeDI9IjE4IiB5MT0iMTguNzUiIHkyPSIxOC43NSI+PC9saW5lPjxsaW5lIHgxPSI3LjUiIHgyPSIxMC41IiB5MT0iMTEuMjUiIHkyPSIxMS4yNSI+PC9saW5lPjwvZz48L3N2Zz4=");
+                }
                 > a {
                     h3 {
-                        background: fade(@brand-secondary-mid,92%);
+                        background: fade(darken(@brand-secondary-mid, 20%), 92%);
                     }
                 }
             }
             &.save {
+                &:before {
+                    background-color: fade(desaturate(darken(@brand-primary-dark, 5%), 20%), 92%);
+                    background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDI0IDI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48ZyBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2U9IiNGRkYiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMi41IDIxLjc1djBjMCAuODI4NDI3LS42NzE1NzMgMS41LTEuNSAxLjVoLTE4IC02LjU1NjcxZS0wOGMtLjgyODQyNy0zLjYyMTE3ZS0wOC0xLjUtLjY3MTU3My0xLjUtMS41IDAgMCAwIDAgMCAwdi0xOS41bDEuNzc2MzZlLTE0IDIuMjY0OTRlLTA3Yy0xLjI1MDg5ZS0wNy0uODI4NDI3LjY3MTU3My0xLjUgMS41LTEuNWgxNWw2LjkwMzQ5ZS0wOCA2LjkyNTEzZS0xMmMuMzkxMTk4IDMuOTI0OTFlLTA1Ljc2NjkwMi4xNTI5MDUgMS4wNDcuNDI2bDMgMi44ODMgNC4yOTE5ZS0wOCA0LjE4MzQ0ZS0wOGMuMjg5NjExLjI4MjI5Mi40NTI5Ni42Njk1Ny40NTMgMS4wNzRaIj48L3BhdGg+PHBhdGggZD0iTTEwLjIzOCAxNi40MWwtMy4xMzU0M2UtMDkgMS41NjM1NWUtMDljLS40MjMwNy4yMTA5NzMtLjkzNzA2NC4wMzkwMzM4LTEuMTQ4MDQtLjM4NDAzNyAtLjA1OTE2MDgtLjExODYzNy0uMDg5OTU3OC0uMjQ5Mzk0LS4wODk5NjM0LS4zODE5NjN2LTUuNzg4bC03LjgwNDA1ZS0xMCAzLjY0MjNlLTA1YzcuMTM4NDFlLTA4LS40NzI3NTYuMzgzMjQ0LS44NTYuODU2LS44NTYgLjEzMjU3IDIuMDAxNzVlLTA4LjI2MzMyOC4wMzA3OTE0LjM4MTk2Ny4wODk5NDcybDUuNzg5IDIuODk1IC05LjIyMTI5ZS0wOS00LjYwMjY2ZS0wOWMuNDIyNDk4LjIxMDg4My41OTQwNDUuNzI0MzQuMzgzMTYyIDEuMTQ2ODQgLS4wODI3OTkzLjE2NTg4Ni0uMjE3Mjc2LjMwMDM2My0uMzgzMTYyLjM4MzE2MloiPjwvcGF0aD48L2c+PC9zdmc+");
+                }
                 > a {
                     h3 {
-                        background: fade(@brand-primary-dark,92%);
+                        background: fade(desaturate(darken(@brand-primary-dark, 5%), 20%), 92%);
                     }
                 }
             }
@@ -105,7 +124,7 @@
         .collection-entry {
             flex: 0 1 50%;
             padding: 15px;
-            height: 250px;
+            height: 300px;
             margin: 0;
             .collection-element {
                 height: 100%;
@@ -147,13 +166,13 @@
     }
     .no-touchevents & {
         .collection-element {
-            .transition(all .15s ease-out);
-            .transform(scale(1));
+            transition: all .15s ease-out;
+            transform: scale(1);
             &:after {
-                .transition(all .15s ease-out);
+                transition: all .15s ease-out;
             }
             &:hover {
-                .transform(scale(1.1));
+                transform: scale(1.05);
                 &:after {
                     top: 12px;
                     right: -12px;
@@ -182,7 +201,8 @@
             padding: 10px;
             border: 10px solid @brand-secondary-light;
         }
-        /* before Extbase/Fluid (TODO) = */ button,
+        /* before Extbase/Fluid (TODO) = */
+        button,
         input[type="submit"] {
             position: absolute;
             top: 14px;
@@ -216,6 +236,44 @@
                 content: " ";
             }
         }
+        #tx-dlf-search-suggest {
+            ul.ui-autocomplete {
+                position: absolute;
+                background: @brand-secondary;
+                color: white;
+                font-size: 14px;
+                z-index: 10;
+                li {
+                    border-bottom: 1px solid rgba(white, .2);
+                    padding: 5px;
+                    &:before {
+                        display: none;
+                    }
+                    div {
+                        position: relative;
+                        cursor: pointer;
+                        padding: 5px;
+                        line-height: 1.2;
+                        &.ui-state-active {
+                            background: white;
+                            color: @brand-secondary;
+                        }
+                    }
+                }
+                &:before {
+                    position: absolute;
+                    top: -10px;
+                    left: 50%;
+                    margin-left: -10px;
+                    width: 0;
+                    height: 0;
+                    border: 10px solid transparent;
+                    border-bottom-color: @brand-secondary;
+                    border-top-width: 0;
+                    content: " ";
+                }
+            }
+        }
     }
 }
-// EOF
+
