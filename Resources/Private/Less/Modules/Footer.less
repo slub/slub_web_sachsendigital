@@ -4,8 +4,7 @@
  * ================================================
  * All definitions for footer and its navigation
  *
- * Author: Thomas Jung <thomas@tjwd.de>
- * License: All rights reserved
+ * Author: Thomas Jung <thomas@jung.digital>
  *
  */
 
@@ -43,18 +42,7 @@
         overflow: hidden;
         color: #fff;
         padding: 10px 0 30px 0;
-        .vertgrad(fade(@brand-primary,30%), fade(@brand-secondary,0%), 0, 100%);
-        &:before {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            background: url(../Images/noise.png) repeat  0 0;
-            background-size: 90px 45px;
-            content: " ";
-            opacity: 0.1;
-        }
+        .vertgrad(fade(@brand-primary, 30%), fade(@brand-secondary, 0%), 0, 100%);
         .partnerlogo-bar {
             a {
                 position: relative;
@@ -87,7 +75,9 @@
         right: 0;
         bottom: 0;
         left: 0;
-        height: 250px;
+        .menu-open & {
+            position: relative;
+        }
     }
     @media screen and (min-width: @tabletLandscapeViewportWidth) {
         p {
@@ -96,5 +86,3 @@
         }
     }
 }
-
-// EOF

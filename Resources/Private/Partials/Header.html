@@ -1,11 +1,27 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
 <f:section name="Header">
     <div class="header">
         <div class="container">
-            <h1>
-                <f:link.page pageUid="{rootPageId}" class="logo" tabindex="1" title="Sachsen.digital">Sachsen.digital</f:link.page>
-            </h1>
-            <button type="button" class="nav-open" aria-label="<f:translate key='nav.open' extensionName='slubWebSachsendigital' />">
-                <span></span>
+            <f:link.page class="header-brand" pageUid="{rootPageId}" title="Startseite von Sachsen.digital">Sachsen.digital</f:link.page>
+            <f:if condition="{data.uid} == {kitodoSearchListView} || {data.uid} == {rootPageId}">
+                <f:then>
+                    <button class="toggle-header-search disabled" disabled>
+                        <span class="toggle-header-search-icon"></span>
+                    </button>
+                </f:then>
+                <f:else>
+                    <button aria-controls="header-search" aria-expanded="false" aria-label="{f:translate(key:'headersearch.open', extensionName:'slubWebSachsendigital')}" class="toggle-header-search" type="button">
+                        <span class="visually-hidden"><f:translate extensionName='slubWebSachsendigital' key='headersearch.open'/></span>
+                        <span class="toggle-header-search-icon"></span>
+                    </button>
+                    <div class="header-search-form" id="header-search" aria-expanded="false">
+                        <f:cObject typoscriptObjectPath="lib.header_search"/>
+                    </div>
+                </f:else>
+            </f:if>
+            <button aria-controls="main-navigation" aria-label="{f:translate(key:'nav.open', extensionName:'slubWebSachsendigital')}" class="nav-open" type="button">
+                <span class="visually-hidden"><f:translate extensionName='slubWebSachsendigital' key='nav.open'/></span>
                 <span class="nav-button-bar"></span>
                 <span class="nav-button-bar"></span>
                 <span class="nav-button-bar"></span>
@@ -13,3 +29,5 @@
         </div>
     </div>
 </f:section>
+
+</html>

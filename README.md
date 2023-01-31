@@ -1,5 +1,19 @@
 # SACHSEN.digital (LDP & SAVE)
 
+## Remark
+
+The following lines are only temporary and have to be changed...
+    
+    "kitodo/presentation": "^4.0|dev-master|dev-dev-sxnd-fixes",
+    "slub/slub-digitalcollections": "^3.0|dev-master|dev-dev-sxnd-fixes"
+    
+    to...
+    
+    "kitodo/presentation": "^4.0|dev-master",
+    "slub/slub-digitalcollections": "^3.0|dev-master"
+    
+    ...as soon as both bracehs in kitodo.preseentation and digitalcollections are merged.
+
 This TYPO3 extension provides the configuration and setup for the new implementation of SACHSEN.digital by the [SLUB Dresden](https://www.slub-dresden.de).
 
 ##  Installation

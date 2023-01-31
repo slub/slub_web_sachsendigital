@@ -105,6 +105,8 @@ page {
             rootPageId.value = {$config.rootPageId}
             kitodoPageView = TEXT
             kitodoPageView.value = {$config.kitodoPageView}
+            kitodoSearchListView = TEXT
+            kitodoSearchListView.value = {$config.kitodoSearchListView}
             piwik_hostname = TEXT
             piwik_hostname.value = {$config.piwik_hostname}
             piwik_idsite = TEXT

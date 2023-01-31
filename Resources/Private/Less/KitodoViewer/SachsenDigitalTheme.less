@@ -1,6 +1,6 @@
 /*
  *
- * SLUB Styles
+ * Sachsen.digital Styles
  * ================================================
  * Color typography and adjustments
  * for custom styling
@@ -30,7 +30,7 @@ body {
         left: 0;
         content: " ";
         opacity: 0.3;
-        .vertgrad(@brand-primary, darken(@brand-primary-dark,50%), 0, 100%);
+        .vertgrad(@brand-primary, darken(@brand-primary-dark, 50%), 0, 100%);
     }
 }
 
@@ -44,19 +44,8 @@ body {
 .control-bar {
     .header-bar {
         background: @brand-secondary;
-        .vertgrad(fade(@brand-secondary,30%), fade(@brand-primary,60%), 0, 100%);
-        .transition();
-        &:before {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            background: url(../Images/noise.png) repeat  0 0;
-            background-size: 90px 45px;
-            content: " ";
-            opacity: 0.1;
-        }
+        .vertgrad(@brand-secondary, fade(@brand-primary, 60%), 0, 100%);
+        transition: @transition;
         .brand {
             top: 5px;
             left: 15px;
@@ -66,7 +55,6 @@ body {
                 &:before {
                     content: '';
                 }
-                background-size: auto 50px;
                 background-position: 0 0;
                 line-height: 24px;
                 color: #fff;
@@ -75,10 +63,26 @@ body {
                 display: block;
             }
         }
+        nav .nav-toggle {
+            .nav-button-bar:last-of-type {
+                display: none;
+            }
+        }
     }
 
     @media screen and (min-width: @tabletLandscapeViewportWidth) {
         background: @brand-secondary;
+        *::-webkit-scrollbar {
+            width: 7px;
+        }
+        *::-webkit-scrollbar-track {
+            background: transparent linear-gradient(90deg, transparent 2px, rgba(white, .2) 3px, rgba(white, .2) 4px, transparent 5px, transparent);
+        }
+        *::-webkit-scrollbar-thumb {
+            background-color: rgba(white, .5);
+            border-radius: 20px;
+        }
+
         &:before {
             position: absolute;
             top: 0;
@@ -88,7 +92,7 @@ body {
             height: auto;
             content: " ";
             opacity: 0.15;
-            .vertgrad(darken(@brand-primary-dark,50%), @brand-primary, 0, 100%);
+            .vertgrad(darken(@brand-primary-dark, 50%), @brand-primary, 0, 100%);
         }
         &:after {
             content: '';
@@ -100,7 +104,7 @@ body {
                 background: transparent;
             }
             .brand {
-                top: 12px;
+                top: 22px;
                 left: 30px;
                 max-width: 60%;
                 a {
@@ -119,8 +123,6 @@ body {
     @media screen and (min-width: @desktopViewportWidth) {
         .header-bar {
             .brand {
-                top: 12px;
-                left: 30px;
                 a {
                     font-size: 11px;
                     line-height: 1px;
@@ -142,6 +144,16 @@ body {
                 color: white;
                 &:before {
                     background: transparent url('@{control-icons}') no-repeat -564px -84px;
+                }
+            }
+            dl dd.tx-dlf-metadata-collection {
+                background: transparent;
+                margin: 0;
+                display: inline;
+                color: white;
+                padding: 0;
+                &:after {
+                    content: ";";
                 }
             }
         }
@@ -186,9 +198,6 @@ body {
         }
         dd {
             color: white;
-            &.tx-dlf-metadata-collection {
-                color: darken(@brand-primary-dark,50%);
-            }
             a {
                 color: white;
             }
@@ -206,11 +215,13 @@ body {
                     overflow: hidden;
                     text-overflow: ellipsis;
                     display: inline-block;
-                    width: 80%;
-                    line-height: 16px;
-                    vertical-align: middle;
+                    max-width: 80%;
+                    line-height: 20px;
+                    vertical-align: text-top;
                     &[href*="digital.slub"] {
-                        vertical-align: middle;
+                        line-height: 20px;
+                        vertical-align: text-top;
+                        max-width: 80%;
                     }
                 }
             }
@@ -221,28 +232,44 @@ body {
 }
 
 .tx-dlf-calendar {
-    .year-anchor {
-        padding: 0 0 10px 60px;
-        font-weight: bold;
-    }
-    .calendar-view  {
-        .year,
-        table {
-            caption {
-                font-weight: bold;
-            }
-            tr {
-                td {
-                    &.open {
-                        ul {
-                            li {
-                                color: white;
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        .year-anchor {
+            padding: 5px 280px 10px 0;
+            font-weight: bold;
+            border-bottom: 0;
+        }
+        .meta-header .year a {
+            color: @brand-primary-dark;
+        }
+        .calendar-list-selection {
+            top: 20px;
+        }
+        .calendar-view {
+            .year,
+            table {
+                caption {
+                    font-weight: bold;
+                }
+                tr {
+                    td {
+                        &.open {
+                            ul {
+                                li {
+                                    color: white;
+                                }
                             }
                         }
                     }
                 }
             }
         }
+    }
+}
+
+
+.tx-dlf-toolsFulltextsearch .fulltext-search-toggle {
+    @media screen and (min-width: @tabletLandscapeViewportWidth) {
+        top: 10px;
     }
 }
 
@@ -270,9 +297,9 @@ body {
                     height: 80px;
                     line-height: 60px;
                     .no-touchevents & {
-                        .transition();
+                        transition: @transition;
                         &:hover {
-                            .transform(scale(1.2));
+                            transform: scale(1.2);
                         }
                     }
                 }
@@ -291,9 +318,9 @@ body {
             max-height: 250px;
         }
         .no-touchevents & {
-            .transition();
+            transition: @transition;
             &:hover {
-                .transform(scale(2));
+                transform: scale(2);
                 z-index: 10;
             }
         }
@@ -313,6 +340,13 @@ body {
 }
 
 .tx-dlf-toc {
+    .tx-dlf-wincontent > ul.toc > li > a .meta-type-icon {
+        font-size: 12px;
+        font-weight: bold;
+        opacity: 1;
+        margin: 10px 0 0 0;
+        display: block;
+    }
     ul.toc {
         ul {
             li {
@@ -320,18 +354,11 @@ body {
                     color: white;
                 }
                 @media screen and (min-width: @tabletLandscapeViewportWidth) {
-                    a, span.a, > span.title {
+                    a {
+                        display: flex;
+                        justify-content: space-between;
                         .meta-type-icon {
-                            background-position: -90px 0px;
-                            &.meta-type-Abbildung {
-                                background-position: 0 0px;
-                            }
-                            &.meta-type-Werbung {
-                                background-position: -30px 0px;
-                            }
-                            &.meta-type-Artikel {
-                                background-position: -60px 0px;
-                            }
+                            background-position: -90px 0;
                         }
                     }
                     &.placeholder {
@@ -340,10 +367,24 @@ body {
                             background: transparent;
                         }
                     }
+                    &.current {
+                        background: white;
+                        a {
+                            color: @brand-primary-dark;
+                            .meta-type-icon {
+                                background-position-y: -30px !important;
+                            }
+                        }
+                    }
+                    &.submenu {
+                        &:before {
+                            border-top-color: white;
+                        }
+                    }
                 }
             }
             li:nth-child(even) {
-                background: lighten(@brand-secondary,10%);
+                background: lighten(@brand-secondary, 10%);
             }
         }
     }

@@ -5,85 +5,287 @@
  * Definition for header image, logo, page titles
  * (for breadcrumb eg. look in Navigation.less)
  *
- * Author: Thomas Jung <thomas@tjwd.de>
- * License: All rights reserved
+ * Author: Thomas Jung <thomas@jung.digital>
  *
  */
- 
+
 .header {
     position: relative;
     height: 80px;
     margin: 0;
     border: 0 none;
     background: @brand-secondary;
-    .vertgrad(fade(@brand-secondary,30%), fade(@brand-primary,60%), 0, 100%);
-    .transition();
-    &:before {
+    .vertgrad(@brand-secondary, fade(@brand-primary, 60%), 0, 100%);
+    transition: @transition;
+    a.header-brand {
         position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        background: url(../Images/noise.png) repeat  0 0;
-        background-size: 90px 45px;
-        content: " ";
-        opacity: 0.1;
-    }
-    h1 {
+        top: 15px;
+        left: 15px;
+        width: 270px;
+        height: 50px;
         margin: 0;
         padding: 0;
-        a {
+        display: block;
+        .text-hide();
+        background: url('../Images/sxndLogo.svg') no-repeat left center;
+        background-size: 100% 100%;
+        &:focus-visible {
+            outline: 1px solid rgba(white, .5);
+            outline-offset: 2px;
+        }
+    }
+    .toggle-header-search {
+        position: absolute;
+        top: 25px;
+        right: 60px;
+        width: 30px;
+        height: 30px;
+        background: transparent;
+        border: 0;
+        transition: @transition;
+        cursor: pointer;
+        &:before {
             position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 100px;
-            height: 50px;
-            margin: 0;
-            display: block;
-            overflow: hidden;
-            text-indent: 200%;
-            white-space: nowrap;
-            padding: 0;
-            background: url('../Images/sxndLogo.svg') no-repeat left center;
-            background-size: 100% 100%;
+            top: 3px;
+            left: 3px;
+            width: 22px;
+            height: 22px;
+            border-radius: 11px;
+            border: 2px solid white;
+            content: " ";
+        }
+        &:after {
+            position: absolute;
+            right: 3px;
+            bottom: 3px;
+            width: 2px;
+            height: 8px;
+            background: white;
+            transform-origin: right bottom;
+            transform: rotate(-45deg);
+            content: " ";
+        }
+        &:focus-visible {
+            outline: 1px solid rgba(white, .5);
+            outline-offset: 2px;
+        }
+        &.disabled {
+            opacity: .5;
+            cursor: default;
+        }
+    }
+    .header-search-form {
+        position: absolute;
+        top: 0;
+        right: 30px;
+        left: 30px;
+        visibility: hidden;
+        opacity: 0;
+        transition: @transition;
+        form {
+            label[for="tx-dlf-search-query"] {
+                border: 0;
+                clip: rect(1px, 1px, 1px, 1px);
+                clip-path: inset(50%);
+                height: 1px;
+                overflow: hidden;
+                padding: 0;
+                position: absolute;
+                width: 1px;
+                white-space: nowrap;
+            }
+            input[type="text"] {
+                position: relative;
+                font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+                font-size: 14px;
+                width: 100%;
+                padding: 5px 10px;
+                border: 5px solid white;
+                background: rgba(white, .2);
+                color: white;
+                &::placeholder {
+                    color: rgba(white, .6);
+                }
+                &:focus-visible {
+                    outline: 1px solid rgba(white, .5);
+                    outline-offset: 2px;
+                }
+            }
+            input[type="submit"] {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                width: 33px;
+                height: 30px;
+                font: 0/0 'Open Sans', Helvetica, Arial, sans-serif;
+                border: 0;
+                background: white url(data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAyOCAyOCI+PHN0eWxlPi5zdDB7ZmlsbDojNzI5YTIzfTwvc3R5bGU+PHBhdGggY2xhc3M9InN0MCIgZD0iTTI1LjEgMjMuOWwtNi41LTYuNmMxLTEuNCAxLjYtMy4xIDEuNi00LjkgMC00LjYtMy43LTguMy04LjMtOC4zLTQuNiAwLTguMyAzLjctOC4zIDguMyAwIDQuNyAzLjYgOC4zIDguMyA4LjMgMS44IDAgMy40LS42IDQuOC0xLjVsNi41IDYuNiAxLjktMS45ek0xMS45IDYuOGMzLjEgMCA1LjYgMi41IDUuNiA1LjZTMTUgMTggMTEuOSAxOHMtNS42LTIuNS01LjYtNS42IDIuNS01LjYgNS42LTUuNnoiLz48L3N2Zz4=) no-repeat right center;
+                background-size: 28px 28px;
+                display: block;
+                &:focus-visible {
+                    outline: 1px solid @brand-primary;
+                }
+            }
+            .fulltext-switch {
+                position: relative;
+                margin-top: 5px;
+                text-align: center;
+                line-height: 1;
+                input[type="radio"] {
+                    margin: 0 2px 0 10px;
+                    vertical-align: middle;
+                }
+                label {
+                    color: white;
+                    font-size: 12px;
+                    text-transform: uppercase;
+                    font-weight: 700;
+                    vertical-align: middle;
+                }
+            }
+            #tx-dlf-search-suggest {
+                ul.ui-autocomplete {
+                    position: absolute;
+                    background: @brand-secondary;
+                    color: white;
+                    font-size: 14px;
+                    z-index: 10;
+                    li {
+                        border-bottom: 1px solid rgba(white, .2);
+                        padding: 5px;
+                        &:before {
+                            display: none;
+                        }
+                        div {
+                            position: relative;
+                            cursor: pointer;
+                            padding: 5px;
+                            line-height: 1.2;
+                            &.ui-state-active {
+                                background: white;
+                                color: @brand-secondary;
+                            }
+                        }
+                    }
+                    &:before {
+                        position: absolute;
+                        top: -10px;
+                        left: 50%;
+                        margin-left: -10px;
+                        width: 0;
+                        height: 0;
+                        border: 10px solid transparent;
+                        border-bottom-color: @brand-secondary;
+                        border-top-width: 0;
+                        content: " ";
+                    }
+                }
+            }
+        }
+    }
+    .header-search-open & {
+        height: 180px;
+        .header-search-form {
+            top: 90px;
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+    .menu-open & {
+        .toggle-header-search,
+        .header-search-form {
+            opacity: 0;
         }
     }
     @media screen and (min-width: @phoneLandscapeViewportWidth) {
-        h1 {
-            a {
-                left: 30px;
-                right: auto;
-                width: 300px;
-            }
+        a.header-brand {
+            left: 30px;
+            right: auto;
+            width: 300px;
+        }
+        .toggle-header-search {
+            right: 70px;
         }
     }
     @media screen and (min-width: @tabletViewportWidth) {
         height: 100px;
-        background: @brand-secondary url(../Images/pageHeaderBg.jpg) no-repeat center bottom;
-        background-size: cover;
-        h1 {
-            a {
-                top: 25px;
-                left: 50px;
+        a.header-brand {
+            top: 25px;
+            left: 50px;
+        }
+        .toggle-header-search {
+            top: 33px;
+            right: 110px;
+            width: 35px;
+            height: 35px;
+            &:before {
+                border-width: 3px;
+                width: 26px;
+                height: 26px;
+                border-radius: 13px;
             }
+            &:after {
+                width: 3px;
+                height: 10px
+            }
+        }
+        .header-search-form {
+            left: 50px;
+            right: 50px;
         }
     }
     @media screen and (min-width: @tabletLandscapeViewportWidth) {
-        h1 {
-            a {
-                left: 0;
+        a.header-brand {
+            left: 0;
+        }
+        .toggle-header-search {
+            .toggle-header-search-icon {
+                position: absolute;
+                top: -13px;
+                right: 20px;
+                font-size: 40px;
+                font-weight: 300;
+                line-height: 1;
+                color: white;
+                opacity: 0;
+                transition: @transition;
+                &:after {
+                    position: absolute;
+                    transform: rotate(-355deg);
+                    transition: @transition;
+                    content: "+";
+                    text-shadow: -2px 0 @brand-primary-dark, 0 2px @brand-primary-dark, 2px 0 @brand-primary-dark, 0 -2px @brand-primary-dark;
+                }
             }
         }
-    }
-    @media screen and (min-width: @desktopViewportWidth) {
-        height: 140px;
-        h1 {
-            a {
-                top: 40px;
+        .header-search-form {
+            top: 30px;
+            left: auto;
+            width: 380px;
+            form {
+                .fulltext-switch {
+                    text-align: left;
+                    margin-top: 3px;
+                }
             }
+        }
+
+        .header-search-open & {
+            height: 100px;
+            .toggle-header-search {
+                .toggle-header-search-icon {
+                    opacity: 1;
+                    &:after {
+                        transform: rotate(-45deg);
+                    }
+                }
+            }
+            .header-search-form {
+                top: 30px;
+                right: 160px;
+            }
+
         }
     }
 }
 
-
-// EOF

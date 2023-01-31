@@ -4,8 +4,7 @@
  * ================================================
  * Specials for the homepage
  *
- * Author: Thomas Jung <thomas@tjwd.de>
- * License: All rights reserved
+ * Author: Thomas Jung <thomas@jung.digital>
  *
  */
 
@@ -19,6 +18,9 @@
         background: @brand-secondary url(../Images/homeHeaderBgSmall.jpg) no-repeat center bottom;
         background-size: cover;
         margin-bottom: -400px;
+        .toggle-header-search {
+            display: none;
+        }
         @media screen and (min-width: @tabletViewportWidth) {
             height: 550px;
             margin-bottom: -550px;
@@ -56,7 +58,7 @@
                 display: none;
             }
             .container {
-                > div:first-child {  // select text container
+                > div:first-child { // select text container
                     position: relative;
                     height: 300px;
                     display: flex;
@@ -69,7 +71,7 @@
                 }
                 a {
                     display: inline-block;
-                    border: 1px solid rgba(255,255,255,0.6);
+                    border: 1px solid rgba(255, 255, 255, 0.6);
                     padding: 10px;
                     border-radius: 4px;
                     background: transparent;
@@ -90,7 +92,7 @@
                             right: 0;
                             bottom: 0;
                             left: 0;
-                            background: fade(@brand-secondary,85%);
+                            background: fade(@brand-secondary, 85%);
                             mix-blend-mode: multiply;
                             content: " ";
                             border-radius: 6px;
@@ -102,7 +104,7 @@
                             width: 0;
                             height: 0;
                             border: 10px solid transparent;
-                            border-top-color: fade(@brand-secondary,85%);
+                            border-top-color: fade(@brand-secondary, 85%);
                             border-bottom-width: 0;
                             content: " ";
                             mix-blend-mode: multiply;
@@ -122,14 +124,27 @@
                             background: transparent;
                             color: #fff;
                             font-size: 16px;
-                            &::-webkit-input-placeholder { color: rgba(255, 255, 255, 0.4); }
-                            &::-webkit-input-placeholder { color: rgba(255, 255, 255, 0.4); }
-                            &:-moz-placeholder { color: rgba(255, 255, 255, 0.4); }
-                            &::-moz-placeholder { color: rgba(255, 255, 255, 0.4); }
-                            &:-ms-input-placeholder {  color: rgba(255, 255, 255, 0.4); }
-                            &::-ms-input-placeholder { color: rgba(255, 255, 255, 0.4); }
+                            &::-webkit-input-placeholder {
+                                color: rgba(255, 255, 255, 0.4);
+                            }
+                            &::-webkit-input-placeholder {
+                                color: rgba(255, 255, 255, 0.4);
+                            }
+                            &:-moz-placeholder {
+                                color: rgba(255, 255, 255, 0.4);
+                            }
+                            &::-moz-placeholder {
+                                color: rgba(255, 255, 255, 0.4);
+                            }
+                            &:-ms-input-placeholder {
+                                color: rgba(255, 255, 255, 0.4);
+                            }
+                            &::-ms-input-placeholder {
+                                color: rgba(255, 255, 255, 0.4);
+                            }
                         }
-                        /* before Extbase/Fluid (TODO) = */ button,
+                        /* before Extbase/Fluid (TODO) = */
+                        button,
                         input[type="submit"] {
                             position: absolute;
                             top: 0;
@@ -157,7 +172,7 @@
                         .no-touchevents & {
                             .fulltext-switch {
                                 opacity: 0.3;
-                                .transition();
+                                transition: @transition;
                             }
                             &:hover {
                                 .fulltext-switch {
@@ -212,7 +227,8 @@
                                 font-size: 20px;
                                 padding: 15px 60px 15px 25px;
                             }
-                            /* before Extbase/Fluid (TODO) = */ button,
+                            /* before Extbase/Fluid (TODO) = */
+                            button,
                             input[type="submit"] {
                                 width: 60px;
                                 height: 60px;
@@ -251,7 +267,7 @@
                     a {
                         position: relative;
                         background: #fff;
-                        box-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+                        box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
                         display: block;
                         img {
                             position: relative;
@@ -268,7 +284,7 @@
                             height: 100%;
                             background: #c5b68d;
                             opacity: 0.25;
-                            .transform(rotate(-3deg));
+                            transform: rotate(-3deg);
                             content: " ";
                         }
                         &:after {
@@ -445,7 +461,7 @@
                         max-width: 100%;
                         filter: grayscale(100%);
                         &:hover {
-                            filter:grayscale(0%);
+                            filter: grayscale(0%);
                         }
                     }
                 }
@@ -549,4 +565,3 @@
     }
 }
 
-// EOF
