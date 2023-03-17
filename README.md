@@ -1,7 +1,5 @@
 # SACHSEN.digital (LDP & SAVE)
 
-## Remark
-
 This TYPO3 extension provides the configuration and setup for the new implementation of SACHSEN.digital by the [SLUB Dresden](https://www.slub-dresden.de).
 
 ##  Installation
