@@ -1,14 +1,16 @@
 // @ts-check
 
-import Gestures from '../lib/Gestures';
 import { e } from '../lib/util';
 import { Keybindings$find } from '../lib/Keyboard';
 import typoConstants from '../lib/typoConstants';
 import {
+  action,
   Chapters,
   ControlPanelButton,
   DlfMediaPlayer,
+  FullScreenButton,
 } from '../DlfMediaPlayer';
+import ShakaFrontend from '../DlfMediaPlayer/frontend/ShakaFrontend';
 
 import Modals from './lib/Modals';
 import { BookmarkModal, HelpModal, ScreenshotModal } from './modals';
@@ -33,12 +35,15 @@ export default class SlubMediaPlayer {
   /**
    *
    * @param {HTMLElement} container
+   * @param {HTMLElement} fullscreenElement
    * @param {VideoInfo} videoInfo
    * @param {AppConfig} config
    */
-  constructor(container, videoInfo, config) {
+  constructor(container, fullscreenElement, videoInfo, config) {
     /** @private */
     this.container = container;
+    /** @private */
+    this.fullscreenElement = fullscreenElement;
     /** @private */
     this.playerMount = e('div');
     this.container.append(this.playerMount);
@@ -51,12 +56,6 @@ export default class SlubMediaPlayer {
 
     /** @private @type {AppConstants} */
     this.constants = typoConstants(config.constants ?? {}, {
-      screenshotFilenameTemplate: 'Screenshot',
-      screenshotCommentTemplate: '',
-      prevChapterTolerance: 5,
-      volumeStep: 0.05,
-      seekStep: 5,
-      trickPlayFactor: 4,
       forceLandscapeOnFullscreen: true,
     });
 
@@ -74,63 +73,58 @@ export default class SlubMediaPlayer {
 
     /** @private */
     this.dlfPlayer = new DlfMediaPlayer(this.env);
+    this.dlfPlayer.parseConstants(config.constants ?? {});
+    this.dlfPlayer.setPlayerMode(videoInfo.mode ?? 'auto', videoInfo.fallbackMode ?? 'audio');
 
     /** @private @type {ChapterLink[]} */
     this.chapterLinks = [];
 
     /** @private */
-    this.modals = Modals({
-      help: new HelpModal(this.container, this.env, {
-        constants: {
-          ...this.constants,
-          // TODO: Refactor
-          forceLandscapeOnFullscreen: Number(this.constants.forceLandscapeOnFullscreen),
-        },
-        keybindings: this.keybindings,
-      }),
-      bookmark: new BookmarkModal(this.container, this.env, {
-        shareButtons: this.config.shareButtons,
-      }),
-      screenshot: new ScreenshotModal(this.container, this.env, {
-        keybindings: this.keybindings,
-        screnshotCaptions: this.config.screenshotCaptions ?? [],
-        constants: this.constants,
-      }),
-    });
+    this.modals = null;
 
     /** @private */
-    this.actions = {
-      'cancel': () => {
-        if (this.modals.hasOpen()) {
+    this.dlfPlayer.actions['fullscreen.toggle'].execute = () => {
+      this.dlfPlayer.ui.seekBar?.endSeek();
+      this.toggleFullScreen();
+    };
+    this.actions = Object.assign({}, this.dlfPlayer.actions, {
+      'cancel': action(() => {
+        if (this.modals?.hasOpen()) {
           this.modals.closeNext();
-        } else if (this.dlfPlayer.isThumbnailPreviewOpen()) {
-          this.dlfPlayer.endSeek();
-        } else if (this.dlfPlayer.anySettingsMenusAreOpen()) {
-          this.dlfPlayer.hideSettingsMenus();
+        } else {
+          this.dlfPlayer.ui.handleEscape();
         }
-      },
-      'modal.help.open': () => {
-        this.openModal(this.modals.help);
-      },
-      'modal.help.toggle': () => {
-        this.dlfPlayer.endSeek();
-        this.modals.toggleExclusive(this.modals.help);
-      },
-      'modal.bookmark.open': () => {
+      }),
+      'modal.help.open': action(() => {
+        this.openModal(this.modals?.help);
+      }),
+      'modal.help.toggle': action(() => {
+        if (this.modals !== null) {
+          this.dlfPlayer.ui.seekBar?.endSeek();
+          this.modals.toggleExclusive(this.modals.help);
+        }
+      }),
+      'modal.bookmark.open': action(() => {
         this.showBookmarkUrl();
-      },
-      'modal.screenshot.open': () => {
-        this.showScreenshot();
-      },
-      'modal.screenshot.snap': () => {
-        this.snapScreenshot();
-      },
-      'fullscreen.toggle': () => {
-        this.dlfPlayer.endSeek();
-        this.toggleFullScreen();
-      },
-      'theater.toggle': () => {
-        this.dlfPlayer.endSeek();
+      }),
+      'modal.screenshot.open': action({
+        isAvailable: () => {
+          return !this.dlfPlayer.isAudioOnly();
+        },
+        execute: () => {
+          this.showScreenshot();
+        },
+      }),
+      'modal.screenshot.snap': action({
+        isAvailable: () => {
+          return !this.dlfPlayer.isAudioOnly();
+        },
+        execute: () => {
+          this.snapScreenshot();
+        },
+      }),
+      'theater.toggle': action(() => {
+        this.dlfPlayer.ui.seekBar?.endSeek();
 
         // @see DigitalcollectionsScripts.js
         // TODO: Make sure the theater mode isn't activated on startup; then stop persisting
@@ -142,92 +136,41 @@ export default class SlubMediaPlayer {
           },
         });
         window.dispatchEvent(ev);
-      },
-      'playback.toggle': () => {
-        if (this.dlfPlayer.paused) {
-          this.dlfPlayer.play();
-        } else {
-          this.dlfPlayer.pause();
-        }
-      },
-      'playback.volume.mute.toggle': () => {
-        this.dlfPlayer.muted = !this.dlfPlayer.muted;
-      },
-      'playback.volume.inc': () => {
-        this.dlfPlayer.volume = this.dlfPlayer.volume + this.constants.volumeStep;
-      },
-      'playback.volume.dec': () => {
-        this.dlfPlayer.volume = this.dlfPlayer.volume - this.constants.volumeStep;
-      },
-      'playback.captions.toggle': () => {
-        this.dlfPlayer.showCaptions = !this.dlfPlayer.showCaptions;
-      },
-      'navigate.rewind': () => {
-        this.dlfPlayer.skipSeconds(-this.constants.seekStep);
-      },
-      'navigate.seek': () => {
-        this.dlfPlayer.skipSeconds(+this.constants.seekStep);
-      },
-      'navigate.continuous-rewind': () => {
-        this.dlfPlayer.ensureTrickPlay(-this.constants.trickPlayFactor);
-      },
-      'navigate.continuous-seek': () => {
-        this.dlfPlayer.ensureTrickPlay(this.constants.trickPlayFactor);
-      },
-      'navigate.chapter.prev': () => {
-        this.dlfPlayer.prevChapter();
-      },
-      'navigate.chapter.next': () => {
-        this.dlfPlayer.nextChapter();
-      },
-      'navigate.frame.prev': () => {
-        this.dlfPlayer.getVifa()?.seekBackward(1);
-      },
-      'navigate.frame.next': () => {
-        this.dlfPlayer.getVifa()?.seekForward(1);
-      },
-      'navigate.position.percental': (
-        /** @type {Keybinding<any, any>} */ kb,
-        /** @type {number} */ keyIndex
-      ) => {
-        if (0 <= keyIndex && keyIndex < kb.keys.length) {
-          // Implies kb.keys.length > 0
+      }),
+    });
 
-          const relative = keyIndex / kb.keys.length;
-          const absolute = relative * this.dlfPlayer.getVideo().duration;
-
-          this.dlfPlayer.seekTo(absolute);
-        }
-      },
-      'navigate.thumbnails.snap': (
-        /** @type {Keybinding<any, any>} */ _kb,
-        /** @type {number} */ _keyIndex,
-        /** @type {KeyEventMode} */ mode
-      ) => {
-        this.dlfPlayer.setThumbnailSnap(mode === 'down');
-      },
-    };
-
-    this.modals.on('closed', this.handlers.onCloseModal);
-
+    this.createModals();
     this.load();
   }
 
-  /**
-   * Prints global error message into {@link container} and quits.
-   *
-   * @private
-   * @param {string} langKey
-   */
-  failWithError(langKey) {
-    this.dlfPlayer.unmount();
+  createModals() {
+    /** @private */
+    this.modals = Modals({
+      help: new HelpModal(this.fullscreenElement, this.env, {
+        constants: {
+          ...this.constants,
+          ...this.dlfPlayer.getConstants(),
+          // TODO: Refactor
+          forceLandscapeOnFullscreen: Number(this.constants.forceLandscapeOnFullscreen),
+        },
+        keybindings: this.keybindings,
+        actionIsAvailable: (actionKey) => {
+          // @ts-expect-error
+          const action = this.actions[actionKey];
+          return action !== undefined && action.isAvailable();
+        },
+      }),
+      bookmark: new BookmarkModal(this.fullscreenElement, this.env, {
+        shareButtons: this.config.shareButtons,
+      }),
+      screenshot: new ScreenshotModal(this.fullscreenElement, this.env, {
+        keybindings: this.keybindings,
+        screnshotCaptions: this.config.screenshotCaptions ?? [],
+        constants: this.config.constants ?? {},
+      }),
+    });
 
-    const errorBox = e('div', {
-      className: "sxnd-player-fatal-error",
-    }, [this.env.t(langKey)]);
-
-    this.container.innerHTML = "";
-    this.container.append(errorBox);
+    this.modals.on('closed', this.handlers.onCloseModal);
   }
 
   /**
@@ -279,16 +222,6 @@ export default class SlubMediaPlayer {
    * @private
    */
   async load() {
-    // Find sources for supported manifest/video formats
-    const videoSources = this.videoInfo.sources.filter(
-      source => this.dlfPlayer.supportsMimeType(source.mimeType)
-    );
-
-    if (videoSources.length === 0) {
-      this.failWithError('error.playback-not-supported');
-      return;
-    }
-
     document.querySelectorAll("a[data-timecode], .tx-dlf-tableofcontents a").forEach(el => {
       const link = /** @type {HTMLAnchorElement} */(el);
       const timecode = this.getLinkTimecode(link);
@@ -308,123 +241,56 @@ export default class SlubMediaPlayer {
 
     const startTime = this.getStartTime(chapters);
 
-    this.dlfPlayer.addControlElement(
-      ControlPanelButton.register(this.env, {
-        className: "sxnd-screenshot-button",
-        material_icon: 'photo_camera',
-        title: this.env.t('control.screenshot.tooltip'),
-        onClick: this.actions['modal.screenshot.open'],
-      }),
-      ControlPanelButton.register(this.env, {
-        className: "sxnd-bookmark-button",
-        material_icon: 'bookmark_border',
-        title: this.env.t('control.bookmark.tooltip'),
-        onClick: this.actions['modal.bookmark.open'],
-      }),
-      'fullscreen',
-      ControlPanelButton.register(this.env, {
-        className: "sxnd-help-button",
-        material_icon: 'info_outline',
-        title: this.env.t('control.help.tooltip'),
-        onClick: this.actions['modal.help.open'],
-      })
-    );
-    this.dlfPlayer.setConstants(this.constants);
-    this.dlfPlayer.setLocale(this.config.lang.twoLetterIsoCode);
-    if (this.videoInfo.url.poster !== undefined) {
-      this.dlfPlayer.setPoster(this.videoInfo.url.poster);
+    // TODO: How to deal with this check?
+    if (this.dlfPlayer.ui instanceof ShakaFrontend) {
+      this.dlfPlayer.ui.addControlElement(
+        ControlPanelButton.register(this.env, {
+          className: "sxnd-screenshot-button",
+          material_icon: 'photo_camera',
+          title: this.env.t('control.screenshot.tooltip'),
+          onClickAction: this.actions['modal.screenshot.open'],
+        }),
+        ControlPanelButton.register(this.env, {
+          className: "sxnd-bookmark-button",
+          material_icon: 'bookmark_border',
+          title: this.env.t('control.bookmark.tooltip'),
+          onClickAction: this.actions['modal.bookmark.open'],
+        }),
+        FullScreenButton.register(this.env, {
+          onClickAction: this.actions['fullscreen.toggle'],
+        }),
+        ControlPanelButton.register(this.env, {
+          className: "sxnd-help-button",
+          material_icon: 'info_outline',
+          title: this.env.t('control.help.tooltip'),
+          onClickAction: this.actions['modal.help.open'],
+        })
+      );
     }
+    this.dlfPlayer.ui.updatePlayerProperties({
+      locale: this.config.lang.twoLetterIsoCode,
+    });
+    this.dlfPlayer.ui.updateMediaProperties({
+      poster: this.videoInfo.url.poster,
+    });
     this.dlfPlayer.setChapters(chapters);
+    this.dlfPlayer.setStartTime(startTime ?? null);
+    this.dlfPlayer.setSources(this.videoInfo.sources);
     this.dlfPlayer.mount(this.playerMount);
 
-    // Try loading video until one of the sources works.
-    let loadedSource;
-    for (const source of videoSources) {
-      try {
-        await this.dlfPlayer.loadManifest(source, startTime);
-        loadedSource = source;
-        break;
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
-    if (loadedSource === undefined) {
-      this.failWithError('error.load-failed');
+    const hasLoadedVideo = await this.dlfPlayer.load();
+    if (!hasLoadedVideo) {
       return;
     }
 
-    this.modals.resize();
+    this.modals?.resize();
 
     this.registerEventHandlers();
   }
 
   registerEventHandlers() {
-    document.addEventListener('keydown', this.handlers.onKeyDown);
+    document.addEventListener('keydown', this.handlers.onKeyDown, { capture: true });
     document.addEventListener('keyup', this.handlers.onKeyUp, { capture: true });
-
-    // TODO: Move actions to DlfMediaPlayer, then also move gesture detection there
-
-    const g = new Gestures();
-    g.register(this.dlfPlayer.getContainer());
-
-    g.on('gesture', (e) => {
-      if (e.event.clientY >= this.dlfPlayer.userArea.bottom) {
-        return;
-      }
-
-      if (!this.dlfPlayer.isUserAreaEvent(e.event)) {
-        return;
-      }
-
-      switch (e.type) {
-        case 'tapup':
-          if (e.event.pointerType === 'mouse') {
-            if (e.tapCount <= 2) {
-              this.actions['playback.toggle']();
-            }
-
-            if (e.tapCount === 2) {
-              this.actions['fullscreen.toggle']();
-            }
-          } else if (e.tapCount >= 2) {
-            if (e.position.x < 1 / 3) {
-              this.actions['navigate.rewind']();
-            } else if (e.position.x > 2 / 3) {
-              this.actions['navigate.seek']();
-            } else if (e.tapCount === 2 && !this.env.isInFullScreen()) {
-              this.actions['fullscreen.toggle']();
-            }
-          }
-          break;
-
-        case 'hold':
-          if (e.tapCount === 1) {
-            this.dlfPlayer.beginRelativeSeek(e.event.clientX);
-          } else if (e.tapCount >= 2) {
-            if (e.position.x < 1 / 3) {
-              this.actions['navigate.continuous-rewind']();
-            } else if (e.position.x > 2 / 3) {
-              this.actions['navigate.continuous-seek']();
-            }
-          }
-          break;
-
-        case 'swipe':
-          // "Natural" swiping
-          if (e.direction === 'east') {
-            this.actions['navigate.rewind']();
-          } else if (e.direction === 'west') {
-            this.actions['navigate.seek']();
-          }
-          break;
-      }
-    });
-
-    g.on('release', () => {
-      this.dlfPlayer.endSeek();
-      this.dlfPlayer.cancelTrickPlay();
-    });
   }
 
   /**
@@ -432,7 +298,7 @@ export default class SlubMediaPlayer {
    * @returns {KeyboardScope}
    */
   getKeyboardScope() {
-    if (this.modals.hasOpen()) {
+    if (this.modals?.hasOpen()) {
       return 'modal';
     }
 
@@ -451,6 +317,23 @@ export default class SlubMediaPlayer {
    * @param {KeyboardEvent} e
    */
   onKeyDown(e) {
+    // Hack against Shaka reacting to Escape key to close overflow menu;
+    // we do this ourselves. (TODO: Find a better solution)
+    if (e.key === 'Escape') {
+      e.stopImmediatePropagation();
+    }
+
+    // TODO: Remove
+    if (this.dlfPlayer.ui instanceof ShakaFrontend) {
+      if (e.key === 'F2') {
+        this.dlfPlayer.ui.updatePlayerProperties({ mode: 'audio' });
+        this.modals?.resize();
+      } else if (e.key === 'F4') {
+        this.dlfPlayer.ui.updatePlayerProperties({ mode: 'video' });
+        this.modals?.resize();
+      }
+    }
+
     this.handleKey(e, 'down');
   }
 
@@ -489,8 +372,10 @@ export default class SlubMediaPlayer {
         || (mode === 'up' && (keybinding.keyup ?? false))
       );
 
-      if (shouldHandle) {
-        this.actions[keybinding.action]?.(keybinding, keyIndex, mode);
+      const action = this.actions[keybinding.action];
+
+      if (shouldHandle && action !== undefined && action.isAvailable()) {
+        action.execute(keybinding, keyIndex, mode);
       }
     }
   }
@@ -506,7 +391,7 @@ export default class SlubMediaPlayer {
     // been attached.
     const target = /** @type {ChapterLink} */(e.currentTarget);
 
-    this.dlfPlayer.play();
+    this.dlfPlayer.media.play();
     this.dlfPlayer.seekTo(target.dlfTimecode);
   }
 
@@ -518,40 +403,11 @@ export default class SlubMediaPlayer {
     this.dlfPlayer.resumeOn(modal);
   }
 
-  /**
-   * Mostly taken from Shaka player (shaka.ui.Controls).
-   *
-   * We put this here so that we don't need to append the app elements (modals)
-   * to the player container.
-   */
   async toggleFullScreen() {
-    if (document.fullscreenElement) {
-      if (screen.orientation) {
-        screen.orientation.unlock();
-      }
-      await document.exitFullscreen();
-    } else {
-      // If we are in PiP mode, leave PiP mode first.
-      try {
-        if (document.pictureInPictureElement) {
-          await document.exitPictureInPicture();
-        }
-        await this.container.requestFullscreen({ navigationUI: 'hide' });
-        if (this.constants.forceLandscapeOnFullscreen && screen.orientation) {
-          try {
-            // Locking to 'landscape' should let it be either
-            // 'landscape-primary' or 'landscape-secondary' as appropriate.
-            await screen.orientation.lock('landscape');
-          } catch (error) {
-            // If screen.orientation.lock does not work on a device, it will
-            // be rejected with an error. Suppress that error.
-          }
-        }
-      } catch (e) {
-        // TODO: Error handling
-        console.log(e);
-      }
-    }
+    // We use this instead of Shaka's toggleFullScreen so that we don't need to
+    // append the app elements (modals) to the player container.
+    this.env.toggleFullScreen(this.fullscreenElement,
+      this.constants.forceLandscapeOnFullscreen);
   }
 
   showBookmarkUrl() {
@@ -561,7 +417,7 @@ export default class SlubMediaPlayer {
       return;
     }
 
-    const modal = this.modals.bookmark
+    const modal = this.modals?.bookmark
       .setTimecode(this.dlfPlayer.displayTime)
       .setFps(this.dlfPlayer.getFps() ?? 0);
 
@@ -569,17 +425,17 @@ export default class SlubMediaPlayer {
   }
 
   /**
-   * @returns {ScreenshotModal | null}
+   * @returns {ScreenshotModal | undefined}
    */
   prepareScreenshot() {
     // Don't do screenshot if there isn't yet an image to be displayed
     if (!this.dlfPlayer.hasCurrentData) {
-      return null;
+      return;
     }
 
     return (
-      this.modals.screenshot
-        .setVideo(this.dlfPlayer.getVideo())
+      this.modals?.screenshot
+        .setVideo(this.dlfPlayer.media)
         .setMetadata(this.videoInfo.metadata)
         .setFps(this.dlfPlayer.getFps())
         .setTimecode(this.dlfPlayer.displayTime)
@@ -588,31 +444,29 @@ export default class SlubMediaPlayer {
 
   showScreenshot() {
     const modal = this.prepareScreenshot();
-
-    if (modal !== null) {
-      this.openModal(modal, /* pause= */ true);
-    }
+    this.openModal(modal, /* pause= */ true);
   }
 
   snapScreenshot() {
     const modal = this.prepareScreenshot();
-
-    if (modal !== null) {
-      modal.snap();
-    }
+    modal?.snap();
   }
 
   /**
    * @private
-   * @param {ValueOf<AppModals>} modal
+   * @param {ValueOf<AppModals>=} modal
    * @param {boolean} pause
    */
   openModal(modal, pause = false) {
+    if (modal == null) {
+      return;
+    }
+
     if (pause) {
       this.dlfPlayer.pauseOn(modal);
     }
 
-    this.dlfPlayer.endSeek();
+    this.dlfPlayer.ui.seekBar?.endSeek();
     modal.open();
   }
 }

@@ -50,10 +50,19 @@ import sanitizeThumbnail from './lib/thumbnails/sanitizeThumbnail';
  *  network: ImageFetcher;
  *  interaction: Interaction;
  * }} Params
+ *
+ * @typedef {'wide' | 'narrow'} SeekMode In wide mode, the whole height of the thumbnail container
+ * can be used and stays open for seeking. In narrow mode, only the seek bar can be used; the thumbnail
+ * is closed when the mouse leaves the seek bar.
  */
 
 const DISPLAY_WIDTH = 160;
 const INITIAL_ASPECT_RATIO = 16 / 9;
+
+/**
+ * Delay in milliseconds from hovering the seek bar until the thumbnail
+ * container is opened.
+ */
 const OPEN_DISPLAY_DELAY = 100;
 
 /**
@@ -108,6 +117,8 @@ export default class ThumbnailPreview {
     this.current = null;
     /** @private @type {number | null} */
     this.renderAnimationFrame = null;
+    /** @private @type {SeekMode} */
+    this.seekMode = 'wide';
     /** @private */
     this.openDisplayTimeout = null;
 
@@ -168,7 +179,7 @@ export default class ThumbnailPreview {
   }
 
   /**
-   * @param {Chapters} chapters
+   * @param {Chapters | null} chapters
    */
   setChapters(chapters) {
     this.chapters = chapters;
@@ -204,6 +215,15 @@ export default class ThumbnailPreview {
       this.renderSeekPosition(this.current.seekPosition)
     }
 
+    this.currentRenderBest();
+  }
+
+  /**
+   *
+   * @param {SeekMode} mode
+   */
+  setSeekMode(mode) {
+    this.seekMode = mode;
     this.currentRenderBest();
   }
 
@@ -331,7 +351,10 @@ export default class ThumbnailPreview {
           return;
         }
 
-        let { top } = this.$container.getBoundingClientRect();
+        let { top } = this.seekMode === 'wide'
+          ? this.$container.getBoundingClientRect()
+          : this.seekBar.getBoundingClientRect();
+
         // We don't want the thumbnail preview to be opened accidentally. If the
         // user is hovering quickly from below to above the seek bar, shrink the
         // area above the seek bar that would keep the thumbnail preview open.

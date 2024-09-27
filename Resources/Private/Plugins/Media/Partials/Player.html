@@ -6,11 +6,12 @@
     <script>
         window.addEventListener('DOMContentLoaded', function () {
             var container = document.querySelector('.media-viewport');
+            var fullscreenElement = document.querySelector('.tx-dlf-view');
             var videoConfig = {sxnd:videoToJson(settings: settings)};
             var playerConfig = {sxnd:playerConfigToJson(settings: settings)};
             playerConfig.lang = {sxnd:translations(baseFile: settings.playerTranslations.baseFile) -> f:format.json() -> f:format.raw()};
 
-            var app = new SlubMediaPlayer(container, videoConfig, playerConfig);
+            var app = new SlubMediaPlayer(container, fullscreenElement, videoConfig, playerConfig);
         });
     </script>
 </f:section>
