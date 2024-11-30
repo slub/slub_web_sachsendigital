@@ -113,6 +113,14 @@
 				<source><![CDATA[Bookmark]]></source>
 				<target><![CDATA[Bookmark]]></target>
 			</trans-unit>
+			<trans-unit id="control.fullscreen.tooltip" approved="yes">
+				<source><![CDATA[Full screen]]></source>
+				<target><![CDATA[Vollbildmodus]]></target>
+			</trans-unit>
+			<trans-unit id="control.fullscreen_exit.tooltip" approved="yes">
+				<source><![CDATA[Exit full screen]]></source>
+				<target><![CDATA[Vollbildmodus beenden]]></target>
+			</trans-unit>
 			<trans-unit id="control.help.tooltip" approved="yes">
 				<source><![CDATA[Show help]]></source>
 				<target><![CDATA[Bedienhinweise]]></target>

@@ -67,6 +67,12 @@ interface Browser {
    * Checks whether the browser is in full screen.
    */
   isInFullScreen(): boolean;
+
+  /**
+   * Toggle full screen, using {@link fullscreenElement} if switching to full
+   * screen.
+   */
+  toggleFullScreen(fullscreenElement: HTMLElement, forceLandscape: boolean);
 }
 
 /**
